@@ -13,7 +13,7 @@ const WaveCardHeader = () => {
           <span className="text-[#8B8E8D] text-[13px] ">Mar 01, 11:00 am</span>
         </div>
       </div>
-      <div className="flex gap-1.5 px-[30px] py-[7px] border border-[#626665] rounded-[23px]">
+      <div className="flex gap-1.5 px-[15px] md:px-[30px] py-[7px] border border-[#626665] rounded-[23px]">
         <img src={rating} alt="" />
         Top 3
       </div>

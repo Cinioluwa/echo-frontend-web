@@ -12,3 +12,7 @@ body {
   font-family: var(--font-poppins);
   background-color: #fae9d4;
 }
+
+.btn-reset {
+  @apply appearance-none bg-transparent border-0 p-0 focus:outline-none;
+}

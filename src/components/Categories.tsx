@@ -48,7 +48,7 @@ const categories: category[] = [
 ];
 
 const Categories = () => {
-  const [isActive, setIsActive] = useState(false);
+  const [isActive, setIsActive] = useState(true);
 
   const [selectedCategory, setSelectedCategory] = useState({} as category);
 
@@ -77,7 +77,7 @@ const Categories = () => {
         </span>
       </div>
 
-      <div className=" py-[13px]">
+      <div className="">
         {categories.map((category) => (
           <li
             key={category.id}
@@ -88,7 +88,7 @@ const Categories = () => {
                 : selectedCategory.id === category.id
                 ? "bg-[#FAE9D4] opacity-100 shadow"
                 : " opacity-64"
-            }  px-[15px] rounded-lg mb-[5px] py-3 items-center opacity-64 text-[15px] transition ease-in duration-200`}
+            }  px-[15px] rounded-lg py-[11px] items-center opacity-64 text-[15px] transition ease-in duration-200`}
           >
             <span>
               <img src={category.labelIcon} />

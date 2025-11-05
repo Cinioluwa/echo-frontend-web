@@ -5,41 +5,64 @@ import WaveHistorySidebar from "./WaveHistorySidebar";
 
 const WaveHistory = () => {
   return (
-    <div className=" h-screen ">
-      <header className="z-20 fixed top-0 w-full">
+    <div className=" h-screen overflow-hidden">
+      <header className="z-20 md:fixed md:top-0 w-full">
         <nav>
           <NavBar />
         </nav>
         <PageTitleBar heading="Wave History" />
       </header>
 
-      <aside className=" pb-[23px]  px-10 fixed h-[calc(100vh-155px)] w-[350px] left-0 bottom-0 whitespace-nowrap ">
+      <aside className=" hidden md:block [scrollbar-width:none] pb-[23px] overflow-y-auto   px-10 fixed h-[calc(100vh-155px)] w-[350px] left-0 bottom-0 whitespace-nowrap ">
         <WaveHistorySidebar />
       </aside>
 
-      <main className="mr-[46px] ml-[350px] mt-[145px]">
-        <div>
-          <h2 className=" my-[22px] text-[25px] font-semibold">Yesterday</h2>
-          <WaveCard
-            waveText=""
-            waveTitle="Increase Wi-Fi Coverage and Speed on Campus"
-          />
-        </div>
-        <div>
-          <h2 className=" my-[22px] text-[25px] font-semibold">25th May 2025</h2>
-          <WaveCard waveText="" waveTitle="" />
-        </div>
-        <div>
-          <h2 className=" my-[22px] text-[25px] font-semibold">25th May 2025</h2>
-          <WaveCard waveText="" waveTitle="" />
-        </div>
-        <div>
-          <h2 className=" my-[22px] text-[25px] font-semibold">25th May 2025</h2>
-          <WaveCard waveText="" waveTitle="" />
-        </div>
-        <div>
-          <h2 className=" my-[22px] text-[25px] font-semibold">25th May 2025</h2>
-          <WaveCard waveText="" waveTitle="" />
+      <main className=" mr-2.5 ml-2.5 mt-5 md:mr-[46px] h-full [scrollbar-width:none] overflow-auto md:ml-[350px]  pb-[5px] md:mt-[155px]">
+        <div className="pb-40">
+          <div className="my-[22px]">
+            <h2 className=" mb-[22px] text-[25px] font-semibold">Yesterday</h2>
+            <WaveCard
+              waveText="Many students struggle with poor Wi-Fi connectivity in certain areas of the campus, which hinders their ability to access online resources, complete assignments, and participate in online discussions. By improving Wi-Fi coverage and speed throughout the campus, we can ensure that all students have reliable internet access, fostering a more productive and connected learning environment.
+            "
+              waveTitle="Increase Wi-Fi Coverage and Speed on Campus"
+            />
+          </div>
+          <div className="my-[22px]">
+            <h2 className=" mb-[22px] text-[25px] font-semibold">
+              25th May 2025
+            </h2>
+            <WaveCard
+              waveText="The current library facilities are outdated and insufficient to meet the needs of the growing student population. Many students find it challenging to locate necessary resources, and the study areas are often overcrowded. Upgrading the library facilities — including expanding the collection of books and digital resources, increasing seating capacity, and enhancing the study environment — will greatly benefit students and support their academic success.
+            "
+              waveTitle="Upgrade Library Facilities and Resources
+            "
+            />
+          </div>
+          <div className="my-[22px]">
+            <h2 className=" mb-[22px] text-[25px] font-semibold">
+              25th May 2025
+            </h2>
+            <WaveCard
+              waveText="Many students struggle with poor Wi-Fi connectivity in certain areas of the campus, which hinders their ability to access online resources, complete assignments, and participate in online discussions. By improving Wi-Fi coverage and speed throughout the campus, we can ensure that all students have reliable internet access, fostering a more productive and connected learning environment."
+              waveTitle="Increase Wi-Fi Coverage and Speed on Campus"
+            />
+          </div>
+          <div className="my-[22px]">
+            <h2 className="mb-[22px]  text-[25px] font-semibold">
+              25th May 2025
+            </h2>
+            <WaveCard
+              waveText="Many students struggle with poor Wi-Fi connectivity in certain areas of the campus, which hinders their ability to access online resources, complete assignments, and participate in online discussions. By improving Wi-Fi coverage and speed throughout the campus, we can ensure that all students have reliable internet access, fostering a more productive and connected learning environment."
+              waveTitle="Increase Wi-Fi Coverage and Speed on Campus"
+            />
+          </div>
+          <div className="my-[22px]">
+            <h2 className="mb-[22px] text-[25px] font-semibold">25th May 2025</h2>
+            <WaveCard
+              waveText="The current library facilities are outdated and insufficient to meet the needs of the growing student population. Many students find it challenging to locate necessary resources, and the study areas are often overcrowded. Upgrading the library facilities — including expanding the collection of books and digital resources, increasing seating capacity, and enhancing the study environment — will greatly benefit students and support their academic success."
+              waveTitle="Upgrade Library Facilities and Resources"
+            />
+          </div>
         </div>
       </main>
     </div>
