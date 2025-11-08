@@ -6,7 +6,7 @@ interface InputGroupProps {
 
 const InputGroup = ({ placeholder, iconSrc, type }: InputGroupProps) => {
   return (
-    <div className="mb-4.5 hidden md:flex items-center bg-[#FBFBFB] italic text-[#CACACA] justify-start pr-11  md:pr-26 h-16  pl-5 border border-[#CACACA] rounded-xl">
+    <div className="mb-4.5  flex items-center bg-[#FBFBFB] italic text-[#CACACA] justify-start   pr-[127px] h-16  pl-5 border border-[#CACACA] rounded-xl">
       <span className="w-7 pr-2 py-1 flex items-center justify-center border-r border-r-[#CACACA]">
         <img src={iconSrc} />
       </span>

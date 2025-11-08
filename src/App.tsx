@@ -1,7 +1,11 @@
-import WaveHistory from "./components/WaveHistory";
+
+
+import Login from "./pages/Login";
+
+
 
 const App = () => {
-  return <WaveHistory />;
+  return <Login />;
 };
 
 export default App;

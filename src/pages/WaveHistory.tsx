@@ -1,7 +1,7 @@
-import NavBar from "./NavBar";
-import PageTitleBar from "./PageTitleBar";
-import WaveCard from "./WaveCard";
-import WaveHistorySidebar from "./WaveHistorySidebar";
+import NavBar from "../components/NavBar";
+import PageTitleBar from "../components/PageTitleBar";
+import WaveCard from "../components/WaveCard";
+import WaveHistorySidebar from "../components/WaveHistorySidebar";
 
 const WaveHistory = () => {
   return (
