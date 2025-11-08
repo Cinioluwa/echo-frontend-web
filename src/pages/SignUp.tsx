@@ -6,7 +6,7 @@ import logo from "../assets/images/Echo Logo.svg";
 import echo from "../assets/images/Echo.svg";
 import InputGroup from "../components/InputGroup";
 
-const Login = () => {
+const SignUp = () => {
   return (
     <div
       style={{ backgroundImage: `url(${backgroundImage})` }}
@@ -77,7 +77,7 @@ const Login = () => {
               </button>
 
 
-              
+
               {/* Mobile sign up CTA */}
               <div className="flex items-center text-[#ACAAAA] justify-center gap-[5px] md:hidden">
                 <img src={email} />
@@ -109,4 +109,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default SignUp;

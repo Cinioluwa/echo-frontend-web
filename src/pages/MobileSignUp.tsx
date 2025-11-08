@@ -4,7 +4,7 @@ import backgroundImage from "../assets/images/backgroundImage.jpg";
 import logo from "../assets/images/Echo Logo.svg";
 import InputGroup from "../components/InputGroup";
 
-const Login = () => {
+const MobileSignUp = () => {
   return (
     <div
       style={{ backgroundImage: `url(${backgroundImage})` }}
@@ -83,4 +83,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default MobileSignUp;

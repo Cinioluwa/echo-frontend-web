@@ -13,9 +13,9 @@ function WaveCardFooter() {
         </div>
       </div>
       <div className="text-[#454545] text-[14px] flex items-center">
-          <span className="mr-1">114</span>
-          Surges
-        </div>
+        <span className="mr-1">114</span>
+        Surges
+      </div>
     </div>
   );
 }
