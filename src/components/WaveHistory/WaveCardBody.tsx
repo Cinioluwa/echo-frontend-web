@@ -1,4 +1,4 @@
-import general from "../assets/images/General.svg";
+import general from "../../assets/images/General.svg";
 
 interface Props {
   waveText: string;

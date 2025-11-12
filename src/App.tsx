@@ -1,11 +1,7 @@
-
-
-import Login from "./pages/Login";
-
-
+import SoundBoard from "./pages/SoundBoard";
 
 const App = () => {
-  return <Login />;
+  return <SoundBoard />;
 };
 
 export default App;

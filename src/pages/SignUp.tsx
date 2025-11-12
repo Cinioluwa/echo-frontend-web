@@ -76,14 +76,11 @@ const SignUp = () => {
                 Sign up
               </button>
 
-
-
               {/* Mobile sign up CTA */}
               <div className="flex items-center text-[#ACAAAA] justify-center gap-[5px] md:hidden">
                 <img src={email} />
                 Sign up with email
               </div>
-              
             </form>
             <p className="text-[#838383] mt-[60px] md:mt-0 text-center text-[14px]">
               By creating an account, you agree to Echo

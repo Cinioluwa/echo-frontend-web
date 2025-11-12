@@ -1,5 +1,6 @@
-import wavecardprofile from "../assets/images/wavecardprofile.svg";
-import rating from "../assets/images/rating.svg";
+import wavecardprofile from '../../assets/images/wavecardprofile.svg'
+import rating from '../../assets/images/rating.svg'
+
 
 const WaveCardHeader = () => {
   return (

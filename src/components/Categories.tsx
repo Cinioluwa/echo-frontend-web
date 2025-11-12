@@ -63,7 +63,7 @@ const Categories = () => {
 
   return (
     <div className="p-2">
-      <header className="my-[15px] pl-2.5 font-[18px] ">Category</header>
+      <header className="my-[15px] pl-2.5 font-[18px]">Category</header>
 
       <div
         onClick={handleClick}

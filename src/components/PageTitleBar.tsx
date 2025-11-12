@@ -1,5 +1,5 @@
 import filters from "../assets/images/filters.svg";
-import create from "../assets/images/Create.svg";
+import { FaPlus } from "react-icons/fa6";
 
 interface pageHeaderProps {
   heading: string;
@@ -14,11 +14,10 @@ const PageTitleBar = ({ heading }: pageHeaderProps) => {
           <img src={filters} alt="" className="inline" />
           <p className=" text-[#B29494] text-[15px] inline ">Filters</p>
         </span>
-        <img
-          src={create}
-          alt=""
-          className="w-[50px] cursor-pointer h-[50px] rounded-full"
-        />
+        <div className="flex justify-center text-[13px] items-center gap-[7px] text-white rounded-[40px] bg-[#F49B31] py-2.5 px-[15px]">
+          <FaPlus fontSize={20} />
+          Create a ping
+        </div>
       </div>
     </div>
   );

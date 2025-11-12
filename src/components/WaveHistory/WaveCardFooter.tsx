@@ -1,4 +1,4 @@
-import eye from "../assets/images/eye_svgrepo.com.svg";
+import eye from "../../assets/images/eye_svgrepo.com.svg";
 
 function WaveCardFooter() {
   return (
