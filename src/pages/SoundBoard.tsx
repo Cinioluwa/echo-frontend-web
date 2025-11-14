@@ -7,7 +7,7 @@ import PageTitleBar from "../components/PageTitleBar";
 
 const SoundBoard = () => {
   return (
-    <div className="h-full ">
+    <div className="h-full">
       <header className="z-20 md:fixed md:top-0 w-full">
         <nav>
           <NavBar />
