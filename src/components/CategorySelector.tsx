@@ -1,0 +1,40 @@
+import { useState } from "react";
+// import { categories } from "./PingFormModal";
+
+const CategorySelector = () => {
+  const [selectCategory, setSelectCategory] = useState("");
+
+  const categories = [
+    "General",
+    "Academics",
+    "Chapel",
+    "Finance",
+    "Hall",
+    "Sport",
+    "Welfare",
+  ];
+
+  function handleSelectCategory(cat: string) {
+    if (categories.includes(cat)) {
+      setSelectCategory(cat);
+    }
+  }
+
+  return (
+    <div className=" border-2  rounded-[20px] overflow-hidden inline-flex">
+      {categories.map((cat, index) => (
+        <div
+          key={index}
+          onClick={() => handleSelectCategory(cat)}
+          className={`cursor-pointer  ${
+            selectCategory === cat ? "bg-[#F49B31] text-white" : "bg-[#FEF5EA]"
+          } py-2.5 border-r transition-colors duration-500 ease-in-out px-[25px]`}
+        >
+          {cat}
+        </div>
+      ))}
+    </div>
+  );
+};
+
+export default CategorySelector;

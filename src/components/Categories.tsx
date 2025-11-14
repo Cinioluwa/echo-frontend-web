@@ -47,6 +47,11 @@ const categories: category[] = [
   },
 ];
 
+// interface categoryy {
+//   isActive: boolean;
+//   selectedCategory: boolean;
+// }
+
 const Categories = () => {
   const [isActive, setIsActive] = useState(true);
 
@@ -88,7 +93,7 @@ const Categories = () => {
                 : selectedCategory.id === category.id
                 ? "bg-[#FAE9D4] opacity-100 shadow"
                 : " opacity-64"
-            }  px-[15px] rounded-lg py-[11px] items-center opacity-64 text-[15px] transition ease-in duration-200`}
+            }  px-[15px] rounded-lg py-[18px] items-center opacity-64 text-[15px] transition ease-in duration-200`}
           >
             <span>
               <img src={category.labelIcon} />

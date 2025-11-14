@@ -4,15 +4,28 @@ import SoundBoardCard from "../components/SoundBoard/SoundBoardCard";
 
 import SideBar from "../components/SideBar";
 import PageTitleBar from "../components/PageTitleBar";
+import PingFormModal from "../components/PingFormModal";
+import { FaPlus } from "react-icons/fa6";
+import { useState } from "react";
 
 const SoundBoard = () => {
+  const [pingForm, setPingForm] = useState(false);
+
   return (
     <div className="h-full">
       <header className="z-20 md:fixed md:top-0 w-full">
         <nav>
           <NavBar />
         </nav>
-        <PageTitleBar heading="Sound Board" />
+        <PageTitleBar heading="Sound Board">
+          <div
+            onClick={() => setPingForm(!pingForm)}
+            className="flex cursor-pointer justify-center text-[13px] items-center gap-[7px] text-white rounded-[40px] bg-[#F49B31] py-2.5 px-[15px]"
+          >
+            <FaPlus fontSize={20} />
+            Create a ping
+          </div>
+        </PageTitleBar>
       </header>
 
       <aside className="hidden md:block [scrollbar-width:none] pb-[23px] overflow-y-auto   px-10 fixed h-[calc(100vh-155px)] w-[350px] left-0 bottom-0 whitespace-nowrap ">
@@ -60,6 +73,17 @@ const SoundBoard = () => {
           </div>
         </div>
       </main>
+
+      {pingForm && (
+        <PingFormModal>
+          <button
+            onClick={() => setPingForm(!pingForm)}
+            className="text-[13px] underline cursor-pointer"
+          >
+            cancel
+          </button>
+        </PingFormModal>
+      )}
     </div>
   );
 };
