@@ -4,7 +4,7 @@ import SoundBoardCard from "../components/SoundBoard/SoundBoardCard";
 
 import SideBar from "../components/SideBar";
 import PageTitleBar from "../components/PageTitleBar";
-import PingFormModal from "../components/PingFormModal";
+import ModalFormDetails from "../components/ModalForm";
 import { FaPlus } from "react-icons/fa6";
 import { useState } from "react";
 
@@ -20,7 +20,7 @@ const SoundBoard = () => {
         <PageTitleBar heading="Sound Board">
           <div
             onClick={() => setPingForm(!pingForm)}
-            className="flex cursor-pointer justify-center text-[13px] items-center gap-[7px] text-white rounded-[40px] bg-[#F49B31] py-2.5 px-[15px]"
+            className="flex cursor-pointer justify-center text-[13px] items-center gap-[7px] text-white rounded-[40px] bg-[#F49B31] py-2.5 px-[15px] text-center"
           >
             <FaPlus fontSize={20} />
             Create a ping
@@ -28,7 +28,7 @@ const SoundBoard = () => {
         </PageTitleBar>
       </header>
 
-      <aside className="hidden md:block [scrollbar-width:none] pb-[23px] overflow-y-auto   px-10 fixed h-[calc(100vh-155px)] w-[350px] left-0 bottom-0 whitespace-nowrap ">
+      <aside className="hidden md:block [scrollbar-width:none]  overflow-y-auto   px-10 fixed h-[calc(100vh-155px)] w-[350px] left-0 bottom-0 whitespace-nowrap ">
         <SideBar />
       </aside>
 
@@ -75,14 +75,14 @@ const SoundBoard = () => {
       </main>
 
       {pingForm && (
-        <PingFormModal>
+        <ModalFormDetails>
           <button
             onClick={() => setPingForm(!pingForm)}
             className="text-[13px] underline cursor-pointer"
           >
             cancel
           </button>
-        </PingFormModal>
+        </ModalFormDetails>
       )}
     </div>
   );

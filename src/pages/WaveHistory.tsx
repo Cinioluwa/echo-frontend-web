@@ -2,15 +2,28 @@ import NavBar from "../components/NavBar";
 import WaveCard from "../components/WaveHistory/WaveCard";
 import SideBar from "../components/SideBar";
 import PageTitleBar from "../components/PageTitleBar";
+import { FaPlus } from "react-icons/fa6";
+import { useState } from "react";
+import ModalFormDetails from "../components/ModalForm";
 
 const WaveHistory = () => {
+  const [pingForm, setPingForm] = useState(false);
+
   return (
     <div className=" h-full">
       <header className="z-20 md:fixed md:top-0 w-full">
         <nav>
           <NavBar />
         </nav>
-        <PageTitleBar heading="Wave History" />
+        <PageTitleBar heading="Wave History">
+          <div
+            onClick={() => setPingForm(!pingForm)}
+            className="flex cursor-pointer justify-center text-[13px] items-center gap-[7px] text-white rounded-[40px] bg-[#F49B31] py-2.5 px-[15px]"
+          >
+            <FaPlus fontSize={20} />
+            Create a ping
+          </div>
+        </PageTitleBar>
       </header>
 
       <aside className=" hidden md:block [scrollbar-width:none] pb-[23px] overflow-y-auto   px-10 fixed h-[calc(100vh-155px)] w-[350px] left-0 bottom-0 whitespace-nowrap ">
@@ -67,6 +80,16 @@ const WaveHistory = () => {
           </div>
         </div>
       </main>
+      {pingForm && (
+        <ModalFormDetails>
+          <button
+            onClick={() => setPingForm(!pingForm)}
+            className="text-[13px] underline cursor-pointer"
+          >
+            cancel
+          </button>
+        </ModalFormDetails>
+      )}
     </div>
   );
 };

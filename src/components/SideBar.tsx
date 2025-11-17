@@ -67,14 +67,10 @@ const SideBar = () => {
             <img
               src={echobtn}
               alt=""
-              className="mx-auto max-w-[40%] align-baseline"
+              className="mx-auto max-w-[60%] align-baseline"
             />
           </div>
-          <div className=" text-center">
-            <div className="py-2 text-[10px] cursor-pointer text-center bg-[#E9AB7A]/40  border mx-auto border-[#7B7B79] rounded-[18px]  text-[#414141] inline-block px-[15px]">
-              Whisper Management Directly
-            </div>
-          </div>
+
         </div>
       </div>
     </div>
