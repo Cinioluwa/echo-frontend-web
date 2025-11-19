@@ -2,13 +2,29 @@ import { useState, type ReactNode } from "react";
 import { FaLink } from "react-icons/fa6";
 import Toggle from "./Toggle";
 import CategorySelector from "./CategorySelector";
-// import { z } from "zod";
+import { v4 as uuidv4 } from "uuid";
+
 
 interface Props {
   children: ReactNode;
+  setPingFormDetails: React.Dispatch<React.SetStateAction<modalFormDetails[]>>;
 }
 
-const ModalFormDetails = ({ children }: Props) => {
+
+
+export interface modalFormDetails {
+  cat: string;
+  formSegment: string;
+  anonymous: boolean;
+  desc: string;
+  hashtag: string;
+  solution: string;
+  title: string;
+  createdAt: string;
+  id: string;
+}
+
+const ModalFormDetails = ({ children, setPingFormDetails }: Props) => {
   const [formSegment, setFormSegment] = useState("ping");
   const [cat, setCat] = useState("");
   const [anonymous, setAnonymous] = useState(false);
@@ -20,7 +36,7 @@ const ModalFormDetails = ({ children }: Props) => {
   function submitForm() {
     if (cat === "") return alert("Select a category!");
 
-    const ModalFormDetails = {
+    const newModalFormDetails: modalFormDetails = {
       cat: cat.trim(),
       formSegment,
       anonymous,
@@ -28,9 +44,23 @@ const ModalFormDetails = ({ children }: Props) => {
       hashtag: hashtag.trim(),
       desc: desc.trim(),
       solution: solution.trim(),
+      id: uuidv4(),
+      createdAt: new Date()
+        .toLocaleString("en-US", {
+          month: "short",
+          day: "2-digit",
+          hour: "2-digit",
+          minute: "2-digit",
+          hour12: true,
+        })
+        .toUpperCase(),
     };
 
-    console.log("modalFormDetails: ", ModalFormDetails);
+    formSegment === "ping"
+      ? setPingFormDetails((prev) => [...prev, newModalFormDetails])
+      : "";
+
+    console.log("modalFormDetails: ", newModalFormDetails);
 
     setTitle("");
     setDesc("");
@@ -42,8 +72,8 @@ const ModalFormDetails = ({ children }: Props) => {
   }
 
   return (
-    <div className="flex  font-poppins justify-center items-center z-50 inset-0 fixed bg-black/40">
-      <div className=" mx-5 rounded-4xl px-[25px] py-2.5 md:p-[30px] bg-white gap-4 overflow-hidden text-[32px] font-poppins flex  flex-col items-center">
+    <div className="flex font-poppins justify-center items-center z-50 inset-0 fixed bg-black/40">
+      <div className=" mx-5 shadow-2xl rounded-4xl px-[25px] py-2.5 md:p-[30px] bg-white gap-4 overflow-hidden text-[32px] font-poppins flex  flex-col items-center">
         <h2 className="font-semibold text-center text-[20px] md:text-[32px]">
           What Kind of Post?
         </h2>

@@ -2,16 +2,21 @@ import { useState } from "react";
 import reaction from "../../../public/reaction.svg";
 import surge from "../../../public/surge.svg";
 
-function SoundBoardCardFooter() {
+interface Props {
+  hashtag?: string;
+  timeStamp: string;
+}
+
+function SoundBoardCardFooter({ hashtag, timeStamp }: Props) {
   const [surged, setSurged] = useState(false);
   const [proposeWave, setProposeWave] = useState(false);
 
   return (
     <div className="flex gap-2.5 lg:gap-5 justify-between items-center ">
       <div className="flex  text-[#8B8E8D] items-center gap-[25px] justify-center">
-        <span className="hidden xl:block">Feb 29, 09:30 pm</span>
+        <span className="hidden xl:block">{timeStamp}</span>
         <div className="text-[#EF6E0B] text-[10px] lg:text-[13px] flex items-center">
-          <span className="mr-1">#welfare #Internet</span>
+          <span className="mr-1">{hashtag}</span>
         </div>
       </div>
       <div className="text-[#454545] text-[10px] lg:text-[13px] gap-2.5 lg:gap-5 flex items-center">

@@ -5,17 +5,33 @@ import SoundBoardCardHeader from "./SoundBoardCardHeader";
 interface Props {
   pingText: string;
   pingTitle: string;
+  image: string;
+  category: string;
+  hashtag?: string;
+  timeStamp: string;
 }
 
-const SoundBoardCard = ({ pingText, pingTitle }: Props) => {
+const SoundBoardCard = ({
+  pingText,
+  category,
+  pingTitle,
+  image,
+  hashtag,
+  timeStamp
+}: Props) => {
   return (
     <>
       <div className="  m-[15px] md:m-0 px-[25px] py-2.5 bg-[#FEFEFE]  rounded-[10px] ">
         <div className="block xl:hidden">
           <SoundBoardCardHeader />
         </div>
-        <SoundBoardCardBody pingTitle={pingTitle} pingText={pingText} />
-        <SoundBoardCardFooter />
+        <SoundBoardCardBody
+          category={category}
+          image={image}
+          pingTitle={pingTitle}
+          pingText={pingText}
+        />
+        <SoundBoardCardFooter timeStamp={timeStamp} hashtag={hashtag} />
       </div>
     </>
   );
