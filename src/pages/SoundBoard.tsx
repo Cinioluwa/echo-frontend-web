@@ -26,7 +26,8 @@ const SoundBoard = () => {
         <PageTitleBar heading="Sound Board">
           <button
             onClick={() => setPingForm(!pingForm)}
-            className="flex cursor-pointer justify-center text-[13px] items-center gap-[7px] text-white rounded-[40px] bg-[#F49B31] py-2.5 px-[15px] text-center"
+            className="flex cursor-pointer justify-center text-[13px] items-center gap-[7px] text-white transition-colors ease-in-out duration-300 rounded-[40px] hover:bg-[#d88429]
+ bg-[#F49B31] py-2.5 px-[15px] text-center"
           >
             <FaPlus fontSize={20} />
             Create a ping
