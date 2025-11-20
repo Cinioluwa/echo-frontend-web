@@ -18,12 +18,13 @@ const SoundBoardCard = ({
   image,
   hashtag,
   timeStamp
+  
 }: Props) => {
   return (
     <>
       <div className="  m-[15px] md:m-0 px-[25px] py-2.5 bg-[#FEFEFE]  rounded-[10px] ">
         <div className="block xl:hidden">
-          <SoundBoardCardHeader />
+          <SoundBoardCardHeader timeStamp={timeStamp}/>
         </div>
         <SoundBoardCardBody
           category={category}

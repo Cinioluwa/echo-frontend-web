@@ -70,21 +70,21 @@ const Categories = () => {
     <div className="p-2">
       <header className="my-[15px] pl-2.5 font-[18px]">Category</header>
 
-      <div
+      <button
         onClick={handleClick}
         className={`flex justify-between items-center mb-px py-3 px-[15px] ${
           isActive ? "bg-[#FAE9D4] shadow" : "bg-transparent"
-        }   rounded-lg font-bold cursor-pointer`}
+        } w-full rounded-lg font-bold cursor-pointer`}
       >
         All Categories
         <span className="w-[26px] font-normal text-white h-[26px] flex justify-center items-center rounded-full bg-[#F49B31]">
           8
         </span>
-      </div>
+      </button>
 
       <div className="">
         {categories.map((category) => (
-          <li
+          <button
             key={category.id}
             onClick={() => handleCategoryClick(category)}
             className={`flex justify-start gap-[13px] cursor-pointer font-semibold  ${
@@ -93,13 +93,13 @@ const Categories = () => {
                 : selectedCategory.id === category.id
                 ? "bg-[#FAE9D4] opacity-100 shadow"
                 : " opacity-64"
-            }  px-[15px] rounded-lg py-[18px] items-center opacity-64 text-[15px] transition ease-in duration-200`}
+            }  px-[15px] w-full rounded-lg py-[18px] items-center opacity-64 text-[15px] transition ease-in duration-200`}
           >
             <span>
               <img src={category.labelIcon} />
             </span>
             <div>{category.label}</div>
-          </li>
+          </button>
         ))}
       </div>
     </div>

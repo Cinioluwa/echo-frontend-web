@@ -1,9 +1,9 @@
 interface CategorySelectorProps {
   category: string;
-  setCategory: (cat: string) => void;
+  setFormData: (cat: string) => void;
 }
 
-const CategorySelector = ({ category, setCategory }: CategorySelectorProps) => {
+const CategorySelector = ({ category, setFormData }: CategorySelectorProps) => {
   const categories = [
     "General",
     "Academics",
@@ -19,7 +19,7 @@ const CategorySelector = ({ category, setCategory }: CategorySelectorProps) => {
       {categories.map((cat, index) => (
         <div
           key={index}
-          onClick={() => setCategory(cat)}
+          onClick={() => setFormData(cat)}
           className={`cursor-pointer  ${
             category === cat ? "bg-[#F49B31] text-white" : "bg-[#FEF5EA]"
           } py-2.5 border-r transition-colors duration-500 ease-in-out px-[25px]`}

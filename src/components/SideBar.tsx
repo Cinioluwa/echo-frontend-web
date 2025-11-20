@@ -17,7 +17,7 @@ const SideBar = () => {
         <Categories />
       </div>
       <div className="mt-[23px]">
-        <div
+        <button
           onClick={() => {
             setStreamActive(true);
             setBoardActive(false);
@@ -25,14 +25,14 @@ const SideBar = () => {
           }}
           className={`flex items-center ${
             streamActive ? "bg-[#FFC37B] border-0" : "bg-transparent border-2"
-          }  gap-3 py-[13px] transition  cursor-pointer mb-3.5 ease-in-out duration-700 border-[#F49B31] rounded-[15px]`}
+          }  gap-3 py-[13px] w-full transition  cursor-pointer mb-3.5 ease-in-out duration-700 border-[#F49B31] rounded-[15px]`}
         >
           <span className="ml-6">
             <img src={stream} alt="" />
           </span>
           Stream
-        </div>
-        <div
+        </button>
+        <button
           onClick={() => {
             setStreamActive(false);
             setBoardActive(false);
@@ -40,14 +40,14 @@ const SideBar = () => {
           }}
           className={`flex items-center ${
             historyActive ? "bg-[#FFC37B] border-0" : "bg-transparent border-2"
-          }  gap-3 py-[13px] transition  cursor-pointer mb-3.5 ease-in-out duration-700 border-[#F49B31] rounded-[15px]`}
+          }  gap-3 py-[13px] transition w-full cursor-pointer mb-3.5 ease-in-out duration-700 border-[#F49B31] rounded-[15px]`}
         >
           <span className="ml-6">
             <img src={history} alt="" />
           </span>
           Wave History
-        </div>
-        <div
+        </button>
+        <button
           onClick={() => {
             setStreamActive(false);
             setBoardActive(true);
@@ -55,13 +55,13 @@ const SideBar = () => {
           }}
           className={`flex items-center ${
             boardActive ? "bg-[#FFC37B] border-0" : "bg-transparent border-2"
-          }  gap-3 py-[13px] transition  cursor-pointer ease-in-out duration-700 border-[#F49B31] rounded-[15px]`}
+          }  gap-3 py-[13px] w-full transition  cursor-pointer ease-in-out duration-700 border-[#F49B31] rounded-[15px]`}
         >
           <span className="ml-6">
             <img src={soundBoard} alt="" />
           </span>
           Sound Board
-        </div>
+        </button>
         <div>
           <div>
             <img
@@ -70,7 +70,6 @@ const SideBar = () => {
               className="mx-auto max-w-[60%] align-baseline"
             />
           </div>
-
         </div>
       </div>
     </div>
