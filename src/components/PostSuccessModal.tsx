@@ -8,7 +8,7 @@ interface Props {
 const PostSuccessModal = ({ setPostSuccessModal, formSegment }: Props) => {
   return (
     <div className="flex font-poppins justify-center items-center z-50 inset-0 fixed bg-black/40">
-      <div className="bg-white p-10 rounded-2xl flex flex-col gap-5 items-center justify-center">
+      <div className="bg-white p-5 md:p-10 rounded-2xl flex flex-col  gap-5 items-center justify-center">
         <div className=" flex flex-col items-center gap-2.5">
           <div className="flex justify-center gap-2.5 ">
             <img src={tick} alt="" />
@@ -21,12 +21,16 @@ const PostSuccessModal = ({ setPostSuccessModal, formSegment }: Props) => {
           </p>
         </div>
         <div className="text-white flex gap-3 flex-col">
-          <button className="px-[125px] py-[17px] rounded-lg bg-[#F49B31]">
+          <button
+            className="px-[125px] py-[17px] rounded-lg hover:bg-[#d88429] transition-colors duration-300 ease-in-out
+ bg-[#F49B31]"
+          >
             Share
           </button>
           <button
             onClick={setPostSuccessModal}
-            className="px-[125px] py-[17px] rounded-lg bg-[#654927]"
+            className="px-[125px] py-[17px] rounded-lg bg-[#654927] transition-colors duration-300 ease-in-out hover:bg-[#553c21]
+"
           >
             Close
           </button>

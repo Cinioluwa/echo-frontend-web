@@ -5,11 +5,23 @@ import surge from "../../../public/surge.svg";
 interface Props {
   hashtag?: string;
   timeStamp: string;
+  id: string;
+  onPropose: (id: string) => void;
+  proposeActive: boolean;
 }
 
-function SoundBoardCardFooter({ hashtag, timeStamp }: Props) {
+function SoundBoardCardFooter({
+  hashtag,
+  timeStamp,
+  id,
+  onPropose,
+  proposeActive,
+}: Props) {
+  function handleClick(id: string) {
+    onPropose(id);
+  }
+
   const [surged, setSurged] = useState(false);
-  const [proposeWave, setProposeWave] = useState(false);
 
   return (
     <div className="flex gap-2.5 lg:gap-5 justify-between items-center ">
@@ -42,14 +54,15 @@ function SoundBoardCardFooter({ hashtag, timeStamp }: Props) {
           />
         </button>
         <button
-          onClick={() => setProposeWave(!proposeWave)}
+          onClick={() => handleClick(id)}
+          disabled={proposeActive}
           className={`${
-            proposeWave
+            proposeActive
               ? "bg-[#F49B31] hover:bg-[#d88429] transition-colors duration-100 ease-out text-white font-bold"
               : "bg-[#FEF5EA] transition-colors duration-100 ease-in-out hover:bg-[#f2e8d9]"
           } cursor-pointer text-[10px] lg:text-[13px] py-1.5 px-5 lg:py-2 flex items-center gap-2.5 border transition-colors duration-1200 ease-in-out  rounded-[20px] lg:px-3.5`}
         >
-          {proposeWave ? "PROPOSED" : "PROPOSE A WAVE"}
+          {proposeActive ? "PROPOSED" : "PROPOSE A WAVE"}
         </button>
         <div className="text-[#454545] justify-center items-start flex flex-col xl:flex-row text-[14px] xl:justify-center  xl:items-center">
           <span className="md:mr-1">114</span>

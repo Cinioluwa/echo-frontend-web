@@ -2,20 +2,38 @@ import soundBoardImage from "../assets/images/SoundBoardImage.svg";
 import SoundBoardCard from "../components/SoundBoard/SoundBoardCard";
 import SideBar from "../components/SideBar";
 import PageTitleBar from "../components/PageTitleBar";
-import ModalForm from "../components/ModalForm";
+
 import { FaPlus } from "react-icons/fa6";
 import { useState } from "react";
-import type { modalFormDetails } from "../components/ModalForm";
+
 import { categoryImages } from "../components/CategoryImages";
 import NavBar from "../components/NavBar";
+import ProposeWaveModal from "../components/ProposeWaveModal";
+
+import type { PingFormDetails } from "../components/PingFormModal";
+import WaveFormModal from "../components/WaveFormModal";
+import PingFormModal from "../components/PingFormModal";
 
 const SoundBoard = () => {
   const [pingForm, setPingForm] = useState(false);
-  const [pingFormDetails, setPingFormDetails] = useState<modalFormDetails[]>(
-    []
-  );
+  const [formSegment, setFormSegment] = useState("ping");
 
-  // const [proposedPing, setProposedPing] = useState('')
+  // FETCHED FROM SERVER:
+  const [pingFormDetails, setPingFormDetails] = useState<PingFormDetails[]>([]);
+
+  const [proposedPingDetails, setProposedPingDetails] =
+    useState<PingFormDetails | null>(null);
+
+  const [proposeWaveModal, setProposeWaveModal] = useState(false);
+  const [proposeActive, setProposeActive] = useState(false);
+
+  // SEARCH FOR WHICH PING WAS PROPOSED:
+  function handleWaveProposal(id: string) {
+    const proposedPing = pingFormDetails.find((details) => details.id === id);
+    proposedPing && setProposedPingDetails({ ...proposedPing });
+    setProposeWaveModal(!proposeWaveModal);
+    console.log(proposedPing);
+  }
 
   return (
     <div className="h-full">
@@ -34,19 +52,18 @@ const SoundBoard = () => {
           </button>
         </PageTitleBar>
       </header>
-
       <aside className="hidden md:block [scrollbar-width:none]  overflow-y-auto   px-10 fixed h-[calc(100vh-155px)] w-[350px] left-0 bottom-0 whitespace-nowrap ">
         <SideBar />
       </aside>
-
       <main className="mr-2.5 ml-2.5 mt-5 flex flex-col md:mr-[46px] h-[calc(100vh-155px)]  md:ml-[350px]   md:mt-[155px]">
         <div className="mb-[25px]">
           <img src={soundBoardImage} alt="" className=" max-h-[200px] w-full" />
         </div>
 
+        {/* MAP PINGFORM DETAILS INTO SOUNDBOARD CARDS */}
         <div className="flex-1 [scrollbar-width:none] h-full overflow-auto">
           {pingFormDetails.map((details) => (
-            <div className="mb-[22px]" key={details.id}>
+            <div className="mb-[22px] " key={details.id}>
               <SoundBoardCard
                 pingText={details.pingDesc}
                 pingTitle={details.pingTitle}
@@ -54,7 +71,9 @@ const SoundBoard = () => {
                 category={details.cat}
                 hashtag={details.hashtag}
                 timeStamp={details.createdAt}
-                // id={formDetails.id}
+                id={details.id}
+                onPropose={(id) => handleWaveProposal(id)}
+                proposeActive={proposeActive}
               />
             </div>
           ))}
@@ -68,6 +87,9 @@ const SoundBoard = () => {
               category="General"
               hashtag="#welfare #internet"
               timeStamp="feb 29, 09:30 pm"
+              id=''
+              onPropose={(id) => handleWaveProposal(id)}
+              proposeActive={false}
             />
           </div>
 
@@ -79,6 +101,9 @@ const SoundBoard = () => {
               image={categoryImages.General}
               timeStamp="feb 29, 09:30 pm"
               hashtag="#welfare #internet"
+              id=''
+              onPropose={(id) => handleWaveProposal(id)}
+              proposeActive={false}
             />
           </div>
           <div className="mb-[22px]">
@@ -89,23 +114,53 @@ const SoundBoard = () => {
               timeStamp="feb 29, 09:30 pm"
               hashtag="#welfare #internet"
               image={categoryImages.General}
+              id=''
+              onPropose={(id) => handleWaveProposal(id)}
+              proposeActive={false}
             />
           </div>
         </div>
       </main>
-
-      {pingForm && (
-        <ModalForm
-          setPingForm={() => setPingForm(!pingForm)}
-          setPingFormDetails={setPingFormDetails}
-        >
-          <button
-            onClick={() => setPingForm(!pingForm)}
-            className="text-[13px] underline cursor-pointer"
+      {formSegment === "ping" && (
+        <div className={`${pingForm ? "" : "hidden"}`}>
+          <PingFormModal
+            formSegment={formSegment}
+            setFormSegment={() => setFormSegment("wave")}
+            setPingForm={() => setPingForm(!pingForm)}
+            setPingFormDetails={(details) => setPingFormDetails(details)}
           >
-            cancel
-          </button>
-        </ModalForm>
+            <button
+              onClick={() => setPingForm(!pingForm)}
+              className="text-[13px] underline cursor-pointer"
+            >
+              cancel
+            </button>
+          </PingFormModal>
+        </div>
+      )}
+      {formSegment === "wave" && (
+        <div className={`${pingForm ? "" : "hidden"}`}>
+          <WaveFormModal
+            formSegment={formSegment}
+            setFormSegment={() => setFormSegment("ping")}
+          >
+            <button
+              onClick={() => setPingForm(!pingForm)}
+              className="text-[13px] underline cursor-pointer"
+            >
+              cancel
+            </button>
+          </WaveFormModal>
+        </div>
+      )}
+
+      {proposeWaveModal && (
+        <ProposeWaveModal
+          onClose={() => setProposeWaveModal(!proposeWaveModal)}
+          timeStamp={proposedPingDetails?.createdAt}
+          pingTitle={proposedPingDetails?.pingTitle}
+          setProposeActive={setProposeActive}
+        />
       )}
     </div>
   );

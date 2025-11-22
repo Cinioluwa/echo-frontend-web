@@ -1,4 +1,3 @@
-
 import SoundBoard from "./pages/SoundBoard";
 
 const App = () => {

@@ -9,6 +9,9 @@ interface Props {
   category: string;
   hashtag?: string;
   timeStamp: string;
+  id: string;
+  onPropose: (id: string) => void;
+  proposeActive: boolean;
 }
 
 const SoundBoardCard = ({
@@ -17,14 +20,16 @@ const SoundBoardCard = ({
   pingTitle,
   image,
   hashtag,
-  timeStamp
-  
+  timeStamp,
+  id,
+  onPropose,
+  proposeActive,
 }: Props) => {
   return (
     <>
       <div className="  m-[15px] md:m-0 px-[25px] py-2.5 bg-[#FEFEFE]  rounded-[10px] ">
         <div className="block xl:hidden">
-          <SoundBoardCardHeader timeStamp={timeStamp}/>
+          <SoundBoardCardHeader timeStamp={timeStamp} />
         </div>
         <SoundBoardCardBody
           category={category}
@@ -32,7 +37,13 @@ const SoundBoardCard = ({
           pingTitle={pingTitle}
           pingText={pingText}
         />
-        <SoundBoardCardFooter timeStamp={timeStamp} hashtag={hashtag} />
+        <SoundBoardCardFooter
+          proposeActive={proposeActive}
+          onPropose={(id) => onPropose(id)}
+          id={id}
+          timeStamp={timeStamp}
+          hashtag={hashtag}
+        />
       </div>
     </>
   );
