@@ -1,14 +1,13 @@
 import { useState, type ReactNode } from "react";
 import { FaLink } from "react-icons/fa6";
-
 import CategorySelector from "./CategorySelector";
-// import { v4 as uuidv4 } from "uuid";
 import PostSuccessModal from "./PostSuccessModal";
+import { v4 as uuidv4 } from "uuid";
 
 interface Props {
   children: ReactNode;
-  // setPingFormDetails: React.Dispatch<React.SetStateAction<WaveFormDetails[]>>;
-  // setWaveForm: () => void;
+  setWaveFormDetails: React.Dispatch<React.SetStateAction<WaveFormDetails[]>>;
+  setWaveForm: () => void;
   formSegment: string;
   setFormSegment: () => void;
 }
@@ -18,65 +17,80 @@ export interface WaveFormDetails {
   formSegment: string;
   solution: string;
   createdAt: string;
-  id: string;
   waveTitle: string;
+  id: string;
   waveDesc: string;
 }
 
 const WaveFormModal = ({
   children,
-  // setPingFormDetails,
-  // setWaveForm,
+  setWaveFormDetails,
+  setWaveForm,
   setFormSegment,
   formSegment,
 }: Props) => {
-  const [pingFormData, setPingFormData] = useState({
+  const [waveFormData, setWaveFormData] = useState({
     cat: "",
     waveDesc: "",
     waveTitle: "",
     solution: "",
-    formSegment: "ping",
+    id: "",
+    formSegment: "wave",
   } as WaveFormDetails);
 
   const [postSuccessModal, setPostSuccessModal] = useState(false);
 
-  // function submitForm() {
-  //   if (pingFormData.cat === "") return alert("Select a category!");
+  function submitForm() {
+    if (waveFormData.cat === "") return alert("Select a category!");
 
-  //   // OBJECT TO BE SENT TO SERVER:
-  //   const newModalFormDetails: WaveFormDetails = {
-  //     cat: pingFormData.cat.trim(),
-  //     waveTitle: pingFormData.waveTitle.trim(),
-  //     waveDesc: pingFormData.waveDesc.trim(),
-  //     formSegment: pingFormData.formSegment,
-  //     solution: pingFormData.solution.trim(),
-  //     id: uuidv4(),
-  //     createdAt: new Date()
-  //       .toLocaleString("en-US", {
-  //         month: "short",
-  //         day: "2-digit",
-  //         hour: "2-digit",
-  //         minute: "2-digit",
-  //         hour12: true,
-  //       })
-  //       .toLowerCase(),
-  //   };
+    // OBJECT TO BE SENT TO SERVER:
+    const newWaveFormDetails: WaveFormDetails = {
+      cat: waveFormData.cat.trim(),
+      waveTitle: waveFormData.waveTitle.trim(),
+      waveDesc: waveFormData.waveDesc.trim(),
+      formSegment: waveFormData.formSegment,
+      solution: waveFormData.solution.trim(),
+      id: uuidv4(),
+      createdAt: new Date()
+        .toLocaleString("en-US", {
+          month: "short",
+          day: "2-digit",
+          hour: "2-digit",
+          minute: "2-digit",
+          hour12: true,
+        })
+        .toLowerCase(),
+    };
 
-  //   pingFormData.formSegment === "ping"
-  //     ? setPingFormDetails((prev) => [newModalFormDetails, ...prev])
-  //     : "";
-  //   setPostSuccessModal(!postSuccessModal);
+    waveFormData.formSegment === "wave"
+      ? setWaveFormDetails((prev) => [newWaveFormDetails, ...prev])
+      : "";
 
-  //   console.log("modalFormDetails: ", newModalFormDetails);
-  // }
+    // SET SUCCESS MODAL ACTIVE
+    setPostSuccessModal(!postSuccessModal);
+
+    // CONFIRM THE waveFormDetails
+    console.log("waveFormDetails: ", newWaveFormDetails);
+
+    // RESET WAVEFORM
+    setWaveFormData({
+      cat: "",
+      waveDesc: "",
+      id: "",
+      waveTitle: "",
+      solution: "",
+      formSegment: "wave",
+      createdAt: "",
+    });
+  }
 
   if (postSuccessModal)
     return (
       <PostSuccessModal
-        formSegment={pingFormData.formSegment}
+        formSegment={waveFormData.formSegment}
         setPostSuccessModal={() => {
           setPostSuccessModal(!postSuccessModal);
-          // setWaveForm();
+          setWaveForm();
         }}
       />
     );
@@ -89,7 +103,7 @@ const WaveFormModal = ({
         </h2>
         <div className="flex rounded-[20px] text-[16px] overflow-hidden border-2 border-black">
           <button
-            onClick={() => setFormSegment()}
+            onClick={setFormSegment}
             className={`inline-block rounded-tl-[15px] border-black rounded-bl-[15px] border-r-2 ${
               formSegment === "ping"
                 ? "bg-[#F49B31] text-white"
@@ -112,7 +126,7 @@ const WaveFormModal = ({
         <form
           onSubmit={(e) => {
             e.preventDefault();
-            // submitForm();
+            submitForm();
           }}
           action=""
           className="text-[14px] max-w-[480px] justify-center items-center flex flex-col gap-5"
@@ -129,12 +143,12 @@ const WaveFormModal = ({
                 placeholder="name, header..."
                 className="pl-[11px] text-[12px] text-[#454545] outline-0 flex-1"
                 onChange={(e) =>
-                  setPingFormData({
-                    ...pingFormData,
+                  setWaveFormData({
+                    ...waveFormData,
                     waveTitle: e.target.value,
                   })
                 }
-                value={pingFormData.waveTitle}
+                value={waveFormData.waveTitle}
                 autoComplete="off"
               />
             </div>
@@ -147,9 +161,9 @@ const WaveFormModal = ({
                 required
                 autoComplete="off"
                 onChange={(e) =>
-                  setPingFormData({ ...pingFormData, waveDesc: e.target.value })
+                  setWaveFormData({ ...waveFormData, waveDesc: e.target.value })
                 }
-                value={pingFormData.waveDesc}
+                value={waveFormData.waveDesc}
                 className="pl-[11px] py-0.5 resize-none h-[100px] text-[12px] text-[#454545] outline-0 flex-1"
               />
             </div>
@@ -163,9 +177,9 @@ const WaveFormModal = ({
                 placeholder="What can be done?"
                 autoComplete="off"
                 onChange={(e) =>
-                  setPingFormData({ ...pingFormData, solution: e.target.value })
+                  setWaveFormData({ ...waveFormData, solution: e.target.value })
                 }
-                value={pingFormData.solution}
+                value={waveFormData.solution}
                 className="pl-[11px] py-0.5 resize-none h-[100px] text-[12px] text-[#454545] outline-0 flex-1"
               />
             </div>
@@ -173,9 +187,9 @@ const WaveFormModal = ({
 
           <div className="overflow-y-scroll [scrollbar-width:none] w-full">
             <CategorySelector
-              category={pingFormData.cat}
+              category={waveFormData.cat}
               setFormData={(cat) =>
-                setPingFormData({ ...pingFormData, cat: cat })
+                setWaveFormData({ ...waveFormData, cat: cat })
               }
             />
           </div>

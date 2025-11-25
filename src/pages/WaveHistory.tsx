@@ -4,7 +4,6 @@ import SideBar from "../components/SideBar";
 import PageTitleBar from "../components/PageTitleBar";
 import { FaPlus } from "react-icons/fa6";
 import { useState } from "react";
-import ModalForm from "../components/ModalForm";
 
 const WaveHistory = () => {
   const [pingForm, setPingForm] = useState(false);
@@ -80,16 +79,6 @@ const WaveHistory = () => {
           </div>
         </div>
       </main>
-      {pingForm && (
-        <ModalForm>
-          <button
-            onClick={() => setPingForm(!pingForm)}
-            className="text-[13px] underline cursor-pointer"
-          >
-            cancel
-          </button>
-        </ModalForm>
-      )}
     </div>
   );
 };

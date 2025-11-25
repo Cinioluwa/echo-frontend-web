@@ -47,7 +47,7 @@ const PingFormModal = ({
   function submitForm() {
     if (pingFormData.cat === "") return alert("Select a category!");
 
-    // OBJECT TO BE SENT TO SERVER:
+    //PingForm DETAILS OBJECT TO BE SENT TO SERVER:
     const newPingFormDetails: PingFormDetails = {
       cat: pingFormData.cat.trim(),
       formSegment: pingFormData.formSegment,
@@ -66,13 +66,15 @@ const PingFormModal = ({
         })
         .toLowerCase(),
     };
-
     setPingFormDetails((prev) => [newPingFormDetails, ...prev]);
 
+    // SET SUCCESS MODAL ACTIVE
     setPostSuccessModal(!postSuccessModal);
 
-    console.log("modalFormDetails: ", newPingFormDetails);
+    // VERIFY THE PINGFORM DETAILS
+    console.log("pingFormDetails: ", newPingFormDetails);
 
+    // RESET THE PINGFORM
     setPingFormData({
       cat: "",
       anonymous: false,
@@ -185,7 +187,7 @@ const PingFormModal = ({
               <label htmlFor="hashtag">Hashtag :</label>
               <input
                 type="text"
-                id="Hashtag"
+                id="hashtag"
                 name="hashtag"
                 required
                 placeholder="What's the current movement?"

@@ -5,6 +5,7 @@ import echobtn from "../assets/images/Echobtn.svg";
 
 import Categories from "./Categories";
 import { useState } from "react";
+import { Link } from "react-router-dom";
 
 const SideBar = () => {
   const [streamActive, setStreamActive] = useState(false);
@@ -30,7 +31,7 @@ const SideBar = () => {
           <span className="ml-6">
             <img src={stream} alt="" />
           </span>
-          Stream
+          <Link to={"/stream"}>Stream</Link>
         </button>
         <button
           onClick={() => {
@@ -45,7 +46,7 @@ const SideBar = () => {
           <span className="ml-6">
             <img src={history} alt="" />
           </span>
-          Wave History
+          <Link to={"/waveHistory"}>Wave History</Link>
         </button>
         <button
           onClick={() => {
@@ -60,7 +61,7 @@ const SideBar = () => {
           <span className="ml-6">
             <img src={soundBoard} alt="" />
           </span>
-          Sound Board
+          <Link to={"/soundBoard"}>Sound Board</Link>
         </button>
         <div>
           <div>

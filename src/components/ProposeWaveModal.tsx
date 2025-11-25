@@ -6,18 +6,70 @@ import ProposedPingCard from "./ProposedPingCard";
 interface Props {
   onClose: () => void;
   timeStamp: string | undefined;
-  pingTitle: String | undefined;
+  pingTitle?: string | undefined;
   setProposeActive: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const ProposeWaveModal = ({ onClose, pingTitle, timeStamp, setProposeActive }: Props) => {
+export interface proposedWaveDetails {
+  solution: string;
+  cat: string;
+  timeStamp: string | undefined;
+  pingTitle: string | undefined;
 
-function handleSubmit(e: React.FormEvent) {
-  e.preventDefault();
-  setProposeActive(true)
+  createdAt: string;
 }
 
-  const [propoposeWaveSoultion, setProposeWaveSolution] = useState("");
+const ProposeWaveModal = ({
+  onClose,
+  pingTitle,
+  timeStamp,
+  setProposeActive,
+}: Props) => {
+  const [proposedWaveDetails, setProposedWaveDetails] =
+    useState<proposedWaveDetails>({
+      solution: "",
+      cat: "",
+      timeStamp: "",
+      pingTitle: "",
+      createdAt: "",
+    });
+
+  function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    if (proposedWaveDetails.cat === "") return alert("Select a category!");
+    // SEND DETAILS TO SERVER
+
+    const newProposedWaveDetails: proposedWaveDetails = {
+      solution: proposedWaveDetails.solution.trim(),
+      cat: proposedWaveDetails.cat,
+      timeStamp: timeStamp,
+      pingTitle: pingTitle,
+      createdAt: new Date()
+        .toLocaleString("en-US", {
+          month: "short",
+          day: "2-digit",
+          hour: "2-digit",
+          minute: "2-digit",
+          hour12: true,
+        })
+        .toLowerCase(),
+    };
+
+    // VERIFY DETAILS
+    console.log("proposedWaveDetails: ", newProposedWaveDetails);
+
+    // RESET FORM
+    setProposedWaveDetails({
+      solution: "",
+      cat: "",
+      timeStamp: "",
+      pingTitle: "",
+      createdAt: "",
+    });
+
+    // UPDATE PROPOSE-btn STATE
+    setProposeActive(true);
+  }
 
   return (
     <div className="flex font-poppins justify-center items-center z-50 inset-0 fixed bg-black/40">
@@ -36,6 +88,7 @@ function handleSubmit(e: React.FormEvent) {
             Ping
           </button>
           <button
+            disabled
             className={`inline-block rounded-tr-[20px] text-white bg-[#F49B31] border-[#454545] border-2 border-l rounded-br-[20px] py-6 px-6  sm:py-4 sm:px-8`}
           >
             Wave
@@ -46,7 +99,7 @@ function handleSubmit(e: React.FormEvent) {
           className="w-full text-[14px] max-w-[480px] justify-center items-center flex flex-col gap-5"
         >
           <fieldset className=" w-full  text-[14px] flex flex-col gap-5">
-            <div className="flex px-[11px] h-[200px]  py-3 border border-black rounded-[10px]  ">
+            <div className="flex px-[11px] h-[200px]  py-3 border border-black rounded-[10px]">
               <label htmlFor="proposeWaveSolution">Solution :</label>
               <textarea
                 id="proposeWaveSolution"
@@ -54,14 +107,24 @@ function handleSubmit(e: React.FormEvent) {
                 required
                 placeholder="What can be done?"
                 autoComplete="off"
-                onChange={(e) => setProposeWaveSolution(e.target.value)}
-                value={propoposeWaveSoultion}
+                onChange={(e) =>
+                  setProposedWaveDetails({  
+                    ...proposedWaveDetails,
+                    solution: e.target.value,
+                  })
+                }
+                value={proposedWaveDetails.solution}
                 className="pl-[11px] py-0.5 resize-none text-[12px] text-[#454545] outline-0 flex-1"
               />
             </div>
           </fieldset>
           <div className="overflow-y-scroll [scrollbar-width:none] w-full">
-            <CategorySelector />
+            <CategorySelector
+              category={proposedWaveDetails.cat}
+              setFormData={(cat) =>
+                setProposedWaveDetails({ ...proposedWaveDetails, cat: cat })
+              }
+            />
           </div>
           <div className="w-full flex justify-between">
             <div className="cursor-pointer">
@@ -74,13 +137,13 @@ function handleSubmit(e: React.FormEvent) {
               Post
             </button>
           </div>
+        </form>
           <button
             onClick={onClose}
             className="text-[13px] underline cursor-pointer"
           >
             cancel
           </button>
-        </form>
       </div>
     </div>
   );

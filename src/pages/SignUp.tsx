@@ -5,6 +5,7 @@ import backgroundImage from "../assets/images/backgroundImage.jpg";
 import logo from "../assets/images/Echo Logo.svg";
 import echo from "../assets/images/Echo.svg";
 import InputGroup from "../components/InputGroup";
+import { Link } from "react-router-dom";
 
 const SignUp = () => {
   return (
@@ -73,7 +74,7 @@ const SignUp = () => {
                 type="submit"
                 className="hidden md:flex items-center justify-center md:px-[107px] py-[15px] whitespace-nowrap  text-white  h-8 cursor-pointer bg-[#F49B31] rounded-[9px]"
               >
-                Sign up
+                <Link to={"/waveHistory"}>Sign up</Link>
               </button>
 
               {/* Mobile sign up CTA */}
@@ -91,12 +92,12 @@ const SignUp = () => {
             <div className=" mb-5 md:mb-5 pt-[30px] border-t border-[#D3CECE] mt-10 self-end w-full">
               <p className="text-center mb-[85px] mt-[29px] md:mb-0 text-[#838383] ">
                 Already have an account?
-                <a
-                  href="#"
+                <Link
+                  to="/"
                   className="pl-1 text-[#F49B31] whitespace-nowrap cursor-pointer"
                 >
                   Log in
-                </a>
+                </Link>
               </p>
             </div>
           </div>

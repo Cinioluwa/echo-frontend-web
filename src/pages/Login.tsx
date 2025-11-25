@@ -5,6 +5,7 @@ import backgroundImage from "../assets/images/backgroundImage.jpg";
 import logo from "../assets/images/Echo Logo.svg";
 import echo from "../assets/images/Echo.svg";
 import InputGroup from "../components/InputGroup";
+import { Link } from "react-router-dom";
 
 const Login = () => {
   return (
@@ -83,12 +84,12 @@ const Login = () => {
             <div className=" mb-5 md:mb-5 pt-[30px] border-t border-[#D3CECE] mt-10 self-end w-full">
               <p className="text-center text-[#838383] ">
                 Don't have an account?
-                <a
-                  href="#"
+                <Link
+                  to="/signUp"
                   className="pl-1 text-[#F49B31] whitespace-nowrap cursor-pointer"
                 >
                   sign up
-                </a>
+                </Link>
               </p>
             </div>
           </div>

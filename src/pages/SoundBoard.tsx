@@ -11,15 +11,20 @@ import NavBar from "../components/NavBar";
 import ProposeWaveModal from "../components/ProposeWaveModal";
 
 import type { PingFormDetails } from "../components/PingFormModal";
-import WaveFormModal from "../components/WaveFormModal";
+import WaveFormModal, {
+  type WaveFormDetails,
+} from "../components/WaveFormModal";
 import PingFormModal from "../components/PingFormModal";
 
 const SoundBoard = () => {
   const [pingForm, setPingForm] = useState(false);
   const [formSegment, setFormSegment] = useState("ping");
 
-  // FETCHED FROM SERVER:
+  //SIMULATING FETCHED DATA FROM SERVER (MAPPED INTO SOUNDBOARD-CARD, Simulated with PingFormModal module.):
   const [pingFormDetails, setPingFormDetails] = useState<PingFormDetails[]>([]);
+
+
+  const [waveFormDetails, setWaveFormDetails] = useState<WaveFormDetails[]>([]);
 
   const [proposedPingDetails, setProposedPingDetails] =
     useState<PingFormDetails | null>(null);
@@ -27,7 +32,7 @@ const SoundBoard = () => {
   const [proposeWaveModal, setProposeWaveModal] = useState(false);
   const [proposeActive, setProposeActive] = useState(false);
 
-  // SEARCH FOR WHICH PING WAS PROPOSED:
+  // SEARCH FOR WHICH PING WAS PROPOSED (SIMULATED ID FROM uuid4 Library):
   function handleWaveProposal(id: string) {
     const proposedPing = pingFormDetails.find((details) => details.id === id);
     proposedPing && setProposedPingDetails({ ...proposedPing });
@@ -43,7 +48,10 @@ const SoundBoard = () => {
         </nav>
         <PageTitleBar heading="Sound Board">
           <button
-            onClick={() => setPingForm(!pingForm)}
+            onClick={() => {
+              setPingForm(!pingForm);
+              setFormSegment("ping");
+            }}
             className="flex cursor-pointer justify-center text-[13px] items-center gap-[7px] text-white transition-colors ease-in-out duration-300 rounded-[40px] hover:bg-[#d88429]
  bg-[#F49B31] py-2.5 px-[15px] text-center"
           >
@@ -78,6 +86,7 @@ const SoundBoard = () => {
             </div>
           ))}
 
+          {/* HARD CODED */}
           <div className="mb-[22px]">
             <SoundBoardCard
               pingText="Many students struggle with poor Wi-Fi connectivity in certain areas of the campus, which hinders their ability to access online resources, complete assignments, and participate in online discussions. By improving Wi-Fi coverage and speed throughout the campus, we can ensure that all students have reliable internet access, fostering a more productive and connected learning environment.
@@ -87,7 +96,7 @@ const SoundBoard = () => {
               category="General"
               hashtag="#welfare #internet"
               timeStamp="feb 29, 09:30 pm"
-              id=''
+              id=""
               onPropose={(id) => handleWaveProposal(id)}
               proposeActive={false}
             />
@@ -101,7 +110,7 @@ const SoundBoard = () => {
               image={categoryImages.General}
               timeStamp="feb 29, 09:30 pm"
               hashtag="#welfare #internet"
-              id=''
+              id=""
               onPropose={(id) => handleWaveProposal(id)}
               proposeActive={false}
             />
@@ -114,7 +123,7 @@ const SoundBoard = () => {
               timeStamp="feb 29, 09:30 pm"
               hashtag="#welfare #internet"
               image={categoryImages.General}
-              id=''
+              id=""
               onPropose={(id) => handleWaveProposal(id)}
               proposeActive={false}
             />
@@ -143,6 +152,8 @@ const SoundBoard = () => {
           <WaveFormModal
             formSegment={formSegment}
             setFormSegment={() => setFormSegment("ping")}
+            setWaveFormDetails={(details) => setWaveFormDetails(details)}
+            setWaveForm={() => setPingForm(!pingForm)}
           >
             <button
               onClick={() => setPingForm(!pingForm)}
