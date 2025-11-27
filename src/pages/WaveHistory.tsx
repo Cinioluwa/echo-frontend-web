@@ -1,6 +1,6 @@
 import NavBar from "../components/NavBar";
 import WaveCard from "../components/WaveHistory/WaveCard";
-import SideBar from "../components/SideBar";
+import SideBar, { type Pages } from "../components/SideBar";
 import PageTitleBar from "../components/PageTitleBar";
 import { FaPlus } from "react-icons/fa6";
 import { useState } from "react";
@@ -8,25 +8,34 @@ import { useState } from "react";
 const WaveHistory = () => {
   const [pingForm, setPingForm] = useState(false);
 
+  
+  // SETTING ACTIVE PAGE BUTTON
+    const [activePage, setActivePage] = useState({
+      streamActive: false,
+      historyActive: true,
+      soundBoardActive: false,
+    } as Pages);
+  
+
   return (
     <div className=" h-full">
       <header className="z-20 md:fixed md:top-0 w-full">
         <nav>
           <NavBar />
         </nav>
-        <PageTitleBar heading="Wave History">
-          <div
+        <PageTitleBar heading="Wave History" children={undefined}>
+          {/* <div
             onClick={() => setPingForm(!pingForm)}
             className="flex cursor-pointer justify-center text-[13px] items-center gap-[7px] text-white rounded-[40px] bg-[#F49B31] py-2.5 px-[15px]"
           >
             <FaPlus fontSize={20} />
             Create a ping
-          </div>
+          </div> */}
         </PageTitleBar>
       </header>
 
       <aside className=" hidden md:block [scrollbar-width:none] pb-[23px] overflow-y-auto   px-10 fixed h-[calc(100vh-155px)] w-[350px] left-0 bottom-0 whitespace-nowrap ">
-        <SideBar />
+        <SideBar pages={activePage} setActivePage={setActivePage}/>
       </aside>
 
       <main className=" mr-2.5 ml-2.5 mt-5 md:mr-[46px] h-[calc(100vh-155px)]   md:ml-[350px] md:mt-[155px]">

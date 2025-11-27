@@ -1,11 +1,15 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Stream from "./components/Stream/Stream";
+import Stream from "./pages/Stream";
 import SoundBoard from "./pages/SoundBoard";
 import WaveHistory from "./pages/WaveHistory";
 import Login from "./pages/Login";
 import SignUp from "./pages/SignUp";
 
+
 const App = () => {
+
+
+
   return (
     <BrowserRouter>
       <Routes>

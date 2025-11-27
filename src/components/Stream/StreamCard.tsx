@@ -1,3 +1,4 @@
+import ProposedPingCard from "../ProposedPingCard";
 import StreamCardBody from "./StreamCardBody";
 import StreamCardFooter from "./StreamCardFooter";
 import StreamCardHeader from "./StreamCardHeader";
@@ -23,14 +24,19 @@ const StreamCard = ({
         <div>
           <StreamCardHeader timeStamp={timeStamp} />
         </div>
+        <div className="my-[15px]">
+          <ProposedPingCard
+            timeStamp="Oct 8, 11:00 am"
+            pingTitle="The power off policy affects students badly. It disrupts study time, comfort, and productivity. It really needs to be reconsidered."
+          />
+        </div>
         <StreamCardBody
           category={category}
           image={image}
           waveTitle={waveTitle}
           waveText={waveText}
         />
-        <StreamCardFooter
-        />
+        <StreamCardFooter />
       </div>
     </>
   );

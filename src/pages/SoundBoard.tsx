@@ -1,6 +1,6 @@
 import soundBoardImage from "../assets/images/SoundBoardImage.svg";
 import SoundBoardCard from "../components/SoundBoard/SoundBoardCard";
-import SideBar from "../components/SideBar";
+import SideBar, { type Pages } from "../components/SideBar";
 import PageTitleBar from "../components/PageTitleBar";
 
 import { FaPlus } from "react-icons/fa6";
@@ -19,6 +19,15 @@ import PingFormModal from "../components/PingFormModal";
 const SoundBoard = () => {
   const [pingForm, setPingForm] = useState(false);
   const [formSegment, setFormSegment] = useState("ping");
+  
+  
+  // SETTING ACTIVE PAGE BUTTON
+    const [activePage, setActivePage] = useState({
+      streamActive: false,
+      historyActive: false,
+      soundBoardActive: true,
+    } as Pages);
+  
 
   //SIMULATING FETCHED DATA FROM SERVER (MAPPED INTO SOUNDBOARD-CARD, Simulated with PingFormModal module.):
   const [pingFormDetails, setPingFormDetails] = useState<PingFormDetails[]>([]);
@@ -61,7 +70,7 @@ const SoundBoard = () => {
         </PageTitleBar>
       </header>
       <aside className="hidden md:block [scrollbar-width:none]  overflow-y-auto   px-10 fixed h-[calc(100vh-155px)] w-[350px] left-0 bottom-0 whitespace-nowrap ">
-        <SideBar />
+        <SideBar pages={activePage} setActivePage={setActivePage}/>
       </aside>
       <main className="mr-2.5 ml-2.5 mt-5 flex flex-col md:mr-[46px] h-[calc(100vh-155px)]  md:ml-[350px]   md:mt-[155px]">
         <div className="mb-[25px]">
@@ -110,6 +119,45 @@ const SoundBoard = () => {
               image={categoryImages.General}
               timeStamp="feb 29, 09:30 pm"
               hashtag="#welfare #internet"
+              id=""
+              onPropose={(id) => handleWaveProposal(id)}
+              proposeActive={false}
+            />
+          </div>
+          <div className="mb-[22px]">
+            <SoundBoardCard
+              pingText="Many students struggle with poor Wi-Fi connectivity in certain areas of the campus, which hinders their ability to access online resources, complete assignments, and participate in online discussions. By improving Wi-Fi coverage and speed throughout the campus, we can ensure that all students have reliable internet access, fostering a more productive and connected learning environment."
+              pingTitle="Increase Wi-Fi Coverage and Speed on Campus"
+              category="General"
+              timeStamp="feb 29, 09:30 pm"
+              hashtag="#welfare #internet"
+              image={categoryImages.General}
+              id=""
+              onPropose={(id) => handleWaveProposal(id)}
+              proposeActive={false}
+            />
+          </div>
+          <div className="mb-[22px]">
+            <SoundBoardCard
+              pingText="Many students struggle with poor Wi-Fi connectivity in certain areas of the campus, which hinders their ability to access online resources, complete assignments, and participate in online discussions. By improving Wi-Fi coverage and speed throughout the campus, we can ensure that all students have reliable internet access, fostering a more productive and connected learning environment."
+              pingTitle="Increase Wi-Fi Coverage and Speed on Campus"
+              category="General"
+              timeStamp="feb 29, 09:30 pm"
+              hashtag="#welfare #internet"
+              image={categoryImages.General}
+              id=""
+              onPropose={(id) => handleWaveProposal(id)}
+              proposeActive={false}
+            />
+          </div>
+          <div className="mb-[22px]">
+            <SoundBoardCard
+              pingText="Many students struggle with poor Wi-Fi connectivity in certain areas of the campus, which hinders their ability to access online resources, complete assignments, and participate in online discussions. By improving Wi-Fi coverage and speed throughout the campus, we can ensure that all students have reliable internet access, fostering a more productive and connected learning environment."
+              pingTitle="Increase Wi-Fi Coverage and Speed on Campus"
+              category="General"
+              timeStamp="feb 29, 09:30 pm"
+              hashtag="#welfare #internet"
+              image={categoryImages.General}
               id=""
               onPropose={(id) => handleWaveProposal(id)}
               proposeActive={false}

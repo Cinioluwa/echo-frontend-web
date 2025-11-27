@@ -19,7 +19,7 @@ const ProposedPingCard = ({ timeStamp, pingTitle }: Props) => {
           <p className="text-[10px] md:text-[9px] ">{timeStamp}</p>
         </div>
       </div>
-      <p className="flex-1 text-[10px] text-start font-semibold">
+      <p className="flex-1 text-[14px] text-start font-normal">
         {pingTitle}...
       </p>
     </div>

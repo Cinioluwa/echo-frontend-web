@@ -1,18 +1,29 @@
-import SideBar from "../SideBar";
-import PageTitleBar from "../PageTitleBar";
+import SideBar, { type Pages } from "../components/SideBar";
+import PageTitleBar from "../components/PageTitleBar";
 import { FaPlus } from "react-icons/fa6";
 import { useState } from "react";
-import { categoryImages } from "../CategoryImages";
-import NavBar from "../NavBar";
-import WaveFormModal, { type WaveFormDetails } from "../WaveFormModal";
-import PingFormModal, { type PingFormDetails } from "../PingFormModal";
-import type { proposedWaveDetails } from "../ProposeWaveModal";
-import StreamCard from "./StreamCard";
+import { categoryImages } from "../components/CategoryImages";
+import NavBar from "../components/NavBar";
+import WaveFormModal, {
+  type WaveFormDetails,
+} from "../components/WaveFormModal";
+import PingFormModal, {
+  type PingFormDetails,
+} from "../components/PingFormModal";
+import type { proposedWaveDetails } from "../components/ProposeWaveModal";
+import StreamCard from "../components/Stream/StreamCard";
 
 const Stream = () => {
   const [waveForm, setWaveForm] = useState(false);
   const [formSegment, setFormSegment] = useState("wave");
   const [pingFormDetails, setPingFormDetails] = useState<PingFormDetails[]>([]);
+
+  // SETTING ACTIVE PAGE BUTTON
+  const [activePage, setActivePage] = useState({
+    streamActive: true,
+    historyActive: false,
+    soundBoardActive: false,
+  } as Pages);
 
   // FETCH (proposedWaveDetails - Contains the PingDetails(PingTitle and TimeStamp)) FROM SERVER:
   const [proposedWaveDetails, setProposedWaveDetails] = useState<
@@ -28,7 +39,7 @@ const Stream = () => {
         <nav>
           <NavBar />
         </nav>
-        <PageTitleBar heading="Sound Board">
+        <PageTitleBar heading="Stream">
           <button
             onClick={() => {
               setWaveForm(!waveForm);
@@ -43,12 +54,9 @@ const Stream = () => {
         </PageTitleBar>
       </header>
       <aside className="hidden md:block [scrollbar-width:none]  overflow-y-auto   px-10 fixed h-[calc(100vh-155px)] w-[350px] left-0 bottom-0 whitespace-nowrap ">
-        <SideBar />
+        <SideBar pages={activePage} setActivePage={setActivePage} />
       </aside>
       <main className="mr-2.5 ml-2.5 mt-5 flex flex-col md:mr-[46px] h-[calc(100vh-155px)]  md:ml-[350px]   md:mt-[155px]">
-
-
-
         {/* MAP WAVEFORM DETAILS INTO SOUNDBOARD CARDS */}
         <div className="flex-1 [scrollbar-width:none] h-full overflow-auto">
           {waveFormDetails.map((details) => (
@@ -63,13 +71,12 @@ const Stream = () => {
             </div>
           ))}
 
-
-{/* HARD CODED */}
+          {/* HARD CODED */}
           <div className="mb-[22px]">
             <StreamCard
-              waveText="Many students struggle with poor Wi-Fi connectivity in certain areas of the campus, which hinders their ability to access online resources, complete assignments, and participate in online discussions. By improving Wi-Fi coverage and speed throughout the campus, we can ensure that all students have reliable internet access, fostering a more productive and connected learning environment.
+              waveText="While the current policy may have been introduced with conservative intentions, it is unintentionally creating more challenges than benefits for students whose daily routines rely on steady electricity. During the day, many students remain in the halls due to having few or no classes, and without reliable power they are left with two poor options: enduring hot, unconducive study environments or moving to overcrowded spaces with weak internet connectivity. A practical solution would be to reduce the timeframe of the policy. Shortening the duration would ease these difficulties, providing students with a more comfortable and productive environment. This adjustment would not only improve daily living conditions but also help safeguard academic performance, ensuring the policy supports rather than hinders student success.
             "
-              waveTitle="Increase Wi-Fi Coverage and Speed on Campus"
+              waveTitle="Reduce the power-off period to 10 a.m. - 3 p.m."
               image={categoryImages.General}
               category="General"
               timeStamp="feb 29, 09:30 pm"
@@ -83,6 +90,33 @@ const Stream = () => {
               category="General"
               image={categoryImages.General}
               timeStamp="feb 29, 09:30 pm"
+            />
+          </div>
+          <div className="mb-[22px]">
+            <StreamCard
+              waveText="Many students struggle with poor Wi-Fi connectivity in certain areas of the campus, which hinders their ability to access online resources, complete assignments, and participate in online discussions. By improving Wi-Fi coverage and speed throughout the campus, we can ensure that all students have reliable internet access, fostering a more productive and connected learning environment."
+              waveTitle="Increase Wi-Fi Coverage and Speed on Campus"
+              category="General"
+              timeStamp="feb 29, 09:30 pm"
+              image={categoryImages.General}
+            />
+          </div>
+          <div className="mb-[22px]">
+            <StreamCard
+              waveText="Many students struggle with poor Wi-Fi connectivity in certain areas of the campus, which hinders their ability to access online resources, complete assignments, and participate in online discussions. By improving Wi-Fi coverage and speed throughout the campus, we can ensure that all students have reliable internet access, fostering a more productive and connected learning environment."
+              waveTitle="Increase Wi-Fi Coverage and Speed on Campus"
+              category="General"
+              timeStamp="feb 29, 09:30 pm"
+              image={categoryImages.General}
+            />
+          </div>
+          <div className="mb-[22px]">
+            <StreamCard
+              waveText="Many students struggle with poor Wi-Fi connectivity in certain areas of the campus, which hinders their ability to access online resources, complete assignments, and participate in online discussions. By improving Wi-Fi coverage and speed throughout the campus, we can ensure that all students have reliable internet access, fostering a more productive and connected learning environment."
+              waveTitle="Increase Wi-Fi Coverage and Speed on Campus"
+              category="General"
+              timeStamp="feb 29, 09:30 pm"
+              image={categoryImages.General}
             />
           </div>
           <div className="mb-[22px]">

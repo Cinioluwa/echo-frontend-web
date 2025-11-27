@@ -68,11 +68,11 @@ const Categories = () => {
 
   return (
     <div className="p-2">
-      <header className="my-[15px] pl-2.5 font-[18px]">Category</header>
+      <header className="my-[10px] pl-2.5 font-[18px]">Category</header>
 
       <button
         onClick={handleClick}
-        className={`flex justify-between items-center mb-px py-3 px-[15px] ${
+        className={`flex justify-between items-center mb-px py-[10px] px-[15px] ${
           isActive ? "bg-[#FAE9D4] shadow" : "bg-transparent"
         } w-full rounded-lg font-bold cursor-pointer`}
       >
@@ -93,7 +93,7 @@ const Categories = () => {
                 : selectedCategory.id === category.id
                 ? "bg-[#FAE9D4] opacity-100 shadow"
                 : " opacity-64"
-            }  px-[15px] w-full rounded-lg py-[18px] items-center opacity-64 text-[15px] transition ease-in duration-200`}
+            }  px-[15px] w-full rounded-lg py-[13px] items-center opacity-64 text-[15px] transition ease-in duration-200`}
           >
             <span>
               <img src={category.labelIcon} />

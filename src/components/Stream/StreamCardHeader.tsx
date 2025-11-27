@@ -10,7 +10,7 @@ const StreamCardHeader = ({ timeStamp }: timeProp) => {
       <div className="flex items-center gap-6 ">
         <img src={cardProfile} alt="" />
         <div className="flex flex-col">
-          <span className="text-[15px] inline-block max-w-3 font-semibold">
+          <span className="text-[15px] whitespace-normal md:whitespace-nowrap inline-block max-w-3 font-semibold">
             Covenant Smith
           </span>
           <span className="text-[#8B8E8D] text-[13px] ">{timeStamp}</span>
