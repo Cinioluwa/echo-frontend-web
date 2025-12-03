@@ -8,7 +8,9 @@ interface Props {
   waveTitle: string;
   image: string;
   category: string;
-  timeStamp: string;
+  pingTimeStamp: string;
+  createdAt: string;
+  pingTitle: string
 }
 
 const StreamCard = ({
@@ -16,18 +18,20 @@ const StreamCard = ({
   category,
   waveTitle,
   image,
-  timeStamp,
+  createdAt,
+  pingTimeStamp,
+  pingTitle
 }: Props) => {
   return (
     <>
-      <div className="  m-[15px] md:m-0 px-[25px] py-2.5 bg-[#FEFEFE]  rounded-[10px] ">
+      <div className="m-[15px] md:m-0 px-[25px] py-2.5 bg-[#FEFEFE]  rounded-[10px] ">
         <div>
-          <StreamCardHeader timeStamp={timeStamp} />
+          <StreamCardHeader createdAt={createdAt} />
         </div>
         <div className="my-[15px]">
           <ProposedPingCard
-            timeStamp="Oct 8, 11:00 am"
-            pingTitle="The power off policy affects students badly. It disrupts study time, comfort, and productivity. It really needs to be reconsidered."
+            pingTimeStamp={pingTimeStamp}
+            pingTitle={pingTitle}
           />
         </div>
         <StreamCardBody

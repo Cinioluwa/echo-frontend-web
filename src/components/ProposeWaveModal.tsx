@@ -5,7 +5,7 @@ import ProposedPingCard from "./ProposedPingCard";
 
 interface Props {
   onClose: () => void;
-  timeStamp: string | undefined;
+  pingTimeStamp: string | undefined;
   pingTitle?: string | undefined;
   setProposeActive: React.Dispatch<React.SetStateAction<boolean>>;
 }
@@ -13,23 +13,23 @@ interface Props {
 export interface proposedWaveDetails {
   solution: string;
   cat: string;
-  timeStamp: string | undefined;
+  pingTimeStamp: string | undefined;
   pingTitle: string | undefined;
-
   createdAt: string;
 }
 
 const ProposeWaveModal = ({
   onClose,
   pingTitle,
-  timeStamp,
+  pingTimeStamp,
   setProposeActive,
+
 }: Props) => {
   const [proposedWaveDetails, setProposedWaveDetails] =
     useState<proposedWaveDetails>({
       solution: "",
       cat: "",
-      timeStamp: "",
+      pingTimeStamp: "",
       pingTitle: "",
       createdAt: "",
     });
@@ -42,7 +42,7 @@ const ProposeWaveModal = ({
     const newProposedWaveDetails: proposedWaveDetails = {
       solution: proposedWaveDetails.solution.trim(),
       cat: proposedWaveDetails.cat,
-      timeStamp: timeStamp,
+      pingTimeStamp: pingTimeStamp,
       pingTitle: pingTitle,
       createdAt: new Date()
         .toLocaleString("en-US", {
@@ -62,7 +62,7 @@ const ProposeWaveModal = ({
     setProposedWaveDetails({
       solution: "",
       cat: "",
-      timeStamp: "",
+      pingTimeStamp: "",
       pingTitle: "",
       createdAt: "",
     });
@@ -78,7 +78,7 @@ const ProposeWaveModal = ({
           Proposing a wave
         </h2>
 
-        <ProposedPingCard timeStamp={timeStamp} pingTitle={pingTitle} />
+        <ProposedPingCard pingTimeStamp={pingTimeStamp} pingTitle={pingTitle} />
 
         <div className="flex rounded-[20px] gap-0 text-[16px] ">
           <button
@@ -108,7 +108,7 @@ const ProposeWaveModal = ({
                 placeholder="What can be done?"
                 autoComplete="off"
                 onChange={(e) =>
-                  setProposedWaveDetails({  
+                  setProposedWaveDetails({
                     ...proposedWaveDetails,
                     solution: e.target.value,
                   })
@@ -138,12 +138,12 @@ const ProposeWaveModal = ({
             </button>
           </div>
         </form>
-          <button
-            onClick={onClose}
-            className="text-[13px] underline cursor-pointer"
-          >
-            cancel
-          </button>
+        <button
+          onClick={onClose}
+          className="text-[13px] underline cursor-pointer"
+        >
+          cancel
+        </button>
       </div>
     </div>
   );

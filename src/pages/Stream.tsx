@@ -10,7 +10,6 @@ import WaveFormModal, {
 import PingFormModal, {
   type PingFormDetails,
 } from "../components/PingFormModal";
-import type { proposedWaveDetails } from "../components/ProposeWaveModal";
 import StreamCard from "../components/Stream/StreamCard";
 
 const Stream = () => {
@@ -19,18 +18,19 @@ const Stream = () => {
   const [pingFormDetails, setPingFormDetails] = useState<PingFormDetails[]>([]);
 
   // SETTING ACTIVE PAGE BUTTON
-  const [activePage, setActivePage] = useState({
+  const [activePage, setActivePage] = useState<Pages>({
     streamActive: true,
     historyActive: false,
     soundBoardActive: false,
-  } as Pages);
+  });
 
-  // FETCH (proposedWaveDetails - Contains the PingDetails(PingTitle and TimeStamp)) FROM SERVER:
-  const [proposedWaveDetails, setProposedWaveDetails] = useState<
-    proposedWaveDetails[]
-  >([]);
+  // FETCH (proposeWaveForm Details - Contains the PingDetails(PingTitle and pingTimeStamp)) FROM SERVER - MAP INTO STREAMCARD:
 
-  // FETCHED (waveFormDetails) FROM SERVER (MAPPED INTO STREAMCARD, Simulated with WaveFormModal module.):
+  // const [proposedWaveDetails, setProposedWaveDetails] = useState<
+  //   proposedWaveDetails[]
+  // >([]);
+
+  // FETCHED (waveFormDetails) FROM SERVER (MAPPED INTO STREAMCARD, Simulated with WaveFormModal module.):   --- ** Meant to be the ProposedWaveDetails, since only proposedWaves would be displayed (undecided by osas).**
   const [waveFormDetails, setWaveFormDetails] = useState<WaveFormDetails[]>([]);
 
   return (
@@ -57,7 +57,7 @@ const Stream = () => {
         <SideBar pages={activePage} setActivePage={setActivePage} />
       </aside>
       <main className="mr-2.5 ml-2.5 mt-5 flex flex-col md:mr-[46px] h-[calc(100vh-155px)]  md:ml-[350px]   md:mt-[155px]">
-        {/* MAP WAVEFORM DETAILS INTO SOUNDBOARD CARDS */}
+        {/* MAP WAVEFORM (proposedWaveForm) DETAILS INTO SOUNDBOARD CARDS */}
         <div className="flex-1 [scrollbar-width:none] h-full overflow-auto">
           {waveFormDetails.map((details) => (
             <div className="mb-[22px] " key={details.id}>
@@ -66,7 +66,10 @@ const Stream = () => {
                 waveTitle={details.waveTitle}
                 image={categoryImages[details.cat]}
                 category={details.cat}
-                timeStamp={details.createdAt}
+                createdAt={details.createdAt}
+                pingTimeStamp="Oct 8, 11:00 am"
+                pingTitle="The school WiFi is so slow that even sending a simple message feels like downloading the entire internet.
+"
               />
             </div>
           ))}
@@ -79,7 +82,10 @@ const Stream = () => {
               waveTitle="Reduce the power-off period to 10 a.m. - 3 p.m."
               image={categoryImages.General}
               category="General"
-              timeStamp="feb 29, 09:30 pm"
+              createdAt="feb 29, 09:30 pm"
+              pingTimeStamp="Oct 8, 11:00 am"
+              pingTitle="The school WiFi is so slow that even sending a simple message feels like downloading the entire internet.
+"
             />
           </div>
 
@@ -89,7 +95,10 @@ const Stream = () => {
               waveTitle="Increase Wi-Fi Coverage and Speed on Campus"
               category="General"
               image={categoryImages.General}
-              timeStamp="feb 29, 09:30 pm"
+              createdAt="feb 29, 09:30 pm"
+              pingTimeStamp="Oct 8, 11:00 am"
+              pingTitle="The school WiFi is so slow that even sending a simple message feels like downloading the entire internet.
+"
             />
           </div>
           <div className="mb-[22px]">
@@ -97,7 +106,10 @@ const Stream = () => {
               waveText="Many students struggle with poor Wi-Fi connectivity in certain areas of the campus, which hinders their ability to access online resources, complete assignments, and participate in online discussions. By improving Wi-Fi coverage and speed throughout the campus, we can ensure that all students have reliable internet access, fostering a more productive and connected learning environment."
               waveTitle="Increase Wi-Fi Coverage and Speed on Campus"
               category="General"
-              timeStamp="feb 29, 09:30 pm"
+              createdAt="feb 29, 09:30 pm"
+              pingTimeStamp="Oct 8, 11:00 am"
+              pingTitle="The school WiFi is so slow that even sending a simple message feels like downloading the entire internet.
+"
               image={categoryImages.General}
             />
           </div>
@@ -106,7 +118,10 @@ const Stream = () => {
               waveText="Many students struggle with poor Wi-Fi connectivity in certain areas of the campus, which hinders their ability to access online resources, complete assignments, and participate in online discussions. By improving Wi-Fi coverage and speed throughout the campus, we can ensure that all students have reliable internet access, fostering a more productive and connected learning environment."
               waveTitle="Increase Wi-Fi Coverage and Speed on Campus"
               category="General"
-              timeStamp="feb 29, 09:30 pm"
+              createdAt="feb 29, 09:30 pm"
+              pingTimeStamp=""
+              pingTitle="The school WiFi is so slow that even sending a simple message feels like downloading the entire internet.
+"
               image={categoryImages.General}
             />
           </div>
@@ -115,7 +130,10 @@ const Stream = () => {
               waveText="Many students struggle with poor Wi-Fi connectivity in certain areas of the campus, which hinders their ability to access online resources, complete assignments, and participate in online discussions. By improving Wi-Fi coverage and speed throughout the campus, we can ensure that all students have reliable internet access, fostering a more productive and connected learning environment."
               waveTitle="Increase Wi-Fi Coverage and Speed on Campus"
               category="General"
-              timeStamp="feb 29, 09:30 pm"
+              createdAt="feb 29, 09:30 pm"
+              pingTimeStamp="Oct 8, 11:00 am"
+              pingTitle="The school WiFi is so slow that even sending a simple message feels like downloading the entire internet.
+"
               image={categoryImages.General}
             />
           </div>
@@ -124,7 +142,10 @@ const Stream = () => {
               waveText="Many students struggle with poor Wi-Fi connectivity in certain areas of the campus, which hinders their ability to access online resources, complete assignments, and participate in online discussions. By improving Wi-Fi coverage and speed throughout the campus, we can ensure that all students have reliable internet access, fostering a more productive and connected learning environment."
               waveTitle="Increase Wi-Fi Coverage and Speed on Campus"
               category="General"
-              timeStamp="feb 29, 09:30 pm"
+              createdAt="feb 29, 09:30 pm"
+              pingTimeStamp="Oct 8, 11:00 am"
+              pingTitle="The school WiFi is so slow that even sending a simple message feels like downloading the entire internet.
+"
               image={categoryImages.General}
             />
           </div>

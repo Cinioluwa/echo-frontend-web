@@ -3,7 +3,7 @@ import filters from "../assets/images/filters.svg";
 
 interface pageHeaderProps {
   heading: string;
-  children: ReactNode;
+  children?: ReactNode;
 }
 
 const PageTitleBar = ({ heading, children }: pageHeaderProps) => {

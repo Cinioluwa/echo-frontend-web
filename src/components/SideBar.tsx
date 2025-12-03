@@ -1,11 +1,8 @@
 import history from "../assets/images/History Logo.svg";
 import stream from "../assets/images/stream.svg";
 import soundBoard from "../assets/images/sound board.svg";
-import echobtn from "../assets/images/Echobtn.svg";
 import Categories from "./Categories";
-import { useState } from "react";
-import { Link, NavLink } from "react-router-dom";
-import { boolean } from "zod";
+import { Link } from "react-router-dom";
 
 export interface Pages {
   streamActive: boolean;
@@ -65,7 +62,7 @@ const SideBar = ({ pages, setActivePage }: Props) => {
             <span className="ml-6">
               <img src={history} alt="" />
             </span>
-            Wave History
+            History
           </button>
         </Link>
         <Link to={"/soundBoard"}>
@@ -89,8 +86,7 @@ const SideBar = ({ pages, setActivePage }: Props) => {
             Sound Board
           </button>
         </Link>
-        <div>
-        </div>
+        <div></div>
       </div>
     </div>
   );

@@ -5,7 +5,6 @@ import WaveHistory from "./pages/WaveHistory";
 import Login from "./pages/Login";
 import SignUp from "./pages/SignUp";
 
-
 const App = () => {
 
 

@@ -19,19 +19,16 @@ import PingFormModal from "../components/PingFormModal";
 const SoundBoard = () => {
   const [pingForm, setPingForm] = useState(false);
   const [formSegment, setFormSegment] = useState("ping");
-  
-  
+
   // SETTING ACTIVE PAGE BUTTON
-    const [activePage, setActivePage] = useState({
-      streamActive: false,
-      historyActive: false,
-      soundBoardActive: true,
-    } as Pages);
-  
+  const [activePage, setActivePage] = useState({
+    streamActive: false,
+    historyActive: false,
+    soundBoardActive: true,
+  } as Pages);
 
   //SIMULATING FETCHED DATA FROM SERVER (MAPPED INTO SOUNDBOARD-CARD, Simulated with PingFormModal module.):
   const [pingFormDetails, setPingFormDetails] = useState<PingFormDetails[]>([]);
-
 
   const [waveFormDetails, setWaveFormDetails] = useState<WaveFormDetails[]>([]);
 
@@ -70,7 +67,7 @@ const SoundBoard = () => {
         </PageTitleBar>
       </header>
       <aside className="hidden md:block [scrollbar-width:none]  overflow-y-auto   px-10 fixed h-[calc(100vh-155px)] w-[350px] left-0 bottom-0 whitespace-nowrap ">
-        <SideBar pages={activePage} setActivePage={setActivePage}/>
+        <SideBar pages={activePage} setActivePage={setActivePage} />
       </aside>
       <main className="mr-2.5 ml-2.5 mt-5 flex flex-col md:mr-[46px] h-[calc(100vh-155px)]  md:ml-[350px]   md:mt-[155px]">
         <div className="mb-[25px]">
@@ -216,7 +213,7 @@ const SoundBoard = () => {
       {proposeWaveModal && (
         <ProposeWaveModal
           onClose={() => setProposeWaveModal(!proposeWaveModal)}
-          timeStamp={proposedPingDetails?.createdAt}
+          pingTimeStamp={proposedPingDetails?.createdAt}
           pingTitle={proposedPingDetails?.pingTitle}
           setProposeActive={setProposeActive}
         />

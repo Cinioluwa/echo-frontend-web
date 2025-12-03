@@ -1,11 +1,11 @@
 import profileImage from "../assets/images/profileImage.jpeg";
 
 interface Props {
-  timeStamp: string | undefined;
+  pingTimeStamp: string | undefined;
   pingTitle: String | undefined;
 }
 
-const ProposedPingCard = ({ timeStamp, pingTitle }: Props) => {
+const ProposedPingCard = ({ pingTimeStamp, pingTitle }: Props) => {
   return (
     <div className="flex items-center w-full justify-between px-[5px] py-[9px] rounded-2xl bg-[#FFC37B]">
       <div className="  inline-flex mr-2.5 ml-2.5  items-center gap-2.5 ">
@@ -16,7 +16,7 @@ const ProposedPingCard = ({ timeStamp, pingTitle }: Props) => {
           <p className="text-[#926B3D] text-[7px] md:text-[12px] ">
             Osagumwenro Ugbo
           </p>
-          <p className="text-[10px] md:text-[9px] ">{timeStamp}</p>
+          <p className="text-[10px] md:text-[9px] ">{pingTimeStamp}</p>
         </div>
       </div>
       <p className="flex-1 text-[14px] text-start font-normal">

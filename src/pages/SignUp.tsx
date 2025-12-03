@@ -18,7 +18,7 @@ const SignUp = () => {
   return (
     <div
       style={{ backgroundImage: `url(${backgroundImage})` }}
-      className="h-screen bg-cover bg-no-repeat bg-center gap-[25px] flex flex-col  md:block overflow-x-hidden"
+      className="h-screen bg-cover bg-no-repeat bg-center gap-[25px] flex flex-col  md:block overflow-x-hidden p-2.5"
     >
       <header>
         <img
@@ -29,8 +29,8 @@ const SignUp = () => {
       {/* SignUp page */}
       <main className="   flex   items-center justify-center">
         {/* SignUp container */}
-        <div className="p-[38px] md:flex  bg-white md:p-4 gap-8 rounded-4xl">
-          <div className="bg-[#FFC37B] flex-1 hidden rounded-2xl md:flex flex-col justify-center items-center p-16 py-10 lg:py-10 lg:px-20">
+        <div className="p-7 md:flex bg-white md:p-4 gap-8 rounded-4xl">
+          <div className="bg-[#FFC37B] hidden  rounded-2xl md:flex flex-col justify-center items-center px-16 py-10 lg:py-10">
             <span className="block whitespace-nowrap font-bold text-2xl mb-4.5">
               Bridge Gap Between
             </span>
@@ -51,7 +51,7 @@ const SignUp = () => {
             <p className="block font-normal mt-[15px] mb-[15px] text-1xl text-center text-[#838383]">
               Create waves, rally support, track change
             </p>
-            <button className="flex cursor-pointer my-4 h-16 items-center justify-center gap-1 rounded-xl bg-[#F49B31]  px-[70px] py-1 md:px-18 md:py-2.5 ">
+            <button className="flex cursor-pointer mb-4 h-16 items-center justify-center gap-1 rounded-xl bg-[#F49B31] w-full ">
               <span className="flex h-8 w-8 items-center justify-center rounded-md bg-white overflow-hidden">
                 <img src={google} alt="Google logo" />
               </span>
@@ -102,7 +102,7 @@ const SignUp = () => {
               <a href="#">Terms of Use</a>, <a href="#">Privacy Policy</a>
             </span>
             <div className=" mb-5 md:mb-5 pt-[30px] border-t border-[#D3CECE] mt-10 self-end w-full">
-              <p className="text-center mb-[25px] mt-[29px] md:mb-0 text-[#838383] ">
+              <p className="text-center  mt-[29px] md:mt-0 md:mb-0 text-[#838383] ">
                 Already have an account?
                 <Link
                   to="/"
