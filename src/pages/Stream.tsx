@@ -39,7 +39,7 @@ const Stream = () => {
         <nav>
           <NavBar />
         </nav>
-        <PageTitleBar heading="Stream">
+        <PageTitleBar pages={activePage} setActivePage={setActivePage} heading="Stream">
           <button
             onClick={() => {
               setWaveForm(!waveForm);

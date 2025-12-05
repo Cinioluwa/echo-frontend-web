@@ -27,7 +27,7 @@ const SoundBoardCard = ({
 }: Props) => {
   return (
     <>
-      <div className="  m-[15px] md:m-0 px-[25px] py-2.5 bg-[#FEFEFE]  rounded-[10px] ">
+      <div className="mt-0  m-[15px] md:m-0 px-[25px] py-2.5 bg-[#FEFEFE]  rounded-[10px] ">
         <div className="block xl:hidden">
           <SoundBoardCardHeader timeStamp={timeStamp} />
         </div>

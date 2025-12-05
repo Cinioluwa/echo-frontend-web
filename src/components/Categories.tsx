@@ -68,11 +68,11 @@ const Categories = () => {
 
   return (
     <div className="p-2">
-      <header className="my-[10px] pl-2.5 font-[18px]">Category</header>
+      <header className="my-2.5 pl-2.5 font-[18px]">Category</header>
 
       <button
         onClick={handleClick}
-        className={`flex justify-between items-center mb-px py-[10px] px-[15px] ${
+        className={`flex justify-between items-center mb-px py-2.5 px-[15px] ${
           isActive ? "bg-[#FAE9D4] shadow" : "bg-transparent"
         } w-full rounded-lg font-bold cursor-pointer`}
       >

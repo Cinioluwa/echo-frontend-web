@@ -100,7 +100,7 @@ const PingFormModal = ({
 
   return (
     <div className="flex font-poppins justify-center items-center z-50 inset-0 fixed bg-black/40">
-      <div className=" mx-5 shadow-2xl rounded-4xl px-[25px] py-2.5 md:p-[30px] bg-white gap-4 overflow-hidden text-[32px] font-poppins flex  flex-col items-center">
+      <div className=" mx-5 shadow-2xl max-w-[480px] rounded-4xl px-[25px] py-2.5 md:p-[30px] bg-white gap-4 overflow-hidden text-[32px] font-poppins flex  flex-col items-center">
         <h2 className="font-semibold text-center text-[20px] md:text-[32px]">
           What Kind of Post?
         </h2>
@@ -141,8 +141,7 @@ const PingFormModal = ({
             e.preventDefault();
             submitForm();
           }}
-          action=""
-          className="text-[14px] max-w-[480px] justify-center items-center flex flex-col gap-5"
+          className="w-full text-[14px] justify-center items-center flex flex-col gap-5"
         >
           {/* ModalForm INPUT GROUP: */}
           <fieldset className=" w-full  text-[14px] flex flex-col gap-5">

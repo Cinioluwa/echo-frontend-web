@@ -97,7 +97,7 @@ const WaveFormModal = ({
 
   return (
     <div className="flex font-poppins justify-center items-center z-50 inset-0 fixed bg-black/40">
-      <div className=" mx-5 shadow-2xl rounded-4xl px-[25px] py-2.5 md:p-[30px] bg-white gap-4 overflow-hidden text-[32px] font-poppins flex  flex-col items-center">
+      <div className=" mx-5 shadow-2xl rounded-4xl px-[25px] py-2.5 max-w-[480px] md:p-[30px] bg-white gap-4 overflow-hidden text-[32px] font-poppins flex  flex-col items-center">
         <h2 className="font-semibold text-center text-[20px] md:text-[32px]">
           What Kind of Post?
         </h2>
@@ -128,12 +128,11 @@ const WaveFormModal = ({
             e.preventDefault();
             submitForm();
           }}
-          action=""
-          className="text-[14px] max-w-[480px] justify-center items-center flex flex-col gap-5"
+          className="w-full text-[14px] justify-center items-center flex flex-col gap-5"
         >
           {/* ModalForm INPUT GROUP: */}
           <fieldset className=" w-full  text-[14px] flex flex-col gap-5">
-            <div className="flex px-[11px] py-3 border border-black rounded-[10px]">
+            <div className="flex p-2.5 w-full py-3 border border-black rounded-[10px]">
               <label htmlFor="waveTitle">Title :</label>
               <input
                 type="text"
@@ -152,7 +151,7 @@ const WaveFormModal = ({
                 autoComplete="off"
               />
             </div>
-            <div className="flex px-[11px] py-3 border border-black rounded-[10px] ">
+            <div className="flex p-2.5 py-3 border border-black rounded-[10px] ">
               <label htmlFor="waveDescription">Description :</label>
               <textarea
                 id="waveDescription"
@@ -168,7 +167,7 @@ const WaveFormModal = ({
               />
             </div>
 
-            <div className="flex px-[11px] py-3 border border-black rounded-[10px]">
+            <div className="flex p-2.5 py-3 border border-black rounded-[10px]">
               <label htmlFor="solution">Solution :</label>
               <textarea
                 id="solution"
