@@ -43,7 +43,7 @@ const MobileMenu = ({ setMenu, menu, pages, setActivePage }: Props) => {
               pages.streamActive
                 ? "bg-[#FFC37B] border-0"
                 : "bg-transparent border-2"
-            }  gap-3 py-[9px] w-full hover:bg-[#FFC37B] transition  cursor-pointer  ease-in-out duration-700 text-[15px] border-[#F49B31] rounded-[25px]`}
+            }  gap-3 py-[9px] w-full transition  cursor-pointer  ease-in-out duration-700 text-[15px] border-[#F49B31] rounded-[25px]`}
           >
             <span className="ml-6">
               <img src={stream} alt="" />
@@ -64,7 +64,7 @@ const MobileMenu = ({ setMenu, menu, pages, setActivePage }: Props) => {
               pages.historyActive
                 ? "bg-[#FFC37B] border-0"
                 : "bg-transparent border-2"
-            }  gap-3 py-[9px] text-[15px] hover:bg-[#FFC37B] transition w-full cursor-pointer  ease-in-out duration-700 border-[#F49B31] rounded-[25px]`}
+            }  gap-3 py-[9px] text-[15px] transition w-full cursor-pointer  ease-in-out duration-700 border-[#F49B31] rounded-[25px]`}
           >
             <span className="ml-6">
               <img src={history} alt="" />
@@ -85,7 +85,7 @@ const MobileMenu = ({ setMenu, menu, pages, setActivePage }: Props) => {
               pages.soundBoardActive
                 ? "bg-[#FFC37B] border-0"
                 : "bg-transparent border-2"
-            }  gap-3 py-[9px] w-full transition hover:bg-[#FFC37B]  cursor-pointer ease-in-out duration-700 text-[15px] border-[#F49B31] rounded-[25px]`}
+            }  gap-3 py-[9px] w-full transition cursor-pointer ease-in-out duration-700 text-[15px] border-[#F49B31] rounded-[25px]`}
           >
             <span className="ml-6">
               <img src={soundBoard} alt="" />
