@@ -24,7 +24,6 @@ function SoundBoardCardFooter() {
           } w-[50%] contrast-200 md:w-full`}
         />
       </button>
-
       <div className="text-[#454545] text-[14px]">114 Surges</div>
     </div>
   );

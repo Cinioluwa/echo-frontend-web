@@ -1,8 +1,9 @@
 import profileImage from "../assets/images/profileImage.jpeg";
+import CollapsibleText from "./CollapsibleText";
 
 interface Props {
   pingTimeStamp: string | undefined;
-  pingTitle: String | undefined;
+  pingTitle: string | undefined;
 }
 
 const ProposedPingCard = ({ pingTimeStamp, pingTitle }: Props) => {
@@ -19,9 +20,7 @@ const ProposedPingCard = ({ pingTimeStamp, pingTitle }: Props) => {
           <p className="text-[0.62rem] md:text-[0.55rem] ">{pingTimeStamp}</p>
         </div>
       </div>
-      <p className="flex-1 text-[0.87rem] text-start font-normal">
-        {pingTitle}...
-      </p>
+      <CollapsibleText text={pingTitle}/>
     </div>
   );
 };

@@ -22,7 +22,7 @@ const MobileMenu = ({ setMenu, menu, pages, setActivePage }: Props) => {
       onClick={handleClick}
       className={`${
         menu ? "opacity-100" : "opacity-0 pointer-events-none"
-      } fixed transition-opacity duration-300 ease-in inset-0 bg-black/40 md:hidden`}
+      } fixed transition-opacity duration-300 z-20 ease-in inset-0 bg-black/40 md:hidden`}
     >
       <div
         onClick={(e) => e.stopPropagation()}

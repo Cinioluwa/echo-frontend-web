@@ -48,7 +48,7 @@ const PageTitleBar = ({
         {openCat && (
           <div
             onClick={() => setOpenCat(false)}
-            className="fixed transition-opacity duration-300 ease-in inset-0 bg-black/40 md:hidden"
+            className="fixed z-10 transition-opacity duration-300 ease-in inset-0 bg-black/40 md:hidden"
           >
             <MobileCategories
               selectedMobileCat={selectedMobileCat}

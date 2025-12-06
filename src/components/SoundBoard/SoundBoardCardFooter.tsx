@@ -46,7 +46,7 @@ function SoundBoardCardFooter({
         >
           SURGE
           <img
-            src={surge}
+            src={surge} 
             alt=""
             className={`${
               surged ? "brightness-0 invert" : ""

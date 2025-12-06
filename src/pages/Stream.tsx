@@ -39,7 +39,11 @@ const Stream = () => {
         <nav>
           <NavBar />
         </nav>
-        <PageTitleBar pages={activePage} setActivePage={setActivePage} heading="Stream">
+        <PageTitleBar
+          pages={activePage}
+          setActivePage={setActivePage}
+          heading="Stream"
+        >
           <button
             onClick={() => {
               setWaveForm(!waveForm);
@@ -84,7 +88,7 @@ const Stream = () => {
               category="General"
               createdAt="feb 29, 09:30 pm"
               pingTimeStamp="Oct 8, 11:00 am"
-              pingTitle="The school WiFi is so slow that even sending a simple message feels like downloading the entire internet.
+              pingTitle="While the current policy may have been introduced with conservative intentions, it is unintentionally creating more challenges than benefits for students whose daily routines rely on steady electricity. During the day, many students remain in the halls due to having few or no classes, and without reliable power they are left with two poor options: enduring hot, unconducive study environments or moving to overcrowded spaces with weak internet connectivity
 "
             />
           </div>
