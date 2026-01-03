@@ -5,29 +5,37 @@ import backgroundImage from "../assets/images/backgroundImage.jpg";
 import logo from "../assets/images/Echo Logo.svg";
 import echo from "../assets/images/Echo.svg";
 import InputGroup from "../components/InputGroup";
+import { Link, useNavigate } from "react-router-dom";
 
 const SignUp = () => {
+  const navigate = useNavigate();
+
+  function handleSubmitLogin(e: React.FormEvent) {
+    e.preventDefault();
+    navigate("/stream");
+  }
+
   return (
     <div
       style={{ backgroundImage: `url(${backgroundImage})` }}
-      className="h-screen bg-cover  bg-no-repeat bg-center gap-[50px] flex flex-col  md:block overflow-x-hidden"
+      className="h-screen bg-cover bg-no-repeat bg-center gap-[25px] flex flex-col  md:block overflow-x-hidden p-2.5"
     >
       <header>
         <img
-          className=" mx-auto md:mb-12 mt-[43px] md:mt-[30px] md:ml-16 contrast-200"
+          className=" mx-auto md:mb-[15px] mt-5 md:mt-2.5 md:ml-16 contrast-200"
           src={logo}
         />
       </header>
       {/* SignUp page */}
       <main className="   flex   items-center justify-center">
         {/* SignUp container */}
-        <div className="p-[38px] md:flex  bg-white md:p-4 gap-8 rounded-4xl">
-          <div className="bg-[#FFC37B] hidden  rounded-2xl md:flex flex-col justify-center items-center p-16 lg:p-32">
+        <div className="p-7 md:flex bg-white md:p-4 gap-8 rounded-4xl">
+          <div className="bg-[#FFC37B] hidden  rounded-2xl md:flex flex-col justify-center items-center px-16 py-10 lg:py-10">
             <span className="block whitespace-nowrap font-bold text-2xl mb-4.5">
               Bridge Gap Between
             </span>
-            <span className="block font-bold text-2 xl mb-8">
-              Students <span className="block text-center">and</span>
+            <span className="block font-semibold text-[26px] xl mb-8">
+              Students <span className="block text-center text-[26px]">and</span>
             </span>
 
             <img src={echo} />
@@ -36,38 +44,43 @@ const SignUp = () => {
             </span>
           </div>
 
-          <div className="flex flex-col md:mr-[15px] mx-2.5 md:mx-0 items-center mt-[70px] justify-center">
+          <div className="flex flex-col md:mr-[15px] mx-2.5 md:mx-0 items-center mt-5 justify-center">
             <span className="block font-semibold max-w-[330px] text-center text-4xl ">
               Echo: Your Voice at CU
             </span>
             <p className="block font-normal mt-[15px] mb-[15px] text-1xl text-center text-[#838383]">
               Create waves, rally support, track change
             </p>
-            <button className="flex cursor-pointer my-4 h-16 items-center justify-center gap-1 rounded-xl bg-[#F49B31]  px-[70px] py-1 md:px-18 md:py-2.5 ">
+            <button className="flex cursor-pointer mb-4 h-16 items-center justify-center gap-1 rounded-xl bg-[#F49B31] w-full ">
               <span className="flex h-8 w-8 items-center justify-center rounded-md bg-white overflow-hidden">
                 <img src={google} alt="Google logo" />
               </span>
               <p className="text-white">Continue with Google</p>
             </button>
-            <form className="flex flex-col justify-center items-center mb-8">
-              <p className="hidden   justify-center gap-3 mt-4 mb-20 text-[#838383]">
+            <form
+              onSubmit={(e) => handleSubmitLogin(e)}
+              className="flex w-full flex-col justify-center items-center mb-8"
+            >
+              <p className="hidden justify-center gap-3 mt-4 mb-20 text-[#838383]">
                 <span className="w-7 pr-2 py-1  inline-flex items-center justify-center border-r border-r-[#CACACA]">
                   <img src={email} />
                 </span>
                 Sign up with Email
               </p>
-              <div className=" hidden md:block">
-                <InputGroup
-                  type="email"
-                  iconSrc={email}
-                  placeholder="Enter email..."
-                />
-                <InputGroup
-                  type="password"
-                  iconSrc={password}
-                  placeholder="Enter password..."
-                />
-              </div>
+
+                <div className="w-full hidden md:block">
+                  <InputGroup
+                    type="email"
+                    iconSrc={email}
+                    placeholder="Enter email..."
+                  />
+                  <InputGroup
+                    type="password"
+                    iconSrc={password}
+                    placeholder="Enter password..."
+                  />
+                </div>
+
 
               <button
                 type="submit"
@@ -76,14 +89,11 @@ const SignUp = () => {
                 Sign up
               </button>
 
-
-
               {/* Mobile sign up CTA */}
               <div className="flex items-center text-[#ACAAAA] justify-center gap-[5px] md:hidden">
                 <img src={email} />
                 Sign up with email
               </div>
-              
             </form>
             <p className="text-[#838383] mt-[60px] md:mt-0 text-center text-[14px]">
               By creating an account, you agree to Echo
@@ -92,14 +102,14 @@ const SignUp = () => {
               <a href="#">Terms of Use</a>, <a href="#">Privacy Policy</a>
             </span>
             <div className=" mb-5 md:mb-5 pt-[30px] border-t border-[#D3CECE] mt-10 self-end w-full">
-              <p className="text-center mb-[85px] mt-[29px] md:mb-0 text-[#838383] ">
+              <p className="text-center  mt-[29px] md:mt-0 md:mb-0 text-[#838383] ">
                 Already have an account?
-                <a
-                  href="#"
+                <Link
+                  to="/"
                   className="pl-1 text-[#F49B31] whitespace-nowrap cursor-pointer"
                 >
                   Log in
-                </a>
+                </Link>
               </p>
             </div>
           </div>

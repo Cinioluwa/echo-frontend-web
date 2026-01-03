@@ -1,0 +1,152 @@
+import { useState } from "react";
+import { FaLink } from "react-icons/fa6";
+import CategorySelector from "./CategorySelector";
+import ProposedPingCard from "./ProposedPingCard";
+
+interface Props {
+  onClose: () => void;
+  pingTimeStamp: string | undefined;
+  pingTitle?: string | undefined;
+  setProposeActive: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+export interface proposedWaveDetails {
+  solution: string;
+  cat: string;
+  pingTimeStamp: string | undefined;
+  pingTitle: string | undefined;
+  createdAt: string;
+}
+
+const ProposeWaveModal = ({
+  onClose,
+  pingTitle,
+  pingTimeStamp,
+  setProposeActive,
+
+}: Props) => {
+  const [proposedWaveDetails, setProposedWaveDetails] =
+    useState<proposedWaveDetails>({
+      solution: "",
+      cat: "",
+      pingTimeStamp: "",
+      pingTitle: "",
+      createdAt: "",
+    });
+
+  function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    if (proposedWaveDetails.cat === "") return alert("Select a category!");
+    // SEND DETAILS TO SERVER
+
+    const newProposedWaveDetails: proposedWaveDetails = {
+      solution: proposedWaveDetails.solution.trim(),
+      cat: proposedWaveDetails.cat,
+      pingTimeStamp: pingTimeStamp,
+      pingTitle: pingTitle,
+      createdAt: new Date()
+        .toLocaleString("en-US", {
+          month: "short",
+          day: "2-digit",
+          hour: "2-digit",
+          minute: "2-digit",
+          hour12: true,
+        })
+        .toLowerCase(),
+    };
+
+    // VERIFY DETAILS
+    console.log("proposedWaveDetails: ", newProposedWaveDetails);
+
+    // RESET FORM
+    setProposedWaveDetails({
+      solution: "",
+      cat: "",
+      pingTimeStamp: "",
+      pingTitle: "",
+      createdAt: "",
+    });
+
+    // UPDATE PROPOSE-btn STATE
+    setProposeActive(true);
+  }
+
+  return (
+    <div className="flex font-poppins justify-center items-center z-50 inset-0 fixed bg-black/40">
+      <div className=" mx-5 shadow-2xl rounded-4xl px-[25px] py-2.5 md:p-[30px] bg-white gap-4 overflow-hidden text-[32px] font-poppins flex  flex-col items-center">
+        <h2 className="font-semibold text-center text-[20px] md:text-[32px]">
+          Proposing a wave
+        </h2>
+
+        <ProposedPingCard pingTimeStamp={pingTimeStamp} pingTitle={pingTitle} />
+
+        <div className="flex rounded-[20px] gap-0 text-[16px] ">
+          <button
+            disabled
+            className={`inline-block rounded-tl-[20px] border-r-0 border-2 text-gray-400 rounded-bl-[20px] border-gray-400 py-6 px-6  sm:py-4 sm:px-8`}
+          >
+            Ping
+          </button>
+          <button
+            disabled
+            className={`inline-block rounded-tr-[20px] text-white bg-[#F49B31] border-[#454545] border-2 border-l rounded-br-[20px] py-6 px-6  sm:py-4 sm:px-8`}
+          >
+            Wave
+          </button>
+        </div>
+        <form
+          onSubmit={(e) => handleSubmit(e)}
+          className="w-full text-[14px] max-w-[480px] justify-center items-center flex flex-col gap-5"
+        >
+          <fieldset className=" w-full  text-[14px] flex flex-col gap-5">
+            <div className="flex px-[11px] h-[200px]  py-3 border border-black rounded-[10px]">
+              <label htmlFor="proposeWaveSolution">Solution :</label>
+              <textarea
+                id="proposeWaveSolution"
+                name="solution"
+                required
+                placeholder="What can be done?"
+                autoComplete="off"
+                onChange={(e) =>
+                  setProposedWaveDetails({
+                    ...proposedWaveDetails,
+                    solution: e.target.value,
+                  })
+                }
+                value={proposedWaveDetails.solution}
+                className="pl-[11px] py-0.5 resize-none text-[12px] text-[#454545] outline-0 flex-1"
+              />
+            </div>
+          </fieldset>
+          <div className="overflow-y-scroll [scrollbar-width:none] w-full">
+            <CategorySelector
+              category={proposedWaveDetails.cat}
+              setFormData={(cat) =>
+                setProposedWaveDetails({ ...proposedWaveDetails, cat: cat })
+              }
+            />
+          </div>
+          <div className="w-full flex justify-between">
+            <div className="cursor-pointer">
+              <FaLink fontSize={30} color="#F49B31" />
+            </div>
+            <button
+              type="submit"
+              className="px-[30px] hover:bg-[#d88429] text-[12px] transition-colors duration-300 ease-in-out py-[5px] cursor-pointer text-white rounded-xl bg-[#F49B31]"
+            >
+              Post
+            </button>
+          </div>
+        </form>
+        <button
+          onClick={onClose}
+          className="text-[13px] underline cursor-pointer"
+        >
+          cancel
+        </button>
+      </div>
+    </div>
+  );
+};
+
+export default ProposeWaveModal;

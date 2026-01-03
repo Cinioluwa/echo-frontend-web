@@ -5,7 +5,7 @@ import finance from "../assets/images/University.svg";
 import hall from "../assets/images/Hall.svg";
 import sport from "../assets/images/sport.svg";
 import welfare from "../assets/images/welfare.svg";
-import { useState } from "react";
+import { useState, type SetStateAction } from "react";
 
 type category = {
   label: string;
@@ -52,51 +52,64 @@ const categories: category[] = [
 //   selectedCategory: boolean;
 // }
 
-const Categories = () => {
+interface Props {
+  setSelectedMobileCat: React.Dispatch<SetStateAction<string>>;
+  setOpenCat: React.Dispatch<SetStateAction<boolean>>;
+  selectedMobileCat: string;
+}
+
+const MobileCategories = ({
+  setSelectedMobileCat,
+  selectedMobileCat,
+  setOpenCat,
+}: Props) => {
   const [isActive, setIsActive] = useState(true);
 
-  const [selectedCategory, setSelectedCategory] = useState({} as category);
-
   function handleClick() {
+    setSelectedMobileCat("");
     if (!isActive) return setIsActive(true);
+    setOpenCat(false);
   }
 
   function handleCategoryClick(category: category) {
-    setSelectedCategory(category);
     setIsActive(false);
+    setSelectedMobileCat(category.label);
+    setOpenCat(false);
   }
 
   return (
-    <div className="p-2">
-      <header className="my-2.5 pl-2.5 font-[18px]">Category</header>
-
+    <div
+      onClick={(e) => e.stopPropagation()}
+      className="p-2 ml-[13px] bg-[#FFC37B] fixed mt-[145px] rounded-[17px]"
+    >
       <button
         onClick={handleClick}
-        className={`flex justify-between items-center mb-px py-2.5 px-[15px] ${
-          isActive ? "bg-[#FAE9D4] shadow" : "bg-transparent"
-        } w-full rounded-lg font-bold cursor-pointer`}
+        className={`flex justify-between items-center py-2 px-2.5 ${
+          selectedMobileCat
+            ? ""
+            : isActive
+            ? "bg-[#FAE9D4] shadow"
+            : "bg-transparent"
+        } w-full rounded-xl font-bold mb-[5px] text-[12px] gap-[45px] cursor-pointer`}
       >
         All Categories
-        <span className="w-[26px] font-normal text-white h-[26px] flex justify-center items-center rounded-full bg-[#F49B31]">
+        <span className="w-5 font-normal text-white h-5 flex justify-center items-center rounded-full bg-[#F49B31]">
           8
         </span>
       </button>
-
-      <div className="">
+      <div>
         {categories.map((category) => (
           <button
             key={category.id}
             onClick={() => handleCategoryClick(category)}
-            className={`flex justify-start gap-[13px] cursor-pointer font-semibold  ${
-              isActive
-                ? "bg-transparent shadow-none"
-                : selectedCategory.id === category.id
+            className={`flex justify-start gap-2 cursor-pointer font-semibold ${
+              selectedMobileCat === category.label
                 ? "bg-[#FAE9D4] opacity-100 shadow"
                 : " opacity-64"
-            }  px-[15px] w-full rounded-lg py-[13px] items-center opacity-64 text-[15px] transition ease-in duration-200`}
+            }   px-2.5 w-full rounded-lg py-2 items-center opacity-64 text-[11px] transition ease-in duration-200`}
           >
             <span>
-              <img src={category.labelIcon} />
+              <img src={category.labelIcon} className="w-[80%]" />
             </span>
             <div>{category.label}</div>
           </button>
@@ -106,4 +119,4 @@ const Categories = () => {
   );
 };
 
-export default Categories;
+export default MobileCategories;

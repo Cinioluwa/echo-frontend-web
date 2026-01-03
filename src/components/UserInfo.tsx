@@ -1,5 +1,7 @@
 import profileImage from "../assets/images/profileImage.jpeg";
 
+
+
 const UserInfo = () => {
   return (
     <div className="inline-flex mr-2.5 ml-2.5 md:ml-[55px] items-center gap-2.5 md:mr-[35px]">

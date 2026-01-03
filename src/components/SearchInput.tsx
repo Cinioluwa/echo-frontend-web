@@ -8,6 +8,8 @@ const SearchInput = () => {
       </span>
       <input
         type="text"
+        id="searchInput"
+        name="searchInput"
         placeholder="Search"
         className="outline-0 flex-1 text-[11px] font-andada"
         required
