@@ -5,7 +5,7 @@ import type {
   UpdateCommentRequest,
   PaginatedResponse,
   PaginationParams,
-} from "../types";
+} from "../types/index";
 
 /**
  * Comment Service
@@ -101,14 +101,14 @@ const commentService = {
     content: string
   ): Promise<Comment> => {
     const parentComment = await commentService.getCommentById(commentId);
-    
+
     const replyData: CreateCommentRequest = {
       content,
       targetType: parentComment.targetType,
       targetId: parentComment.targetId,
       parentCommentId: commentId,
     };
-    
+
     return commentService.createComment(replyData);
   },
 
@@ -120,10 +120,9 @@ const commentService = {
   getMyComments: async (
     params?: PaginationParams
   ): Promise<PaginatedResponse<Comment>> => {
-    const response = await api.get<PaginatedResponse<Comment>>(
-      "/comments/me",
-      { params }
-    );
+    const response = await api.get<PaginatedResponse<Comment>>("/comments/me", {
+      params,
+    });
     return response.data;
   },
 };

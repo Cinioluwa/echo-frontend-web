@@ -1,5 +1,10 @@
 import api from "../axios.config";
-import type { Ping, Wave, PaginatedResponse, PaginationParams } from "../types";
+import type {
+  Ping,
+  Wave,
+  PaginatedResponse,
+  PaginationParams,
+} from "../types/index";
 
 export interface PublicFeedParams extends PaginationParams {
   top?: number;

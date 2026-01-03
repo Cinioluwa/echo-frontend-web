@@ -216,3 +216,38 @@ export interface ApiResponse<T> {
   data: T;
   message?: string;
 }
+
+// ==================== Announcement Types ====================
+
+export interface Announcement {
+  id: number;
+  title: string;
+  content: string;
+  authorId: number;
+  organizationId: number;
+  createdAt: string;
+  author?: {
+    firstName: string;
+    lastName: string;
+  };
+  categories?: {
+    id: number;
+    name: string;
+  }[];
+}
+
+// ==================== Stats & Analytics Types ====================
+
+export interface Stats {
+  totalUsers: number;
+  totalPings: number;
+  totalSurges: number;
+  totalWaves: number;
+  totalComments: number;
+}
+
+export interface AnalyticsData {
+  name: string;
+  value?: number;
+  count?: number;
+}

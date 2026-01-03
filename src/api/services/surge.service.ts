@@ -4,7 +4,7 @@ import type {
   CreateSurgeRequest,
   PaginatedResponse,
   PaginationParams,
-} from "../types";
+} from "../types/index";
 
 /**
  * Surge Service
@@ -64,7 +64,7 @@ const surgeService = {
   ): Promise<boolean> => {
     try {
       const hasSurged = await surgeService.checkIfSurged(targetType, targetId);
-      
+
       if (hasSurged) {
         await surgeService.removeSurge(targetType, targetId);
         return false;

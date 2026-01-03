@@ -11,4 +11,4 @@ export { default as commentService } from "./comment.service";
 export { default as surgeService } from "./surge.service";
 
 // Re-export types for convenience
-export type * from "../types";
+export type * from "../types/index";

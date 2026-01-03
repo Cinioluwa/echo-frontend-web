@@ -1,5 +1,5 @@
 import api from "../axios.config";
-import type { Category } from "../types";
+import type { Category } from "../types/index";
 
 export interface GetCategoriesParams {
   q?: string;

@@ -1,5 +1,5 @@
 import api from "../axios.config";
-import type { Announcement } from "../types";
+import type { Announcement } from "../types/index";
 
 export interface GetAnnouncementsParams {
   categoryId?: number;

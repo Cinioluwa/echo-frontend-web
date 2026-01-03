@@ -5,7 +5,7 @@ import type {
   Comment,
   PaginatedResponse,
   PaginationParams,
-} from "../types";
+} from "../types/index";
 
 export interface UpdateUserRequest {
   firstName?: string;

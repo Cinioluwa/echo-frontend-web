@@ -5,7 +5,7 @@ import type {
   UpdatePingRequest,
   PaginatedResponse,
   PingQueryParams,
-} from "../types";
+} from "../types/index";
 
 /**
  * Ping Service

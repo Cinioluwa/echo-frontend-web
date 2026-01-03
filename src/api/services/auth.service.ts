@@ -4,7 +4,7 @@ import type {
   LoginRequest,
   SignupRequest,
   AuthResponse,
-} from "../types";
+} from "../types/index";
 
 /**
  * Authentication Service
@@ -18,12 +18,12 @@ const authService = {
    */
   login: async (credentials: LoginRequest): Promise<AuthResponse> => {
     const response = await api.post<AuthResponse>("/auth/login", credentials);
-    
+
     // Store token in localStorage
     if (response.data.token) {
       localStorage.setItem("authToken", response.data.token);
     }
-    
+
     return response.data;
   },
 
@@ -34,12 +34,12 @@ const authService = {
    */
   signup: async (userData: SignupRequest): Promise<AuthResponse> => {
     const response = await api.post<AuthResponse>("/auth/signup", userData);
-    
+
     // Store token in localStorage
     if (response.data.token) {
       localStorage.setItem("authToken", response.data.token);
     }
-    
+
     return response.data;
   },
 
@@ -72,11 +72,11 @@ const authService = {
    */
   refreshToken: async (): Promise<{ token: string }> => {
     const response = await api.post<{ token: string }>("/auth/refresh");
-    
+
     if (response.data.token) {
       localStorage.setItem("authToken", response.data.token);
     }
-    
+
     return response.data;
   },
 

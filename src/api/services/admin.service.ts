@@ -6,7 +6,7 @@ import type {
   AnalyticsData,
   PaginatedResponse,
   PaginationParams,
-} from "../types";
+} from "../types/index";
 
 export interface GetAdminPingsParams extends PaginationParams {
   category?: number;

@@ -6,7 +6,7 @@ import type {
   ProposeWaveRequest,
   PaginatedResponse,
   WaveQueryParams,
-} from "../types";
+} from "../types/index";
 
 /**
  * Wave Service
