@@ -1,55 +1,25 @@
 import api from "../axios.config";
-import type { Ping, PaginatedResponse, PaginationParams } from "../types";
-
-export interface CreatePingRequest {
-  title: string;
-  content: string;
-  categoryId: number;
-  hashtag?: string;
-}
-
-export interface UpdatePingRequest {
-  title?: string;
-  content?: string;
-}
-
-export interface UpdatePingStatusRequest {
-  status: "POSTED" | "UNDER_REVIEW" | "ARCHIVED";
-}
-
-export interface UpdateProgressStatusRequest {
-  status: "PENDING" | "IN_PROGRESS" | "RESOLVED" | "WONT_FIX";
-}
-
-export interface GetPingsParams extends PaginationParams {
-  category?: number;
-  status?: "POSTED" | "UNDER_REVIEW" | "ARCHIVED";
-}
-
-export interface SearchPingsParams extends PaginationParams {
-  hashtag?: string;
-  q?: string;
-}
+import type {
+  Ping,
+  CreatePingRequest,
+  UpdatePingRequest,
+  PaginatedResponse,
+  PingQueryParams,
+} from "../types";
 
 /**
  * Ping Service
- * Handles pings (posts/issues) management
+ * Handles ping (issues/complaints) management
  */
 const pingService = {
   /**
-   * Create a new ping
-   * @param data Ping details
-   */
-  create: async (data: CreatePingRequest): Promise<Ping> => {
-    const response = await api.post<Ping>("/pings", data);
-    return response.data;
-  },
-
-  /**
-   * Get all pings in organization with filters
+   * Get all pings with optional filters
    * @param params Query parameters for filtering and pagination
+   * @returns Paginated list of pings
    */
-  getAll: async (params?: GetPingsParams): Promise<PaginatedResponse<Ping>> => {
+  getPings: async (
+    params?: PingQueryParams
+  ): Promise<PaginatedResponse<Ping>> => {
     const response = await api.get<PaginatedResponse<Ping>>("/pings", {
       params,
     });
@@ -57,24 +27,67 @@ const pingService = {
   },
 
   /**
-   * Search pings by hashtag or text query
-   * @param params Search parameters
+   * Get a single ping by ID
+   * @param id Ping ID
+   * @returns Ping details
    */
-  search: async (
-    params: SearchPingsParams
+  getPingById: async (id: string): Promise<Ping> => {
+    const response = await api.get<Ping>(`/pings/${id}`);
+    return response.data;
+  },
+
+  /**
+   * Create a new ping
+   * @param data Ping creation data
+   * @returns Created ping
+   */
+  createPing: async (data: CreatePingRequest): Promise<Ping> => {
+    const response = await api.post<Ping>("/pings", data);
+    return response.data;
+  },
+
+  /**
+   * Update an existing ping
+   * @param id Ping ID
+   * @param data Updated ping data
+   * @returns Updated ping
+   */
+  updatePing: async (id: string, data: UpdatePingRequest): Promise<Ping> => {
+    const response = await api.patch<Ping>(`/pings/${id}`, data);
+    return response.data;
+  },
+
+  /**
+   * Delete a ping
+   * @param id Ping ID
+   */
+  deletePing: async (id: string): Promise<void> => {
+    await api.delete(`/pings/${id}`);
+  },
+
+  /**
+   * Get pings by category
+   * @param category Category name
+   * @param params Additional query parameters
+   * @returns Paginated list of pings in category
+   */
+  getPingsByCategory: async (
+    category: string,
+    params?: PingQueryParams
   ): Promise<PaginatedResponse<Ping>> => {
-    const response = await api.get<PaginatedResponse<Ping>>("/pings/search", {
-      params,
+    const response = await api.get<PaginatedResponse<Ping>>("/pings", {
+      params: { ...params, category },
     });
     return response.data;
   },
 
   /**
-   * Get current user's pings
-   * @param params Pagination parameters
+   * Get pings created by current user
+   * @param params Query parameters
+   * @returns Paginated list of user's pings
    */
   getMyPings: async (
-    params?: PaginationParams
+    params?: PingQueryParams
   ): Promise<PaginatedResponse<Ping>> => {
     const response = await api.get<PaginatedResponse<Ping>>("/pings/me", {
       params,
@@ -83,68 +96,53 @@ const pingService = {
   },
 
   /**
-   * Get a specific ping by ID with full details
-   * @param id Ping ID
+   * Search pings by keyword
+   * @param query Search query
+   * @param params Additional query parameters
+   * @returns Paginated search results
    */
-  getById: async (id: number): Promise<Ping> => {
-    const response = await api.get<Ping>(`/pings/${id}`);
+  searchPings: async (
+    query: string,
+    params?: PingQueryParams
+  ): Promise<PaginatedResponse<Ping>> => {
+    const response = await api.get<PaginatedResponse<Ping>>("/pings/search", {
+      params: { ...params, q: query },
+    });
     return response.data;
   },
 
   /**
-   * Update a ping (author only)
-   * @param id Ping ID
-   * @param data Updated ping data
+   * Get trending pings (most surges, comments, views)
+   * @param limit Number of trending pings to retrieve
+   * @returns List of trending pings
    */
-  update: async (id: number, data: UpdatePingRequest): Promise<Ping> => {
-    const response = await api.patch<Ping>(`/pings/${id}`, data);
+  getTrendingPings: async (limit: number = 10): Promise<Ping[]> => {
+    const response = await api.get<Ping[]>("/pings/trending", {
+      params: { limit },
+    });
     return response.data;
   },
 
   /**
-   * Delete a ping (author only)
-   * @param id Ping ID
+   * Get pings that have proposed waves
+   * @param params Query parameters
+   * @returns Paginated list of pings with waves
    */
-  delete: async (id: number): Promise<void> => {
-    await api.delete(`/pings/${id}`);
-  },
-
-  /**
-   * Update ping status (admin only)
-   * @param id Ping ID
-   * @param data New status
-   */
-  updateStatus: async (
-    id: number,
-    data: UpdatePingStatusRequest
-  ): Promise<Ping> => {
-    const response = await api.patch<Ping>(`/pings/${id}/status`, data);
+  getPingsWithWaves: async (
+    params?: PingQueryParams
+  ): Promise<PaginatedResponse<Ping>> => {
+    const response = await api.get<PaginatedResponse<Ping>>("/pings", {
+      params: { ...params, hasWave: true },
+    });
     return response.data;
   },
 
   /**
-   * Submit ping for review (representative only)
+   * Increment view count for a ping
    * @param id Ping ID
    */
-  submitForReview: async (id: number): Promise<Ping> => {
-    const response = await api.patch<Ping>(`/pings/${id}/submit`);
-    return response.data;
-  },
-
-  /**
-   * Update ping progress status (admin only)
-   * @param id Ping ID
-   * @param data New progress status
-   */
-  updateProgressStatus: async (
-    id: number,
-    data: UpdateProgressStatusRequest
-  ): Promise<Ping> => {
-    const response = await api.patch<Ping>(
-      `/pings/${id}/progress-status`,
-      data
-    );
-    return response.data;
+  incrementViewCount: async (id: string): Promise<void> => {
+    await api.post(`/pings/${id}/view`);
   },
 };
 
