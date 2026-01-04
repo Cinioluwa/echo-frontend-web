@@ -1,3 +1,4 @@
+import { useState } from "react";
 import google from "../assets/images/Google (2).svg";
 import password from "../assets/images/Password.svg";
 import email from "../assets/images/Email.svg";
@@ -6,13 +7,75 @@ import logo from "../assets/images/Echo Logo.svg";
 import echo from "../assets/images/Echo.svg";
 import InputGroup from "../components/InputGroup";
 import { Link, useNavigate } from "react-router-dom";
+import authService from "../api/services/auth.service";
 
 const SignUp = () => {
   const navigate = useNavigate();
 
-  function handleSubmitLogin(e: React.FormEvent) {
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+    firstName: "",
+    lastName: "",
+  });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+    if (error) setError(null);
+    if (success) setSuccess(null);
+  };
+
+  async function handleSubmitSignUp(e: React.FormEvent) {
     e.preventDefault();
-    navigate("/stream");
+    setError(null);
+    setSuccess(null);
+    setLoading(true);
+
+    try {
+      const response = await authService.signup(formData);
+
+      // Check if email verification is required
+      if (response.message.includes("verify your email")) {
+        setSuccess("Account created! Please check your email to verify your account.");
+        // Clear form
+        setFormData({
+          email: "",
+          password: "",
+          firstName: "",
+          lastName: "",
+        });
+      } else {
+        // If token is returned, user is auto-logged in
+        setSuccess("Account created successfully!");
+        setTimeout(() => navigate("/stream"), 1500);
+      }
+    } catch (err: any) {
+      const status = err?.response?.status;
+      const data = err?.response?.data;
+
+      if (status === 409 && data?.code === "ACCOUNT_EXISTS") {
+        setError("An account with this email already exists");
+      } else if (status === 404 && data?.code === "ORG_NOT_FOUND") {
+        setError("No organization found for this email domain. Please contact your administrator.");
+      } else if (status === 400) {
+        setError(data?.error || "Invalid registration data. Please check all fields.");
+      } else {
+        setError(data?.error || "Registration failed. Please try again.");
+      }
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  function handleGoogleSignUp() {
+    setError("Google Sign-Up is not configured yet.");
   }
 
   return (
@@ -24,6 +87,7 @@ const SignUp = () => {
         <img
           className=" mx-auto md:mb-[15px] mt-5 md:mt-2.5 md:ml-16 contrast-200"
           src={logo}
+          alt="Echo Logo"
         />
       </header>
       {/* SignUp page */}
@@ -38,7 +102,7 @@ const SignUp = () => {
               Students <span className="block text-center text-[26px]">and</span>
             </span>
 
-            <img src={echo} />
+            <img src={echo} alt="Echo" />
             <span className="block mt-8 font-bold text-2xl mb-4.5">
               Management
             </span>
@@ -51,14 +115,33 @@ const SignUp = () => {
             <p className="block font-normal mt-[15px] mb-[15px] text-1xl text-center text-[#838383]">
               Create waves, rally support, track change
             </p>
-            <button className="flex cursor-pointer mb-4 h-16 items-center justify-center gap-1 rounded-xl bg-[#F49B31] w-full ">
+
+            {error && (
+              <div className="w-full mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+                <p className="text-red-600 text-sm text-center">{error}</p>
+              </div>
+            )}
+
+            {success && (
+              <div className="w-full mb-4 p-3 bg-green-50 border border-green-200 rounded-lg">
+                <p className="text-green-600 text-sm text-center">{success}</p>
+              </div>
+            )}
+
+            <button
+              type="button"
+              onClick={handleGoogleSignUp}
+              disabled={loading}
+              className="flex cursor-pointer mb-4 h-16 items-center justify-center gap-1 rounded-xl bg-[#F49B31] w-full disabled:opacity-50 disabled:cursor-not-allowed"
+            >
               <span className="flex h-8 w-8 items-center justify-center rounded-md bg-white overflow-hidden">
                 <img src={google} alt="Google logo" />
               </span>
               <p className="text-white">Continue with Google</p>
             </button>
+
             <form
-              onSubmit={(e) => handleSubmitLogin(e)}
+              onSubmit={handleSubmitSignUp}
               className="flex w-full flex-col justify-center items-center mb-8"
             >
               <p className="hidden justify-center gap-3 mt-4 mb-20 text-[#838383]">
@@ -68,32 +151,61 @@ const SignUp = () => {
                 Sign up with Email
               </p>
 
-                <div className="w-full hidden md:block">
-                  <InputGroup
-                    type="email"
-                    iconSrc={email}
-                    placeholder="Enter email..."
-                  />
-                  <InputGroup
-                    type="password"
-                    iconSrc={password}
-                    placeholder="Enter password..."
-                  />
-                </div>
-
+              <div className="w-full hidden md:block">
+                <InputGroup
+                  type="text"
+                  name="firstName"
+                  iconSrc={email}
+                  placeholder="First Name..."
+                  value={formData.firstName}
+                  onChange={handleInputChange}
+                  disabled={loading}
+                />
+                <InputGroup
+                  type="text"
+                  name="lastName"
+                  iconSrc={email}
+                  placeholder="Last Name..."
+                  value={formData.lastName}
+                  onChange={handleInputChange}
+                  disabled={loading}
+                />
+                <InputGroup
+                  type="email"
+                  name="email"
+                  iconSrc={email}
+                  placeholder="Enter email..."
+                  value={formData.email}
+                  onChange={handleInputChange}
+                  disabled={loading}
+                />
+                <InputGroup
+                  type="password"
+                  name="password"
+                  iconSrc={password}
+                  placeholder="Enter password..."
+                  value={formData.password}
+                  onChange={handleInputChange}
+                  disabled={loading}
+                />
+              </div>
 
               <button
                 type="submit"
-                className="hidden md:flex items-center justify-center md:px-[107px] py-[15px] whitespace-nowrap  text-white  h-8 cursor-pointer bg-[#F49B31] rounded-[9px]"
+                disabled={loading}
+                className="hidden md:flex items-center justify-center md:px-[107px] py-[15px] whitespace-nowrap  text-white  h-8 cursor-pointer bg-[#F49B31] rounded-[9px] disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Sign up
+                {loading ? "Creating account..." : "Sign up"}
               </button>
 
               {/* Mobile sign up CTA */}
-              <div className="flex items-center text-[#ACAAAA] justify-center gap-[5px] md:hidden">
-                <img src={email} />
+              <Link
+                to="/mobile-signup"
+                className="flex items-center text-[#ACAAAA] justify-center gap-[5px] md:hidden"
+              >
+                <img src={email} alt="" />
                 Sign up with email
-              </div>
+              </Link>
             </form>
             <p className="text-[#838383] mt-[60px] md:mt-0 text-center text-[14px]">
               By creating an account, you agree to Echo

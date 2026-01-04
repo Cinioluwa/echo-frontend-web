@@ -34,8 +34,11 @@ api.interceptors.response.use(
 
     // Handle unauthorized
     if (error.response?.status === 401) {
-      localStorage.removeItem("authToken");
-      window.location.href = "/login";
+      const hadToken = !!localStorage.getItem("authToken");
+      if (hadToken) {
+        localStorage.removeItem("authToken");
+        window.location.href = "/login";
+      }
     }
 
     return Promise.reject(error);

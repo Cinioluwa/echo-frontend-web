@@ -6,15 +6,16 @@
 // ==================== User Types ====================
 
 export interface User {
-  id: string;
+  id: number;
   email: string;
   firstName: string;
   lastName: string;
-  matricNumber?: string;
-  role: "student" | "admin" | "moderator";
-  isVerified: boolean;
+  level?: number; // Student year/level
+  role: "USER" | "ADMIN" | "REPRESENTATIVE";
+  organizationId: number;
+  status?: "PENDING_VERIFICATION" | "ACTIVE" | "SUSPENDED";
   createdAt: string;
-  updatedAt: string;
+  updatedAt?: string;
 }
 
 export interface LoginRequest {
@@ -27,12 +28,36 @@ export interface SignupRequest {
   password: string;
   firstName: string;
   lastName: string;
-  matricNumber?: string;
+  level?: number;
 }
 
 export interface AuthResponse {
-  user: User;
+  message: string;
   token: string;
+  user?: User;
+}
+
+export interface GoogleAuthRequest {
+  token: string;
+}
+
+export interface VerifyEmailRequest {
+  token: string;
+}
+
+export interface ForgotPasswordRequest {
+  email: string;
+}
+
+export interface ResetPasswordRequest {
+  token: string;
+  newPassword: string;
+}
+
+export interface OrganizationWaitlistRequest {
+  email: string;
+  organizationName: string;
+  message?: string;
 }
 
 // ==================== Category Types ====================

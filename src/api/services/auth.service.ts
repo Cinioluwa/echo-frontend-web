@@ -4,6 +4,7 @@ import type {
   LoginRequest,
   SignupRequest,
   AuthResponse,
+  OrganizationWaitlistRequest,
 } from "../types/index";
 
 /**
@@ -17,7 +18,25 @@ const authService = {
    * @returns Auth response with user data and token
    */
   login: async (credentials: LoginRequest): Promise<AuthResponse> => {
-    const response = await api.post<AuthResponse>("/auth/login", credentials);
+    const response = await api.post<AuthResponse>("/users/login", credentials);
+
+    // Store token in localStorage
+    if (response.data.token) {
+      localStorage.setItem("authToken", response.data.token);
+    }
+
+    return response.data;
+  },
+
+  /**
+   * Authenticate with Google OAuth
+   * @param googleToken Google ID token
+   * @returns Auth response with user data and token
+   */
+  googleAuth: async (googleToken: string): Promise<AuthResponse> => {
+    const response = await api.post<AuthResponse>("/auth/google", {
+      token: googleToken,
+    });
 
     // Store token in localStorage
     if (response.data.token) {
@@ -30,12 +49,12 @@ const authService = {
   /**
    * Register new user account
    * @param userData New user registration data
-   * @returns Auth response with user data and token
+   * @returns Auth response with user data
    */
   signup: async (userData: SignupRequest): Promise<AuthResponse> => {
-    const response = await api.post<AuthResponse>("/auth/signup", userData);
+    const response = await api.post<AuthResponse>("/users/register", userData);
 
-    // Store token in localStorage
+    // Note: Token might not be included if email verification is required
     if (response.data.token) {
       localStorage.setItem("authToken", response.data.token);
     }
@@ -44,39 +63,14 @@ const authService = {
   },
 
   /**
-   * Logout current user
-   * Clears token and redirects to login
+   * Verify email with verification token
+   * @param token Email verification token
    */
-  logout: async (): Promise<void> => {
-    try {
-      await api.post("/auth/logout");
-    } finally {
-      // Always clear token and redirect, even if API call fails
-      localStorage.removeItem("authToken");
-      window.location.href = "/";
-    }
-  },
-
-  /**
-   * Get current authenticated user
-   * @returns Current user data
-   */
-  getCurrentUser: async (): Promise<User> => {
-    const response = await api.get<User>("/auth/me");
-    return response.data;
-  },
-
-  /**
-   * Refresh authentication token
-   * @returns New auth token
-   */
-  refreshToken: async (): Promise<{ token: string }> => {
-    const response = await api.post<{ token: string }>("/auth/refresh");
-
-    if (response.data.token) {
-      localStorage.setItem("authToken", response.data.token);
-    }
-
+  verifyEmail: async (token: string): Promise<{ message: string }> => {
+    const response = await api.post<{ message: string }>(
+      "/users/verify-email",
+      { token }
+    );
     return response.data;
   },
 
@@ -84,8 +78,12 @@ const authService = {
    * Request password reset email
    * @param email User's email address
    */
-  requestPasswordReset: async (email: string): Promise<void> => {
-    await api.post("/auth/forgot-password", { email });
+  forgotPassword: async (email: string): Promise<{ message: string }> => {
+    const response = await api.post<{ message: string }>(
+      "/users/forgot-password",
+      { email }
+    );
+    return response.data;
   },
 
   /**
@@ -93,16 +91,50 @@ const authService = {
    * @param token Password reset token
    * @param newPassword New password
    */
-  resetPassword: async (token: string, newPassword: string): Promise<void> => {
-    await api.post("/auth/reset-password", { token, newPassword });
+  resetPassword: async (
+    token: string,
+    newPassword: string
+  ): Promise<{ message: string }> => {
+    const response = await api.patch<{ message: string }>(
+      "/users/reset-password",
+      {
+        token,
+        newPassword,
+      }
+    );
+    return response.data;
   },
 
   /**
-   * Verify email with verification token
-   * @param token Email verification token
+   * Request new organization onboarding
+   * @param data Organization waitlist request data
    */
-  verifyEmail: async (token: string): Promise<void> => {
-    await api.post("/auth/verify-email", { token });
+  joinOrganizationWaitlist: async (
+    data: OrganizationWaitlistRequest
+  ): Promise<{ message: string }> => {
+    const response = await api.post<{ message: string }>(
+      "/users/organization-waitlist",
+      data
+    );
+    return response.data;
+  },
+
+  /**
+   * Logout current user
+   * Clears token and redirects to login
+   */
+  logout: (): void => {
+    localStorage.removeItem("authToken");
+    window.location.href = "/";
+  },
+
+  /**
+   * Get current authenticated user
+   * @returns Current user data
+   */
+  getCurrentUser: async (): Promise<User> => {
+    const response = await api.get<User>("/users/me");
+    return response.data;
   },
 
   /**
