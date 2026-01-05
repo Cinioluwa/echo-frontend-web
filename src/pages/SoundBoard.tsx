@@ -12,7 +12,7 @@ import ProposeWaveModal from "../components/ProposeWaveModal";
 
 import type { PingFormDetails } from "../components/PingFormModal";
 import PingFormModal from "../components/PingFormModal";
-import { publicService } from "../api/services";
+import { publicService, searchService } from "../api/services";
 import type { Ping } from "../api/types";
 
 const SoundBoard = () => {
@@ -32,6 +32,8 @@ const SoundBoard = () => {
   const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState<string>("");
 
   //SIMULATING FETCHED DATA FROM SERVER (MAPPED INTO SOUNDBOARD-CARD, Simulated with PingFormModal module.):
   const [pingFormDetails, setPingFormDetails] = useState<PingFormDetails[]>([]);
@@ -42,17 +44,40 @@ const SoundBoard = () => {
   const [proposeWaveModal, setProposeWaveModal] = useState(false);
   const [proposeActive, setProposeActive] = useState(false);
 
+  // Debounce search query
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearchQuery(searchQuery);
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
+
   // FETCH PINGS FROM API
   useEffect(() => {
     const fetchPings = async () => {
       try {
         setIsLoading(true);
         setError(null);
-        const response = await publicService.getSoundboard({
-          page: currentPage,
-          limit: 20,
-          sort: "trending",
-        });
+
+        let response;
+        if (debouncedSearchQuery) {
+          // Use search service if there's a search query
+          response = await searchService.searchSoundboard({
+            q: debouncedSearchQuery,
+            page: currentPage,
+            limit: 20,
+            sort: "trending"
+          });
+        } else {
+          // Use regular soundboard endpoint
+          response = await publicService.getSoundboard({
+            page: currentPage,
+            limit: 20,
+            sort: "trending",
+          });
+        }
+
         setPings(response.data);
         setTotalPages(response.pagination.totalPages || 1);
       } catch (err: any) {
@@ -64,7 +89,7 @@ const SoundBoard = () => {
     };
 
     fetchPings();
-  }, [currentPage]);
+  }, [currentPage, debouncedSearchQuery]);
 
   // REFRESH PINGS AFTER CREATING NEW PING
   const handlePingCreated = async () => {
@@ -79,6 +104,12 @@ const SoundBoard = () => {
     } catch (err) {
       console.error("Error refreshing pings:", err);
     }
+  };
+
+  // Handle search
+  const handleSearch = (query: string) => {
+    setSearchQuery(query);
+    setCurrentPage(1); // Reset to first page on new search
   };
 
   // SEARCH FOR WHICH PING WAS PROPOSED
@@ -118,7 +149,7 @@ const SoundBoard = () => {
     <div className="h-full">
       <header className="z-20 md:fixed md:top-0 w-full">
         <nav>
-          <NavBar />
+          <NavBar onSearch={handleSearch} />
         </nav>
         <PageTitleBar pages={activePage} setActivePage={setActivePage} heading="Sound Board">
           <button

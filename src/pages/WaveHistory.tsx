@@ -4,7 +4,7 @@ import SideBar, { type Pages } from "../components/SideBar";
 import PageTitleBar from "../components/PageTitleBar";
 // import { FaPlus } from "react-icons/fa6";
 import { useState, useEffect } from "react";
-import { publicService } from "../api/services";
+import { publicService, searchService } from "../api/services";
 import type { Wave } from "../api/types";
 
 const WaveHistory = () => {
@@ -14,6 +14,8 @@ const WaveHistory = () => {
   const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [hasNextPage, setHasNextPage] = useState(false);
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState<string>("");
 
   // SETTING ACTIVE PAGE BUTTON
   const [activePage, setActivePage] = useState({
@@ -22,22 +24,43 @@ const WaveHistory = () => {
     soundBoardActive: false,
   } as Pages);
 
+  // Debounce search query
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearchQuery(searchQuery);
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
+
   // Fetch waves from API
   useEffect(() => {
     fetchWaves();
-  }, [currentPage]);
+  }, [currentPage, debouncedSearchQuery]);
 
   const fetchWaves = async () => {
     try {
       setLoading(true);
       setError(null);
 
-      const response = await publicService.getStream({
-        page: currentPage,
-        limit: 20,
-        sort: "new",
-        days: "all"
-      });
+      let response;
+      if (debouncedSearchQuery) {
+        // Use search service if there's a search query
+        response = await searchService.searchStream({
+          q: debouncedSearchQuery,
+          page: currentPage,
+          limit: 20,
+          sort: "new"
+        });
+      } else {
+        // Use regular stream endpoint
+        response = await publicService.getStream({
+          page: currentPage,
+          limit: 20,
+          sort: "new",
+          days: "all"
+        });
+      }
 
       setWaves(response.data);
       setHasNextPage(response.pagination.hasNextPage || false);
@@ -47,6 +70,12 @@ const WaveHistory = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  // Handle search
+  const handleSearch = (query: string) => {
+    setSearchQuery(query);
+    setCurrentPage(1); // Reset to first page on new search
   };
 
   // Group waves by date
@@ -90,7 +119,7 @@ const WaveHistory = () => {
     <div className=" h-full">
       <header className="z-20 md:fixed md:top-0 w-full">
         <nav>
-          <NavBar />
+          <NavBar onSearch={handleSearch} />
         </nav>
         <PageTitleBar pages={activePage} setActivePage={setActivePage} heading="History" />
       </header>

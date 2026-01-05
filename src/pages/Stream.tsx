@@ -9,7 +9,7 @@ import WaveFormModal, {
 } from "../components/WaveFormModal";
 import PingFormModal from "../components/PingFormModal";
 import StreamCard from "../components/Stream/StreamCard";
-import { publicService } from "../api/services";
+import { publicService, searchService } from "../api/services";
 import type { Wave } from "../api/types";
 
 const Stream = () => {
@@ -22,6 +22,8 @@ const Stream = () => {
   const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [hasNextPage, setHasNextPage] = useState(false);
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState<string>("");
 
   // SETTING ACTIVE PAGE BUTTON
   const [activePage, setActivePage] = useState<Pages>({
@@ -33,22 +35,43 @@ const Stream = () => {
   // FETCHED (waveFormDetails) FROM SERVER (MAPPED INTO STREAMCARD):
   const [waveFormDetails, setWaveFormDetails] = useState<WaveFormDetails[]>([]);
 
+  // Debounce search query
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearchQuery(searchQuery);
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
+
   // Fetch waves from API
   useEffect(() => {
     fetchWaves();
-  }, [currentPage]);
+  }, [currentPage, debouncedSearchQuery]);
 
   const fetchWaves = async () => {
     try {
       setLoading(true);
       setError(null);
 
-      const response = await publicService.getStream({
-        page: currentPage,
-        limit: 20,
-        sort: "trending",
-        days: 7
-      });
+      let response;
+      if (debouncedSearchQuery) {
+        // Use search service if there's a search query
+        response = await searchService.searchStream({
+          q: debouncedSearchQuery,
+          page: currentPage,
+          limit: 20,
+          sort: "trending"
+        });
+      } else {
+        // Use regular stream endpoint
+        response = await publicService.getStream({
+          page: currentPage,
+          limit: 20,
+          sort: "trending",
+          days: 7
+        });
+      }
 
       setWaves(response.data);
       setHasNextPage(response.pagination.hasNextPage || false);
@@ -58,6 +81,12 @@ const Stream = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  // Handle search
+  const handleSearch = (query: string) => {
+    setSearchQuery(query);
+    setCurrentPage(1); // Reset to first page on new search
   };
 
   // Format date for display
@@ -75,7 +104,7 @@ const Stream = () => {
     <div className="h-full">
       <header className="z-20 md:fixed md:top-0 w-full">
         <nav>
-          <NavBar />
+          <NavBar onSearch={handleSearch} />
         </nav>
         <PageTitleBar
           pages={activePage}

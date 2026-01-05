@@ -3,7 +3,11 @@ import echoBrand from "../assets/images/Echo brand.svg";
 import SearchInput from "./SearchInput";
 import UserInfo from "./UserInfo";
 
-const NavBar = () => {
+interface NavBarProps {
+  onSearch?: (query: string) => void;
+}
+
+const NavBar = ({ onSearch }: NavBarProps) => {
   return (
     <div className="bg-[#FFC37B] flex items-center justify-between">
       <div className=" hidden md:block">
@@ -12,7 +16,7 @@ const NavBar = () => {
       <div className="block md:hidden min-w-[20%]">
         <img src={echoBrand} className=" brightness-0 contrast-200" />
       </div>
-      <SearchInput />
+      <SearchInput onSearch={onSearch} />
       <UserInfo />
     </div>
   );
