@@ -1,11 +1,7 @@
-import general from "../assets/images/General.svg";
-import academics from "../assets/images/Graduation Cap.svg";
-import chapel from "../assets/images/Chapel.svg";
-import finance from "../assets/images/University.svg";
-import hall from "../assets/images/Hall.svg";
-import sport from "../assets/images/sport.svg";
-import welfare from "../assets/images/welfare.svg";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { categoryImages } from "./CategoryImages";
+import { categoryService } from "../api/services";
+import type { CategoryData } from "../api/types";
 
 type category = {
   label: string;
@@ -13,49 +9,33 @@ type category = {
   id: number;
 };
 
-const categories: category[] = [
-  { labelIcon: general, label: "General", id: 1 },
-  {
-    labelIcon: academics,
-    label: "Academics",
-    id: 2,
-  },
-  {
-    labelIcon: chapel,
-    label: "Chapel",
-    id: 3,
-  },
-  {
-    labelIcon: finance,
-    label: "Finance",
-    id: 4,
-  },
-  {
-    labelIcon: hall,
-    label: "Hall",
-    id: 5,
-  },
-  {
-    labelIcon: sport,
-    label: "Sport",
-    id: 6,
-  },
-  {
-    labelIcon: welfare,
-    label: "Welfare",
-    id: 7,
-  },
-];
-
-// interface categoryy {
-//   isActive: boolean;
-//   selectedCategory: boolean;
-// }
-
 const Categories = () => {
   const [isActive, setIsActive] = useState(true);
-
   const [selectedCategory, setSelectedCategory] = useState({} as category);
+  const [categories, setCategories] = useState<category[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const data = await categoryService.getAll();
+        // Map API data to local category format with icons
+        const mappedCategories = data.map((cat: CategoryData) => ({
+          id: cat.id,
+          label: cat.name,
+          labelIcon: categoryImages[cat.name] || categoryImages.General,
+        }));
+        setCategories(mappedCategories);
+      } catch (err) {
+        console.error("Error fetching categories:", err);
+        setError("Failed to load categories");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchCategories();
+  }, []);
 
   function handleClick() {
     if (!isActive) return setIsActive(true);
@@ -66,19 +46,38 @@ const Categories = () => {
     setIsActive(false);
   }
 
+  if (isLoading) {
+    return (
+      <div className="p-2">
+        <header className="my-2.5 pl-2.5 font-[18px]">Category</header>
+        <div className="text-center py-4 text-sm text-gray-500">
+          Loading categories...
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="p-2">
+        <header className="my-2.5 pl-2.5 font-[18px]">Category</header>
+        <div className="text-center py-4 text-sm text-red-500">{error}</div>
+      </div>
+    );
+  }
+
   return (
     <div className="p-2">
       <header className="my-2.5 pl-2.5 font-[18px]">Category</header>
 
       <button
         onClick={handleClick}
-        className={`flex justify-between items-center mb-px py-2.5 px-[15px] ${
-          isActive ? "bg-[#FAE9D4] shadow" : "bg-transparent"
-        } w-full rounded-lg font-bold cursor-pointer`}
+        className={`flex justify-between items-center mb-px py-2.5 px-[15px] ${isActive ? "bg-[#FAE9D4] shadow" : "bg-transparent"
+          } w-full rounded-lg font-bold cursor-pointer`}
       >
         All Categories
         <span className="w-[26px] font-normal text-white h-[26px] flex justify-center items-center rounded-full bg-[#F49B31]">
-          8
+          {categories.length}
         </span>
       </button>
 
@@ -87,13 +86,12 @@ const Categories = () => {
           <button
             key={category.id}
             onClick={() => handleCategoryClick(category)}
-            className={`flex justify-start gap-[13px] cursor-pointer font-semibold  ${
-              isActive
+            className={`flex justify-start gap-[13px] cursor-pointer font-semibold  ${isActive
                 ? "bg-transparent shadow-none"
                 : selectedCategory.id === category.id
-                ? "bg-[#FAE9D4] opacity-100 shadow"
-                : " opacity-64"
-            }  px-[15px] w-full rounded-lg py-[13px] items-center opacity-64 text-[15px] transition ease-in duration-200`}
+                  ? "bg-[#FAE9D4] opacity-100 shadow"
+                  : " opacity-64"
+              }  px-[15px] w-full rounded-lg py-[13px] items-center opacity-64 text-[15px] transition ease-in duration-200`}
           >
             <span>
               <img src={category.labelIcon} />
