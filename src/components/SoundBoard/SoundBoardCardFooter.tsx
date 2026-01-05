@@ -11,6 +11,7 @@ interface Props {
   proposeActive: boolean;
   surgeCount?: number;
   commentCount?: number;
+  onRefresh?: () => void;
 }
 
 function SoundBoardCardFooter({
@@ -21,6 +22,7 @@ function SoundBoardCardFooter({
   proposeActive,
   surgeCount = 0,
   commentCount = 0,
+  onRefresh,
 }: Props) {
   function handleClick(id: string) {
     onPropose(id);
@@ -52,6 +54,12 @@ function SoundBoardCardFooter({
 
       // Update based on server response
       setSurged(response.surged);
+      setCurrentSurgeCount(response.surgeCount);
+
+      // Call refresh callback if provided to update parent state
+      if (onRefresh) {
+        onRefresh();
+      }
 
     } catch (error: any) {
       console.error("Error toggling surge:", error);
@@ -80,8 +88,8 @@ function SoundBoardCardFooter({
           onClick={handleSurgeToggle}
           disabled={isToggling}
           className={`transition-colors cursor-pointer duration-1200 ease-in-out ${surged
-              ? "bg-[#F49B31] hover:bg-[#d88429] transition-colors duration-100 ease-out text-white font-bold"
-              : "bg-[#FEF5EA] transition-colors duration-100 ease-in-out hover:bg-[#f2e8d9]"
+            ? "bg-[#F49B31] hover:bg-[#d88429] transition-colors duration-100 ease-out text-white font-bold"
+            : "bg-[#FEF5EA] transition-colors duration-100 ease-in-out hover:bg-[#f2e8d9]"
             } py-1.5 lg:py-2 lg:px-5 flex items-center gap-2.5 border  rounded-[20px] px-5 disabled:opacity-50 disabled:cursor-not-allowed`}
         >
           {isToggling ? "..." : "SURGE"}
@@ -96,8 +104,8 @@ function SoundBoardCardFooter({
           onClick={() => handleClick(id)}
           disabled={proposeActive}
           className={`${proposeActive
-              ? "bg-[#F49B31] hover:bg-[#d88429] transition-colors duration-100 ease-out text-white font-bold"
-              : "bg-[#FEF5EA] transition-colors duration-100 ease-in-out hover:bg-[#f2e8d9]"
+            ? "bg-[#F49B31] hover:bg-[#d88429] transition-colors duration-100 ease-out text-white font-bold"
+            : "bg-[#FEF5EA] transition-colors duration-100 ease-in-out hover:bg-[#f2e8d9]"
             } cursor-pointer text-[10px] lg:text-[13px] py-1.5 px-5 lg:py-2 flex items-center gap-2.5 border transition-colors duration-1200 ease-in-out  rounded-[20px] lg:px-3.5`}
         >
           {proposeActive ? "PROPOSED" : "PROPOSE A WAVE"}

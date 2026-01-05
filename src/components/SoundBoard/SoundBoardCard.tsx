@@ -14,6 +14,8 @@ interface Props {
   proposeActive: boolean;
   surgeCount?: number;
   commentCount?: number;
+  authorName?: string;
+  onRefresh?: () => void;
 }
 
 const SoundBoardCard = ({
@@ -28,12 +30,14 @@ const SoundBoardCard = ({
   proposeActive,
   surgeCount = 0,
   commentCount = 0,
+  authorName,
+  onRefresh,
 }: Props) => {
   return (
     <>
       <div className="mt-0  m-[15px] md:m-0 px-[25px] py-2.5 bg-[#FEFEFE]  rounded-[10px] ">
         <div className="block xl:hidden">
-          <SoundBoardCardHeader timeStamp={timeStamp} />
+          <SoundBoardCardHeader timeStamp={timeStamp} authorName={authorName} />
         </div>
         <SoundBoardCardBody
           category={category}
@@ -49,6 +53,7 @@ const SoundBoardCard = ({
           hashtag={hashtag}
           surgeCount={surgeCount}
           commentCount={commentCount}
+          onRefresh={onRefresh}
         />
       </div>
     </>

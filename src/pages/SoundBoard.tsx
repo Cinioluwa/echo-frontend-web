@@ -192,6 +192,9 @@ const SoundBoard = () => {
               {/* DISPLAY API PINGS */}
               {pings.map((ping) => {
                 const categoryName = ping.category?.name || "General";
+                const authorName = ping.author
+                  ? `${ping.author.firstName} ${ping.author.lastName}`
+                  : undefined;
                 return (
                   <div className="mb-[22px]" key={ping.id}>
                     <SoundBoardCard
@@ -211,6 +214,8 @@ const SoundBoard = () => {
                       proposeActive={proposeActive}
                       surgeCount={ping.surgeCount}
                       commentCount={ping._count?.comments || 0}
+                      authorName={authorName}
+                      onRefresh={handlePingCreated}
                     />
                   </div>
                 );
