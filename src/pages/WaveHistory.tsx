@@ -3,10 +3,17 @@ import WaveCard from "../components/WaveHistory/WaveCard";
 import SideBar, { type Pages } from "../components/SideBar";
 import PageTitleBar from "../components/PageTitleBar";
 // import { FaPlus } from "react-icons/fa6";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { publicService } from "../api/services";
+import type { Wave } from "../api/types";
 
 const WaveHistory = () => {
-
+  // API Integration States
+  const [waves, setWaves] = useState<Wave[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [hasNextPage, setHasNextPage] = useState(false);
 
   // SETTING ACTIVE PAGE BUTTON
   const [activePage, setActivePage] = useState({
@@ -14,6 +21,70 @@ const WaveHistory = () => {
     historyActive: true,
     soundBoardActive: false,
   } as Pages);
+
+  // Fetch waves from API
+  useEffect(() => {
+    fetchWaves();
+  }, [currentPage]);
+
+  const fetchWaves = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      const response = await publicService.getStream({
+        page: currentPage,
+        limit: 20,
+        sort: "new",
+        days: "all"
+      });
+
+      setWaves(response.data);
+      setHasNextPage(response.pagination.hasNextPage || false);
+    } catch (err: any) {
+      console.error("Error fetching wave history:", err);
+      setError(err.response?.data?.error || "Failed to load wave history. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Group waves by date
+  const groupWavesByDate = (waves: Wave[]) => {
+    const groups: { [key: string]: Wave[] } = {};
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    waves.forEach((wave) => {
+      const waveDate = new Date(wave.createdAt);
+      waveDate.setHours(0, 0, 0, 0);
+
+      const diffTime = today.getTime() - waveDate.getTime();
+      const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+
+      let dateLabel: string;
+      if (diffDays === 0) {
+        dateLabel = "Today";
+      } else if (diffDays === 1) {
+        dateLabel = "Yesterday";
+      } else {
+        dateLabel = waveDate.toLocaleDateString('en-US', {
+          day: 'numeric',
+          month: 'long',
+          year: 'numeric'
+        });
+      }
+
+      if (!groups[dateLabel]) {
+        groups[dateLabel] = [];
+      }
+      groups[dateLabel].push(wave);
+    });
+
+    return groups;
+  };
+
+  const groupedWaves = groupWavesByDate(waves);
 
   return (
     <div className=" h-full">
@@ -29,54 +100,69 @@ const WaveHistory = () => {
       </aside>
 
       <main className=" mr-2.5 ml-2.5 mt-5 md:mr-[46px] h-[calc(100vh-155px)]   md:ml-[350px] md:mt-[155px]">
-        <div className=" h-full overflow-auto [scrollbar-width:none]">
-          <div className="mb-[22px] flex md:block flex-col items-center">
-            <h2 className=" md:mb-[22px] text-[25px] font-semibold">Yesterday</h2>
-            <WaveCard
-              waveText="Many students struggle with poor Wi-Fi connectivity in certain areas of the campus, which hinders their ability to access online resources, complete assignments, and participate in online discussions. By improving Wi-Fi coverage and speed throughout the campus, we can ensure that all students have reliable internet access, fostering a more productive and connected learning environment.
-            "
-              waveTitle="Increase Wi-Fi Coverage and Speed on Campus"
-            />
+        {/* Loading State */}
+        {loading && (
+          <div className="h-full flex items-center justify-center">
+            <div className="text-center">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#F49B31] mx-auto"></div>
+              <p className="mt-4 text-gray-600">Loading wave history...</p>
+            </div>
           </div>
-          <div className="mb-[22px] flex md:block flex-col items-center">
-            <h2 className=" md:mb-[22px] text-[25px] font-semibold">
-              25th May 2025
-            </h2>
-            <WaveCard
-              waveText="The current library facilities are outdated and insufficient to meet the needs of the growing student population. Many students find it challenging to locate necessary resources, and the study areas are often overcrowded. Upgrading the library facilities — including expanding the collection of books and digital resources, increasing seating capacity, and enhancing the study environment — will greatly benefit students and support their academic success.
-            "
-              waveTitle="Upgrade Library Facilities and Resources
-            "
-            />
+        )}
+
+        {/* Error State */}
+        {error && !loading && (
+          <div className="h-full flex items-center justify-center">
+            <div className="text-center">
+              <p className="text-red-500 mb-4">{error}</p>
+              <button
+                onClick={fetchWaves}
+                className="bg-[#F49B31] hover:bg-[#d88429] text-white px-6 py-2 rounded-lg transition-colors"
+              >
+                Try Again
+              </button>
+            </div>
           </div>
-          <div className="mb-[22px] flex md:block flex-col items-center">
-            <h2 className=" md:mb-[22px] text-[25px] font-semibold">
-              25th May 2025
-            </h2>
-            <WaveCard
-              waveText="Many students struggle with poor Wi-Fi connectivity in certain areas of the campus, which hinders their ability to access online resources, complete assignments, and participate in online discussions. By improving Wi-Fi coverage and speed throughout the campus, we can ensure that all students have reliable internet access, fostering a more productive and connected learning environment."
-              waveTitle="Increase Wi-Fi Coverage and Speed on Campus"
-            />
+        )}
+
+        {/* Waves List */}
+        {!loading && !error && (
+          <div className=" h-full overflow-auto [scrollbar-width:none]">
+            {Object.entries(groupedWaves).map(([dateLabel, dateWaves]) => (
+              <div key={dateLabel} className="mb-[22px] flex md:block flex-col items-center">
+                <h2 className="md:mb-[22px] text-[25px] font-semibold">{dateLabel}</h2>
+                {dateWaves.map((wave) => (
+                  <WaveCard
+                    key={wave.id}
+                    wave={wave}
+                  />
+                ))}
+              </div>
+            ))}
+
+            {/* Empty State */}
+            {waves.length === 0 && (
+              <div className="flex items-center justify-center h-full">
+                <div className="text-center">
+                  <p className="text-gray-500 text-lg mb-2">No waves yet</p>
+                  <p className="text-gray-400 text-sm">Check back later for wave history!</p>
+                </div>
+              </div>
+            )}
+
+            {/* Load More Button */}
+            {hasNextPage && (
+              <div className="flex justify-center py-6">
+                <button
+                  onClick={() => setCurrentPage(prev => prev + 1)}
+                  className="bg-[#F49B31] hover:bg-[#d88429] text-white px-6 py-3 rounded-lg transition-colors"
+                >
+                  Load More
+                </button>
+              </div>
+            )}
           </div>
-          <div className="mb-[22px] flex  md:block flex-col items-center">
-            <h2 className="md:mb-[22px]  text-[25px] font-semibold">
-              25th May 2025
-            </h2>
-            <WaveCard
-              waveText="Many students struggle with poor Wi-Fi connectivity in certain areas of the campus, which hinders their ability to access online resources, complete assignments, and participate in online discussions. By improving Wi-Fi coverage and speed throughout the campus, we can ensure that all students have reliable internet access, fostering a more productive and connected learning environment."
-              waveTitle="Increase Wi-Fi Coverage and Speed on Campus"
-            />
-          </div>
-          <div className="mb-[22px] flex md:block flex-col items-center">
-            <h2 className="md:mb-[22px] text-[25px] font-semibold">
-              25th May 2025
-            </h2>
-            <WaveCard
-              waveText="The current library facilities are outdated and insufficient to meet the needs of the growing student population. Many students find it challenging to locate necessary resources, and the study areas are often overcrowded. Upgrading the library facilities — including expanding the collection of books and digital resources, increasing seating capacity, and enhancing the study environment — will greatly benefit students and support their academic success."
-              waveTitle="Upgrade Library Facilities and Resources"
-            />
-          </div>
-        </div>
+        )}
       </main>
     </div>
   );

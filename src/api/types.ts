@@ -77,19 +77,26 @@ export interface Ping {
 
 export interface Wave {
   id: number;
+  title?: string;
+  description?: string;
   solution: string;
   pingId: number;
   surgeCount: number;
   viewCount: number;
+  rank?: number; // Top ranking (1-3 for top waves)
   flaggedForReview?: boolean;
   organizationId: number;
+  status?: "active" | "approved" | "rejected" | "implemented";
   createdAt: string;
+  updatedAt?: string;
   ping?: {
     id: number;
     title: string;
     author?: Author;
     createdAt?: string;
   };
+  author?: Author;
+  category?: Category;
   comments?: Comment[];
   _count?: {
     comments: number;
