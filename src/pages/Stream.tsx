@@ -157,23 +157,39 @@ const Stream = () => {
         {!loading && !error && (
           <div className="flex-1 [scrollbar-width:none] h-full overflow-auto">
             {/* Display API fetched waves */}
-            {waves.map((wave) => (
-              <div className="mb-[22px]" key={wave.id}>
-                <StreamCard
-                  waveId={wave.id.toString()}
-                  waveText={wave.solution}
-                  waveTitle={wave.ping?.title || "Wave Solution"}
-                  image={categoryImages["General"]}
-                  category="General"
-                  createdAt={formatDate(wave.createdAt)}
-                  pingTimeStamp=""
-                  pingTitle={wave.ping?.title || ""}
-                  surgeCount={wave._count?.surges || wave.surgeCount}
-                  commentCount={wave._count?.comments || 0}
-                  onRefresh={fetchWaves}
-                />
-              </div>
-            ))}
+            {waves.map((wave) => {
+              // Get author name - handle both object and string types
+              const authorName = typeof wave.author === 'object' && wave.author
+                ? `${wave.author.firstName} ${wave.author.lastName}`
+                : wave.ping?.author
+                  ? `${wave.ping.author.firstName} ${wave.ping.author.lastName}`
+                  : undefined;
+
+              const authorId = typeof wave.author === 'object' && wave.author
+                ? wave.author.id
+                : undefined;
+
+              return (
+                <div className="mb-[22px]" key={wave.id}>
+                  <StreamCard
+                    waveId={wave.id.toString()}
+                    waveText={wave.solution}
+                    waveTitle={wave.ping?.title || "Wave Solution"}
+                    image={categoryImages["General"]}
+                    category="General"
+                    createdAt={formatDate(wave.createdAt)}
+                    pingTimeStamp=""
+                    pingTitle={wave.ping?.title || ""}
+                    surgeCount={wave._count?.surges || wave.surgeCount}
+                    commentCount={wave._count?.comments || 0}
+                    onRefresh={fetchWaves}
+                    authorName={authorName}
+                    authorId={authorId}
+                    rank={wave.rank}
+                  />
+                </div>
+              );
+            })}
 
             {/* Display manually created waves from form */}
             {waveFormDetails.map((details) => (

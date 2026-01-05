@@ -15,6 +15,9 @@ interface Props {
   surgeCount?: number;
   commentCount?: number;
   onRefresh?: () => void;
+  authorName?: string;
+  authorId?: number;
+  rank?: number;
 }
 
 const StreamCard = ({
@@ -28,13 +31,20 @@ const StreamCard = ({
   waveId,
   surgeCount = 0,
   commentCount = 0,
-  onRefresh
+  onRefresh,
+  authorName,
+  authorId,
+  rank
 }: Props) => {
   return (
     <>
       <div className="m-[15px] md:m-0 px-[25px] py-2.5 bg-[#FEFEFE]  rounded-[10px] ">
         <div>
-          <StreamCardHeader createdAt={createdAt} />
+          <StreamCardHeader
+            createdAt={createdAt}
+            authorName={authorName}
+            rank={rank}
+          />
         </div>
         <div className="my-[15px]">
           <ProposedPingCard
