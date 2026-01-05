@@ -108,20 +108,33 @@ export interface UpdatePingRequest {
 // ==================== Wave Types ====================
 
 export interface Wave {
-  id: string;
-  title: string;
-  description: string;
+  id: number; // Backend returns number
+  title?: string;
+  description?: string;
   solution: string;
-  category: Category;
-  ping?: Ping | string; // Referenced ping (if wave was proposed from a ping)
-  author: User | string; // Can be populated or just ID
+  category?: Category;
+  ping?: {
+    id: number;
+    title: string;
+    author?: {
+      id: number;
+      firstName: string;
+      lastName: string;
+    };
+    createdAt?: string;
+  };
+  author?: User | string; // Can be populated or just ID
   surgeCount: number;
-  commentCount: number;
+  commentCount?: number;
   viewCount: number;
   rank?: number; // Top ranking (1-3 for top waves)
-  status: "active" | "approved" | "rejected" | "implemented";
+  status?: "active" | "approved" | "rejected" | "implemented";
   createdAt: string;
-  updatedAt: string;
+  updatedAt?: string;
+  _count?: {
+    surges: number;
+    comments: number;
+  };
 }
 
 export interface CreateWaveRequest {

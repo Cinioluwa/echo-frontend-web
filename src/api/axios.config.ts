@@ -37,7 +37,7 @@ api.interceptors.response.use(
       const hadToken = !!localStorage.getItem("authToken");
       if (hadToken) {
         localStorage.removeItem("authToken");
-        window.location.href = "/login";
+        window.location.href = "/";
       }
     }
 

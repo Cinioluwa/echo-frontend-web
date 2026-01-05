@@ -3,6 +3,8 @@ import { FaLink } from "react-icons/fa6";
 import CategorySelector from "./CategorySelector";
 import PostSuccessModal from "./PostSuccessModal";
 import { v4 as uuidv4 } from "uuid";
+import { waveService } from "../api/services";
+import type { Category } from "../api/types/index";
 
 interface Props {
   children: ReactNode;
@@ -10,6 +12,7 @@ interface Props {
   setWaveForm: () => void;
   formSegment: string;
   setFormSegment: () => void;
+  onSuccess?: () => void;
 }
 
 export interface WaveFormDetails {
@@ -28,6 +31,7 @@ const WaveFormModal = ({
   setWaveForm,
   setFormSegment,
   formSegment,
+  onSuccess,
 }: Props) => {
   const [waveFormData, setWaveFormData] = useState({
     cat: "",
@@ -39,49 +43,82 @@ const WaveFormModal = ({
   } as WaveFormDetails);
 
   const [postSuccessModal, setPostSuccessModal] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  function submitForm() {
+  async function submitForm() {
     if (waveFormData.cat === "") return alert("Select a category!");
 
-    // OBJECT TO BE SENT TO SERVER:
-    const newWaveFormDetails: WaveFormDetails = {
-      cat: waveFormData.cat.trim(),
-      waveTitle: waveFormData.waveTitle.trim(),
-      waveDesc: waveFormData.waveDesc.trim(),
-      formSegment: waveFormData.formSegment,
-      solution: waveFormData.solution.trim(),
-      id: uuidv4(),
-      createdAt: new Date()
-        .toLocaleString("en-US", {
-          month: "short",
-          day: "2-digit",
-          hour: "2-digit",
-          minute: "2-digit",
-          hour12: true,
-        })
-        .toLowerCase(),
-    };
+    setIsSubmitting(true);
+    setError(null);
 
-    waveFormData.formSegment === "wave"
-      ? setWaveFormDetails((prev) => [newWaveFormDetails, ...prev])
-      : "";
+    try {
+      // Note: The backend currently requires waves to be created for specific pings
+      // via POST /api/pings/:pingId/waves, not as standalone entities.
+      // This is a temporary workaround - waves should be proposed from ping cards.
+      setError("Waves must be proposed from existing pings. Please go to the Soundboard and propose a wave for a specific ping.");
+      setIsSubmitting(false);
+      return;
 
-    // SET SUCCESS MODAL ACTIVE
-    setPostSuccessModal(!postSuccessModal);
+      // TODO: Once backend supports standalone waves, uncomment this:
+      // const createdWave = await waveService.createWave({
+      //   title: waveFormData.waveTitle.trim(),
+      //   description: waveFormData.waveDesc.trim(),
+      //   solution: waveFormData.solution.trim(),
+      //   category: waveFormData.cat as Category,
+      // });
+      // console.log("Wave created successfully:", createdWave);
 
-    // CONFIRM THE waveFormDetails
-    console.log("waveFormDetails: ", newWaveFormDetails);
+      // TODO: Once backend supports standalone waves, uncomment below:
 
-    // RESET WAVEFORM
-    setWaveFormData({
-      cat: "",
-      waveDesc: "",
-      id: "",
-      waveTitle: "",
-      solution: "",
-      formSegment: "wave",
-      createdAt: "",
-    });
+      // OBJECT TO BE DISPLAYED LOCALLY:
+      // const newWaveFormDetails: WaveFormDetails = {
+      //   cat: waveFormData.cat.trim(),
+      //   waveTitle: waveFormData.waveTitle.trim(),
+      //   waveDesc: waveFormData.waveDesc.trim(),
+      //   formSegment: waveFormData.formSegment,
+      //   solution: waveFormData.solution.trim(),
+      //   id: createdWave.id.toString() || uuidv4(),
+      //   createdAt: new Date()
+      //     .toLocaleString("en-US", {
+      //       month: "short",
+      //       day: "2-digit",
+      //       hour: "2-digit",
+      //       minute: "2-digit",
+      //       hour12: true,
+      //     })
+      //     .toLowerCase(),
+      // };
+
+      // // Add to local state if it's a wave
+      // if (waveFormData.formSegment === "wave") {
+      //   setWaveFormDetails((prev) => [newWaveFormDetails, ...prev]);
+      // }
+
+      // // Call onSuccess callback to refresh parent data
+      // if (onSuccess) {
+      //   onSuccess();
+      // }
+
+      // // SET SUCCESS MODAL ACTIVE
+      // setPostSuccessModal(!postSuccessModal);
+
+      // // RESET WAVEFORM
+      // setWaveFormData({
+      //   cat: "",
+      //   waveDesc: "",
+      //   id: "",
+      //   waveTitle: "",
+      //   solution: "",
+      //   formSegment: "wave",
+      //   createdAt: "",
+      // });
+    } catch (err: any) {
+      console.error("Error creating wave:", err);
+      setError(err.response?.data?.error || "Failed to create wave. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   if (postSuccessModal)
@@ -104,20 +141,18 @@ const WaveFormModal = ({
         <div className="flex rounded-[20px] text-[16px] overflow-hidden border-2 border-black">
           <button
             onClick={setFormSegment}
-            className={`inline-block rounded-tl-[15px] border-black rounded-bl-[15px] border-r-2 ${
-              formSegment === "ping"
-                ? "bg-[#F49B31] text-white"
-                : "bg-[#FEF5EA]"
-            }  py-6 px-6 cursor-pointer sm:py-4 sm:px-8`}
+            className={`inline-block rounded-tl-[15px] border-black rounded-bl-[15px] border-r-2 ${formSegment === "ping"
+              ? "bg-[#F49B31] text-white"
+              : "bg-[#FEF5EA]"
+              }  py-6 px-6 cursor-pointer sm:py-4 sm:px-8`}
           >
             Ping
           </button>
           <button
-            className={`inline-block ${
-              formSegment === "wave"
-                ? "bg-[#F49B31] text-white"
-                : "bg-[#FEF5EA]"
-            } rounded-tr-[15px] cursor-pointer text-black rounded-br-[15px] py-6 px-6  sm:py-4 sm:px-8`}
+            className={`inline-block ${formSegment === "wave"
+              ? "bg-[#F49B31] text-white"
+              : "bg-[#FEF5EA]"
+              } rounded-tr-[15px] cursor-pointer text-black rounded-br-[15px] py-6 px-6  sm:py-4 sm:px-8`}
           >
             Wave
           </button>
@@ -130,6 +165,13 @@ const WaveFormModal = ({
           }}
           className="w-full text-[14px] justify-center items-center flex flex-col gap-5"
         >
+          {/* Error Message */}
+          {error && (
+            <div className="w-full p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg text-sm">
+              {error}
+            </div>
+          )}
+
           {/* ModalForm INPUT GROUP: */}
           <fieldset className=" w-full  text-[14px] flex flex-col gap-5">
             <div className="flex p-2.5 w-full py-3 border border-black rounded-[10px]">
@@ -198,9 +240,11 @@ const WaveFormModal = ({
             </div>
             <button
               type="submit"
-              className="px-[30px] hover:bg-[#d88429] transition-colors duration-300 ease-in-out py-[5px] cursor-pointer text-white rounded-xl bg-[#F49B31]"
+              disabled={isSubmitting}
+              className={`px-[30px] hover:bg-[#d88429] transition-colors duration-300 ease-in-out py-[5px] cursor-pointer text-white rounded-xl bg-[#F49B31] ${isSubmitting ? "opacity-50 cursor-not-allowed" : ""
+                }`}
             >
-              Post
+              {isSubmitting ? "Posting..." : "Post"}
             </button>
           </div>
         </form>

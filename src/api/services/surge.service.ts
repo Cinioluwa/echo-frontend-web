@@ -53,28 +53,19 @@ const surgeService = {
   },
 
   /**
-   * Toggle surge on a ping or wave (add if not surged, remove if already surged)
+   * Toggle surge on a ping or wave (matches backend POST /api/waves/:waveId/surge)
    * @param targetType Type of target (ping or wave)
    * @param targetId Target ID
-   * @returns True if surge was added, false if removed
+   * @returns Response with surged status
    */
   toggleSurge: async (
     targetType: "ping" | "wave",
     targetId: string
-  ): Promise<boolean> => {
-    try {
-      const hasSurged = await surgeService.checkIfSurged(targetType, targetId);
-
-      if (hasSurged) {
-        await surgeService.removeSurge(targetType, targetId);
-        return false;
-      } else {
-        await surgeService.addSurge({ targetType, targetId });
-        return true;
-      }
-    } catch (error) {
-      throw error;
-    }
+  ): Promise<{ message: string; surged: boolean }> => {
+    const response = await api.post<{ message: string; surged: boolean }>(
+      `/${targetType}s/${targetId}/surge`
+    );
+    return response.data;
   },
 
   /**

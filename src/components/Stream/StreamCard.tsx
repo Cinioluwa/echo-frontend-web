@@ -10,7 +10,11 @@ interface Props {
   category: string;
   pingTimeStamp: string;
   createdAt: string;
-  pingTitle: string
+  pingTitle: string;
+  waveId?: string;
+  surgeCount?: number;
+  commentCount?: number;
+  onRefresh?: () => void;
 }
 
 const StreamCard = ({
@@ -20,7 +24,11 @@ const StreamCard = ({
   image,
   createdAt,
   pingTimeStamp,
-  pingTitle
+  pingTitle,
+  waveId,
+  surgeCount = 0,
+  commentCount = 0,
+  onRefresh
 }: Props) => {
   return (
     <>
@@ -40,7 +48,12 @@ const StreamCard = ({
           waveTitle={waveTitle}
           waveText={waveText}
         />
-        <StreamCardFooter />
+        <StreamCardFooter
+          waveId={waveId}
+          surgeCount={surgeCount}
+          commentCount={commentCount}
+          onRefresh={onRefresh}
+        />
       </div>
     </>
   );

@@ -7,7 +7,7 @@ import PostSuccessModal from "./PostSuccessModal";
 
 interface Props {
   children: ReactNode;
-  setPingFormDetails: React.Dispatch<React.SetStateAction<PingFormDetails[]>>;
+  setPingFormDetails?: React.Dispatch<React.SetStateAction<PingFormDetails[]>>;
   setPingForm: () => void;
   formSegment: string;
   setFormSegment: () => void;
@@ -106,21 +106,19 @@ const PingFormModal = ({
         </h2>
         <div className="flex rounded-[20px] text-[16px] overflow-hidden border-2 border-black">
           <button
-            className={`inline-block rounded-tl-[15px] border-black rounded-bl-[15px] border-r-2 ${
-              formSegment === "ping"
+            className={`inline-block rounded-tl-[15px] border-black rounded-bl-[15px] border-r-2 ${formSegment === "ping"
                 ? "bg-[#F49B31] text-white"
                 : "bg-[#FEF5EA]"
-            }  py-6 px-6 cursor-pointer sm:py-4 sm:px-8`}
+              }  py-6 px-6 cursor-pointer sm:py-4 sm:px-8`}
           >
             Ping
           </button>
           <button
             onClick={() => setFormSegment()}
-            className={`inline-block ${
-              formSegment === "wave"
+            className={`inline-block ${formSegment === "wave"
                 ? "bg-[#F49B31] text-white"
                 : "bg-[#FEF5EA]"
-            } rounded-tr-[15px] cursor-pointer text-black rounded-br-[15px] py-6 px-6  sm:py-4 sm:px-8`}
+              } rounded-tr-[15px] cursor-pointer text-black rounded-br-[15px] py-6 px-6  sm:py-4 sm:px-8`}
           >
             Wave
           </button>

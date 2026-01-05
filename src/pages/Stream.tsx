@@ -1,21 +1,27 @@
 import SideBar, { type Pages } from "../components/SideBar";
 import PageTitleBar from "../components/PageTitleBar";
 import { FaPlus } from "react-icons/fa6";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { categoryImages } from "../components/CategoryImages";
 import NavBar from "../components/NavBar";
 import WaveFormModal, {
   type WaveFormDetails,
 } from "../components/WaveFormModal";
-import PingFormModal, {
-  type PingFormDetails,
-} from "../components/PingFormModal";
+import PingFormModal from "../components/PingFormModal";
 import StreamCard from "../components/Stream/StreamCard";
+import { publicService } from "../api/services";
+import type { Wave } from "../api/types";
 
 const Stream = () => {
   const [waveForm, setWaveForm] = useState(false);
   const [formSegment, setFormSegment] = useState("wave");
-  const [pingFormDetails, setPingFormDetails] = useState<PingFormDetails[]>([]);
+
+  // API Integration States
+  const [waves, setWaves] = useState<Wave[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [hasNextPage, setHasNextPage] = useState(false);
 
   // SETTING ACTIVE PAGE BUTTON
   const [activePage, setActivePage] = useState<Pages>({
@@ -24,14 +30,46 @@ const Stream = () => {
     soundBoardActive: false,
   });
 
-  // FETCH (proposeWaveForm Details - Contains the PingDetails(PingTitle and pingTimeStamp)) FROM SERVER - MAP INTO STREAMCARD:
-
-  // const [proposedWaveDetails, setProposedWaveDetails] = useState<
-  //   proposedWaveDetails[]
-  // >([]);
-
-  // FETCHED (waveFormDetails) FROM SERVER (MAPPED INTO STREAMCARD, Simulated with WaveFormModal module.):   --- ** Meant to be the ProposedWaveDetails, since only proposedWaves would be displayed (undecided by osas).**
+  // FETCHED (waveFormDetails) FROM SERVER (MAPPED INTO STREAMCARD):
   const [waveFormDetails, setWaveFormDetails] = useState<WaveFormDetails[]>([]);
+
+  // Fetch waves from API
+  useEffect(() => {
+    fetchWaves();
+  }, [currentPage]);
+
+  const fetchWaves = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      const response = await publicService.getStream({
+        page: currentPage,
+        limit: 20,
+        sort: "trending",
+        days: 7
+      });
+
+      setWaves(response.data);
+      setHasNextPage(response.pagination.hasNextPage || false);
+    } catch (err: any) {
+      console.error("Error fetching waves:", err);
+      setError(err.response?.data?.error || "Failed to load waves. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Format date for display
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  };
 
   return (
     <div className="h-full">
@@ -61,99 +99,91 @@ const Stream = () => {
         <SideBar pages={activePage} setActivePage={setActivePage} />
       </aside>
       <main className="mr-2.5 ml-2.5 mt-5 flex flex-col md:mr-[46px] h-[calc(100vh-155px)]  md:ml-[350px]   md:mt-[155px]">
-        {/* MAP WAVEFORM (proposedWaveForm) DETAILS INTO SOUNDBOARD CARDS */}
-        <div className="flex-1 [scrollbar-width:none] h-full overflow-auto">
-          {waveFormDetails.map((details) => (
-            <div className="mb-[22px] " key={details.id}>
-              <StreamCard
-                waveText={details.solution}
-                waveTitle={details.waveTitle}
-                image={categoryImages[details.cat]}
-                category={details.cat}
-                createdAt={details.createdAt}
-                pingTimeStamp="Oct 8, 11:00 am"
-                pingTitle="The school WiFi is so slow that even sending a simple message feels like downloading the entire internet.
-"
-              />
+        {/* Loading State */}
+        {loading && (
+          <div className="flex-1 flex items-center justify-center">
+            <div className="text-center">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#F49B31] mx-auto"></div>
+              <p className="mt-4 text-gray-600">Loading waves...</p>
             </div>
-          ))}
+          </div>
+        )}
 
-          {/* HARD CODED */}
-          <div className="mb-[22px]">
-            <StreamCard
-              waveText="While the current policy may have been introduced with conservative intentions, it is unintentionally creating more challenges than benefits for students whose daily routines rely on steady electricity. During the day, many students remain in the halls due to having few or no classes, and without reliable power they are left with two poor options: enduring hot, unconducive study environments or moving to overcrowded spaces with weak internet connectivity. A practical solution would be to reduce the timeframe of the policy. Shortening the duration would ease these difficulties, providing students with a more comfortable and productive environment. This adjustment would not only improve daily living conditions but also help safeguard academic performance, ensuring the policy supports rather than hinders student success.
-            "
-              waveTitle="Reduce the power-off period to 10 a.m. - 3 p.m."
-              image={categoryImages.General}
-              category="General"
-              createdAt="feb 29, 09:30 pm"
-              pingTimeStamp="Oct 8, 11:00 am"
-              pingTitle="While the current policy may have been introduced with conservative intentions, it is unintentionally creating more challenges than benefits for students whose daily routines rely on steady electricity. During the day, many students remain in the halls due to having few or no classes, and without reliable power they are left with two poor options: enduring hot, unconducive study environments or moving to overcrowded spaces with weak internet connectivity
-"
-            />
+        {/* Error State */}
+        {error && !loading && (
+          <div className="flex-1 flex items-center justify-center">
+            <div className="text-center">
+              <p className="text-red-500 mb-4">{error}</p>
+              <button
+                onClick={fetchWaves}
+                className="bg-[#F49B31] hover:bg-[#d88429] text-white px-6 py-2 rounded-lg transition-colors"
+              >
+                Try Again
+              </button>
+            </div>
           </div>
+        )}
 
-          <div className="mb-[22px]">
-            <StreamCard
-              waveText="Many students struggle with poor Wi-Fi connectivity in certain areas of the campus, which hinders their ability to access online resources, complete assignments, and participate in online discussions. By improving Wi-Fi coverage and speed throughout the campus, we can ensure that all students have reliable internet access, fostering a more productive and connected learning environment."
-              waveTitle="Increase Wi-Fi Coverage and Speed on Campus"
-              category="General"
-              image={categoryImages.General}
-              createdAt="feb 29, 09:30 pm"
-              pingTimeStamp="Oct 8, 11:00 am"
-              pingTitle="The school WiFi is so slow that even sending a simple message feels like downloading the entire internet.
-"
-            />
+        {/* Waves List */}
+        {!loading && !error && (
+          <div className="flex-1 [scrollbar-width:none] h-full overflow-auto">
+            {/* Display API fetched waves */}
+            {waves.map((wave) => (
+              <div className="mb-[22px]" key={wave.id}>
+                <StreamCard
+                  waveId={wave.id.toString()}
+                  waveText={wave.solution}
+                  waveTitle={wave.ping?.title || "Wave Solution"}
+                  image={categoryImages["General"]}
+                  category="General"
+                  createdAt={formatDate(wave.createdAt)}
+                  pingTimeStamp=""
+                  pingTitle={wave.ping?.title || ""}
+                  surgeCount={wave._count?.surges || wave.surgeCount}
+                  commentCount={wave._count?.comments || 0}
+                  onRefresh={fetchWaves}
+                />
+              </div>
+            ))}
+
+            {/* Display manually created waves from form */}
+            {waveFormDetails.map((details) => (
+              <div className="mb-[22px]" key={details.id}>
+                <StreamCard
+                  waveText={details.solution}
+                  waveTitle={details.waveTitle}
+                  image={categoryImages[details.cat]}
+                  category={details.cat}
+                  createdAt={details.createdAt}
+                  pingTimeStamp=""
+                  pingTitle=""
+                />
+              </div>
+            ))}
+
+            {/* Empty State */}
+            {waves.length === 0 && waveFormDetails.length === 0 && (
+              <div className="flex items-center justify-center h-full">
+                <div className="text-center">
+                  <p className="text-gray-500 text-lg mb-2">No waves yet</p>
+                  <p className="text-gray-400 text-sm">Be the first to create a wave!</p>
+                </div>
+              </div>
+            )}
+
+            {/* Load More Button */}
+            {hasNextPage && (
+              <div className="flex justify-center py-6">
+                <button
+                  onClick={() => setCurrentPage(prev => prev + 1)}
+                  className="bg-[#F49B31] hover:bg-[#d88429] text-white px-6 py-3 rounded-lg transition-colors"
+                >
+                  Load More
+                </button>
+              </div>
+            )}
           </div>
-          <div className="mb-[22px]">
-            <StreamCard
-              waveText="Many students struggle with poor Wi-Fi connectivity in certain areas of the campus, which hinders their ability to access online resources, complete assignments, and participate in online discussions. By improving Wi-Fi coverage and speed throughout the campus, we can ensure that all students have reliable internet access, fostering a more productive and connected learning environment."
-              waveTitle="Increase Wi-Fi Coverage and Speed on Campus"
-              category="General"
-              createdAt="feb 29, 09:30 pm"
-              pingTimeStamp="Oct 8, 11:00 am"
-              pingTitle="The school WiFi is so slow that even sending a simple message feels like downloading the entire internet.
-"
-              image={categoryImages.General}
-            />
-          </div>
-          <div className="mb-[22px]">
-            <StreamCard
-              waveText="Many students struggle with poor Wi-Fi connectivity in certain areas of the campus, which hinders their ability to access online resources, complete assignments, and participate in online discussions. By improving Wi-Fi coverage and speed throughout the campus, we can ensure that all students have reliable internet access, fostering a more productive and connected learning environment."
-              waveTitle="Increase Wi-Fi Coverage and Speed on Campus"
-              category="General"
-              createdAt="feb 29, 09:30 pm"
-              pingTimeStamp=""
-              pingTitle="The school WiFi is so slow that even sending a simple message feels like downloading the entire internet.
-"
-              image={categoryImages.General}
-            />
-          </div>
-          <div className="mb-[22px]">
-            <StreamCard
-              waveText="Many students struggle with poor Wi-Fi connectivity in certain areas of the campus, which hinders their ability to access online resources, complete assignments, and participate in online discussions. By improving Wi-Fi coverage and speed throughout the campus, we can ensure that all students have reliable internet access, fostering a more productive and connected learning environment."
-              waveTitle="Increase Wi-Fi Coverage and Speed on Campus"
-              category="General"
-              createdAt="feb 29, 09:30 pm"
-              pingTimeStamp="Oct 8, 11:00 am"
-              pingTitle="The school WiFi is so slow that even sending a simple message feels like downloading the entire internet.
-"
-              image={categoryImages.General}
-            />
-          </div>
-          <div className="mb-[22px]">
-            <StreamCard
-              waveText="Many students struggle with poor Wi-Fi connectivity in certain areas of the campus, which hinders their ability to access online resources, complete assignments, and participate in online discussions. By improving Wi-Fi coverage and speed throughout the campus, we can ensure that all students have reliable internet access, fostering a more productive and connected learning environment."
-              waveTitle="Increase Wi-Fi Coverage and Speed on Campus"
-              category="General"
-              createdAt="feb 29, 09:30 pm"
-              pingTimeStamp="Oct 8, 11:00 am"
-              pingTitle="The school WiFi is so slow that even sending a simple message feels like downloading the entire internet.
-"
-              image={categoryImages.General}
-            />
-          </div>
-        </div>
+        )}
       </main>
       {formSegment === "ping" && (
         <div className={`${waveForm ? "" : "hidden"}`}>
@@ -161,7 +191,6 @@ const Stream = () => {
             formSegment={formSegment}
             setFormSegment={() => setFormSegment("wave")}
             setPingForm={() => setWaveForm(!waveForm)}
-            setPingFormDetails={(details) => setPingFormDetails(details)}
           >
             <button
               onClick={() => setWaveForm(!waveForm)}
@@ -179,6 +208,7 @@ const Stream = () => {
             setFormSegment={() => setFormSegment("ping")}
             setWaveFormDetails={(details) => setWaveFormDetails(details)}
             setWaveForm={() => setWaveForm(!waveForm)}
+            onSuccess={fetchWaves}
           >
             <button
               onClick={() => setWaveForm(!waveForm)}

@@ -88,6 +88,7 @@ export interface Wave {
     id: number;
     title: string;
     author?: Author;
+    createdAt?: string;
   };
   comments?: Comment[];
   _count?: {
