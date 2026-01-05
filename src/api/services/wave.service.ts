@@ -150,6 +150,22 @@ const waveService = {
     );
     return response.data;
   },
+
+  /**
+   * Create a wave for a specific ping
+   * @param pingId Ping ID
+   * @param solution Wave solution text
+   * @returns Created wave
+   */
+  createWaveForPing: async (
+    pingId: string,
+    solution: string
+  ): Promise<Wave> => {
+    const response = await api.post<Wave>(`/pings/${pingId}/waves`, {
+      solution,
+    });
+    return response.data;
+  },
 };
 
 export default waveService;

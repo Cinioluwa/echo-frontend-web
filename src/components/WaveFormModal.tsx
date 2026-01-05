@@ -17,6 +17,7 @@ interface Props {
 
 export interface WaveFormDetails {
   cat: string;
+  catId: number;
   formSegment: string;
   solution: string;
   createdAt: string;
@@ -35,6 +36,7 @@ const WaveFormModal = ({
 }: Props) => {
   const [waveFormData, setWaveFormData] = useState({
     cat: "",
+    catId: 0,
     waveDesc: "",
     waveTitle: "",
     solution: "",
@@ -228,9 +230,9 @@ const WaveFormModal = ({
 
           <div className="overflow-y-scroll [scrollbar-width:none] w-full">
             <CategorySelector
-              category={waveFormData.cat}
-              setFormData={(cat) =>
-                setWaveFormData({ ...waveFormData, cat: cat })
+              categoryId={waveFormData.catId}
+              setFormData={(catId, catName) =>
+                setWaveFormData({ ...waveFormData, catId: catId, cat: catName })
               }
             />
           </div>

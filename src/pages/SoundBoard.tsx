@@ -4,17 +4,16 @@ import SideBar, { type Pages } from "../components/SideBar";
 import PageTitleBar from "../components/PageTitleBar";
 
 import { FaPlus } from "react-icons/fa6";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import { categoryImages } from "../components/CategoryImages";
 import NavBar from "../components/NavBar";
 import ProposeWaveModal from "../components/ProposeWaveModal";
 
 import type { PingFormDetails } from "../components/PingFormModal";
-import WaveFormModal, {
-  type WaveFormDetails,
-} from "../components/WaveFormModal";
 import PingFormModal from "../components/PingFormModal";
+import { publicService } from "../api/services";
+import type { Ping } from "../api/types";
 
 const SoundBoard = () => {
   const [pingForm, setPingForm] = useState(false);
@@ -27,10 +26,15 @@ const SoundBoard = () => {
     soundBoardActive: true,
   } as Pages);
 
+  // API STATE
+  const [pings, setPings] = useState<Ping[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+
   //SIMULATING FETCHED DATA FROM SERVER (MAPPED INTO SOUNDBOARD-CARD, Simulated with PingFormModal module.):
   const [pingFormDetails, setPingFormDetails] = useState<PingFormDetails[]>([]);
-
-  const [waveFormDetails, setWaveFormDetails] = useState<WaveFormDetails[]>([]);
 
   const [proposedPingDetails, setProposedPingDetails] =
     useState<PingFormDetails | null>(null);
@@ -38,12 +42,76 @@ const SoundBoard = () => {
   const [proposeWaveModal, setProposeWaveModal] = useState(false);
   const [proposeActive, setProposeActive] = useState(false);
 
-  // SEARCH FOR WHICH PING WAS PROPOSED (SIMULATED ID FROM uuid4 Library):
+  // FETCH PINGS FROM API
+  useEffect(() => {
+    const fetchPings = async () => {
+      try {
+        setIsLoading(true);
+        setError(null);
+        const response = await publicService.getSoundboard({
+          page: currentPage,
+          limit: 20,
+          sort: "trending",
+        });
+        setPings(response.data);
+        setTotalPages(response.pagination.totalPages || 1);
+      } catch (err: any) {
+        setError(err.response?.data?.error || "Failed to fetch pings");
+        console.error("Error fetching pings:", err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchPings();
+  }, [currentPage]);
+
+  // REFRESH PINGS AFTER CREATING NEW PING
+  const handlePingCreated = async () => {
+    try {
+      const response = await publicService.getSoundboard({
+        page: currentPage,
+        limit: 20,
+        sort: "trending",
+      });
+      setPings(response.data);
+      setTotalPages(response.pagination.totalPages || 1);
+    } catch (err) {
+      console.error("Error refreshing pings:", err);
+    }
+  };
+
+  // SEARCH FOR WHICH PING WAS PROPOSED
   function handleWaveProposal(id: string) {
     const proposedPing = pingFormDetails.find((details) => details.id === id);
-    proposedPing && setProposedPingDetails({ ...proposedPing });
+
+    // Try to find from API pings first (convert id to number for comparison)
+    const apiPing = pings.find((ping) => ping.id.toString() === id);
+
+    if (apiPing) {
+      // Use API ping data
+      setProposedPingDetails({
+        id: apiPing.id.toString(),
+        pingTitle: apiPing.title,
+        pingDesc: apiPing.content,
+        cat: apiPing.category?.name || "General",
+        catId: apiPing.category?.id || 1,
+        hashtag: apiPing.hashtag || "",
+        createdAt: new Date(apiPing.createdAt).toLocaleDateString("en-US", {
+          month: "short",
+          day: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+        }),
+        anonymous: false,
+        formSegment: "ping",
+      });
+    } else if (proposedPing) {
+      // Fallback to local ping
+      setProposedPingDetails({ ...proposedPing });
+    }
+
     setProposeWaveModal(!proposeWaveModal);
-    console.log(proposedPing);
   }
 
   return (
@@ -52,7 +120,7 @@ const SoundBoard = () => {
         <nav>
           <NavBar />
         </nav>
-        <PageTitleBar pages={activePage} setActivePage={setActivePage}  heading="Sound Board">
+        <PageTitleBar pages={activePage} setActivePage={setActivePage} heading="Sound Board">
           <button
             onClick={() => {
               setPingForm(!pingForm);
@@ -76,103 +144,88 @@ const SoundBoard = () => {
 
         {/* MAP PINGFORM DETAILS INTO SOUNDBOARD CARDS */}
         <div className="flex-1 [scrollbar-width:none] h-full overflow-auto">
-          {pingFormDetails.map((details) => (
-            <div className="mb-[22px] " key={details.id}>
-              <SoundBoardCard
-                pingText={details.pingDesc}
-                pingTitle={details.pingTitle}
-                image={categoryImages[details.cat]}
-                category={details.cat}
-                hashtag={details.hashtag}
-                timeStamp={details.createdAt}
-                id={details.id}
-                onPropose={(id) => handleWaveProposal(id)}
-                proposeActive={proposeActive}
-              />
+          {isLoading ? (
+            <div className="flex justify-center items-center h-40">
+              <p className="text-gray-500">Loading pings...</p>
             </div>
-          ))}
+          ) : error ? (
+            <div className="flex justify-center items-center h-40">
+              <p className="text-red-500">{error}</p>
+            </div>
+          ) : pings.length === 0 ? (
+            <div className="flex justify-center items-center h-40">
+              <p className="text-gray-500">No pings available</p>
+            </div>
+          ) : (
+            <>
+              {/* DISPLAY API PINGS */}
+              {pings.map((ping) => {
+                const categoryName = ping.category?.name || "General";
+                return (
+                  <div className="mb-[22px]" key={ping.id}>
+                    <SoundBoardCard
+                      pingText={ping.content}
+                      pingTitle={ping.title}
+                      image={categoryImages[categoryName] || categoryImages.General}
+                      category={categoryName}
+                      hashtag={ping.hashtag || ""}
+                      timeStamp={new Date(ping.createdAt).toLocaleDateString("en-US", {
+                        month: "short",
+                        day: "numeric",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
+                      id={ping.id.toString()}
+                      onPropose={(id) => handleWaveProposal(id)}
+                      proposeActive={proposeActive}
+                      surgeCount={ping.surgeCount}
+                      commentCount={ping._count?.comments || 0}
+                    />
+                  </div>
+                );
+              })}
 
-          {/* HARD CODED */}
-          <div className="mb-[22px]">
-            <SoundBoardCard
-              pingText="Many students struggle with poor Wi-Fi connectivity in certain areas of the campus, which hinders their ability to access online resources, complete assignments, and participate in online discussions. By improving Wi-Fi coverage and speed throughout the campus, we can ensure that all students have reliable internet access, fostering a more productive and connected learning environment.
-            "
-              pingTitle="Increase Wi-Fi Coverage and Speed on Campus"
-              image={categoryImages.General}
-              category="General"
-              hashtag="#welfare #internet"
-              timeStamp="feb 29, 09:30 pm"
-              id=""
-              onPropose={(id) => handleWaveProposal(id)}
-              proposeActive={false}
-            />
-          </div>
+              {/* DISPLAY LOCAL PING FORM DETAILS (NEWLY CREATED) */}
+              {pingFormDetails.map((details) => (
+                <div className="mb-[22px]" key={details.id}>
+                  <SoundBoardCard
+                    pingText={details.pingDesc}
+                    pingTitle={details.pingTitle}
+                    image={categoryImages[details.cat]}
+                    category={details.cat}
+                    hashtag={details.hashtag}
+                    timeStamp={details.createdAt}
+                    id={details.id}
+                    onPropose={(id) => handleWaveProposal(id)}
+                    proposeActive={proposeActive}
+                  />
+                </div>
+              ))}
 
-          <div className="mb-[22px]">
-            <SoundBoardCard
-              pingText="Many students struggle with poor Wi-Fi connectivity in certain areas of the campus, which hinders their ability to access online resources, complete assignments, and participate in online discussions. By improving Wi-Fi coverage and speed throughout the campus, we can ensure that all students have reliable internet access, fostering a more productive and connected learning environment."
-              pingTitle="Increase Wi-Fi Coverage and Speed on Campus"
-              category="General"
-              image={categoryImages.General}
-              timeStamp="feb 29, 09:30 pm"
-              hashtag="#welfare #internet"
-              id=""
-              onPropose={(id) => handleWaveProposal(id)}
-              proposeActive={false}
-            />
-          </div>
-          <div className="mb-[22px]">
-            <SoundBoardCard
-              pingText="Many students struggle with poor Wi-Fi connectivity in certain areas of the campus, which hinders their ability to access online resources, complete assignments, and participate in online discussions. By improving Wi-Fi coverage and speed throughout the campus, we can ensure that all students have reliable internet access, fostering a more productive and connected learning environment."
-              pingTitle="Increase Wi-Fi Coverage and Speed on Campus"
-              category="General"
-              timeStamp="feb 29, 09:30 pm"
-              hashtag="#welfare #internet"
-              image={categoryImages.General}
-              id=""
-              onPropose={(id) => handleWaveProposal(id)}
-              proposeActive={false}
-            />
-          </div>
-          <div className="mb-[22px]">
-            <SoundBoardCard
-              pingText="Many students struggle with poor Wi-Fi connectivity in certain areas of the campus, which hinders their ability to access online resources, complete assignments, and participate in online discussions. By improving Wi-Fi coverage and speed throughout the campus, we can ensure that all students have reliable internet access, fostering a more productive and connected learning environment."
-              pingTitle="Increase Wi-Fi Coverage and Speed on Campus"
-              category="General"
-              timeStamp="feb 29, 09:30 pm"
-              hashtag="#welfare #internet"
-              image={categoryImages.General}
-              id=""
-              onPropose={(id) => handleWaveProposal(id)}
-              proposeActive={false}
-            />
-          </div>
-          <div className="mb-[22px]">
-            <SoundBoardCard
-              pingText="Many students struggle with poor Wi-Fi connectivity in certain areas of the campus, which hinders their ability to access online resources, complete assignments, and participate in online discussions. By improving Wi-Fi coverage and speed throughout the campus, we can ensure that all students have reliable internet access, fostering a more productive and connected learning environment."
-              pingTitle="Increase Wi-Fi Coverage and Speed on Campus"
-              category="General"
-              timeStamp="feb 29, 09:30 pm"
-              hashtag="#welfare #internet"
-              image={categoryImages.General}
-              id=""
-              onPropose={(id) => handleWaveProposal(id)}
-              proposeActive={false}
-            />
-          </div>
-          <div className="mb-[22px]">
-            <SoundBoardCard
-              pingText="Many students struggle with poor Wi-Fi connectivity in certain areas of the campus, which hinders their ability to access online resources, complete assignments, and participate in online discussions. By improving Wi-Fi coverage and speed throughout the campus, we can ensure that all students have reliable internet access, fostering a more productive and connected learning environment."
-              pingTitle="Increase Wi-Fi Coverage and Speed on Campus"
-              category="General"
-              timeStamp="feb 29, 09:30 pm"
-              hashtag="#welfare #internet"
-              image={categoryImages.General}
-              id=""
-              onPropose={(id) => handleWaveProposal(id)}
-              proposeActive={false}
-            />
-          </div>
+              {/* PAGINATION CONTROLS */}
+              {totalPages > 1 && (
+                <div className="flex justify-center items-center gap-4 my-6">
+                  <button
+                    onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
+                    disabled={currentPage === 1}
+                    className="px-4 py-2 bg-[#F49B31] text-white rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#d88429] transition-colors"
+                  >
+                    Previous
+                  </button>
+                  <span className="text-gray-700">
+                    Page {currentPage} of {totalPages}
+                  </span>
+                  <button
+                    onClick={() => setCurrentPage((prev) => Math.min(totalPages, prev + 1))}
+                    disabled={currentPage === totalPages}
+                    className="px-4 py-2 bg-[#F49B31] text-white rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#d88429] transition-colors"
+                  >
+                    Next
+                  </button>
+                </div>
+              )}
+            </>
+          )}
         </div>
       </main>
       {formSegment === "ping" && (
@@ -182,6 +235,7 @@ const SoundBoard = () => {
             setFormSegment={() => setFormSegment("wave")}
             setPingForm={() => setPingForm(!pingForm)}
             setPingFormDetails={(details) => setPingFormDetails(details)}
+            onPingCreated={handlePingCreated}
           >
             <button
               onClick={() => setPingForm(!pingForm)}
@@ -194,19 +248,7 @@ const SoundBoard = () => {
       )}
       {formSegment === "wave" && (
         <div className={`${pingForm ? "" : "hidden"}`}>
-          <WaveFormModal
-            formSegment={formSegment}
-            setFormSegment={() => setFormSegment("ping")}
-            setWaveFormDetails={(details) => setWaveFormDetails(details)}
-            setWaveForm={() => setPingForm(!pingForm)}
-          >
-            <button
-              onClick={() => setPingForm(!pingForm)}
-              className="text-[13px] underline cursor-pointer"
-            >
-              cancel
-            </button>
-          </WaveFormModal>
+          {/* Wave form commented out - not integrated yet */}
         </div>
       )}
 
@@ -215,7 +257,9 @@ const SoundBoard = () => {
           onClose={() => setProposeWaveModal(!proposeWaveModal)}
           pingTimeStamp={proposedPingDetails?.createdAt}
           pingTitle={proposedPingDetails?.pingTitle}
+          pingId={proposedPingDetails?.id}
           setProposeActive={setProposeActive}
+          onWaveCreated={handlePingCreated}
         />
       )}
     </div>

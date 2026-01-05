@@ -2,17 +2,21 @@ import { useState } from "react";
 import { FaLink } from "react-icons/fa6";
 import CategorySelector from "./CategorySelector";
 import ProposedPingCard from "./ProposedPingCard";
+import { waveService } from "../api/services";
 
 interface Props {
   onClose: () => void;
   pingTimeStamp: string | undefined;
   pingTitle?: string | undefined;
+  pingId?: string;
   setProposeActive: React.Dispatch<React.SetStateAction<boolean>>;
+  onWaveCreated?: () => void;
 }
 
 export interface proposedWaveDetails {
   solution: string;
   cat: string;
+  catId: number;
   pingTimeStamp: string | undefined;
   pingTitle: string | undefined;
   createdAt: string;
@@ -22,53 +26,70 @@ const ProposeWaveModal = ({
   onClose,
   pingTitle,
   pingTimeStamp,
+  pingId,
   setProposeActive,
-
+  onWaveCreated,
 }: Props) => {
   const [proposedWaveDetails, setProposedWaveDetails] =
     useState<proposedWaveDetails>({
       solution: "",
       cat: "",
+      catId: 0,
       pingTimeStamp: "",
       pingTitle: "",
       createdAt: "",
     });
 
-  function handleSubmit(e: React.FormEvent) {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (proposedWaveDetails.cat === "") return alert("Select a category!");
-    // SEND DETAILS TO SERVER
+    if (proposedWaveDetails.catId === 0 || !proposedWaveDetails.cat) {
+      return alert("Select a category!");
+    }
 
-    const newProposedWaveDetails: proposedWaveDetails = {
-      solution: proposedWaveDetails.solution.trim(),
-      cat: proposedWaveDetails.cat,
-      pingTimeStamp: pingTimeStamp,
-      pingTitle: pingTitle,
-      createdAt: new Date()
-        .toLocaleString("en-US", {
-          month: "short",
-          day: "2-digit",
-          hour: "2-digit",
-          minute: "2-digit",
-          hour12: true,
-        })
-        .toLowerCase(),
-    };
+    if (!pingId) {
+      alert("Ping ID is missing. Cannot create wave.");
+      return;
+    }
 
-    // VERIFY DETAILS
-    console.log("proposedWaveDetails: ", newProposedWaveDetails);
+    setIsSubmitting(true);
 
-    // RESET FORM
-    setProposedWaveDetails({
-      solution: "",
-      cat: "",
-      pingTimeStamp: "",
-      pingTitle: "",
-      createdAt: "",
-    });
+    try {
+      // CREATE WAVE VIA API - Using the ping-specific endpoint
+      const createdWave = await waveService.createWaveForPing(
+        pingId,
+        proposedWaveDetails.solution.trim()
+      );
 
-    // UPDATE PROPOSE-btn STATE
-    setProposeActive(true);
+      console.log("Wave created successfully:", createdWave);
+
+      // RESET FORM
+      setProposedWaveDetails({
+        solution: "",
+        cat: "",
+        catId: 0,
+        pingTimeStamp: "",
+        pingTitle: "",
+        createdAt: "",
+      });
+
+      // UPDATE PROPOSE-btn STATE
+      setProposeActive(true);
+
+      // TRIGGER REFRESH IF CALLBACK PROVIDED
+      if (onWaveCreated) {
+        onWaveCreated();
+      }
+
+      // CLOSE MODAL
+      onClose();
+    } catch (err: any) {
+      console.error("Error creating wave:", err);
+      alert(err.response?.data?.error || "Failed to create wave. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   return (
@@ -120,9 +141,9 @@ const ProposeWaveModal = ({
           </fieldset>
           <div className="overflow-y-scroll [scrollbar-width:none] w-full">
             <CategorySelector
-              category={proposedWaveDetails.cat}
-              setFormData={(cat) =>
-                setProposedWaveDetails({ ...proposedWaveDetails, cat: cat })
+              categoryId={proposedWaveDetails.catId}
+              setFormData={(catId, catName) =>
+                setProposedWaveDetails({ ...proposedWaveDetails, catId: catId, cat: catName })
               }
             />
           </div>
@@ -132,9 +153,10 @@ const ProposeWaveModal = ({
             </div>
             <button
               type="submit"
-              className="px-[30px] hover:bg-[#d88429] text-[12px] transition-colors duration-300 ease-in-out py-[5px] cursor-pointer text-white rounded-xl bg-[#F49B31]"
+              disabled={isSubmitting}
+              className="px-[30px] hover:bg-[#d88429] text-[12px] transition-colors duration-300 ease-in-out py-[5px] cursor-pointer text-white rounded-xl bg-[#F49B31] disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Post
+              {isSubmitting ? "Posting..." : "Post"}
             </button>
           </div>
         </form>

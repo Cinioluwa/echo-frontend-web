@@ -4,6 +4,7 @@ import Toggle from "./Toggle";
 import CategorySelector from "./CategorySelector";
 import { v4 as uuidv4 } from "uuid";
 import PostSuccessModal from "./PostSuccessModal";
+import { pingService } from "../api/services";
 
 interface Props {
   children: ReactNode;
@@ -11,10 +12,12 @@ interface Props {
   setPingForm: () => void;
   formSegment: string;
   setFormSegment: () => void;
+  onPingCreated?: () => void;
 }
 
 export interface PingFormDetails {
   cat: string;
+  catId: number;
   formSegment: string;
   anonymous: boolean;
   pingDesc: string;
@@ -30,9 +33,11 @@ const PingFormModal = ({
   setPingForm,
   setFormSegment,
   formSegment,
+  onPingCreated,
 }: Props) => {
   const [pingFormData, setPingFormData] = useState<PingFormDetails>({
     cat: "",
+    catId: 0,
     anonymous: false,
     pingDesc: "",
     hashtag: "",
@@ -43,48 +48,79 @@ const PingFormModal = ({
   });
 
   const [postSuccessModal, setPostSuccessModal] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  function submitForm() {
-    if (pingFormData.cat === "") return alert("Select a category!");
+  async function submitForm() {
+    if (pingFormData.catId === 0 || !pingFormData.cat) {
+      return alert("Select a category!");
+    }
 
-    //PingForm DETAILS OBJECT TO BE SENT TO SERVER:
-    const newPingFormDetails: PingFormDetails = {
-      cat: pingFormData.cat.trim(),
-      formSegment: pingFormData.formSegment,
-      anonymous: pingFormData.anonymous,
-      pingTitle: pingFormData.pingTitle.trim(),
-      hashtag: pingFormData.hashtag.trim(),
-      pingDesc: pingFormData.pingDesc.trim(),
-      id: uuidv4(),
-      createdAt: new Date()
-        .toLocaleString("en-US", {
-          month: "short",
-          day: "2-digit",
-          hour: "2-digit",
-          minute: "2-digit",
-          hour12: true,
-        })
-        .toLowerCase(),
-    };
-    setPingFormDetails((prev) => [newPingFormDetails, ...prev]);
+    setIsSubmitting(true);
 
-    // SET SUCCESS MODAL ACTIVE
-    setPostSuccessModal(!postSuccessModal);
+    try {
+      // CREATE PING VIA API
+      const hashtag = pingFormData.hashtag.trim();
 
-    // VERIFY THE PINGFORM DETAILS
-    console.log("pingFormDetails: ", newPingFormDetails);
+      const createdPing = await pingService.createPing({
+        title: pingFormData.pingTitle.trim(),
+        content: pingFormData.pingDesc.trim(),
+        categoryId: pingFormData.catId,
+        hashtag: hashtag || undefined,
+      });
 
-    // RESET THE PINGFORM
-    setPingFormData({
-      cat: "",
-      anonymous: false,
-      pingDesc: "",
-      hashtag: "",
-      pingTitle: "",
-      formSegment: "ping",
-      createdAt: "",
-      id: "",
-    });
+      console.log("Ping created successfully:", createdPing);
+
+      // OPTIONALLY KEEP LOCAL STATE FOR IMMEDIATE DISPLAY
+      const newPingFormDetails: PingFormDetails = {
+        cat: pingFormData.cat.trim(),
+        catId: pingFormData.catId,
+        formSegment: pingFormData.formSegment,
+        anonymous: pingFormData.anonymous,
+        pingTitle: pingFormData.pingTitle.trim(),
+        hashtag: pingFormData.hashtag.trim(),
+        pingDesc: pingFormData.pingDesc.trim(),
+        id: uuidv4(),
+        createdAt: new Date()
+          .toLocaleString("en-US", {
+            month: "short",
+            day: "2-digit",
+            hour: "2-digit",
+            minute: "2-digit",
+            hour12: true,
+          })
+          .toLowerCase(),
+      };
+
+      if (setPingFormDetails) {
+        setPingFormDetails((prev) => [newPingFormDetails, ...prev]);
+      }
+
+      // TRIGGER REFRESH OF PING LIST
+      if (onPingCreated) {
+        onPingCreated();
+      }
+
+      // SET SUCCESS MODAL ACTIVE
+      setPostSuccessModal(!postSuccessModal);
+
+      // RESET THE PINGFORM
+      setPingFormData({
+        cat: "",
+        catId: 0,
+        anonymous: false,
+        pingDesc: "",
+        hashtag: "",
+        pingTitle: "",
+        formSegment: "ping",
+        createdAt: "",
+        id: "",
+      });
+    } catch (err: any) {
+      console.error("Error creating ping:", err);
+      alert(err.response?.data?.error || "Failed to create ping. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   if (postSuccessModal)
@@ -107,8 +143,8 @@ const PingFormModal = ({
         <div className="flex rounded-[20px] text-[16px] overflow-hidden border-2 border-black">
           <button
             className={`inline-block rounded-tl-[15px] border-black rounded-bl-[15px] border-r-2 ${formSegment === "ping"
-                ? "bg-[#F49B31] text-white"
-                : "bg-[#FEF5EA]"
+              ? "bg-[#F49B31] text-white"
+              : "bg-[#FEF5EA]"
               }  py-6 px-6 cursor-pointer sm:py-4 sm:px-8`}
           >
             Ping
@@ -116,8 +152,8 @@ const PingFormModal = ({
           <button
             onClick={() => setFormSegment()}
             className={`inline-block ${formSegment === "wave"
-                ? "bg-[#F49B31] text-white"
-                : "bg-[#FEF5EA]"
+              ? "bg-[#F49B31] text-white"
+              : "bg-[#FEF5EA]"
               } rounded-tr-[15px] cursor-pointer text-black rounded-br-[15px] py-6 px-6  sm:py-4 sm:px-8`}
           >
             Wave
@@ -200,9 +236,9 @@ const PingFormModal = ({
 
           <div className="overflow-y-scroll [scrollbar-width:none] w-full">
             <CategorySelector
-              category={pingFormData.cat}
-              setFormData={(cat) =>
-                setPingFormData({ ...pingFormData, cat: cat })
+              categoryId={pingFormData.catId}
+              setFormData={(catId, catName) =>
+                setPingFormData({ ...pingFormData, catId: catId, cat: catName })
               }
             />
           </div>
@@ -212,9 +248,10 @@ const PingFormModal = ({
             </div>
             <button
               type="submit"
-              className="px-[30px] hover:bg-[#d88429] transition-colors duration-300 ease-in-out py-[5px] cursor-pointer text-white rounded-xl bg-[#F49B31]"
+              disabled={isSubmitting}
+              className="px-[30px] hover:bg-[#d88429] transition-colors duration-300 ease-in-out py-[5px] cursor-pointer text-white rounded-xl bg-[#F49B31] disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Post
+              {isSubmitting ? "Posting..." : "Post"}
             </button>
           </div>
         </form>

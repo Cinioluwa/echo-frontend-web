@@ -12,6 +12,8 @@ interface Props {
   id: string;
   onPropose: (id: string) => void;
   proposeActive: boolean;
+  surgeCount?: number;
+  commentCount?: number;
 }
 
 const SoundBoardCard = ({
@@ -24,6 +26,8 @@ const SoundBoardCard = ({
   id,
   onPropose,
   proposeActive,
+  surgeCount = 0,
+  commentCount = 0,
 }: Props) => {
   return (
     <>
@@ -43,6 +47,8 @@ const SoundBoardCard = ({
           id={id}
           timeStamp={timeStamp}
           hashtag={hashtag}
+          surgeCount={surgeCount}
+          commentCount={commentCount}
         />
       </div>
     </>

@@ -62,6 +62,11 @@ export interface OrganizationWaitlistRequest {
 
 // ==================== Category Types ====================
 
+export interface CategoryData {
+  id: number;
+  name: string;
+}
+
 export type Category =
   | "General"
   | "Academics"
@@ -74,27 +79,32 @@ export type Category =
 // ==================== Ping Types ====================
 
 export interface Ping {
-  id: string;
+  id: number;
   title: string;
-  description: string;
-  category: Category;
-  hashtags: string[];
-  author: User | string; // Can be populated or just ID
-  isAnonymous: boolean;
+  content: string;
+  category?: {
+    id: number;
+    name: string;
+  };
+  hashtag?: string;
+  author?: User;
+  status: "POSTED" | "UNDER_REVIEW" | "ARCHIVED";
   surgeCount: number;
-  commentCount: number;
-  viewCount: number;
-  status: "active" | "resolved" | "archived";
+  viewCount?: number;
   createdAt: string;
-  updatedAt: string;
+  updatedAt?: string;
+  _count?: {
+    waves: number;
+    comments: number;
+    surges: number;
+  };
 }
 
 export interface CreatePingRequest {
   title: string;
-  description: string;
-  category: Category;
-  hashtags?: string[];
-  isAnonymous?: boolean;
+  content: string;
+  categoryId: number;
+  hashtag?: string;
 }
 
 export interface UpdatePingRequest {

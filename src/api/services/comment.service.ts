@@ -125,6 +125,38 @@ const commentService = {
     });
     return response.data;
   },
+
+  /**
+   * Create a comment on a ping
+   * @param pingId Ping ID
+   * @param content Comment content
+   * @returns Created comment
+   */
+  createCommentOnPing: async (
+    pingId: string,
+    content: string
+  ): Promise<Comment> => {
+    const response = await api.post<Comment>(`/pings/${pingId}/comments`, {
+      content,
+    });
+    return response.data;
+  },
+
+  /**
+   * Create a comment on a wave
+   * @param waveId Wave ID
+   * @param content Comment content
+   * @returns Created comment
+   */
+  createCommentOnWave: async (
+    waveId: string,
+    content: string
+  ): Promise<Comment> => {
+    const response = await api.post<Comment>(`/waves/${waveId}/comments`, {
+      content,
+    });
+    return response.data;
+  },
 };
 
 export default commentService;
