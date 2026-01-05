@@ -92,6 +92,7 @@ export interface Wave {
   ping?: {
     id: number;
     title: string;
+    content?: string; // Ping description - to be added by backend
     author?: Author;
     createdAt?: string;
   };

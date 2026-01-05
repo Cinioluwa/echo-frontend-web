@@ -99,7 +99,7 @@ const Stream = () => {
       minute: '2-digit'
     });
   };
-
+  console.log("Waves data:", waves);
   return (
     <div className="h-full">
       <header className="z-20 md:fixed md:top-0 w-full">
@@ -178,8 +178,9 @@ const Stream = () => {
                     image={categoryImages["General"]}
                     category="General"
                     createdAt={formatDate(wave.createdAt)}
-                    pingTimeStamp=""
+                    pingTimeStamp={wave.ping?.createdAt ? formatDate(wave.ping.createdAt) : ""}
                     pingTitle={wave.ping?.title || ""}
+                    pingDescription={wave.ping?.content}
                     surgeCount={wave._count?.surges || wave.surgeCount}
                     commentCount={wave._count?.comments || 0}
                     onRefresh={fetchWaves}

@@ -12,6 +12,7 @@ export { default as surgeService } from "./surge.service";
 export { default as publicService } from "./public.service";
 export { default as categoryService } from "./category.service";
 export { default as searchService } from "./search.service";
+export { default as announcementService } from "./announcement.service";
 
 // Re-export types for convenience
 export type * from "../types/index";

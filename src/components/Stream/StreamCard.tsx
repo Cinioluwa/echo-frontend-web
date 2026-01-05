@@ -11,6 +11,7 @@ interface Props {
   pingTimeStamp: string;
   createdAt: string;
   pingTitle: string;
+  pingDescription?: string;
   waveId?: string;
   surgeCount?: number;
   commentCount?: number;
@@ -28,6 +29,7 @@ const StreamCard = ({
   createdAt,
   pingTimeStamp,
   pingTitle,
+  pingDescription,
   waveId,
   surgeCount = 0,
   commentCount = 0,
@@ -50,6 +52,7 @@ const StreamCard = ({
           <ProposedPingCard
             pingTimeStamp={pingTimeStamp}
             pingTitle={pingTitle}
+            pingDescription={pingDescription}
           />
         </div>
         <StreamCardBody

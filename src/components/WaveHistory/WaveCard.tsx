@@ -10,7 +10,7 @@ interface Props {
 const WaveCard = ({ wave }: Props) => {
   return (
     <>
-      <div className="  m-[15px] md:m-0 p-[25px] bg-[#FEFEFE]  rounded-[10px] ">
+      <div className="  m-[15px] p-[25px] bg-[#FEFEFE]  rounded-[10px] ">
         <WaveCardHeader wave={wave} />
         <WaveCardBody wave={wave} />
         <WaveCardFooter wave={wave} />

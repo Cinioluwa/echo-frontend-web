@@ -158,7 +158,7 @@ const WaveHistory = () => {
         {!loading && !error && (
           <div className=" h-full overflow-auto [scrollbar-width:none]">
             {Object.entries(groupedWaves).map(([dateLabel, dateWaves]) => (
-              <div key={dateLabel} className="mb-[22px] flex md:block flex-col items-center">
+              <div key={dateLabel} className="mb-[22px] flex md:block flex-col items-center ">
                 <h2 className="md:mb-[22px] text-[25px] font-semibold">{dateLabel}</h2>
                 {dateWaves.map((wave) => (
                   <WaveCard
