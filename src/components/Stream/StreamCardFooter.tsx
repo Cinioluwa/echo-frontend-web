@@ -17,20 +17,30 @@ function StreamCardFooter({ waveId, surgeCount = 0, commentCount = 0, onRefresh 
   const handleSurge = async () => {
     if (!waveId || isLoading) return;
 
+    // Optimistic update - update UI immediately
+    const previousSurged = surged;
+    const previousCount = currentSurgeCount;
+
+    setSurged(!surged);
+    setCurrentSurgeCount(prev => surged ? prev - 1 : prev + 1);
     setIsLoading(true);
+
     try {
       const response = await surgeService.toggleSurge("wave", waveId);
 
-      // Update local state based on API response
+      // Sync with API response
       setSurged(response.surged);
-      setCurrentSurgeCount(prev => response.surged ? prev + 1 : prev - 1);
-
-      // Optionally refresh parent data
-      if (onRefresh) {
-        onRefresh();
-      }
+      setCurrentSurgeCount(prev => {
+        // Calculate the correct count based on the change
+        const diff = response.surged ? 1 : -1;
+        const expectedCount = previousCount + diff;
+        return expectedCount;
+      });
     } catch (error) {
       console.error("Error toggling surge:", error);
+      // Revert on error
+      setSurged(previousSurged);
+      setCurrentSurgeCount(previousCount);
     } finally {
       setIsLoading(false);
     }
@@ -41,9 +51,9 @@ function StreamCardFooter({ waveId, surgeCount = 0, commentCount = 0, onRefresh 
       <button
         onClick={handleSurge}
         disabled={isLoading || !waveId}
-        className={`transition-colors cursor-pointer duration-1200 ease-in-out ${surged
-          ? "bg-[#F49B31] hover:bg-[#d88429] transition-colors duration-100 ease-out text-white font-bold"
-          : "bg-[#FEF5EA] transition-colors duration-100 ease-in-out hover:bg-[#f2e8d9]"
+        className={`transition-all cursor-pointer duration-300 ease-in-out ${surged
+          ? "bg-[#F49B31] hover:bg-[#d88429] text-white font-bold scale-105"
+          : "bg-[#FEF5EA] hover:bg-[#f2e8d9] scale-100"
           } py-1.5 lg:py-2 lg:px-5 flex items-center gap-2.5 border rounded-[20px] px-5 ${isLoading || !waveId ? "opacity-50 cursor-not-allowed" : ""
           }`}
       >
@@ -51,7 +61,7 @@ function StreamCardFooter({ waveId, surgeCount = 0, commentCount = 0, onRefresh 
         <img
           src={surge}
           alt=""
-          className={`${surged ? "brightness-0 invert" : ""
+          className={`transition-all duration-300 ${surged ? "brightness-0 invert" : ""
             } w-[50%] contrast-200 md:w-full`}
         />
       </button>
