@@ -34,7 +34,7 @@ const CategorySelector = ({ categoryId, setFormData }: CategorySelectorProps) =>
   }
 
   return (
-    <div className=" border-2  rounded-[20px] overflow-hidden inline-flex ">
+    <div className=" border-2  rounded-[20px] overflow-hidden inline-flex min-w-max">
       {categories.map((cat) => (
         <div
           key={cat.id}
