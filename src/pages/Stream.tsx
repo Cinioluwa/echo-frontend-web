@@ -11,8 +11,10 @@ import PingFormModal from "../components/PingFormModal";
 import StreamCard from "../components/Stream/StreamCard";
 import { publicService, searchService } from "../api/services";
 import type { Wave } from "../api/types";
+import { useCategoryFilter } from "../contexts/CategoryFilterContext";
 
 const Stream = () => {
+  const { selectedCategoryId } = useCategoryFilter();
   const [waveForm, setWaveForm] = useState(false);
   const [formSegment, setFormSegment] = useState("wave");
 
@@ -47,7 +49,7 @@ const Stream = () => {
   // Fetch waves from API
   useEffect(() => {
     fetchWaves();
-  }, [currentPage, debouncedSearchQuery]);
+  }, [currentPage, debouncedSearchQuery, selectedCategoryId]);
 
   const fetchWaves = async () => {
     try {
@@ -55,10 +57,11 @@ const Stream = () => {
       setError(null);
 
       let response;
-      if (debouncedSearchQuery) {
-        // Use search service if there's a search query
+      if (debouncedSearchQuery || selectedCategoryId) {
+        // Use search service if there's a search query or category filter
         response = await searchService.searchStream({
           q: debouncedSearchQuery,
+          category: selectedCategoryId || undefined,
           page: currentPage,
           limit: 20,
           sort: "trending"
@@ -72,6 +75,10 @@ const Stream = () => {
           days: 7
         });
       }
+
+      console.log("🔍 Raw API Response:", response);
+      console.log("🌊 Wave data from API:", response.data);
+      console.log("📊 Sample wave (first item):", response.data[0]);
 
       setWaves(response.data);
       setHasNextPage(response.pagination.hasNextPage || false);
@@ -100,6 +107,7 @@ const Stream = () => {
     });
   };
   console.log("Waves data:", waves);
+  console.log("Waves with hasSurged:", waves.map(w => ({ id: w.id, hasSurged: w.hasSurged })));
   return (
     <div className="h-full">
       <header className="z-20 md:fixed md:top-0 w-full">
@@ -158,16 +166,17 @@ const Stream = () => {
           <div className="flex-1 [scrollbar-width:none] h-full overflow-auto">
             {/* Display API fetched waves */}
             {waves.map((wave) => {
-              // Get author name - handle both object and string types
-              const authorName = typeof wave.author === 'object' && wave.author
+              // Get wave author name
+              const waveAuthorName = wave.author
                 ? `${wave.author.firstName} ${wave.author.lastName}`
-                : wave.ping?.author
-                  ? `${wave.ping.author.firstName} ${wave.ping.author.lastName}`
-                  : undefined;
-
-              const authorId = typeof wave.author === 'object' && wave.author
-                ? wave.author.id
                 : undefined;
+
+              // Get ping author info for the ping card
+              const pingAuthorName = wave.ping?.author
+                ? `${wave.ping.author.firstName} ${wave.ping.author.lastName}`
+                : undefined;
+
+              const pingAuthorId = wave.ping?.author?.id;
 
               return (
                 <div className="mb-[22px]" key={wave.id}>
@@ -176,7 +185,7 @@ const Stream = () => {
                     waveText={wave.solution}
                     waveTitle={wave.ping?.title || "Wave Solution"}
                     image={categoryImages["General"]}
-                    category="General"
+                    category={wave.category?.name}
                     createdAt={formatDate(wave.createdAt)}
                     pingTimeStamp={wave.ping?.createdAt ? formatDate(wave.ping.createdAt) : ""}
                     pingTitle={wave.ping?.title || ""}
@@ -184,9 +193,12 @@ const Stream = () => {
                     surgeCount={wave._count?.surges || wave.surgeCount}
                     commentCount={wave._count?.comments || 0}
                     onRefresh={fetchWaves}
-                    authorName={authorName}
-                    authorId={authorId}
+                    authorName={waveAuthorName}
+                    authorId={wave.author?.id}
                     rank={wave.rank}
+                    pingAuthorName={pingAuthorName}
+                    pingAuthorId={pingAuthorId}
+                    hasSurged={wave.hasSurged}
                   />
                 </div>
               );

@@ -1,15 +1,15 @@
 import general from "../../assets/images/General.svg";
-import type { Wave } from "../../api/types";
+import type { ResolutionLog } from "../../api/types";
 
 interface Props {
-  wave: Wave;
+  resolution: ResolutionLog;
 }
 
-const WaveCardBody = ({ wave }: Props) => {
+const WaveCardBody = ({ resolution }: Props) => {
   // Get category name
   const getCategoryName = () => {
-    if (wave.category && typeof wave.category === 'object') {
-      return wave.category.name;
+    if (resolution.category && typeof resolution.category === 'object') {
+      return resolution.category.name;
     }
     return "General";
   };
@@ -23,11 +23,29 @@ const WaveCardBody = ({ wave }: Props) => {
         {getCategoryName()}
       </div>
       <p className="font-semibold text-[16px] ">
-        {wave.ping?.title || wave.title || "Wave Solution"}
+        {resolution.title}
       </p>
-      <p className=" text-[#626665] text-[15px] border-b border-[#D3CECE] pb-4 ">
-        {wave.solution}
+      <p className=" text-[#626665] text-[15px] pb-2 ">
+        {resolution.content}
       </p>
+
+      {/* Approved Wave Solution */}
+      {resolution.approvedWave && (
+        <div className="mt-2 p-3 bg-green-50 border border-green-200 rounded-lg">
+          <p className="text-sm font-semibold text-green-800 mb-1">✓ Approved Solution:</p>
+          <p className="text-sm text-green-700">{resolution.approvedWave.solution}</p>
+        </div>
+      )}
+
+      {/* Official Response */}
+      {resolution.officialResponse && (
+        <div className="mt-2 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+          <p className="text-sm font-semibold text-blue-800 mb-1">Official Response:</p>
+          <p className="text-sm text-blue-700">{resolution.officialResponse.content}</p>
+        </div>
+      )}
+
+      <div className="border-b border-[#D3CECE] mt-2"></div>
     </div>
   );
 };

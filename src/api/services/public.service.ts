@@ -1,9 +1,20 @@
 import api from "../axios.config";
-import type { Ping, Wave, PaginatedResponse, PaginationParams } from "../types";
+import type {
+  Ping,
+  Wave,
+  ResolutionLog,
+  PaginatedResponse,
+  PaginationParams,
+} from "../types";
 
 export interface PublicFeedParams extends PaginationParams {
   top?: number;
   sort?: "trending" | "new";
+  days?: number | "all";
+}
+
+export interface ResolutionLogParams extends PaginationParams {
+  top?: number;
   days?: number | "all";
 }
 
@@ -36,6 +47,20 @@ const publicService = {
     const response = await api.get<PaginatedResponse<Wave>>("/public/stream", {
       params,
     });
+    return response.data;
+  },
+
+  /**
+   * Get resolution log - resolved pings with approved solutions
+   * @param params Query parameters for filtering and pagination
+   */
+  getResolutionLog: async (
+    params?: ResolutionLogParams
+  ): Promise<PaginatedResponse<ResolutionLog>> => {
+    const response = await api.get<PaginatedResponse<ResolutionLog>>(
+      "/public/resolution-log",
+      { params }
+    );
     return response.data;
   },
 };

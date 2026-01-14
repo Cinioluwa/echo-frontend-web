@@ -300,3 +300,61 @@ export interface AnalyticsData {
   value?: number;
   count?: number;
 }
+
+// ==================== Resolution Log Types ====================
+
+export interface ResolutionLog {
+  id: number;
+  title: string;
+  content: string;
+  categoryId?: number;
+  hashtag?: string;
+  isAnonymous?: boolean;
+  surgeCount: number;
+  hasSurged?: boolean;
+  createdAt: string;
+  resolvedAt: string;
+  msToResolve: number; // Time in milliseconds from creation to resolution
+  author?: {
+    id: number;
+    email: string;
+    firstName: string;
+    lastName: string;
+    level?: number;
+  } | null;
+  category?: {
+    id: number;
+    name: string;
+  };
+  approvedWave?: {
+    id: number;
+    solution: string;
+    surgeCount: number;
+    viewCount: number;
+    createdAt: string;
+    author?: {
+      id: number;
+      email: string;
+      firstName: string;
+      lastName: string;
+      level?: number;
+    } | null;
+  } | null;
+  officialResponse?: {
+    id: number;
+    content: string;
+    createdAt: string;
+    author?: {
+      id: number;
+      email: string;
+      firstName: string;
+      lastName: string;
+      level?: number;
+    };
+  } | null;
+  _count?: {
+    waves?: number;
+    comments?: number;
+    surges?: number;
+  };
+}

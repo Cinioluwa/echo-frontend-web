@@ -1,19 +1,19 @@
 import WaveCardBody from "./WaveCardBody";
 import WaveCardFooter from "./WaveCardFooter";
 import WaveCardHeader from "./WaveCardHeader";
-import type { Wave } from "../../api/types";
+import type { ResolutionLog } from "../../api/types";
 
 interface Props {
-  wave: Wave;
+  resolution: ResolutionLog;
 }
 
-const WaveCard = ({ wave }: Props) => {
+const WaveCard = ({ resolution }: Props) => {
   return (
     <>
       <div className="  m-[15px] p-[25px] bg-[#FEFEFE]  rounded-[10px] ">
-        <WaveCardHeader wave={wave} />
-        <WaveCardBody wave={wave} />
-        <WaveCardFooter wave={wave} />
+        <WaveCardHeader resolution={resolution} />
+        <WaveCardBody resolution={resolution} />
+        <WaveCardFooter resolution={resolution} />
       </div>
     </>
   );

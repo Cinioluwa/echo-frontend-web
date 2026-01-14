@@ -16,6 +16,7 @@
   - [Surges (Likes)](#surges-likes)
   - [Categories](#categories)
   - [Announcements](#announcements)
+  - [Notifications](#notifications)
   - [Public Feed](#public-feed)
   - [Admin Routes](#admin-routes)
   - [Representative Routes](#representative-routes)
@@ -138,6 +139,8 @@ All routes are prefixed with `/api`
 
 ## Rate Limiting
 
+Echo uses **Redis-based rate limiting** to protect against abuse and ensure fair usage across all users.
+
 ### Global Rate Limits
 
 - **General requests**: 500 requests per 15 minutes
@@ -151,6 +154,18 @@ X-RateLimit-Limit: 500
 X-RateLimit-Remaining: 499
 X-RateLimit-Reset: 1699362000
 ```
+
+### Rate Limit Responses
+
+When rate limit is exceeded:
+
+```json
+{
+  "error": "Too many requests, please try again later."
+}
+```
+
+**Status Code:** `429 Too Many Requests`
 
 ---
 
@@ -835,13 +850,22 @@ Create a wave (solution) for a ping.
   "id": 1,
   "solution": "Extend library hours to midnight...",
   "pingId": 1,
+  "status": "POSTED",
   "surgeCount": 0,
   "viewCount": 0,
   "flaggedForReview": false,
+  "authorId": 1,
   "organizationId": 1,
   "createdAt": "2025-11-07T11:00:00.000Z"
 }
 ```
+
+**Wave Status Values:**
+
+- `POSTED` - Publicly visible (default)
+- `UNDER_REVIEW` - Flagged for review by representatives
+- `APPROVED` - Approved by admin (marks parent ping as resolved)
+- `REJECTED` - Rejected by admin
 
 ---
 
@@ -864,9 +888,15 @@ Get all waves for a specific ping.
     {
       "id": 1,
       "solution": "Extend library hours to midnight...",
+      "status": "POSTED",
       "surgeCount": 15,
       "viewCount": 200,
       "createdAt": "2025-11-07T11:00:00.000Z",
+      "author": {
+        "id": 3,
+        "firstName": "Alice",
+        "lastName": "Johnson"
+      },
       "comments": [
         {
           "id": 1,
@@ -896,6 +926,8 @@ Get all waves for a specific ping.
 }
 ```
 
+**Note:** `author` field is omitted if the wave is posted anonymously.
+
 ---
 
 ### GET /api/waves/:id
@@ -910,9 +942,15 @@ Get a specific wave by ID (increments view count).
 {
   "id": 1,
   "solution": "Extend library hours to midnight...",
+  "status": "POSTED",
   "surgeCount": 15,
   "viewCount": 201,
   "createdAt": "2025-11-07T11:00:00.000Z",
+  "author": {
+    "id": 3,
+    "firstName": "Alice",
+    "lastName": "Johnson"
+  },
   "ping": {
     "id": 1,
     "title": "Library Hours Too Short",
@@ -930,6 +968,8 @@ Get a specific wave by ID (increments view count).
   }
 }
 ```
+
+**Note:** View count is automatically incremented each time this endpoint is called.
 
 ---
 
@@ -1151,11 +1191,13 @@ Get all announcements for the organization.
 
 ---
 
-## Public Feed
+## Notifications
 
-### GET /api/public/soundboard
+Users receive in-app notifications for important events. Notifications are also sent via email.
 
-Get trending or new pings (Soundboard view).
+### GET /api/notifications
+
+Get all notifications for the current user.
 
 **Auth Required:** Yes
 
@@ -1163,7 +1205,111 @@ Get trending or new pings (Soundboard view).
 
 - `page` (optional): Page number (default: 1)
 - `limit` (optional): Items per page (default: 20, max: 100)
-- `top` (optional): Get top N items (e.g., `top=3`)
+- `unreadOnly` (optional): Filter to unread only (true/false)
+
+**Success Response (200):**
+
+```json
+{
+  "data": [
+    {
+      "id": 1,
+      "type": "WAVE_APPROVED",
+      "title": "Your wave was approved!",
+      "body": "Your solution for 'Library Hours Too Short' has been approved.",
+      "createdAt": "2026-01-08T10:30:00.000Z",
+      "readAt": null,
+      "pingId": 5,
+      "waveId": 12,
+      "announcementId": null
+    },
+    {
+      "id": 2,
+      "type": "OFFICIAL_RESPONSE_POSTED",
+      "title": "Official response to your ping",
+      "body": "An official response has been posted to 'Exam Schedule Conflict'.",
+      "createdAt": "2026-01-07T14:20:00.000Z",
+      "readAt": "2026-01-07T15:00:00.000Z",
+      "pingId": 3,
+      "waveId": null,
+      "announcementId": null
+    }
+  ],
+  "pagination": {
+    "total": 15,
+    "totalPages": 1,
+    "currentPage": 1,
+    "limit": 20
+  }
+}
+```
+
+### Notification Types
+
+- `WAVE_APPROVED` - A wave (solution) was approved by an admin
+- `OFFICIAL_RESPONSE_POSTED` - An official response was posted to a ping
+- `ANNOUNCEMENT_POSTED` - A new announcement was created
+
+---
+
+### GET /api/notifications/unread-count
+
+Get count of unread notifications.
+
+**Auth Required:** Yes
+
+**Success Response (200):**
+
+```json
+{
+  "unreadCount": 3
+}
+```
+
+---
+
+### PATCH /api/notifications/:id/read
+
+Mark a notification as read.
+
+**Auth Required:** Yes
+
+**Success Response (200):**
+
+```json
+{
+  "id": 1,
+  "type": "WAVE_APPROVED",
+  "title": "Your wave was approved!",
+  "body": "Your solution for 'Library Hours Too Short' has been approved.",
+  "createdAt": "2026-01-08T10:30:00.000Z",
+  "readAt": "2026-01-08T11:00:00.000Z",
+  "pingId": 5,
+  "waveId": 12
+}
+```
+
+**Error Responses:**
+
+- `404` - Notification not found
+
+---
+
+## Public Feed
+
+### GET /api/public/soundboard
+
+Get trending or new pings (Soundboard view) for the authenticated user's organization.
+
+**Auth Required:** Yes
+
+**Organization Scope:** Organization-specific (uses organizationId from JWT)
+
+**Query Parameters:**
+
+- `page` (optional): Page number (default: 1)
+- `limit` (optional): Items per page (default: 20, max: 100)
+- `top` (optional): Get top N items (e.g., `top=3`, max: 50). Overrides pagination.
 - `sort` (optional): `trending` (default) or `new`
 - `days` (optional): Filter by days (default: 7, or `all`)
 
@@ -1177,7 +1323,7 @@ Get trending or new pings (Soundboard view).
     {
       "id": 1,
       "title": "Library Hours Too Short",
-      "content": "...",
+      "content": "Our library closes at 8pm but many students need to study later...",
       "category": {
         "id": 3,
         "name": "Facilities"
@@ -1185,6 +1331,7 @@ Get trending or new pings (Soundboard view).
       "status": "POSTED",
       "surgeCount": 42,
       "createdAt": "2025-11-07T10:30:00.000Z",
+      "isAnonymous": false,
       "author": {
         "id": 1,
         "firstName": "John",
@@ -1194,7 +1341,8 @@ Get trending or new pings (Soundboard view).
         "waves": 5,
         "comments": 12,
         "surges": 42
-      }
+      },
+      "hasSurged": true
     }
   ],
   "pagination": {
@@ -1206,15 +1354,32 @@ Get trending or new pings (Soundboard view).
 }
 ```
 
+**Notes:**
+
+- `hasSurged`: Boolean indicating if the authenticated user has surged (liked) this ping
+- `author` is `null` if `isAnonymous` is `true`
+- When using `top` parameter, pagination only includes `{ top, sort }` instead of full pagination details
+- Results are filtered by organizationId from the authenticated user's JWT token
+
 ---
 
 ### GET /api/public/stream
 
-Get trending or new waves (Stream view).
+Get trending or new waves (Stream view) for the authenticated user's organization.
 
 **Auth Required:** Yes
 
-**Query Parameters:** Same as `/api/public/soundboard`
+**Organization Scope:** Organization-specific (uses organizationId from JWT)
+
+**Query Parameters:**
+
+- `page` (optional): Page number (default: 1)
+- `limit` (optional): Items per page (default: 20, max: 100)
+- `top` (optional): Get top N items (e.g., `top=3`, max: 50). Overrides pagination.
+- `sort` (optional): `trending` (default) or `new`
+- `days` (optional): Filter by days (default: 7, or `all`)
+
+**Example:** `/api/public/stream?sort=new&limit=15`
 
 **Success Response (200):**
 
@@ -1222,18 +1387,36 @@ Get trending or new waves (Stream view).
 {
   "data": [
     {
-      "id": 1,
-      "solution": "Extend library hours to midnight...",
-      "surgeCount": 15,
-      "viewCount": 200,
-      "createdAt": "2025-11-07T11:00:00.000Z",
+      "id": 15,
+      "solution": "Extend library hours to midnight on weekdays and offer 24/7 access during finals",
+      "pingId": 1,
+      "surgeCount": 25,
+      "createdAt": "2025-12-22T15:00:00.000Z",
+      "hasSurged": true,
+      "author": {
+        "id": 12,
+        "firstName": "Jane",
+        "lastName": "Smith"
+      },
       "ping": {
         "id": 1,
-        "title": "Library Hours Too Short"
+        "title": "Library Hours Too Short",
+        "content": "Our library closes at 8pm but many students need to study later...",
+        "createdAt": "2025-11-06T10:00:00.000Z",
+        "category": {
+          "id": 3,
+          "name": "Facilities"
+        },
+        "author": {
+          "id": 5,
+          "firstName": "John",
+          "lastName": "Doe"
+        },
+        "hasSurged": true
       },
       "_count": {
-        "surges": 15,
-        "comments": 3
+        "comments": 8,
+        "surges": 25
       }
     }
   ],
@@ -1241,10 +1424,85 @@ Get trending or new waves (Stream view).
     "page": 1,
     "limit": 20,
     "total": 50,
-    "sort": "trending"
+    "sort": "new"
   }
 }
 ```
+
+**Notes:**
+
+- `hasSurged`: Boolean indicating if the authenticated user has surged the wave
+- `ping.hasSurged`: Boolean indicating if the authenticated user has surged the associated ping
+- `author` fields may be omitted if the wave or ping was posted anonymously
+- When using `top` parameter, pagination only includes `{ top, sort }` instead of full pagination details
+- Results are filtered by organizationId from the authenticated user's JWT token
+
+---
+
+### GET /api/public/resolution-log
+
+Get a log of resolved pings with their approved solutions and official responses for the authenticated user's organization.
+
+**Auth Required:** Yes
+
+**Organization Scope:** Organization-specific (uses organizationId from JWT)
+
+**Query Parameters:**
+
+- `page` (optional): Page number (default: 1)
+- `limit` (optional): Items per page (default: 20, max: 100)
+- `top` (optional): Get top N items (e.g., `top=5`, max: 50). Overrides pagination.
+- `days` (optional): Filter by days since resolution (default: 7, or `all`)
+
+**Example:** `/api/public/resolution-log?limit=10&days=30`
+
+**Success Response (200):**
+
+```json
+{
+  "data": [
+    {
+      "id": 5,
+      "title": "Library Hours Too Short",
+      "category": {
+        "id": 3,
+        "name": "Facilities"
+      },
+      "progressStatus": "RESOLVED",
+      "createdAt": "2025-12-20T10:00:00.000Z",
+      "resolvedAt": "2026-01-05T14:30:00.000Z",
+      "msToResolve": 1382400000,
+      "approvedWave": {
+        "id": 15,
+        "solution": "Extend library hours to midnight on weekdays and offer 24/7 access during finals",
+        "createdAt": "2025-12-22T15:00:00.000Z"
+      },
+      "officialResponse": {
+        "id": 3,
+        "content": "We have approved extending library hours as suggested. Changes will take effect next semester.",
+        "createdAt": "2026-01-05T14:00:00.000Z"
+      },
+      "hasSurged": false
+    }
+  ],
+  "pagination": {
+    "page": 1,
+    "limit": 20,
+    "total": 45
+  }
+}
+```
+
+**Notes:**
+
+- Only shows pings that have been resolved (`resolvedAt` is not null)
+- `msToResolve` is the time in milliseconds between ping creation and resolution
+- `approvedWave` will be the first approved wave (status = APPROVED) if one exists, otherwise `null`
+- `officialResponse` contains the representative's official response if one exists, otherwise `null`
+- `hasSurged`: Boolean indicating if the authenticated user has surged the ping
+- When using `top` parameter, pagination only includes `{ top }` instead of full pagination details
+- Results are filtered by organizationId from the authenticated user's JWT token
+- Useful for transparency - users can see how their feedback led to actual changes
 
 ---
 
@@ -1528,6 +1786,305 @@ Update ping progress status.
 
 ---
 
+### GET /api/admin/analytics/active-users
+
+Get count of active users within a time window.
+
+**Auth Required:** Yes (ADMIN)
+
+**Query Parameters:**
+
+- `weeks` (required): Number of weeks to analyze (1-52)
+- `offsetWeeks` (optional): Weeks to offset backwards from current time (0-520, default: 0)
+
+**Example:** `/api/admin/analytics/active-users?weeks=4&offsetWeeks=0`
+
+**Success Response (200):**
+
+```json
+{
+  "weeks": 4,
+  "offsetWeeks": 0,
+  "start": "2025-12-11T10:00:00.000Z",
+  "end": "2026-01-08T10:00:00.000Z",
+  "activeUsers": 342
+}
+```
+
+**Note:** Active users are those who created pings, comments, surges, or official responses within the time window.
+
+---
+
+### GET /api/admin/analytics/trending
+
+Get trending categories with comparison to previous period.
+
+**Auth Required:** Yes (ADMIN)
+
+**Query Parameters:**
+
+- `weeks` (optional): Number of weeks to analyze (1-52, default: 1)
+- `offsetWeeks` (optional): Weeks to offset backwards (0-520, default: 0)
+
+**Success Response (200):**
+
+```json
+{
+  "window": {
+    "weeks": 1,
+    "offsetWeeks": 0,
+    "start": "2026-01-01T10:00:00.000Z",
+    "end": "2026-01-08T10:00:00.000Z"
+  },
+  "comparisonWindow": {
+    "start": "2025-12-25T10:00:00.000Z",
+    "end": "2026-01-01T10:00:00.000Z"
+  },
+  "data": [
+    {
+      "categoryId": 3,
+      "categoryName": "Facilities",
+      "currentCount": 45,
+      "previousCount": 30,
+      "delta": 15,
+      "percentChange": 50.0,
+      "isNew": false
+    },
+    {
+      "categoryId": 2,
+      "categoryName": "Academic",
+      "currentCount": 38,
+      "previousCount": 35,
+      "delta": 3,
+      "percentChange": 8.57,
+      "isNew": false
+    }
+  ]
+}
+```
+
+---
+
+### GET /api/admin/analytics/sentiment
+
+Analyze sentiment of pings within a time window.
+
+**Auth Required:** Yes (ADMIN)
+
+**Query Parameters:**
+
+- `weeks` (required): Number of weeks to analyze (1-52)
+- `offsetWeeks` (optional): Weeks to offset backwards (0-520, default: 0)
+
+**Success Response (200):**
+
+```json
+{
+  "window": {
+    "weeks": 2,
+    "offsetWeeks": 0,
+    "start": "2025-12-25T10:00:00.000Z",
+    "end": "2026-01-08T10:00:00.000Z"
+  },
+  "totalPings": 150,
+  "averageScore": -0.8,
+  "counts": {
+    "positive": 25,
+    "neutral": 40,
+    "negative": 85
+  },
+  "percentages": {
+    "positive": 16.67,
+    "neutral": 26.67,
+    "negative": 56.67
+  }
+}
+```
+
+**Note:** Sentiment analysis uses the `sentiment` library to analyze ping titles and content.
+
+---
+
+### GET /api/admin/analytics/response-times
+
+Analyze response times for acknowledgment and resolution of pings.
+
+**Auth Required:** Yes (ADMIN)
+
+**Query Parameters:**
+
+- `days` (optional): Number of days to analyze (default: 30, max: 365)
+
+**Success Response (200):**
+
+```json
+{
+  "windowDays": 30,
+  "totalPings": 450,
+  "acknowledgedCount": 320,
+  "resolvedCount": 180,
+  "avgMsToAcknowledge": 86400000,
+  "avgMsToResolve": 604800000,
+  "byCategory": [
+    {
+      "categoryId": 3,
+      "categoryName": "Facilities",
+      "totalPings": 120,
+      "acknowledgedCount": 95,
+      "resolvedCount": 60,
+      "avgMsToAcknowledge": 72000000,
+      "avgMsToResolve": 518400000
+    },
+    {
+      "categoryId": 2,
+      "categoryName": "Academic",
+      "totalPings": 100,
+      "acknowledgedCount": 80,
+      "resolvedCount": 45,
+      "avgMsToAcknowledge": 90000000,
+      "avgMsToResolve": 648000000
+    }
+  ]
+}
+```
+
+**Note:** Times are in milliseconds. Divide by 86400000 to get days.
+
+---
+
+### GET /api/admin/pings/priority
+
+Get priority pings based on engagement score.
+
+**Auth Required:** Yes (ADMIN)
+
+**Query Parameters:**
+
+- `weeks` (required): Number of weeks to analyze (1-52)
+- `offsetWeeks` (optional): Weeks to offset backwards (0-520, default: 0)
+- `limit` (optional): Number of results (1-100, default: 20)
+
+**Success Response (200):**
+
+```json
+{
+  "window": {
+    "weeks": 2,
+    "offsetWeeks": 0,
+    "start": "2025-12-25T10:00:00.000Z",
+    "end": "2026-01-08T10:00:00.000Z"
+  },
+  "limit": 20,
+  "data": [
+    {
+      "id": 5,
+      "title": "Library Hours Too Short",
+      "content": "...",
+      "categoryId": 3,
+      "surgeCount": 85,
+      "progressStatus": "PENDING",
+      "createdAt": "2025-12-28T10:00:00.000Z",
+      "category": {
+        "id": 3,
+        "name": "Facilities"
+      },
+      "author": {
+        "email": "student@university.edu",
+        "firstName": "John",
+        "lastName": "Doe"
+      },
+      "_count": {
+        "waves": 12,
+        "comments": 34,
+        "surges": 85
+      },
+      "priorityScore": 323
+    }
+  ]
+}
+```
+
+**Note:** Priority score = (surges × 3) + (comments × 2) + waves. Higher scores indicate more urgent issues.
+
+---
+
+### GET /api/admin/waves
+
+Get all waves with admin filters.
+
+**Auth Required:** Yes (ADMIN)
+
+**Query Parameters:**
+
+- `page` (optional): Page number (default: 1)
+- `limit` (optional): Items per page (default: 20, max: 100)
+- `status` (optional): Filter by wave status (`POSTED`, `UNDER_REVIEW`, `APPROVED`, `REJECTED`)
+
+**Success Response (200):**
+
+```json
+{
+  "data": [
+    {
+      "id": 15,
+      "solution": "Extend library hours to midnight on weekdays",
+      "status": "APPROVED",
+      "surgeCount": 42,
+      "viewCount": 320,
+      "flaggedForReview": false,
+      "createdAt": "2026-01-05T14:30:00.000Z",
+      "ping": {
+        "id": 5,
+        "title": "Library Hours Too Short",
+        "progressStatus": "RESOLVED"
+      },
+      "flaggedBy": null,
+      "_count": {
+        "surges": 42,
+        "comments": 8
+      }
+    }
+  ],
+  "pagination": {
+    "totalWaves": 250,
+    "totalPages": 13,
+    "currentPage": 1,
+    "limit": 20
+  }
+}
+```
+
+---
+
+### PATCH /api/admin/waves/:id/status
+
+Update wave status and optionally resolve parent ping.
+
+**Auth Required:** Yes (ADMIN)
+
+**Request Body:**
+
+```json
+{
+  "status": "POSTED" | "UNDER_REVIEW" | "APPROVED" | "REJECTED"
+}
+```
+
+**Success Response (200):**
+
+```json
+{
+  "id": 15,
+  "pingId": 5,
+  "status": "APPROVED",
+  "flaggedForReview": false
+}
+```
+
+**Note:** When a wave is approved (`APPROVED`), the parent ping is automatically marked as `RESOLVED` and a notification is sent to the ping author.
+
+---
+
 ## Representative Routes
 
 All representative routes require `REPRESENTATIVE` role.
@@ -1692,6 +2249,13 @@ Create official response to a ping.
 - `POSTED` - Publicly visible
 - `UNDER_REVIEW` - Submitted for review
 - `ARCHIVED` - Hidden from public view
+
+**Wave Status:**
+
+- `POSTED` - Publicly visible (default)
+- `UNDER_REVIEW` - Flagged for review by representatives
+- `APPROVED` - Approved by admin (auto-resolves parent ping and sends notification)
+- `REJECTED` - Rejected by admin
 
 **Progress Status:**
 

@@ -1,12 +1,12 @@
 import wavecardprofile from '../../assets/images/wavecardprofile.svg'
 import rating from '../../assets/images/rating.svg'
-import type { Wave } from "../../api/types";
+import type { ResolutionLog } from "../../api/types";
 
 interface Props {
-  wave: Wave;
+  resolution: ResolutionLog;
 }
 
-const WaveCardHeader = ({ wave }: Props) => {
+const WaveCardHeader = ({ resolution }: Props) => {
   // Format date for display
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -18,12 +18,20 @@ const WaveCardHeader = ({ wave }: Props) => {
     });
   };
 
-  // Get author name
+  // Get author name (from the ping author)
   const getAuthorName = () => {
-    if (typeof wave.author === 'object' && wave.author) {
-      return `${wave.author.firstName} ${wave.author.lastName}`;
+    if (resolution.author && typeof resolution.author === 'object') {
+      return `${resolution.author.firstName} ${resolution.author.lastName}`;
     }
     return 'Anonymous';
+  };
+
+  // Calculate resolution time in days
+  const getResolutionTime = () => {
+    const days = Math.floor(resolution.msToResolve / (1000 * 60 * 60 * 24));
+    if (days === 0) return 'Same day';
+    if (days === 1) return '1 day';
+    return `${days} days`;
   };
 
   return (
@@ -34,15 +42,13 @@ const WaveCardHeader = ({ wave }: Props) => {
           <span className="text-[15px] whitespace-normal sm:whitespace-nowrap inline-block max-w-3 font-semibold">
             {getAuthorName()}
           </span>
-          <span className="text-[#8B8E8D] text-[13px] ">{formatDate(wave.createdAt)}</span>
+          <span className="text-[#8B8E8D] text-[13px] ">{formatDate(resolution.resolvedAt)}</span>
         </div>
       </div>
-      {wave.rank && wave.rank <= 3 && (
-        <div className="flex gap-1.5 px-[15px] md:px-[30px] py-[7px] border border-[#626665] rounded-[23px]">
-          <img src={rating} alt="" />
-          Top {wave.rank}
-        </div>
-      )}
+      <div className="flex gap-1.5 px-[15px] md:px-[30px] py-[7px] border border-[#626665] rounded-[23px]">
+        <span className="text-green-600 font-semibold">✓</span>
+        Resolved in {getResolutionTime()}
+      </div>
     </div>
   );
 };

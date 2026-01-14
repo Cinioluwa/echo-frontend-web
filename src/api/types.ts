@@ -56,14 +56,18 @@ export interface Ping {
   content: string;
   categoryId?: number;
   hashtag?: string;
+  isAnonymous?: boolean;
   status: "POSTED" | "UNDER_REVIEW" | "ARCHIVED";
-  progressStatus: "PENDING" | "IN_PROGRESS" | "RESOLVED" | "WONT_FIX";
+  progressStatus?: "PENDING" | "IN_PROGRESS" | "RESOLVED" | "WONT_FIX";
+  progressUpdatedAt?: string;
+  resolvedAt?: string;
   surgeCount: number;
+  hasSurged?: boolean; // Whether the current user has surged this ping
   authorId: number;
   organizationId: number;
   createdAt: string;
   updatedAt: string;
-  author?: Author;
+  author?: Author | null;
   category?: Category;
   waves?: Wave[];
   comments?: Comment[];
@@ -81,22 +85,34 @@ export interface Wave {
   description?: string;
   solution: string;
   pingId: number;
+  isAnonymous?: boolean;
   surgeCount: number;
+  hasSurged?: boolean; // Whether the current user has surged this wave
   viewCount: number;
   rank?: number; // Top ranking (1-3 for top waves)
   flaggedForReview?: boolean;
+  authorId: number;
   organizationId: number;
-  status?: "active" | "approved" | "rejected" | "implemented";
+  status?: "POSTED" | "UNDER_REVIEW" | "APPROVED" | "REJECTED";
   createdAt: string;
   updatedAt?: string;
   ping?: {
     id: number;
     title: string;
-    content?: string; // Ping description - to be added by backend
-    author?: Author;
+    content?: string;
+    categoryId?: number;
+    hasSurged?: boolean;
+    surgeCount?: number;
+    author?: Author | null;
+    category?: Category;
     createdAt?: string;
+    _count?: {
+      waves?: number;
+      comments?: number;
+      surges?: number;
+    };
   };
-  author?: Author;
+  author?: Author | null;
   category?: Category;
   comments?: Comment[];
   _count?: {
@@ -169,4 +185,39 @@ export interface AnalyticsData {
   name: string;
   value?: number;
   count?: number;
+}
+
+export interface ResolutionLog {
+  id: number;
+  title: string;
+  content: string;
+  categoryId?: number;
+  hashtag?: string;
+  isAnonymous?: boolean;
+  surgeCount: number;
+  hasSurged?: boolean;
+  createdAt: string;
+  resolvedAt: string;
+  msToResolve: number; // Time in milliseconds from creation to resolution
+  author?: Author | null;
+  category?: Category;
+  approvedWave?: {
+    id: number;
+    solution: string;
+    surgeCount: number;
+    viewCount: number;
+    createdAt: string;
+    author?: Author | null;
+  } | null;
+  officialResponse?: {
+    id: number;
+    content: string;
+    createdAt: string;
+    author?: Author;
+  } | null;
+  _count?: {
+    waves?: number;
+    comments?: number;
+    surges?: number;
+  };
 }

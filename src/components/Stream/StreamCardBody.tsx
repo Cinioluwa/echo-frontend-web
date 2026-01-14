@@ -2,7 +2,7 @@ interface Props {
   waveText: string;
   waveTitle: string;
   image?: string;
-  category: string;
+  category?: string;
 }
 
 const StreamCardBody = ({
@@ -17,7 +17,7 @@ const StreamCardBody = ({
         <span>
           <img src={image} alt="" />
         </span>
-        {category}
+        {category || "General"}
       </div>
       <p className="font-semibold text-[16px] ">{waveTitle}</p>
       <p className="text-[#626665] text-[15px] border-b border-[#D3CECE] pb-4">

@@ -5,10 +5,22 @@ interface Props {
   pingTimeStamp: string | undefined;
   pingTitle: string | undefined;
   pingDescription?: string | undefined;
+  pingAuthorName?: string;
+  pingAuthorId?: number;
 }
 
-const ProposedPingCard = ({ pingTimeStamp, pingTitle, pingDescription }: Props) => {
+const ProposedPingCard = ({
+  pingTimeStamp,
+  pingTitle,
+  pingDescription,
+  pingAuthorName,
+  pingAuthorId: _pingAuthorId
+}: Props) => {
   console.log(pingTimeStamp);
+
+  // Use provided author name or fallback to default
+  const displayName = pingAuthorName || "Anonymous User";
+
   return (
     <div className="flex items-center w-full justify-between px-[5px] py-[9px] rounded-2xl bg-[#FFC37B]">
       <div className="  inline-flex mr-2.5 ml-2.5  items-center gap-2.5 ">
@@ -17,7 +29,7 @@ const ProposedPingCard = ({ pingTimeStamp, pingTitle, pingDescription }: Props) 
         </span>
         <div className="text-start">
           <p className="text-[#926B3D] text-[0.45rem] md:text-[0.74rem] font-bold ">
-            Osagumwenro U
+            {displayName}
           </p>
           <p className="text-[0.62rem] md:text-[0.55rem] ">{pingTimeStamp}</p>
         </div>

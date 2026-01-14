@@ -14,8 +14,10 @@ import type { PingFormDetails } from "../components/PingFormModal";
 import PingFormModal from "../components/PingFormModal";
 import { publicService, searchService } from "../api/services";
 import type { Ping } from "../api/types";
+import { useCategoryFilter } from "../contexts/CategoryFilterContext";
 
 const SoundBoard = () => {
+  const { selectedCategoryId } = useCategoryFilter();
   const [pingForm, setPingForm] = useState(false);
   const [formSegment, setFormSegment] = useState("ping");
 
@@ -61,10 +63,11 @@ const SoundBoard = () => {
         setError(null);
 
         let response;
-        if (debouncedSearchQuery) {
-          // Use search service if there's a search query
+        if (debouncedSearchQuery || selectedCategoryId) {
+          // Use search service if there's a search query or category filter
           response = await searchService.searchSoundboard({
             q: debouncedSearchQuery,
+            category: selectedCategoryId || undefined,
             page: currentPage,
             limit: 20,
             sort: "trending"
@@ -78,6 +81,10 @@ const SoundBoard = () => {
           });
         }
 
+        console.log("🔍 Raw API Response (Pings):", response);
+        console.log("📌 Ping data from API:", response.data);
+        console.log("📊 Sample ping (first item):", response.data[0]);
+
         setPings(response.data);
         setTotalPages(response.pagination.totalPages || 1);
       } catch (err: any) {
@@ -89,7 +96,7 @@ const SoundBoard = () => {
     };
 
     fetchPings();
-  }, [currentPage, debouncedSearchQuery]);
+  }, [currentPage, debouncedSearchQuery, selectedCategoryId]);
 
   // REFRESH PINGS AFTER CREATING NEW PING
   const handlePingCreated = async () => {
@@ -105,6 +112,12 @@ const SoundBoard = () => {
       console.error("Error refreshing pings:", err);
     }
   };
+
+  // Debug: Log pings data to check hasSurged field
+  useEffect(() => {
+    console.log("Pings data:", pings);
+    console.log("Pings with hasSurged:", pings.map(p => ({ id: p.id, title: p.title, hasSurged: p.hasSurged })));
+  }, [pings]);
 
   // Handle search
   const handleSearch = (query: string) => {
@@ -216,6 +229,7 @@ const SoundBoard = () => {
                       commentCount={ping._count?.comments || 0}
                       authorName={authorName}
                       onRefresh={handlePingCreated}
+                      hasSurged={ping.hasSurged}
                     />
                   </div>
                 );

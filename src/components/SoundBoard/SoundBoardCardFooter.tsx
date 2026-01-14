@@ -12,6 +12,7 @@ interface Props {
   surgeCount?: number;
   commentCount?: number;
   onRefresh?: () => void;
+  hasSurged?: boolean; // Whether the current user has surged this ping
 }
 
 function SoundBoardCardFooter({
@@ -23,14 +24,20 @@ function SoundBoardCardFooter({
   surgeCount = 0,
   commentCount = 0,
   onRefresh,
+  hasSurged = false,
 }: Props) {
   function handleClick(id: string) {
     onPropose(id);
   }
 
-  const [surged, setSurged] = useState(false);
+  const [surged, setSurged] = useState(hasSurged);
   const [currentSurgeCount, setCurrentSurgeCount] = useState(surgeCount);
   const [isToggling, setIsToggling] = useState(false);
+
+  // Sync surge state with prop changes
+  useEffect(() => {
+    setSurged(hasSurged);
+  }, [hasSurged, id]);
 
   // Update surge count when prop changes
   useEffect(() => {
@@ -54,7 +61,7 @@ function SoundBoardCardFooter({
 
       // Update based on server response
       setSurged(response.surged);
-      setCurrentSurgeCount(response.surgeCount);
+      // Keep the optimistic count since API doesn't return surgeCount
 
       // Call refresh callback if provided to update parent state
       if (onRefresh) {

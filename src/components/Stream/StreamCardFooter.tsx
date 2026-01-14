@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import surge from "../../../public/surge.svg";
 import { surgeService } from "../../api/services";
 
@@ -7,12 +7,24 @@ interface Props {
   surgeCount?: number;
   commentCount?: number;
   onRefresh?: () => void;
+  hasSurged?: boolean; // Whether the current user has surged this wave
 }
 
-function StreamCardFooter({ waveId, surgeCount = 0, commentCount = 0, onRefresh }: Props) {
-  const [surged, setSurged] = useState(false);
+function StreamCardFooter({ waveId, surgeCount = 0, commentCount: _commentCount = 0, onRefresh: _onRefresh, hasSurged = false }: Props) {
+  const [surged, setSurged] = useState(hasSurged);
   const [currentSurgeCount, setCurrentSurgeCount] = useState(surgeCount);
   const [isLoading, setIsLoading] = useState(false);
+
+  // Sync surge state with prop changes
+  useEffect(() => {
+    console.log(`StreamCardFooter [Wave ${waveId}]: hasSurged prop =`, hasSurged);
+    setSurged(hasSurged);
+  }, [hasSurged, waveId]);
+
+  // Update surge count when prop changes
+  useEffect(() => {
+    setCurrentSurgeCount(surgeCount);
+  }, [surgeCount]);
 
   const handleSurge = async () => {
     if (!waveId || isLoading) return;
@@ -30,7 +42,7 @@ function StreamCardFooter({ waveId, surgeCount = 0, commentCount = 0, onRefresh 
 
       // Sync with API response
       setSurged(response.surged);
-      setCurrentSurgeCount(prev => {
+      setCurrentSurgeCount(_prev => {
         // Calculate the correct count based on the change
         const diff = response.surged ? 1 : -1;
         const expectedCount = previousCount + diff;
