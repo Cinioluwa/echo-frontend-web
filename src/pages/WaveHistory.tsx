@@ -4,20 +4,27 @@ import SideBar, { type Pages } from "../components/SideBar";
 import PageTitleBar from "../components/PageTitleBar";
 // import { FaPlus } from "react-icons/fa6";
 import { useState, useEffect } from "react";
-import { publicService } from "../api/services";
-import type { ResolutionLog } from "../api/types";
-import { useCategoryFilter } from "../contexts/CategoryFilterContext";
+import { useResolutionsStore, useSearchStore, selectGroupedResolutions } from "../stores";
+import { useShallow } from "zustand/react/shallow";
 
 const WaveHistory = () => {
-  const { selectedCategoryId, setCategoryCounts } = useCategoryFilter();
-  // API Integration States - using ResolutionLog for resolved pings
-  const [resolutions, setResolutions] = useState<ResolutionLog[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [hasNextPage, setHasNextPage] = useState(false);
-  const [searchQuery, setSearchQuery] = useState<string>("");
-  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState<string>("");
+  // Zustand stores
+  const { isLoading, error, fetchResolutions, fetchNextPage, hasNextPage } = useResolutionsStore(
+    useShallow((state) => ({
+      isLoading: state.isLoading,
+      error: state.error,
+      fetchResolutions: state.fetchResolutions,
+      fetchNextPage: state.fetchNextPage,
+      hasNextPage: state.hasNextPage,
+    }))
+  );
+
+  const selectedCategoryId = useSearchStore((state) => state.selectedCategoryId);
+
+  // Use grouped selector for date-based grouping
+  const groupedResolutions = useResolutionsStore(
+    selectGroupedResolutions(selectedCategoryId)
+  );
 
   // SETTING ACTIVE PAGE BUTTON
   const [activePage, setActivePage] = useState({
@@ -26,111 +33,19 @@ const WaveHistory = () => {
     soundBoardActive: false,
   } as Pages);
 
-  // Debounce search query
+  // Fetch resolutions on mount
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setDebouncedSearchQuery(searchQuery);
-    }, 500);
+    fetchResolutions({ days: "all" });
+  }, [fetchResolutions]);
 
-    return () => clearTimeout(timer);
-  }, [searchQuery]);
-
-  // Fetch resolution log from API
-  useEffect(() => {
-    fetchResolutions();
-  }, [currentPage, debouncedSearchQuery, selectedCategoryId]);
-
-  const fetchResolutions = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-
-      // Note: Resolution log endpoint doesn't support text search or category filters yet
-      // Only using pagination and days filter
-      const response = await publicService.getResolutionLog({
-        page: currentPage,
-        limit: 20,
-        days: "all"
-      });
-
-      console.log("🔍 Raw API Response (Resolution Log):", response);
-      console.log("📜 Resolution data from API:", response.data);
-
-      setResolutions(response.data);
-      setHasNextPage(response.pagination.hasNextPage || false);
-    } catch (err: any) {
-      console.error("Error fetching resolution log:", err);
-      setError(err.response?.data?.error || "Failed to load resolution history. Please try again.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Handle search
-  const handleSearch = (query: string) => {
-    setSearchQuery(query);
-    setCurrentPage(1); // Reset to first page on new search
-  };
-
-  // Group resolutions by date
-  // Filter resolutions by selected category (client-side filtering)
-  const filteredResolutions = selectedCategoryId
-    ? resolutions.filter(resolution => resolution.category?.id === selectedCategoryId)
-    : resolutions;
-
-  // Calculate category counts
-  useEffect(() => {
-    const counts: Record<number, number> = {};
-    resolutions.forEach((resolution) => {
-      const categoryId = resolution.category?.id;
-      if (categoryId) {
-        counts[categoryId] = (counts[categoryId] || 0) + 1;
-      }
-    });
-    setCategoryCounts(counts, resolutions.length);
-  }, [resolutions, setCategoryCounts]);
-
-  const groupResolutionsByDate = (resolutions: ResolutionLog[]) => {
-    const groups: { [key: string]: ResolutionLog[] } = {};
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-
-    resolutions.forEach((resolution) => {
-      const resolutionDate = new Date(resolution.resolvedAt);
-      resolutionDate.setHours(0, 0, 0, 0);
-
-      const diffTime = today.getTime() - resolutionDate.getTime();
-      const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-
-      let dateLabel: string;
-      if (diffDays === 0) {
-        dateLabel = "Today";
-      } else if (diffDays === 1) {
-        dateLabel = "Yesterday";
-      } else {
-        dateLabel = resolutionDate.toLocaleDateString('en-US', {
-          day: 'numeric',
-          month: 'long',
-          year: 'numeric'
-        });
-      }
-
-      if (!groups[dateLabel]) {
-        groups[dateLabel] = [];
-      }
-      groups[dateLabel].push(resolution);
-    });
-
-    return groups;
-  };
-
-  const groupedResolutions = groupResolutionsByDate(filteredResolutions);
+  // Calculate total filtered count
+  const filteredCount = Object.values(groupedResolutions).flat().length;
 
   return (
     <div className=" h-full">
       <header className="z-20 md:fixed md:top-0 w-full">
         <nav>
-          <NavBar onSearch={handleSearch} />
+          <NavBar />
         </nav>
         <PageTitleBar pages={activePage} setActivePage={setActivePage} heading="History" />
       </header>
@@ -141,7 +56,7 @@ const WaveHistory = () => {
 
       <main className=" mr-2.5 ml-2.5 mt-5 md:mr-[46px] h-[calc(100vh-155px)]   md:ml-[350px] md:mt-[155px]">
         {/* Loading State */}
-        {loading && (
+        {isLoading && (
           <div className="h-full flex items-center justify-center">
             <div className="text-center">
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#F49B31] mx-auto"></div>
@@ -151,12 +66,12 @@ const WaveHistory = () => {
         )}
 
         {/* Error State */}
-        {error && !loading && (
+        {error && !isLoading && (
           <div className="h-full flex items-center justify-center">
             <div className="text-center">
               <p className="text-red-500 mb-4">{error}</p>
               <button
-                onClick={fetchResolutions}
+                onClick={() => fetchResolutions({ days: "all" })}
                 className="bg-[#F49B31] hover:bg-[#d88429] text-white px-6 py-2 rounded-lg transition-colors"
               >
                 Try Again
@@ -166,7 +81,7 @@ const WaveHistory = () => {
         )}
 
         {/* Resolutions List */}
-        {!loading && !error && (
+        {!isLoading && !error && (
           <div className=" h-full overflow-auto [scrollbar-width:none]">
             {Object.entries(groupedResolutions).map(([dateLabel, dateResolutions]) => (
               <div key={dateLabel} className="mb-[22px] flex md:block flex-col items-center ">
@@ -181,7 +96,7 @@ const WaveHistory = () => {
             ))}
 
             {/* Empty State */}
-            {filteredResolutions.length === 0 && (
+            {filteredCount === 0 && (
               <div className="flex items-center justify-center h-full">
                 <div className="text-center">
                   <p className="text-gray-500 text-lg mb-2">No resolved issues yet</p>
@@ -194,7 +109,7 @@ const WaveHistory = () => {
             {hasNextPage && (
               <div className="flex justify-center py-6">
                 <button
-                  onClick={() => setCurrentPage(prev => prev + 1)}
+                  onClick={fetchNextPage}
                   className="bg-[#F49B31] hover:bg-[#d88429] text-white px-6 py-3 rounded-lg transition-colors"
                 >
                   Load More

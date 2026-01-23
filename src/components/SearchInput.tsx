@@ -1,5 +1,6 @@
-import { useState, useCallback, useEffect } from "react";
+import { useCallback, useEffect } from "react";
 import { useLocation } from "react-router-dom";
+import { useSearchStore } from "../stores";
 const search = "/assets/images/Search.svg";
 
 interface SearchInputProps {
@@ -7,16 +8,19 @@ interface SearchInputProps {
 }
 
 const SearchInput = ({ onSearch }: SearchInputProps) => {
-  const [searchQuery, setSearchQuery] = useState("");
+  const searchQuery = useSearchStore((state) => state.query);
+  const setSearchQuery = useSearchStore((state) => state.setQuery);
+  const setDebouncedQuery = useSearchStore((state) => state.setDebouncedQuery);
   const location = useLocation();
 
   // Reset search when navigating to a different page
   useEffect(() => {
     setSearchQuery("");
+    setDebouncedQuery("");
     if (onSearch) {
       onSearch("");
     }
-  }, [location.pathname]);
+  }, [location.pathname, setSearchQuery, setDebouncedQuery, onSearch]);
 
   // Determine search context based on current page
   const getSearchContext = () => {

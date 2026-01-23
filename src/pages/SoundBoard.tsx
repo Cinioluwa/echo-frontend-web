@@ -12,12 +12,30 @@ import ProposeWaveModal from "../components/ProposeWaveModal";
 
 import type { PingFormDetails } from "../components/PingFormModal";
 import PingFormModal from "../components/PingFormModal";
-import { publicService, searchService } from "../api/services";
-import type { Ping } from "../api/types";
-import { useCategoryFilter } from "../contexts/CategoryFilterContext";
+import { usePingsStore, useSearchStore } from "../stores";
+import { useShallow } from "zustand/react/shallow";
 
 const SoundBoard = () => {
-  const { selectedCategoryId, setCategoryCounts } = useCategoryFilter();
+  // Zustand stores
+  const { pings, isLoading, error, fetchPings, fetchNextPage, currentPage, totalPages } = usePingsStore(
+    useShallow((state) => ({
+      pings: state.pings,
+      isLoading: state.isLoading,
+      error: state.error,
+      fetchPings: state.fetchPings,
+      fetchNextPage: state.fetchNextPage,
+      currentPage: state.currentPage,
+      totalPages: state.totalPages,
+    }))
+  );
+
+  const { debouncedQuery, selectedCategoryId } = useSearchStore(
+    useShallow((state) => ({
+      debouncedQuery: state.debouncedQuery,
+      selectedCategoryId: state.selectedCategoryId,
+    }))
+  );
+
   const [pingForm, setPingForm] = useState(false);
   const [formSegment, setFormSegment] = useState("ping");
 
@@ -28,15 +46,6 @@ const SoundBoard = () => {
     soundBoardActive: true,
   } as Pages);
 
-  // API STATE
-  const [pings, setPings] = useState<Ping[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const [searchQuery, setSearchQuery] = useState<string>("");
-  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState<string>("");
-
   //SIMULATING FETCHED DATA FROM SERVER (MAPPED INTO SOUNDBOARD-CARD, Simulated with PingFormModal module.):
   const [pingFormDetails, setPingFormDetails] = useState<PingFormDetails[]>([]);
 
@@ -46,88 +55,23 @@ const SoundBoard = () => {
   const [proposeWaveModal, setProposeWaveModal] = useState(false);
   const [proposeActive, setProposeActive] = useState(false);
 
-  // Debounce search query
+  // Fetch pings when search/filter changes
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setDebouncedSearchQuery(searchQuery);
-    }, 500);
-
-    return () => clearTimeout(timer);
-  }, [searchQuery]);
-
-  // FETCH PINGS FROM API
-  useEffect(() => {
-    const fetchPings = async () => {
-      try {
-        setIsLoading(true);
-        setError(null);
-
-        let response;
-        if (debouncedSearchQuery || selectedCategoryId) {
-          // Use search service if there's a search query or category filter
-          response = await searchService.searchSoundboard({
-            q: debouncedSearchQuery,
-            category: selectedCategoryId || undefined,
-            page: currentPage,
-            limit: 20,
-            sort: "trending"
-          });
-        } else {
-          // Use regular soundboard endpoint
-          response = await publicService.getSoundboard({
-            page: currentPage,
-            limit: 20,
-            sort: "trending",
-          });
-        }
-
-        console.log("🔍 Raw API Response (Pings):", response);
-        console.log("📌 Ping data from API:", response.data);
-        console.log("📊 Sample ping (first item):", response.data[0]);
-
-        setPings(response.data);
-        setTotalPages(response.pagination.totalPages || 1);
-      } catch (err: any) {
-        setError(err.response?.data?.error || "Failed to fetch pings");
-        console.error("Error fetching pings:", err);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchPings();
-  }, [currentPage, debouncedSearchQuery, selectedCategoryId]);
+    fetchPings({
+      q: debouncedQuery,
+      category: selectedCategoryId || undefined,
+      sort: "trending",
+    });
+  }, [debouncedQuery, selectedCategoryId, fetchPings]);
 
   // Filter pings by selected category (client-side filtering)
   const filteredPings = selectedCategoryId
     ? pings.filter(ping => ping.category?.id === selectedCategoryId)
     : pings;
 
-  // Calculate category counts
-  useEffect(() => {
-    const counts: Record<number, number> = {};
-    pings.forEach((ping) => {
-      const categoryId = ping.category?.id;
-      if (categoryId) {
-        counts[categoryId] = (counts[categoryId] || 0) + 1;
-      }
-    });
-    setCategoryCounts(counts, pings.length);
-  }, [pings, setCategoryCounts]);
-
   // REFRESH PINGS AFTER CREATING NEW PING
-  const handlePingCreated = async () => {
-    try {
-      const response = await publicService.getSoundboard({
-        page: currentPage,
-        limit: 20,
-        sort: "trending",
-      });
-      setPings(response.data);
-      setTotalPages(response.pagination.totalPages || 1);
-    } catch (err) {
-      console.error("Error refreshing pings:", err);
-    }
+  const handlePingCreated = () => {
+    fetchPings({ sort: "trending" });
   };
 
   // Debug: Log pings data to check hasSurged field
@@ -135,12 +79,6 @@ const SoundBoard = () => {
     console.log("Pings data:", pings);
     console.log("Pings with hasSurged:", pings.map(p => ({ id: p.id, title: p.title, hasSurged: p.hasSurged })));
   }, [pings]);
-
-  // Handle search
-  const handleSearch = (query: string) => {
-    setSearchQuery(query);
-    setCurrentPage(1); // Reset to first page on new search
-  };
 
   // SEARCH FOR WHICH PING WAS PROPOSED
   function handleWaveProposal(id: string) {
@@ -179,7 +117,7 @@ const SoundBoard = () => {
     <div className="h-full">
       <header className="z-20 md:fixed md:top-0 w-full">
         <nav>
-          <NavBar onSearch={handleSearch} />
+          <NavBar />
         </nav>
         <PageTitleBar pages={activePage} setActivePage={setActivePage} heading="Sound Board">
           <button
@@ -273,7 +211,7 @@ const SoundBoard = () => {
               {totalPages > 1 && (
                 <div className="flex justify-center items-center gap-4 my-6">
                   <button
-                    onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
+                    onClick={() => fetchPings({ page: Math.max(1, currentPage - 1), sort: "trending" })}
                     disabled={currentPage === 1}
                     className="px-4 py-2 bg-[#F49B31] text-white rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#d88429] transition-colors"
                   >
@@ -283,7 +221,7 @@ const SoundBoard = () => {
                     Page {currentPage} of {totalPages}
                   </span>
                   <button
-                    onClick={() => setCurrentPage((prev) => Math.min(totalPages, prev + 1))}
+                    onClick={fetchNextPage}
                     disabled={currentPage === totalPages}
                     className="px-4 py-2 bg-[#F49B31] text-white rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#d88429] transition-colors"
                   >

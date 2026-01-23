@@ -1,11 +1,13 @@
-import { useAuth } from "../contexts/AuthContext";
+import { useAuthStore } from "../stores";
 import { User } from 'lucide-react';
 
 const UserInfo = () => {
-  const { user, loading, error } = useAuth();
+  const user = useAuthStore((state) => state.user);
+  const isLoading = useAuthStore((state) => state.isLoading);
+  const error = useAuthStore((state) => state.error);
 
   // Loading state
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="inline-flex mr-2.5 ml-2.5 md:ml-[55px] items-center gap-2.5 md:mr-[35px]">
         <div className="animate-pulse flex items-center gap-2.5">

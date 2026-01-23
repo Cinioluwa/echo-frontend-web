@@ -9,23 +9,31 @@ import WaveFormModal, {
 } from "../components/WaveFormModal";
 import PingFormModal from "../components/PingFormModal";
 import StreamCard from "../components/Stream/StreamCard";
-import { publicService, searchService } from "../api/services";
-import type { Wave } from "../api/types";
-import { useCategoryFilter } from "../contexts/CategoryFilterContext";
+import { useWavesStore, useSearchStore } from "../stores";
+import { useShallow } from "zustand/react/shallow";
 
 const Stream = () => {
-  const { selectedCategoryId, setCategoryCounts } = useCategoryFilter();
+  // Zustand stores
+  const { waves, isLoading, error, hasNextPage, fetchWaves, fetchNextPage } = useWavesStore(
+    useShallow((state) => ({
+      waves: state.waves,
+      isLoading: state.isLoading,
+      error: state.error,
+      hasNextPage: state.hasNextPage,
+      fetchWaves: state.fetchWaves,
+      fetchNextPage: state.fetchNextPage,
+    }))
+  );
+
+  const { debouncedQuery, selectedCategoryId } = useSearchStore(
+    useShallow((state) => ({
+      debouncedQuery: state.debouncedQuery,
+      selectedCategoryId: state.selectedCategoryId,
+    }))
+  );
+
   const [waveForm, setWaveForm] = useState(false);
   const [formSegment, setFormSegment] = useState("wave");
-
-  // API Integration States
-  const [waves, setWaves] = useState<Wave[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [hasNextPage, setHasNextPage] = useState(false);
-  const [searchQuery, setSearchQuery] = useState<string>("");
-  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState<string>("");
 
   // SETTING ACTIVE PAGE BUTTON
   const [activePage, setActivePage] = useState<Pages>({
@@ -37,64 +45,15 @@ const Stream = () => {
   // FETCHED (waveFormDetails) FROM SERVER (MAPPED INTO STREAMCARD):
   const [waveFormDetails, setWaveFormDetails] = useState<WaveFormDetails[]>([]);
 
-  // Debounce search query
+  // Fetch waves when search/filter changes
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setDebouncedSearchQuery(searchQuery);
-    }, 500);
-
-    return () => clearTimeout(timer);
-  }, [searchQuery]);
-
-  // Fetch waves from API
-  useEffect(() => {
-    fetchWaves();
-  }, [currentPage, debouncedSearchQuery, selectedCategoryId]);
-
-  const fetchWaves = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-
-      let response;
-      if (debouncedSearchQuery || selectedCategoryId) {
-        // Use search service if there's a search query or category filter
-        response = await searchService.searchStream({
-          q: debouncedSearchQuery,
-          category: selectedCategoryId || undefined,
-          page: currentPage,
-          limit: 20,
-          sort: "trending"
-        });
-      } else {
-        // Use regular stream endpoint
-        response = await publicService.getStream({
-          page: currentPage,
-          limit: 20,
-          sort: "trending",
-          days: 7
-        });
-      }
-
-      console.log("🔍 Raw API Response:", response);
-      console.log("🌊 Wave data from API:", response.data);
-      console.log("📊 Sample wave (first item):", response.data[0]);
-
-      setWaves(response.data);
-      setHasNextPage(response.pagination.hasNextPage || false);
-    } catch (err: any) {
-      console.error("Error fetching waves:", err);
-      setError(err.response?.data?.error || "Failed to load waves. Please try again.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Handle search
-  const handleSearch = (query: string) => {
-    setSearchQuery(query);
-    setCurrentPage(1); // Reset to first page on new search
-  };
+    fetchWaves({
+      q: debouncedQuery,
+      category: selectedCategoryId || undefined,
+      sort: "trending",
+      days: 7,
+    });
+  }, [debouncedQuery, selectedCategoryId, fetchWaves]);
 
   // Format date for display
   const formatDate = (dateString: string) => {
@@ -114,23 +73,11 @@ const Stream = () => {
     ? waves.filter(wave => wave.category?.id === selectedCategoryId || wave.ping?.category?.id === selectedCategoryId)
     : waves;
 
-  // Calculate category counts
-  useEffect(() => {
-    const counts: Record<number, number> = {};
-    waves.forEach((wave) => {
-      const categoryId = wave.category?.id || wave.ping?.category?.id;
-      if (categoryId) {
-        counts[categoryId] = (counts[categoryId] || 0) + 1;
-      }
-    });
-    setCategoryCounts(counts, waves.length);
-  }, [waves, setCategoryCounts]);
-
   return (
     <div className="h-full">
       <header className="z-20 md:fixed md:top-0 w-full">
         <nav>
-          <NavBar onSearch={handleSearch} />
+          <NavBar />
         </nav>
         <PageTitleBar
           pages={activePage}
@@ -155,7 +102,7 @@ const Stream = () => {
       </aside>
       <main className="mr-2.5 ml-2.5 mt-5 flex flex-col md:mr-[46px] h-[calc(100vh-155px)]  md:ml-[350px]   md:mt-[155px]">
         {/* Loading State */}
-        {loading && (
+        {isLoading && (
           <div className="flex-1 flex items-center justify-center">
             <div className="text-center">
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#F49B31] mx-auto"></div>
@@ -165,12 +112,12 @@ const Stream = () => {
         )}
 
         {/* Error State */}
-        {error && !loading && (
+        {error && !isLoading && (
           <div className="flex-1 flex items-center justify-center">
             <div className="text-center">
               <p className="text-red-500 mb-4">{error}</p>
               <button
-                onClick={fetchWaves}
+                onClick={() => fetchWaves({ sort: "trending", days: 7 })}
                 className="bg-[#F49B31] hover:bg-[#d88429] text-white px-6 py-2 rounded-lg transition-colors"
               >
                 Try Again
@@ -180,7 +127,7 @@ const Stream = () => {
         )}
 
         {/* Waves List */}
-        {!loading && !error && (
+        {!isLoading && !error && (
           <div className="flex-1 [scrollbar-width:none] h-full overflow-auto">
             {/* Display API fetched waves */}
             {filteredWaves.map((wave) => {
@@ -210,7 +157,7 @@ const Stream = () => {
                     pingDescription={wave.ping?.content}
                     surgeCount={wave._count?.surges || wave.surgeCount}
                     commentCount={wave._count?.comments || 0}
-                    onRefresh={fetchWaves}
+                    onRefresh={() => fetchWaves({ sort: "trending", days: 7 })}
                     authorName={waveAuthorName}
                     authorId={wave.author?.id}
                     rank={wave.rank}
@@ -251,7 +198,7 @@ const Stream = () => {
             {hasNextPage && (
               <div className="flex justify-center py-6">
                 <button
-                  onClick={() => setCurrentPage(prev => prev + 1)}
+                  onClick={fetchNextPage}
                   className="bg-[#F49B31] hover:bg-[#d88429] text-white px-6 py-3 rounded-lg transition-colors"
                 >
                   Load More
@@ -284,7 +231,7 @@ const Stream = () => {
             setFormSegment={() => setFormSegment("ping")}
             setWaveFormDetails={(details) => setWaveFormDetails(details)}
             setWaveForm={() => setWaveForm(!waveForm)}
-            onSuccess={fetchWaves}
+            onSuccess={() => fetchWaves({ sort: "trending", days: 7 })}
           >
             <button
               onClick={() => setWaveForm(!waveForm)}
