@@ -1,4 +1,4 @@
-import soundBoardImage from "../assets/images/SoundBoardImage.svg";
+const soundBoardImage = "/assets/images/SoundBoardImage.svg";
 import SoundBoardCard from "../components/SoundBoard/SoundBoardCard";
 import SideBar, { type Pages } from "../components/SideBar";
 import PageTitleBar from "../components/PageTitleBar";
@@ -17,7 +17,7 @@ import type { Ping } from "../api/types";
 import { useCategoryFilter } from "../contexts/CategoryFilterContext";
 
 const SoundBoard = () => {
-  const { selectedCategoryId } = useCategoryFilter();
+  const { selectedCategoryId, setCategoryCounts } = useCategoryFilter();
   const [pingForm, setPingForm] = useState(false);
   const [formSegment, setFormSegment] = useState("ping");
 
@@ -97,6 +97,23 @@ const SoundBoard = () => {
 
     fetchPings();
   }, [currentPage, debouncedSearchQuery, selectedCategoryId]);
+
+  // Filter pings by selected category (client-side filtering)
+  const filteredPings = selectedCategoryId
+    ? pings.filter(ping => ping.category?.id === selectedCategoryId)
+    : pings;
+
+  // Calculate category counts
+  useEffect(() => {
+    const counts: Record<number, number> = {};
+    pings.forEach((ping) => {
+      const categoryId = ping.category?.id;
+      if (categoryId) {
+        counts[categoryId] = (counts[categoryId] || 0) + 1;
+      }
+    });
+    setCategoryCounts(counts, pings.length);
+  }, [pings, setCategoryCounts]);
 
   // REFRESH PINGS AFTER CREATING NEW PING
   const handlePingCreated = async () => {
@@ -196,14 +213,14 @@ const SoundBoard = () => {
             <div className="flex justify-center items-center h-40">
               <p className="text-red-500">{error}</p>
             </div>
-          ) : pings.length === 0 ? (
+          ) : filteredPings.length === 0 ? (
             <div className="flex justify-center items-center h-40">
               <p className="text-gray-500">No pings available</p>
             </div>
           ) : (
             <>
               {/* DISPLAY API PINGS */}
-              {pings.map((ping) => {
+              {filteredPings.map((ping) => {
                 const categoryName = ping.category?.name || "General";
                 const authorName = ping.author
                   ? `${ping.author.firstName} ${ping.author.lastName}`

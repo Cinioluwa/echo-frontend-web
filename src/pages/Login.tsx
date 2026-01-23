@@ -1,10 +1,10 @@
 import { useState } from "react";
-import google from "../assets/images/Google (2).svg";
-import password from "../assets/images/Password.svg";
-import email from "../assets/images/Email.svg";
-import backgroundImage from "../assets/images/backgroundImage.jpg";
-import logo from "../assets/images/Echo Logo.svg";
-import echo from "../assets/images/Echo.svg";
+const google = "/assets/images/Google (2).svg";
+const password = "/assets/images/Password.svg";
+const email = "/assets/images/Email.svg";
+const backgroundImage = "/assets/images/backgroundImage.jpg";
+const logo = "/assets/images/Echo Logo.svg";
+const echo = "/assets/images/Echo.svg";
 import InputGroup from "../components/InputGroup";
 import { Link, useNavigate } from "react-router-dom";
 import authService from "../api/services/auth.service";

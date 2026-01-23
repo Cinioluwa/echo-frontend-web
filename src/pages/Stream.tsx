@@ -14,7 +14,7 @@ import type { Wave } from "../api/types";
 import { useCategoryFilter } from "../contexts/CategoryFilterContext";
 
 const Stream = () => {
-  const { selectedCategoryId } = useCategoryFilter();
+  const { selectedCategoryId, setCategoryCounts } = useCategoryFilter();
   const [waveForm, setWaveForm] = useState(false);
   const [formSegment, setFormSegment] = useState("wave");
 
@@ -108,6 +108,24 @@ const Stream = () => {
   };
   console.log("Waves data:", waves);
   console.log("Waves with hasSurged:", waves.map(w => ({ id: w.id, hasSurged: w.hasSurged })));
+
+  // Filter waves by selected category (client-side filtering)
+  const filteredWaves = selectedCategoryId
+    ? waves.filter(wave => wave.category?.id === selectedCategoryId || wave.ping?.category?.id === selectedCategoryId)
+    : waves;
+
+  // Calculate category counts
+  useEffect(() => {
+    const counts: Record<number, number> = {};
+    waves.forEach((wave) => {
+      const categoryId = wave.category?.id || wave.ping?.category?.id;
+      if (categoryId) {
+        counts[categoryId] = (counts[categoryId] || 0) + 1;
+      }
+    });
+    setCategoryCounts(counts, waves.length);
+  }, [waves, setCategoryCounts]);
+
   return (
     <div className="h-full">
       <header className="z-20 md:fixed md:top-0 w-full">
@@ -165,7 +183,7 @@ const Stream = () => {
         {!loading && !error && (
           <div className="flex-1 [scrollbar-width:none] h-full overflow-auto">
             {/* Display API fetched waves */}
-            {waves.map((wave) => {
+            {filteredWaves.map((wave) => {
               // Get wave author name
               const waveAuthorName = wave.author
                 ? `${wave.author.firstName} ${wave.author.lastName}`

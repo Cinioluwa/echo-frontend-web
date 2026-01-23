@@ -1,6 +1,6 @@
 import { useState, type ReactNode } from "react";
-import filters from "../assets/images/filters.svg";
-import menuBar from "../assets/images/menu-hotdog.svg";
+const filters = "/assets/images/filters.svg";
+const menuBar = "/assets/images/menu-hotdog.svg";
 import MobileMenu from "./MobileMenu";
 import type { Pages } from "./SideBar";
 import MobileCategories from "./MobileCategories";

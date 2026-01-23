@@ -1,5 +1,5 @@
-import logo from "../assets/images/Echo Logo_black.svg";
-import echoBrand from "../assets/images/Echo brand.svg";
+const logo = "/assets/images/Echo Logo_black.svg";
+const echoBrand = "/assets/images/Echo brand.svg";
 import SearchInput from "./SearchInput";
 import UserInfo from "./UserInfo";
 

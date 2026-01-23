@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect } from "react";
 import { useLocation } from "react-router-dom";
-import search from "../assets/images/Search.svg";
+const search = "/assets/images/Search.svg";
 
 interface SearchInputProps {
   onSearch?: (query: string) => void;

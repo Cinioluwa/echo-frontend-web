@@ -11,7 +11,7 @@ type category = {
 };
 
 const Categories = () => {
-  const { selectedCategoryId, setSelectedCategory: setGlobalCategory, clearCategoryFilter } = useCategoryFilter();
+  const { selectedCategoryId, setSelectedCategory: setGlobalCategory, clearCategoryFilter, categoryCounts, totalCount } = useCategoryFilter();
   const [isActive, setIsActive] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState({} as category);
   const [categories, setCategories] = useState<category[]>([]);
@@ -83,7 +83,7 @@ const Categories = () => {
       >
         All Categories
         <span className="w-[26px] font-normal text-white h-[26px] flex justify-center items-center rounded-full bg-[#F49B31]">
-          {categories.length}
+          {totalCount}
         </span>
       </button>
 
@@ -92,17 +92,22 @@ const Categories = () => {
           <button
             key={category.id}
             onClick={() => handleCategoryClick(category)}
-            className={`flex justify-start gap-[13px] cursor-pointer font-semibold  ${isActive
+            className={`flex justify-between gap-[13px] cursor-pointer font-semibold  ${isActive
               ? "bg-transparent shadow-none"
               : selectedCategory.id === category.id
                 ? "bg-[#FAE9D4] opacity-100 shadow"
                 : " opacity-64"
               }  px-[15px] w-full rounded-lg py-[13px] items-center opacity-64 text-[15px] transition ease-in duration-200`}
           >
-            <span>
-              <img src={category.labelIcon} />
+            <div className="flex gap-[13px] items-center">
+              <span>
+                <img src={category.labelIcon} />
+              </span>
+              <div>{category.label}</div>
+            </div>
+            <span className="w-[26px] font-normal text-white h-[26px] flex justify-center items-center rounded-full bg-[#F49B31] text-[13px]">
+              {categoryCounts[category.id] || 0}
             </span>
-            <div>{category.label}</div>
           </button>
         ))}
       </div>

@@ -1,12 +1,12 @@
-import general from "../assets/images/General.svg";
-import academics from "../assets/images/Graduation Cap.svg";
-import chapel from "../assets/images/Chapel.svg";
-import finance from "../assets/images/University.svg";
-import hall from "../assets/images/Hall.svg";
-import sport from "../assets/images/sport.svg";
-import welfare from "../assets/images/welfare.svg";
+const general = "/assets/images/General.svg";
+const academics = "/assets/images/Graduation Cap.svg";
+const chapel = "/assets/images/Chapel.svg";
+const finance = "/assets/images/University.svg";
+const hall = "/assets/images/Hall.svg";
+const sport = "/assets/images/sport.svg";
+const welfare = "/assets/images/welfare.svg";
 
-export const categoryImages:Record<string, string> = {
+export const categoryImages: Record<string, string> = {
   General: general,
   Academics: academics,
   Chapel: chapel,

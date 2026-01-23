@@ -1,5 +1,5 @@
-import cardProfile from "../../assets/images/wavecardprofile.svg";
 import { useAuth } from "../../contexts/AuthContext";
+import { User } from 'lucide-react';
 
 interface StreamCardHeaderProps {
   createdAt: string;
@@ -27,7 +27,9 @@ const StreamCardHeader = ({ createdAt, authorName, rank }: StreamCardHeaderProps
   return (
     <div className="flex justify-between items-center">
       <div className="flex items-center gap-6 ">
-        <img src={cardProfile} alt="Profile" />
+        <div className="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center">
+          <User className="w-6 h-6 text-gray-500" />
+        </div>
         <div className="flex flex-col">
           <span className="text-[15px] whitespace-normal sm:whitespace-nowrap inline-block max-w-3 font-semibold">
             {displayName}

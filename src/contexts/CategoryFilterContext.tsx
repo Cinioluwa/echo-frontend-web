@@ -6,6 +6,9 @@ interface CategoryFilterContextType {
   selectedCategoryName: string | null;
   setSelectedCategory: (id: number | null, name: string | null) => void;
   clearCategoryFilter: () => void;
+  categoryCounts: Record<number, number>;
+  totalCount: number;
+  setCategoryCounts: (counts: Record<number, number>, total: number) => void;
 }
 
 const CategoryFilterContext = createContext<
@@ -25,6 +28,8 @@ export const CategoryFilterProvider: React.FC<CategoryFilterProviderProps> = ({
   const [selectedCategoryName, setSelectedCategoryName] = useState<
     string | null
   >(null);
+  const [categoryCounts, setCategoryCountsState] = useState<Record<number, number>>({});
+  const [totalCount, setTotalCount] = useState<number>(0);
 
   const setSelectedCategory = (id: number | null, name: string | null) => {
     setSelectedCategoryId(id);
@@ -36,6 +41,11 @@ export const CategoryFilterProvider: React.FC<CategoryFilterProviderProps> = ({
     setSelectedCategoryName(null);
   };
 
+  const setCategoryCounts = (counts: Record<number, number>, total: number) => {
+    setCategoryCountsState(counts);
+    setTotalCount(total);
+  };
+
   return (
     <CategoryFilterContext.Provider
       value={{
@@ -43,6 +53,9 @@ export const CategoryFilterProvider: React.FC<CategoryFilterProviderProps> = ({
         selectedCategoryName,
         setSelectedCategory,
         clearCategoryFilter,
+        categoryCounts,
+        totalCount,
+        setCategoryCounts,
       }}
     >
       {children}

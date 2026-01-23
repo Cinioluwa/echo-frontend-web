@@ -9,7 +9,7 @@ import type { ResolutionLog } from "../api/types";
 import { useCategoryFilter } from "../contexts/CategoryFilterContext";
 
 const WaveHistory = () => {
-  const { selectedCategoryId } = useCategoryFilter();
+  const { selectedCategoryId, setCategoryCounts } = useCategoryFilter();
   // API Integration States - using ResolutionLog for resolved pings
   const [resolutions, setResolutions] = useState<ResolutionLog[]>([]);
   const [loading, setLoading] = useState(true);
@@ -73,6 +73,23 @@ const WaveHistory = () => {
   };
 
   // Group resolutions by date
+  // Filter resolutions by selected category (client-side filtering)
+  const filteredResolutions = selectedCategoryId
+    ? resolutions.filter(resolution => resolution.category?.id === selectedCategoryId)
+    : resolutions;
+
+  // Calculate category counts
+  useEffect(() => {
+    const counts: Record<number, number> = {};
+    resolutions.forEach((resolution) => {
+      const categoryId = resolution.category?.id;
+      if (categoryId) {
+        counts[categoryId] = (counts[categoryId] || 0) + 1;
+      }
+    });
+    setCategoryCounts(counts, resolutions.length);
+  }, [resolutions, setCategoryCounts]);
+
   const groupResolutionsByDate = (resolutions: ResolutionLog[]) => {
     const groups: { [key: string]: ResolutionLog[] } = {};
     const today = new Date();
@@ -107,7 +124,7 @@ const WaveHistory = () => {
     return groups;
   };
 
-  const groupedResolutions = groupResolutionsByDate(resolutions);
+  const groupedResolutions = groupResolutionsByDate(filteredResolutions);
 
   return (
     <div className=" h-full">
@@ -164,7 +181,7 @@ const WaveHistory = () => {
             ))}
 
             {/* Empty State */}
-            {resolutions.length === 0 && (
+            {filteredResolutions.length === 0 && (
               <div className="flex items-center justify-center h-full">
                 <div className="text-center">
                   <p className="text-gray-500 text-lg mb-2">No resolved issues yet</p>

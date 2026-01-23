@@ -1,5 +1,5 @@
-import profileImage from "../assets/images/profileImage.jpeg";
 import { useAuth } from "../contexts/AuthContext";
+import { User } from 'lucide-react';
 
 const UserInfo = () => {
   const { user, loading, error } = useAuth();
@@ -23,8 +23,8 @@ const UserInfo = () => {
         <div className="text-end">
           <p className="text-[#926B3D] text-[7px] md:text-[12px]">Guest</p>
         </div>
-        <span className="w-[50px] inline-block overflow-hidden h-[50px] cursor-pointer rounded-full bg-gray-200">
-          <img src={profileImage} className="object-cover w-full h-full" />
+        <span className="w-[50px] inline-flex items-center justify-center h-[50px] cursor-pointer rounded-full bg-gray-200">
+          <User className="w-6 h-6 text-gray-500" />
         </span>
       </div>
     );
@@ -40,8 +40,8 @@ const UserInfo = () => {
         <p className="text-[10px] md:text-[14px]">{fullName}</p>
       </div>
 
-      <span className="w-[50px] inline-block overflow-hidden h-[50px] cursor-pointer rounded-full">
-        <img src={profileImage} className="object-cover w-full h-full" alt={fullName} />
+      <span className="w-[50px] inline-flex items-center justify-center h-[50px] cursor-pointer rounded-full bg-gray-200">
+        <User className="w-6 h-6 text-gray-500" />
       </span>
     </div>
   );

@@ -1,4 +1,4 @@
-import tick from "../assets/images/Tick icon.svg";
+const tick = "/assets/images/Tick icon.svg";
 
 interface Props {
   setPostSuccessModal: () => void;

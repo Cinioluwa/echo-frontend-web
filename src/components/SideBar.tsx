@@ -1,6 +1,6 @@
-import history from "../assets/images/History Logo.svg";
-import stream from "../assets/images/stream.svg";
-import soundBoard from "../assets/images/sound board.svg";
+const history = "/assets/images/History Logo.svg";
+const stream = "/assets/images/stream.svg";
+const soundBoard = "/assets/images/sound board.svg";
 import Categories from "./Categories";
 import { Link } from "react-router-dom";
 
@@ -31,11 +31,10 @@ const SideBar = ({ pages, setActivePage }: Props) => {
                 soundBoardActive: false,
               })
             }
-            className={`flex items-center ${
-              pages.streamActive
+            className={`flex items-center ${pages.streamActive
                 ? "bg-[#FFC37B] border-0"
                 : "bg-transparent border-2"
-            }  gap-3 py-[13px] w-full transition  cursor-pointer mb-3.5 ease-in-out duration-700 border-[#F49B31] rounded-[15px]`}
+              }  gap-3 py-[13px] w-full transition  cursor-pointer mb-3.5 ease-in-out duration-700 border-[#F49B31] rounded-[15px]`}
           >
             <span className="ml-6">
               <img src={stream} alt="" />
@@ -53,11 +52,10 @@ const SideBar = ({ pages, setActivePage }: Props) => {
                 soundBoardActive: false,
               })
             }
-            className={`flex items-center ${
-              pages.historyActive
+            className={`flex items-center ${pages.historyActive
                 ? "bg-[#FFC37B] border-0"
                 : "bg-transparent border-2"
-            }  gap-3 py-[13px] transition w-full cursor-pointer mb-3.5 ease-in-out duration-700 border-[#F49B31] rounded-[15px]`}
+              }  gap-3 py-[13px] transition w-full cursor-pointer mb-3.5 ease-in-out duration-700 border-[#F49B31] rounded-[15px]`}
           >
             <span className="ml-6">
               <img src={history} alt="" />
@@ -74,11 +72,10 @@ const SideBar = ({ pages, setActivePage }: Props) => {
                 soundBoardActive: true,
               })
             }
-            className={`flex items-center ${
-              pages.soundBoardActive
+            className={`flex items-center ${pages.soundBoardActive
                 ? "bg-[#FFC37B] border-0"
                 : "bg-transparent border-2"
-            }  gap-3 py-[13px] w-full transition  cursor-pointer ease-in-out duration-700 border-[#F49B31] rounded-[15px]`}
+              }  gap-3 py-[13px] w-full transition  cursor-pointer ease-in-out duration-700 border-[#F49B31] rounded-[15px]`}
           >
             <span className="ml-6">
               <img src={soundBoard} alt="" />

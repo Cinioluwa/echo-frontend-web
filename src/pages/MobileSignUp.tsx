@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import password from "../assets/images/Password.svg";
-import email from "../assets/images/Email.svg";
-import backgroundImage from "../assets/images/backgroundImage.jpg";
-import logo from "../assets/images/Echo Logo.svg";
+const password = "/assets/images/Password.svg";
+const email = "/assets/images/Email.svg";
+const backgroundImage = "/assets/images/backgroundImage.jpg";
+const logo = "/assets/images/Echo Logo.svg";
 import InputGroup from "../components/InputGroup";
 import authService from "../api/services/auth.service";
 

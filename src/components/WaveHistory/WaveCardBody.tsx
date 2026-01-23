@@ -1,4 +1,4 @@
-import general from "../../assets/images/General.svg";
+const general = "/assets/images/General.svg";
 import type { ResolutionLog } from "../../api/types";
 
 interface Props {

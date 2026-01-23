@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import reaction from "../../../public/reaction.svg";
+const reaction = "/reaction.svg";
 import surge from "../../../public/surge.svg";
 import { surgeService } from "../../api/services";
 
