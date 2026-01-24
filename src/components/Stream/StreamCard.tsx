@@ -15,13 +15,11 @@ interface Props {
   waveId?: string;
   surgeCount?: number;
   commentCount?: number;
-  onRefresh?: () => void;
   authorName?: string;
   authorId?: number;
   rank?: number;
   pingAuthorName?: string;
   pingAuthorId?: number;
-  hasSurged?: boolean; // Whether the current user has surged this wave
 }
 
 const StreamCard = ({
@@ -36,13 +34,11 @@ const StreamCard = ({
   waveId,
   surgeCount = 0,
   commentCount = 0,
-  onRefresh,
   authorName,
   authorId: _authorId,
   rank,
   pingAuthorName,
   pingAuthorId,
-  hasSurged = false
 }: Props) => {
   return (
     <>
@@ -73,8 +69,6 @@ const StreamCard = ({
           waveId={waveId}
           surgeCount={surgeCount}
           commentCount={commentCount}
-          onRefresh={onRefresh}
-          hasSurged={hasSurged}
         />
       </div>
     </>

@@ -1,4 +1,4 @@
-import { useAuth } from "../../contexts/AuthContext";
+import { useAuthStore } from "../../stores";
 import { User } from 'lucide-react';
 
 interface StreamCardHeaderProps {
@@ -8,7 +8,7 @@ interface StreamCardHeaderProps {
 }
 
 const StreamCardHeader = ({ createdAt, authorName, rank }: StreamCardHeaderProps) => {
-  const { user } = useAuth();
+  const user = useAuthStore((state) => state.user);
 
   // Use provided authorName or fallback to current user or guest
   const displayName = authorName || (user ? `${user.firstName} ${user.lastName}` : "Guest User");

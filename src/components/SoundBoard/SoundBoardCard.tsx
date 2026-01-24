@@ -15,8 +15,6 @@ interface Props {
   surgeCount?: number;
   commentCount?: number;
   authorName?: string;
-  onRefresh?: () => void;
-  hasSurged?: boolean; // Whether the current user has surged this ping
 }
 
 const SoundBoardCard = ({
@@ -32,8 +30,6 @@ const SoundBoardCard = ({
   surgeCount = 0,
   commentCount = 0,
   authorName,
-  onRefresh,
-  hasSurged = false,
 }: Props) => {
   return (
     <>
@@ -55,8 +51,6 @@ const SoundBoardCard = ({
           hashtag={hashtag}
           surgeCount={surgeCount}
           commentCount={commentCount}
-          onRefresh={onRefresh}
-          hasSurged={hasSurged}
         />
       </div>
     </>

@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { categoryImages } from "./CategoryImages";
 import { categoryService } from "../api/services";
 import type { CategoryData } from "../api/types";
-import { useCategoryFilter } from "../contexts/CategoryFilterContext";
+import { useSearchStore } from "../stores";
 
 type category = {
   label: string;
@@ -11,7 +11,9 @@ type category = {
 };
 
 const Categories = () => {
-  const { selectedCategoryId, setSelectedCategory: setGlobalCategory, clearCategoryFilter, categoryCounts, totalCount } = useCategoryFilter();
+  const selectedCategoryId = useSearchStore((state) => state.selectedCategoryId);
+  const setSelectedCategory = useSearchStore((state) => state.setSelectedCategory);
+  const clearCategoryFilter = useSearchStore((state) => state.clearCategoryFilter);
   const [isActive, setIsActive] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState({} as category);
   const [categories, setCategories] = useState<category[]>([]);
@@ -49,7 +51,7 @@ const Categories = () => {
   function handleCategoryClick(category: category) {
     setSelectedCategory(category);
     setIsActive(false);
-    setGlobalCategory(category.id, category.label); // Update the global filter
+    setSelectedCategory(category.id); // Update the global filter
   }
 
   if (isLoading) {
@@ -83,7 +85,7 @@ const Categories = () => {
       >
         All Categories
         <span className="w-[26px] font-normal text-white h-[26px] flex justify-center items-center rounded-full bg-[#F49B31]">
-          {totalCount}
+          {categories.length}
         </span>
       </button>
 

@@ -1,7 +1,6 @@
-import { useState, useEffect } from "react";
 const reaction = "/reaction.svg";
 import surge from "../../../public/surge.svg";
-import { surgeService } from "../../api/services";
+import { useSurgeStore } from "../../stores";
 
 interface Props {
   hashtag?: string;
@@ -11,8 +10,6 @@ interface Props {
   proposeActive: boolean;
   surgeCount?: number;
   commentCount?: number;
-  onRefresh?: () => void;
-  hasSurged?: boolean; // Whether the current user has surged this ping
 }
 
 function SoundBoardCardFooter({
@@ -23,60 +20,29 @@ function SoundBoardCardFooter({
   proposeActive,
   surgeCount = 0,
   commentCount = 0,
-  onRefresh,
-  hasSurged = false,
 }: Props) {
   function handleClick(id: string) {
     onPropose(id);
   }
 
-  const [surged, setSurged] = useState(hasSurged);
-  const [currentSurgeCount, setCurrentSurgeCount] = useState(surgeCount);
-  const [isToggling, setIsToggling] = useState(false);
+  const toggleSurge = useSurgeStore((state) => state.toggleSurge);
+  const hasSurged = useSurgeStore((state) => state.hasSurged("ping", id));
+  const isToggling = useSurgeStore((state) => state.isToggling[`ping-${id}`] || false);
 
-  // Sync surge state with prop changes
-  useEffect(() => {
-    setSurged(hasSurged);
-  }, [hasSurged, id]);
-
-  // Update surge count when prop changes
-  useEffect(() => {
-    setCurrentSurgeCount(surgeCount);
-  }, [surgeCount]);
-
-  const handleSurgeToggle = async () => {
+  const handleSurge = async () => {
     if (isToggling || !id) return;
 
-    setIsToggling(true);
-    const previousSurged = surged;
-    const previousCount = currentSurgeCount;
-
     try {
-      // Optimistic UI update
-      setSurged(!surged);
-      setCurrentSurgeCount(surged ? currentSurgeCount - 1 : currentSurgeCount + 1);
-
-      // Call API
-      const response = await surgeService.toggleSurge("ping", id);
-
-      // Update based on server response
-      setSurged(response.surged);
-      // Keep the optimistic count since API doesn't return surgeCount
-
-      // Call refresh callback if provided to update parent state
-      if (onRefresh) {
-        onRefresh();
-      }
-
-    } catch (error: any) {
-      console.error("Error toggling surge:", error);
-      // Revert on error
-      setSurged(previousSurged);
-      setCurrentSurgeCount(previousCount);
-    } finally {
-      setIsToggling(false);
+      await toggleSurge("ping", id);
+      // Optimistic update and error reversion handled by store
+    } catch (error) {
+      console.error("Surge failed:", error);
+      // Error already handled by store (automatic revert)
     }
   };
+
+  // Calculate display surge count (base count + 1 if user has surged)
+  const displaySurgeCount = surgeCount + (hasSurged ? 1 : 0);
 
   return (
     <div className="flex gap-2.5 lg:gap-5 justify-between items-center ">
@@ -92,9 +58,9 @@ function SoundBoardCardFooter({
           <span>{commentCount}</span> comments
         </div>
         <button
-          onClick={handleSurgeToggle}
+          onClick={handleSurge}
           disabled={isToggling}
-          className={`transition-colors cursor-pointer duration-1200 ease-in-out ${surged
+          className={`transition-colors cursor-pointer duration-1200 ease-in-out ${hasSurged
             ? "bg-[#F49B31] hover:bg-[#d88429] transition-colors duration-100 ease-out text-white font-bold"
             : "bg-[#FEF5EA] transition-colors duration-100 ease-in-out hover:bg-[#f2e8d9]"
             } py-1.5 lg:py-2 lg:px-5 flex items-center gap-2.5 border  rounded-[20px] px-5 disabled:opacity-50 disabled:cursor-not-allowed`}
@@ -103,7 +69,7 @@ function SoundBoardCardFooter({
           <img
             src={surge}
             alt=""
-            className={`${surged ? "brightness-0 invert" : ""
+            className={`${hasSurged ? "brightness-0 invert" : ""
               } w-[50%] contrast-200 md:w-full`}
           />
         </button>
@@ -118,7 +84,7 @@ function SoundBoardCardFooter({
           {proposeActive ? "PROPOSED" : "PROPOSE A WAVE"}
         </button>
         <div className="text-[#454545] justify-center items-start flex flex-col xl:flex-row text-[14px] xl:justify-center  xl:items-center">
-          <span className="md:mr-1">{currentSurgeCount}</span>
+          <span className="md:mr-1">{displaySurgeCount}</span>
           Surges
         </div>
       </div>
