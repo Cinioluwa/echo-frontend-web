@@ -1,6 +1,5 @@
 import { useState } from "react";
-
-import surge from "../../../public/surge.svg";
+import surge from "../../assets/images/surge.svg";
 
 function SoundBoardCardFooter() {
   const [surged, setSurged] = useState(false);

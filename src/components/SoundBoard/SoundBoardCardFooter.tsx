@@ -1,6 +1,6 @@
 import { useState } from "react";
-import reaction from "../../../public/reaction.svg";
-import surge from "../../../public/surge.svg";
+import surge from "../../assets/images/surge.svg";
+import reaction from "../../assets/images/reaction.svg";
 
 interface Props {
   hashtag?: string;
@@ -46,7 +46,7 @@ function SoundBoardCardFooter({
         >
           SURGE
           <img
-            src={surge} 
+            src={surge}
             alt=""
             className={`${
               surged ? "brightness-0 invert" : ""
