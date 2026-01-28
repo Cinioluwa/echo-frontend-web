@@ -1,4 +1,4 @@
-import surge from "../../../public/surge.svg";
+import surge from "/surge.svg";
 import { useSurgeStore } from "../../stores";
 
 interface Props {
@@ -12,7 +12,7 @@ function StreamCardFooter({ waveId, surgeCount = 0, commentCount: _commentCount 
   const hasSurged = useSurgeStore((state) =>
     waveId ? state.hasSurged("wave", waveId) : false
   );
-  const isToggling = useSurgeStore((state) => 
+  const isToggling = useSurgeStore((state) =>
     waveId ? state.isToggling[`wave-${waveId}`] || false : false
   );
 
@@ -27,9 +27,6 @@ function StreamCardFooter({ waveId, surgeCount = 0, commentCount: _commentCount 
       // Error already handled by store (automatic revert)
     }
   };
-
-  // Calculate display surge count (base count + 1 if user has surged)
-  const displaySurgeCount = surgeCount + (hasSurged ? 1 : 0);
 
   return (
     <div className="flex justify-between items-center">
@@ -51,7 +48,7 @@ function StreamCardFooter({ waveId, surgeCount = 0, commentCount: _commentCount 
         />
       </button>
       <div className="text-[#454545] text-[14px]">
-        {displaySurgeCount} Surge{displaySurgeCount !== 1 ? "s" : ""}
+        {surgeCount} Surge{surgeCount !== 1 ? "s" : ""}
       </div>
     </div>
   );

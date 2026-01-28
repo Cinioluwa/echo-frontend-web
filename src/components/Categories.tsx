@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { categoryImages } from "./CategoryImages";
 import { categoryService } from "../api/services";
-import type { CategoryData } from "../api/types";
+import type { Category } from "../api/types";
 import { useSearchStore } from "../stores";
 
 type category = {
@@ -12,10 +12,12 @@ type category = {
 
 const Categories = () => {
   const selectedCategoryId = useSearchStore((state) => state.selectedCategoryId);
-  const setSelectedCategory = useSearchStore((state) => state.setSelectedCategory);
-  const clearCategoryFilter = useSearchStore((state) => state.clearCategoryFilter);
+  const setCategory = useSearchStore((state) => state.setCategory);
+  const clearCategory = useSearchStore((state) => state.clearCategory);
+  const categoryCounts = useSearchStore((state) => state.categoryCounts);
+  const totalCount = useSearchStore((state) => state.totalCount);
   const [isActive, setIsActive] = useState(true);
-  const [selectedCategory, setSelectedCategory] = useState({} as category);
+  const [selectedCategory, setLocalSelectedCategory] = useState({} as category);
   const [categories, setCategories] = useState<category[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -25,7 +27,7 @@ const Categories = () => {
       try {
         const data = await categoryService.getAll();
         // Map API data to local category format with icons
-        const mappedCategories = data.map((cat: CategoryData) => ({
+        const mappedCategories = data.map((cat: Category) => ({
           id: cat.id,
           label: cat.name,
           labelIcon: categoryImages[cat.name] || categoryImages.General,
@@ -44,14 +46,14 @@ const Categories = () => {
   function handleClick() {
     if (!isActive) {
       setIsActive(true);
-      clearCategoryFilter(); // Clear the global filter when "All Categories" is selected
+      clearCategory(); // Clear the global filter when "All Categories" is selected
     }
   }
 
   function handleCategoryClick(category: category) {
-    setSelectedCategory(category);
+    setLocalSelectedCategory(category);
     setIsActive(false);
-    setSelectedCategory(category.id); // Update the global filter
+    setCategory(category.id, category.label); // Update the global filter
   }
 
   if (isLoading) {
@@ -85,7 +87,7 @@ const Categories = () => {
       >
         All Categories
         <span className="w-[26px] font-normal text-white h-[26px] flex justify-center items-center rounded-full bg-[#F49B31]">
-          {categories.length}
+          {totalCount || 0}
         </span>
       </button>
 

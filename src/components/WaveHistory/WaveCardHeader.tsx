@@ -1,4 +1,3 @@
-const rating = '/assets/images/rating.svg'
 import type { ResolutionLog } from "../../api/types";
 import { User } from 'lucide-react';
 

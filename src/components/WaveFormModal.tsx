@@ -2,9 +2,6 @@ import { useState, type ReactNode } from "react";
 import { FaLink } from "react-icons/fa6";
 import CategorySelector from "./CategorySelector";
 import PostSuccessModal from "./PostSuccessModal";
-import { v4 as uuidv4 } from "uuid";
-import { waveService } from "../api/services";
-import type { Category } from "../api/types/index";
 
 interface Props {
   children: ReactNode;

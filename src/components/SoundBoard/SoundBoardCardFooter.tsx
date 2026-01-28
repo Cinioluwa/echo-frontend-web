@@ -1,5 +1,5 @@
 const reaction = "/reaction.svg";
-import surge from "../../../public/surge.svg";
+import surge from "/surge.svg";
 import { useSurgeStore } from "../../stores";
 
 interface Props {
@@ -41,9 +41,6 @@ function SoundBoardCardFooter({
     }
   };
 
-  // Calculate display surge count (base count + 1 if user has surged)
-  const displaySurgeCount = surgeCount + (hasSurged ? 1 : 0);
-
   return (
     <div className="flex gap-2.5 lg:gap-5 justify-between items-center ">
       <div className="flex  text-[#8B8E8D] items-center gap-[25px] justify-center">
@@ -84,7 +81,7 @@ function SoundBoardCardFooter({
           {proposeActive ? "PROPOSED" : "PROPOSE A WAVE"}
         </button>
         <div className="text-[#454545] justify-center items-start flex flex-col xl:flex-row text-[14px] xl:justify-center  xl:items-center">
-          <span className="md:mr-1">{displaySurgeCount}</span>
+          <span className="md:mr-1">{surgeCount}</span>
           Surges
         </div>
       </div>

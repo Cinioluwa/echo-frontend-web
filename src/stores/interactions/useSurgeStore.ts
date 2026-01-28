@@ -2,6 +2,8 @@ import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
 import surgeService from "../../api/services/surge.service";
+import { usePingsStore } from "../data/usePingsStore";
+import { useWavesStore } from "../data/useWavesStore";
 
 type SurgeType = "wave" | "ping";
 
@@ -68,6 +70,36 @@ export const useSurgeStore = create<SurgeState>()(
               }
               delete state.isToggling[key];
             });
+
+            // Update surge count and hasSurged in the data stores
+            // When surging: increment count, when unsurging: decrement count
+            if (type === "ping") {
+              const ping = usePingsStore.getState().pingsById[id];
+              if (ping) {
+                const countChange = response.surged ? 1 : -1;
+                const newSurgeCount = Math.max(
+                  0,
+                  ping.surgeCount + countChange,
+                );
+                usePingsStore.getState().updatePing(id, {
+                  surgeCount: newSurgeCount,
+                  hasSurged: response.surged,
+                });
+              }
+            } else if (type === "wave") {
+              const wave = useWavesStore.getState().wavesById[id];
+              if (wave) {
+                const countChange = response.surged ? 1 : -1;
+                const newSurgeCount = Math.max(
+                  0,
+                  wave.surgeCount + countChange,
+                );
+                useWavesStore.getState().updateWave(id, {
+                  surgeCount: newSurgeCount,
+                  hasSurged: response.surged,
+                });
+              }
+            }
 
             return response.surged;
           } catch (error) {

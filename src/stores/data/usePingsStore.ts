@@ -5,6 +5,7 @@ import publicService from "../../api/services/public.service";
 import searchService from "../../api/services/search.service";
 import type { Ping } from "../../api/types";
 import { DEFAULT_CACHE_CONFIG } from "../types";
+import { useSurgeStore } from "../interactions/useSurgeStore";
 
 interface FetchParams {
   page?: number;
@@ -113,6 +114,12 @@ export const usePingsStore = create<PingsState>()(
             state.lastParams = params;
             state.isLoading = false;
           });
+
+          // Sync surge store with hasSurged data from API
+          const surgedPingIds = response.data
+            .filter((ping) => ping.hasSurged)
+            .map((ping) => ping.id.toString());
+          useSurgeStore.getState().syncFromAPI("ping", surgedPingIds);
         } catch (err: any) {
           console.error("Error fetching pings:", err);
           set((state) => {

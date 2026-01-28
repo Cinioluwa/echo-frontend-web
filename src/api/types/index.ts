@@ -91,6 +91,7 @@ export interface Ping {
   status: "POSTED" | "UNDER_REVIEW" | "ARCHIVED";
   surgeCount: number;
   viewCount?: number;
+  hasSurged?: boolean; // Whether the current user has surged this ping
   createdAt: string;
   updatedAt?: string;
   _count?: {
@@ -138,6 +139,7 @@ export interface Wave {
   surgeCount: number;
   commentCount?: number;
   viewCount: number;
+  hasSurged?: boolean; // Whether the current user has surged this wave
   rank?: number; // Top ranking (1-3 for top waves)
   status?: "active" | "approved" | "rejected" | "implemented";
   createdAt: string;

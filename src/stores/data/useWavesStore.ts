@@ -5,6 +5,7 @@ import publicService from "../../api/services/public.service";
 import searchService from "../../api/services/search.service";
 import type { Wave } from "../../api/types";
 import { DEFAULT_CACHE_CONFIG } from "../types";
+import { useSurgeStore } from "../interactions/useSurgeStore";
 
 interface FetchParams {
   page?: number;
@@ -128,6 +129,12 @@ export const useWavesStore = create<WavesState>()(
             state.lastParams = params;
             state.isLoading = false;
           });
+
+          // Sync surge store with hasSurged data from API
+          const surgedWaveIds = response.data
+            .filter((wave) => wave.hasSurged)
+            .map((wave) => wave.id.toString());
+          useSurgeStore.getState().syncFromAPI("wave", surgedWaveIds);
         } catch (err: any) {
           console.error("Error fetching waves:", err);
           set((state) => {
