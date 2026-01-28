@@ -1,6 +1,6 @@
 interface Props {
   waveText: string;
-  waveTitle: string;
+  waveTitle?: string;
   image?: string;
   category: string;
 }

@@ -3,6 +3,8 @@ import { FaLink } from "react-icons/fa6";
 import CategorySelector from "./CategorySelector";
 import PostSuccessModal from "./PostSuccessModal";
 import { v4 as uuidv4 } from "uuid";
+import { MdErrorOutline } from "react-icons/md";
+import search from "../assets/images/Search.svg";
 
 interface Props {
   children: ReactNode;
@@ -17,9 +19,7 @@ export interface WaveFormDetails {
   formSegment: string;
   solution: string;
   createdAt: string;
-  waveTitle: string;
   id: string;
-  waveDesc: string;
 }
 
 const WaveFormModal = ({
@@ -31,8 +31,6 @@ const WaveFormModal = ({
 }: Props) => {
   const [waveFormData, setWaveFormData] = useState({
     cat: "",
-    waveDesc: "",
-    waveTitle: "",
     solution: "",
     id: "",
     formSegment: "wave",
@@ -46,8 +44,6 @@ const WaveFormModal = ({
     // OBJECT TO BE SENT TO SERVER:
     const newWaveFormDetails: WaveFormDetails = {
       cat: waveFormData.cat.trim(),
-      waveTitle: waveFormData.waveTitle.trim(),
-      waveDesc: waveFormData.waveDesc.trim(),
       formSegment: waveFormData.formSegment,
       solution: waveFormData.solution.trim(),
       id: uuidv4(),
@@ -75,9 +71,7 @@ const WaveFormModal = ({
     // RESET WAVEFORM
     setWaveFormData({
       cat: "",
-      waveDesc: "",
       id: "",
-      waveTitle: "",
       solution: "",
       formSegment: "wave",
       createdAt: "",
@@ -123,6 +117,27 @@ const WaveFormModal = ({
           </button>
         </div>
 
+        <div className="flex w-full flex-col my-3  gap-2.5 max-w-[500px] items-center">
+          <div className="flex text-[10px] items-center gap-0.5 p-1 px-2 rounded-[10px] font-andada bg-[#FEF5EA] text-[#454545]">
+            <MdErrorOutline />
+            <p>You must link a Wave to an existing Ping.</p>
+          </div>
+
+          <div className="bg-[#FEF5EA] flex items-center justify-start flex-1 py-3 px-2 h-[37px] w-full rounded-[20px]">
+            <span className="flex justify-center ml-[18px] mr-[3px] items-center">
+              <img src={search} alt="" className="w-[80%]" />
+            </span>
+            <input
+              type="text"
+              id="searchInput"
+              name="searchInput"
+              placeholder="Search for the ping..."
+              className="outline-0 flex-1 text-[10px] font-andada italic"
+              required
+            />
+          </div>
+        </div>
+
         <form
           onSubmit={(e) => {
             e.preventDefault();
@@ -132,42 +147,7 @@ const WaveFormModal = ({
         >
           {/* ModalForm INPUT GROUP: */}
           <fieldset className=" w-full  text-[14px] flex flex-col gap-5">
-            <div className="flex p-2.5 w-full py-3 border border-black rounded-[10px]">
-              <label htmlFor="waveTitle">Title :</label>
-              <input
-                type="text"
-                id="waveTitle"
-                name="waveTitle"
-                required
-                placeholder="name, header..."
-                className="pl-[11px] text-[12px] text-[#454545] outline-0 flex-1"
-                onChange={(e) =>
-                  setWaveFormData({
-                    ...waveFormData,
-                    waveTitle: e.target.value,
-                  })
-                }
-                value={waveFormData.waveTitle}
-                autoComplete="off"
-              />
-            </div>
-            <div className="flex p-2.5 py-3 border border-black rounded-[10px] ">
-              <label htmlFor="waveDescription">Description :</label>
-              <textarea
-                id="waveDescription"
-                name="waveDescription"
-                placeholder="What's the issue?"
-                required
-                autoComplete="off"
-                onChange={(e) =>
-                  setWaveFormData({ ...waveFormData, waveDesc: e.target.value })
-                }
-                value={waveFormData.waveDesc}
-                className="pl-[11px] py-0.5 resize-none h-[100px] text-[12px] text-[#454545] outline-0 flex-1"
-              />
-            </div>
-
-            <div className="flex p-2.5 py-3 border border-black rounded-[10px]">
+            <div className="flex p-2.5 py-3 border h-[290px] border-black rounded-[10px]">
               <label htmlFor="solution">Solution :</label>
               <textarea
                 id="solution"
@@ -183,7 +163,6 @@ const WaveFormModal = ({
               />
             </div>
           </fieldset>
-
           <div className="overflow-y-scroll [scrollbar-width:none] w-full">
             <CategorySelector
               category={waveFormData.cat}
@@ -198,6 +177,7 @@ const WaveFormModal = ({
             </div>
             <button
               type="submit"
+
               className="px-[30px] hover:bg-[#d88429] transition-colors duration-300 ease-in-out py-[5px] cursor-pointer text-white rounded-xl bg-[#F49B31]"
             >
               Post

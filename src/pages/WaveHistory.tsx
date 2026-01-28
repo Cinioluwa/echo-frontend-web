@@ -1,11 +1,20 @@
-import NavBar from "../components/NavBar";
 import WaveCard from "../components/WaveHistory/WaveCard";
-import SideBar, { type Pages } from "../components/SideBar";
-import PageTitleBar from "../components/PageTitleBar";
-// import { FaPlus } from "react-icons/fa6";
+import { type Pages } from "../components/SideBar";
 import { useState } from "react";
+import Layout from "../components/Layout";
+import PingFormModal, {
+  type PingFormDetails,
+} from "../components/PingFormModal";
+import WaveFormModal, {
+  type WaveFormDetails,
+} from "../components/WaveFormModal";
 
 const WaveHistory = () => {
+  const [waveForm, setWaveForm] = useState(false);
+  const [formSegment, setFormSegment] = useState("ping");
+  const [pingFormDetails, setPingFormDetails] = useState<PingFormDetails[]>([]);
+  const [waveFormDetails, setWaveFormDetails] = useState<WaveFormDetails[]>([]);
+
   // SETTING ACTIVE PAGE BUTTON
   const [activePage, setActivePage] = useState({
     streamActive: false,
@@ -15,20 +24,13 @@ const WaveHistory = () => {
 
   return (
     <div className=" h-full">
-      <header className="z-20 md:fixed md:top-0 w-full">
-        <nav>
-          <NavBar />
-        </nav>
-        <PageTitleBar
-          pages={activePage}
-          setActivePage={setActivePage}
-          heading="History"
-        />
-      </header>
-
-      <aside className=" hidden md:block [scrollbar-width:none] pb-[23px] overflow-y-auto   px-10 fixed h-[calc(100vh-155px)] w-[350px] left-0 bottom-0 whitespace-nowrap ">
-        <SideBar pages={activePage} setActivePage={setActivePage} />
-      </aside>
+      <Layout
+        heading="History"
+        setFormSegment={setFormSegment}
+        setForm={setWaveForm}
+        activePage={activePage}
+        setActivePage={setActivePage}
+      />
 
       <main className=" mr-2.5 ml-2.5 mt-5 md:mr-[46px] h-[calc(100vh-155px)]   md:ml-[350px] md:mt-[155px]">
         <div className=" h-full overflow-auto [scrollbar-width:none]">
@@ -82,6 +84,41 @@ const WaveHistory = () => {
           </div>
         </div>
       </main>
+
+      {formSegment === "ping" && (
+        <div className={`${waveForm ? "" : "hidden"}`}>
+          <PingFormModal
+            formSegment={formSegment}
+            setFormSegment={() => setFormSegment("wave")}
+            setPingForm={() => setWaveForm(!waveForm)}
+            setPingFormDetails={(details) => setPingFormDetails(details)}
+          >
+            <button
+              onClick={() => setWaveForm(!waveForm)}
+              className="text-[13px] underline cursor-pointer"
+            >
+              cancel
+            </button>
+          </PingFormModal>
+        </div>
+      )}
+      {formSegment === "wave" && (
+        <div className={`${waveForm ? "" : "hidden"}`}>
+          <WaveFormModal
+            formSegment={formSegment}
+            setFormSegment={() => setFormSegment("ping")}
+            setWaveFormDetails={(details) => setWaveFormDetails(details)}
+            setWaveForm={() => setWaveForm(!waveForm)}
+          >
+            <button
+              onClick={() => setWaveForm(!waveForm)}
+              className="text-[13px] underline cursor-pointer"
+            >
+              cancel
+            </button>
+          </WaveFormModal>
+        </div>
+      )}
     </div>
   );
 };

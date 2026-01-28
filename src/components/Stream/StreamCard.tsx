@@ -5,12 +5,12 @@ import StreamCardHeader from "./StreamCardHeader";
 
 interface Props {
   waveText: string;
-  waveTitle: string;
+  waveTitle?: string;
   image: string;
   category: string;
   pingTimeStamp: string;
   createdAt: string;
-  pingTitle: string
+  pingTitle: string;
 }
 
 const StreamCard = ({
@@ -20,7 +20,7 @@ const StreamCard = ({
   image,
   createdAt,
   pingTimeStamp,
-  pingTitle
+  pingTitle,
 }: Props) => {
   return (
     <>
