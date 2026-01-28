@@ -3,9 +3,10 @@ import WaveCard from "../components/WaveHistory/WaveCard";
 import SideBar, { type Pages } from "../components/SideBar";
 import PageTitleBar from "../components/PageTitleBar";
 // import { FaPlus } from "react-icons/fa6";
-import { useState, useEffect } from "react";
-import { useResolutionsStore, useSearchStore, selectGroupedResolutions } from "../stores";
+import { useState, useEffect, useMemo } from "react";
+import { useResolutionsStore, useSearchStore } from "../stores";
 import { useShallow } from "zustand/react/shallow";
+import type { ResolutionLog } from "../api/types";
 
 const WaveHistory = () => {
   // Zustand stores
@@ -21,10 +22,48 @@ const WaveHistory = () => {
 
   const selectedCategoryId = useSearchStore((state) => state.selectedCategoryId);
 
-  // Use grouped selector for date-based grouping
-  const groupedResolutions = useResolutionsStore(
-    selectGroupedResolutions(selectedCategoryId)
-  );
+  // Get all resolutions from store
+  const resolutions = useResolutionsStore((state) => state.resolutions);
+
+  // Group resolutions by date (memoized to prevent infinite loops)
+  const groupedResolutions = useMemo(() => {
+    // Filter by category if one is selected
+    const filtered = selectedCategoryId 
+      ? resolutions.filter((r) => r.category?.id === selectedCategoryId)
+      : resolutions;
+
+    const groups: { [key: string]: ResolutionLog[] } = {};
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    filtered.forEach((resolution) => {
+      const resolutionDate = new Date(resolution.resolvedAt);
+      resolutionDate.setHours(0, 0, 0, 0);
+
+      const diffTime = today.getTime() - resolutionDate.getTime();
+      const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+
+      let dateLabel: string;
+      if (diffDays === 0) {
+        dateLabel = "Today";
+      } else if (diffDays === 1) {
+        dateLabel = "Yesterday";
+      } else {
+        dateLabel = resolutionDate.toLocaleDateString("en-US", {
+          day: "numeric",
+          month: "long",
+          year: "numeric",
+        });
+      }
+
+      if (!groups[dateLabel]) {
+        groups[dateLabel] = [];
+      }
+      groups[dateLabel].push(resolution);
+    });
+
+    return groups;
+  }, [resolutions, selectedCategoryId]);
 
   // SETTING ACTIVE PAGE BUTTON
   const [activePage, setActivePage] = useState({
@@ -36,7 +75,8 @@ const WaveHistory = () => {
   // Fetch resolutions on mount
   useEffect(() => {
     fetchResolutions({ days: "all" });
-  }, [fetchResolutions]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Calculate total filtered count
   const filteredCount = Object.values(groupedResolutions).flat().length;
