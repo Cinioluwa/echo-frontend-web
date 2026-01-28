@@ -67,15 +67,6 @@ export interface CategoryData {
   name: string;
 }
 
-export type Category =
-  | "General"
-  | "Academics"
-  | "Chapel"
-  | "Finance"
-  | "Hall"
-  | "Sport"
-  | "Welfare";
-
 // ==================== Ping Types ====================
 
 export interface Ping {
@@ -111,7 +102,7 @@ export interface CreatePingRequest {
 export interface UpdatePingRequest {
   title?: string;
   description?: string;
-  category?: Category;
+  category?: CategoryData;
   hashtags?: string[];
   status?: "active" | "resolved" | "archived";
 }
@@ -123,7 +114,7 @@ export interface Wave {
   title?: string;
   description?: string;
   solution: string;
-  category?: Category;
+  category?: CategoryData;
   ping?: {
     id: number;
     title: string;
@@ -154,7 +145,7 @@ export interface CreateWaveRequest {
   title: string;
   description: string;
   solution: string;
-  category: Category;
+  category: CategoryData;
   pingId?: string; // If proposing a wave for a specific ping
 }
 
@@ -162,13 +153,13 @@ export interface UpdateWaveRequest {
   title?: string;
   description?: string;
   solution?: string;
-  category?: Category;
+  category?: CategoryData;
   status?: "active" | "approved" | "rejected" | "implemented";
 }
 
 export interface ProposeWaveRequest {
   solution: string;
-  category: Category;
+  category: CategoryData;
   pingId: string;
 }
 
@@ -236,7 +227,7 @@ export interface PaginatedResponse<T> {
 // ==================== Filter/Query Types ====================
 
 export interface WaveQueryParams extends PaginationParams {
-  category?: Category;
+  category?: CategoryData;
   status?: Wave["status"];
   authorId?: string;
   search?: string;
@@ -245,7 +236,7 @@ export interface WaveQueryParams extends PaginationParams {
 }
 
 export interface PingQueryParams extends PaginationParams {
-  category?: Category;
+  category?: CategoryData;
   status?: Ping["status"];
   authorId?: string;
   search?: string;

@@ -5,6 +5,7 @@ export * from "./interactions/useSurgeStore";
 export * from "./data/useWavesStore";
 export * from "./data/usePingsStore";
 export * from "./data/useResolutionsStore";
+export * from "./data/useCategoriesStore";
 
 // Re-export types
 export * from "./types";
@@ -14,12 +15,14 @@ export const resetAllStores = () => {
   const { useWavesStore } = require("./data/useWavesStore");
   const { usePingsStore } = require("./data/usePingsStore");
   const { useResolutionsStore } = require("./data/useResolutionsStore");
+  const { useCategoriesStore } = require("./data/useCategoriesStore");
   const { useSurgeStore } = require("./interactions/useSurgeStore");
   const { useSearchStore } = require("./ui/useSearchStore");
 
   useWavesStore.getState().reset();
   usePingsStore.getState().reset();
   useResolutionsStore.getState().reset();
+  useCategoriesStore.getState().reset();
   useSurgeStore.getState().clearSurges();
   useSearchStore.getState().clearAll();
 };

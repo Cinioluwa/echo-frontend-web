@@ -1,56 +1,12 @@
-const general = "/assets/images/General.svg";
-const academics = "/assets/images/Graduation Cap.svg";
-const chapel = "/assets/images/Chapel.svg";
-const finance = "/assets/images/University.svg";
-const hall = "/assets/images/Hall.svg";
-const sport = "/assets/images/sport.svg";
-const welfare = "/assets/images/welfare.svg";
-import { useState, type SetStateAction } from "react";
+import { useState, useEffect, type SetStateAction } from "react";
+import { categoryImages } from "./CategoryImages";
+import { useCategoriesStore } from "../stores";
 
 type category = {
   label: string;
   labelIcon?: string;
   id: number;
 };
-
-const categories: category[] = [
-  { labelIcon: general, label: "General", id: 1 },
-  {
-    labelIcon: academics,
-    label: "Academics",
-    id: 2,
-  },
-  {
-    labelIcon: chapel,
-    label: "Chapel",
-    id: 3,
-  },
-  {
-    labelIcon: finance,
-    label: "Finance",
-    id: 4,
-  },
-  {
-    labelIcon: hall,
-    label: "Hall",
-    id: 5,
-  },
-  {
-    labelIcon: sport,
-    label: "Sport",
-    id: 6,
-  },
-  {
-    labelIcon: welfare,
-    label: "Welfare",
-    id: 7,
-  },
-];
-
-// interface categoryy {
-//   isActive: boolean;
-//   selectedCategory: boolean;
-// }
 
 interface Props {
   setSelectedMobileCat: React.Dispatch<SetStateAction<string>>;
@@ -64,6 +20,15 @@ const MobileCategories = ({
   setOpenCat,
 }: Props) => {
   const [isActive, setIsActive] = useState(true);
+  
+  // Categories from global store
+  const categories = useCategoriesStore((state) => state.categories);
+  const fetchCategories = useCategoriesStore((state) => state.fetchCategories);
+
+  useEffect(() => {
+    // Fetch categories with icon mapper
+    fetchCategories((name: string) => categoryImages[name] || categoryImages.General);
+  }, [fetchCategories]);
 
   function handleClick() {
     setSelectedMobileCat("");
@@ -93,7 +58,7 @@ const MobileCategories = ({
       >
         All Categories
         <span className="w-5 font-normal text-white h-5 flex justify-center items-center rounded-full bg-[#F49B31]">
-          8
+          {categories.length}
         </span>
       </button>
       <div>

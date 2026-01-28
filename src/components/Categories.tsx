@@ -1,8 +1,6 @@
 import { useState, useEffect } from "react";
 import { categoryImages } from "./CategoryImages";
-import { categoryService } from "../api/services";
-import type { Category } from "../api/types";
-import { useSearchStore } from "../stores";
+import { useSearchStore, useCategoriesStore } from "../stores";
 
 type category = {
   label: string;
@@ -11,37 +9,24 @@ type category = {
 };
 
 const Categories = () => {
-  const selectedCategoryId = useSearchStore((state) => state.selectedCategoryId);
   const setCategory = useSearchStore((state) => state.setCategory);
   const clearCategory = useSearchStore((state) => state.clearCategory);
   const categoryCounts = useSearchStore((state) => state.categoryCounts);
   const totalCount = useSearchStore((state) => state.totalCount);
+  
+  // Categories from global store
+  const categories = useCategoriesStore((state) => state.categories);
+  const isLoading = useCategoriesStore((state) => state.isLoading);
+  const error = useCategoriesStore((state) => state.error);
+  const fetchCategories = useCategoriesStore((state) => state.fetchCategories);
+  
   const [isActive, setIsActive] = useState(true);
   const [selectedCategory, setLocalSelectedCategory] = useState({} as category);
-  const [categories, setCategories] = useState<category[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const data = await categoryService.getAll();
-        // Map API data to local category format with icons
-        const mappedCategories = data.map((cat: Category) => ({
-          id: cat.id,
-          label: cat.name,
-          labelIcon: categoryImages[cat.name] || categoryImages.General,
-        }));
-        setCategories(mappedCategories);
-      } catch (err) {
-        console.error("Error fetching categories:", err);
-        setError("Failed to load categories");
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    fetchCategories();
-  }, []);
+    // Fetch categories with icon mapper
+    fetchCategories((name: string) => categoryImages[name] || categoryImages.General);
+  }, [fetchCategories]);
 
   function handleClick() {
     if (!isActive) {
