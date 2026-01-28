@@ -15,6 +15,8 @@ interface Props {
   surgeCount?: number;
   commentCount?: number;
   authorName?: string;
+  onRefresh?: () => void;
+  hasSurged?: boolean;
 }
 
 const SoundBoardCard = ({
@@ -30,6 +32,8 @@ const SoundBoardCard = ({
   surgeCount = 0,
   commentCount = 0,
   authorName,
+  onRefresh: _onRefresh,
+  hasSurged: _hasSurged,
 }: Props) => {
   return (
     <>

@@ -20,6 +20,8 @@ interface Props {
   rank?: number;
   pingAuthorName?: string;
   pingAuthorId?: number;
+  onRefresh?: () => void;
+  hasSurged?: boolean;
 }
 
 const StreamCard = ({
@@ -39,6 +41,8 @@ const StreamCard = ({
   rank,
   pingAuthorName,
   pingAuthorId,
+  onRefresh: _onRefresh,
+  hasSurged: _hasSurged,
 }: Props) => {
   return (
     <>

@@ -5,11 +5,9 @@ import PostSuccessModal from "./PostSuccessModal";
 
 interface Props {
   children: ReactNode;
-  setWaveFormDetails: React.Dispatch<React.SetStateAction<WaveFormDetails[]>>;
   setWaveForm: () => void;
   formSegment: string;
   setFormSegment: () => void;
-  onSuccess?: () => void;
 }
 
 export interface WaveFormDetails {
@@ -25,11 +23,9 @@ export interface WaveFormDetails {
 
 const WaveFormModal = ({
   children,
-  setWaveFormDetails,
   setWaveForm,
   setFormSegment,
   formSegment,
-  onSuccess,
 }: Props) => {
   const [waveFormData, setWaveFormData] = useState({
     cat: "",

@@ -43,7 +43,7 @@ const Stream = () => {
   });
 
   // FETCHED (waveFormDetails) FROM SERVER (MAPPED INTO STREAMCARD):
-  const [waveFormDetails, setWaveFormDetails] = useState<WaveFormDetails[]>([]);
+  const [waveFormDetails] = useState<WaveFormDetails[]>([]);
 
   // Fetch waves when search/filter changes
   useEffect(() => {
@@ -229,9 +229,7 @@ const Stream = () => {
           <WaveFormModal
             formSegment={formSegment}
             setFormSegment={() => setFormSegment("ping")}
-            setWaveFormDetails={(details) => setWaveFormDetails(details)}
             setWaveForm={() => setWaveForm(!waveForm)}
-            onSuccess={() => fetchWaves({ sort: "trending", days: 7 })}
           >
             <button
               onClick={() => setWaveForm(!waveForm)}
