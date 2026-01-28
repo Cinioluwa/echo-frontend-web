@@ -6,6 +6,8 @@ import searchService from "../../api/services/search.service";
 import type { Ping } from "../../api/types";
 import { DEFAULT_CACHE_CONFIG } from "../types";
 import { useSurgeStore } from "../interactions/useSurgeStore";
+import { useSearchStore } from "../ui/useSearchStore";
+import { calculatePingCategoryCounts } from "../utils/categoryCounts";
 
 interface FetchParams {
   page?: number;
@@ -115,6 +117,10 @@ export const usePingsStore = create<PingsState>()(
             state.isLoading = false;
           });
 
+          // Calculate and set category counts
+          const { counts, total } = calculatePingCategoryCounts(response.data);
+          useSearchStore.getState().setCategoryCounts(counts, total);
+
           // Sync surge store with hasSurged data from API
           const surgedPingIds = response.data
             .filter((ping) => ping.hasSurged)
@@ -142,6 +148,11 @@ export const usePingsStore = create<PingsState>()(
           state.pings.unshift(ping);
           state.pingsById[ping.id.toString()] = ping;
         });
+
+        // Recalculate category counts
+        const state = get();
+        const { counts, total } = calculatePingCategoryCounts(state.pings);
+        useSearchStore.getState().setCategoryCounts(counts, total);
       },
 
       updatePing: (id: string, updates: Partial<Ping>) => {
@@ -163,6 +174,11 @@ export const usePingsStore = create<PingsState>()(
           delete state.pingsById[id];
           state.pings = state.pings.filter((p) => p.id.toString() !== id);
         });
+
+        // Recalculate category counts
+        const state = get();
+        const { counts, total } = calculatePingCategoryCounts(state.pings);
+        useSearchStore.getState().setCategoryCounts(counts, total);
       },
 
       invalidateCache: () => {

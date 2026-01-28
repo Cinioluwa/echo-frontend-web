@@ -6,6 +6,8 @@ import searchService from "../../api/services/search.service";
 import type { Wave } from "../../api/types";
 import { DEFAULT_CACHE_CONFIG } from "../types";
 import { useSurgeStore } from "../interactions/useSurgeStore";
+import { useSearchStore } from "../ui/useSearchStore";
+import { calculateWaveCategoryCounts } from "../utils/categoryCounts";
 
 interface FetchParams {
   page?: number;
@@ -130,6 +132,10 @@ export const useWavesStore = create<WavesState>()(
             state.isLoading = false;
           });
 
+          // Calculate and set category counts
+          const { counts, total } = calculateWaveCategoryCounts(response.data);
+          useSearchStore.getState().setCategoryCounts(counts, total);
+
           // Sync surge store with hasSurged data from API
           const surgedWaveIds = response.data
             .filter((wave) => wave.hasSurged)
@@ -159,6 +165,11 @@ export const useWavesStore = create<WavesState>()(
           state.waves.unshift(wave);
           state.wavesById[wave.id.toString()] = wave;
         });
+
+        // Recalculate category counts
+        const state = get();
+        const { counts, total } = calculateWaveCategoryCounts(state.waves);
+        useSearchStore.getState().setCategoryCounts(counts, total);
       },
 
       updateWave: (id: string, updates: Partial<Wave>) => {
@@ -181,6 +192,11 @@ export const useWavesStore = create<WavesState>()(
           delete state.wavesById[id];
           state.waves = state.waves.filter((w) => w.id.toString() !== id);
         });
+
+        // Recalculate category counts
+        const state = get();
+        const { counts, total } = calculateWaveCategoryCounts(state.waves);
+        useSearchStore.getState().setCategoryCounts(counts, total);
       },
 
       invalidateCache: () => {
