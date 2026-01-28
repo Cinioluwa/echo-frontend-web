@@ -177,7 +177,6 @@ const WaveFormModal = ({
             </div>
             <button
               type="submit"
-
               className="px-[30px] hover:bg-[#d88429] transition-colors duration-300 ease-in-out py-[5px] cursor-pointer text-white rounded-xl bg-[#F49B31]"
             >
               Post

@@ -34,6 +34,18 @@ const WaveHistory = () => {
 
       <main className=" mr-2.5 ml-2.5 mt-5 md:mr-[46px] h-[calc(100vh-155px)]   md:ml-[350px] md:mt-[155px]">
         <div className=" h-full overflow-auto [scrollbar-width:none]">
+          <div className="flex gap-[15px] mb-4">
+            <div className="bg-[#FFC37B] p-4 rounded-[18px] w-[100px] flex items-center justify-center border border-[#7B7B79] h-10">
+              All
+            </div>
+            <div className="bg-[#FFC37B] p-4 rounded-[18px] w-[100px] flex items-center justify-center border border-[#7B7B79] h-10">
+              Waves
+            </div>
+            <div className="bg-[#FFC37B] p-4 rounded-[18px] w-[100px] flex items-center justify-center border border-[#7B7B79] h-10">
+              Pings
+            </div>
+          </div>
+
           <div className="mb-[22px] flex md:block flex-col items-center">
             <h2 className=" md:mb-[22px] text-[25px] font-semibold">
               Yesterday
