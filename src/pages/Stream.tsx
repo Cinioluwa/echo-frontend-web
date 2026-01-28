@@ -1,19 +1,15 @@
 import { useState } from "react";
 import { categoryImages } from "../components/CategoryImages";
-import WaveFormModal, {
-  type WaveFormDetails,
-} from "../components/WaveFormModal";
-import PingFormModal, {
-  type PingFormDetails,
-} from "../components/PingFormModal";
+import WaveFormModal from "../components/WaveFormModal";
+import PingFormModal from "../components/PingFormModal";
 import StreamCard from "../components/Stream/StreamCard";
 import Layout from "../components/Layout";
 import type { Pages } from "../components/SideBar";
+import useWaveStore from "../services/waveStore";
 
 const Stream = () => {
   const [waveForm, setWaveForm] = useState(false);
   const [formSegment, setFormSegment] = useState("wave");
-  const [pingFormDetails, setPingFormDetails] = useState<PingFormDetails[]>([]);
 
   // SETTING ACTIVE PAGE BUTTON
   const [activePage, setActivePage] = useState<Pages>({
@@ -29,7 +25,8 @@ const Stream = () => {
   // >([]);
 
   // FETCHED (waveFormDetails) FROM SERVER (MAPPED INTO STREAMCARD, Simulated with WaveFormModal module.):   --- ** Meant to be the ProposedWaveDetails, since only proposedWaves would be displayed (undecided by osas).**
-  const [waveFormDetails, setWaveFormDetails] = useState<WaveFormDetails[]>([]);
+
+  const waveDetails = useWaveStore((s) => s.waves);
 
   return (
     <div className="h-full">
@@ -44,7 +41,7 @@ const Stream = () => {
       <main className="mr-2.5 ml-2.5 mt-5 flex flex-col md:mr-[46px] h-[calc(100vh-155px)]  md:ml-[350px]   md:mt-[155px]">
         {/* MAP WAVEFORM (proposedWaveForm) DETAILS INTO SOUNDBOARD CARDS */}
         <div className="flex-1 [scrollbar-width:none] h-full overflow-auto">
-          {waveFormDetails.map((details) => (
+          {waveDetails.map((details) => (
             <div className="mb-[22px] " key={details.id}>
               <StreamCard
                 waveText={details.solution}
@@ -52,8 +49,11 @@ const Stream = () => {
                 category={details.cat}
                 createdAt={details.createdAt}
                 pingTimeStamp="Oct 8, 11:00 am"
-                pingTitle="The school WiFi is so slow that even sending a simple message feels like downloading the entire internet.
-"
+                pingTitle={
+                  details.pingTitle
+                    ? details.pingTitle
+                    : "Many students struggle with poor Wi-Fi connectivity in certain areas of the campus, which hinders their ability to access online resources, complete assignments, and participate in online discussions."
+                }
               />
             </div>
           ))}
@@ -141,7 +141,6 @@ const Stream = () => {
             formSegment={formSegment}
             setFormSegment={() => setFormSegment("wave")}
             setPingForm={() => setWaveForm(!waveForm)}
-            setPingFormDetails={(details) => setPingFormDetails(details)}
           >
             <button
               onClick={() => setWaveForm(!waveForm)}
@@ -157,7 +156,6 @@ const Stream = () => {
           <WaveFormModal
             formSegment={formSegment}
             setFormSegment={() => setFormSegment("ping")}
-            setWaveFormDetails={(details) => setWaveFormDetails(details)}
             setWaveForm={() => setWaveForm(!waveForm)}
           >
             <button

@@ -4,10 +4,10 @@ import Toggle from "./Toggle";
 import CategorySelector from "./CategorySelector";
 import { v4 as uuidv4 } from "uuid";
 import PostSuccessModal from "./PostSuccessModal";
+import usePingStore from "../services/pingStore";
 
 interface Props {
   children: ReactNode;
-  setPingFormDetails: React.Dispatch<React.SetStateAction<PingFormDetails[]>>;
   setPingForm: () => void;
   formSegment: string;
   setFormSegment: () => void;
@@ -26,7 +26,6 @@ export interface PingFormDetails {
 
 const PingFormModal = ({
   children,
-  setPingFormDetails,
   setPingForm,
   setFormSegment,
   formSegment,
@@ -43,6 +42,8 @@ const PingFormModal = ({
   });
 
   const [postSuccessModal, setPostSuccessModal] = useState(false);
+
+  const setPing = usePingStore((s) => s.setPings);
 
   function submitForm() {
     if (pingFormData.cat === "") return alert("Select a category!");
@@ -66,7 +67,8 @@ const PingFormModal = ({
         })
         .toLowerCase(),
     };
-    setPingFormDetails((prev) => [newPingFormDetails, ...prev]);
+
+    setPing(newPingFormDetails);
 
     // SET SUCCESS MODAL ACTIVE
     setPostSuccessModal(!postSuccessModal);

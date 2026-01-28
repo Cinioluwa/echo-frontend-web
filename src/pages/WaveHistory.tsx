@@ -2,18 +2,12 @@ import WaveCard from "../components/WaveHistory/WaveCard";
 import { type Pages } from "../components/SideBar";
 import { useState } from "react";
 import Layout from "../components/Layout";
-import PingFormModal, {
-  type PingFormDetails,
-} from "../components/PingFormModal";
-import WaveFormModal, {
-  type WaveFormDetails,
-} from "../components/WaveFormModal";
+import PingFormModal from "../components/PingFormModal";
+import WaveFormModal from "../components/WaveFormModal";
 
 const WaveHistory = () => {
   const [waveForm, setWaveForm] = useState(false);
   const [formSegment, setFormSegment] = useState("ping");
-  const [pingFormDetails, setPingFormDetails] = useState<PingFormDetails[]>([]);
-  const [waveFormDetails, setWaveFormDetails] = useState<WaveFormDetails[]>([]);
 
   // SETTING ACTIVE PAGE BUTTON
   const [activePage, setActivePage] = useState({
@@ -103,7 +97,6 @@ const WaveHistory = () => {
             formSegment={formSegment}
             setFormSegment={() => setFormSegment("wave")}
             setPingForm={() => setWaveForm(!waveForm)}
-            setPingFormDetails={(details) => setPingFormDetails(details)}
           >
             <button
               onClick={() => setWaveForm(!waveForm)}
@@ -119,7 +112,6 @@ const WaveHistory = () => {
           <WaveFormModal
             formSegment={formSegment}
             setFormSegment={() => setFormSegment("ping")}
-            setWaveFormDetails={(details) => setWaveFormDetails(details)}
             setWaveForm={() => setWaveForm(!waveForm)}
           >
             <button

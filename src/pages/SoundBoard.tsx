@@ -4,12 +4,11 @@ import { useState } from "react";
 import { categoryImages } from "../components/CategoryImages";
 import ProposeWaveModal from "../components/ProposeWaveModal";
 import type { PingFormDetails } from "../components/PingFormModal";
-import WaveFormModal, {
-  type WaveFormDetails,
-} from "../components/WaveFormModal";
+import WaveFormModal from "../components/WaveFormModal";
 import PingFormModal from "../components/PingFormModal";
 import Layout from "../components/Layout";
 import type { Pages } from "../components/SideBar";
+import usePingStore from "../services/pingStore";
 
 const SoundBoard = () => {
   const [pingForm, setPingForm] = useState(false);
@@ -23,9 +22,7 @@ const SoundBoard = () => {
   } as Pages);
 
   //SIMULATING FETCHED DATA FROM SERVER (MAPPED INTO SOUNDBOARD-CARD, Simulated with PingFormModal module.):
-  const [pingFormDetails, setPingFormDetails] = useState<PingFormDetails[]>([]);
-
-  const [waveFormDetails, setWaveFormDetails] = useState<WaveFormDetails[]>([]);
+  const pingFormDetails = usePingStore((s) => s.pings);
 
   const [proposedPingDetails, setProposedPingDetails] =
     useState<PingFormDetails | null>(null);
@@ -163,7 +160,6 @@ const SoundBoard = () => {
             formSegment={formSegment}
             setFormSegment={() => setFormSegment("wave")}
             setPingForm={() => setPingForm(!pingForm)}
-            setPingFormDetails={(details) => setPingFormDetails(details)}
           >
             <button
               onClick={() => setPingForm(!pingForm)}
@@ -179,7 +175,6 @@ const SoundBoard = () => {
           <WaveFormModal
             formSegment={formSegment}
             setFormSegment={() => setFormSegment("ping")}
-            setWaveFormDetails={(details) => setWaveFormDetails(details)}
             setWaveForm={() => setPingForm(!pingForm)}
           >
             <button

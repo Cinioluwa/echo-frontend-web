@@ -5,10 +5,10 @@ import PostSuccessModal from "./PostSuccessModal";
 import { v4 as uuidv4 } from "uuid";
 import { MdErrorOutline } from "react-icons/md";
 import search from "../assets/images/Search.svg";
+// import useWaveStore from "../services/waveStore";
 
 interface Props {
   children: ReactNode;
-  setWaveFormDetails: React.Dispatch<React.SetStateAction<WaveFormDetails[]>>;
   setWaveForm: () => void;
   formSegment: string;
   setFormSegment: () => void;
@@ -24,7 +24,6 @@ export interface WaveFormDetails {
 
 const WaveFormModal = ({
   children,
-  setWaveFormDetails,
   setWaveForm,
   setFormSegment,
   formSegment,
@@ -37,6 +36,9 @@ const WaveFormModal = ({
   } as WaveFormDetails);
 
   const [postSuccessModal, setPostSuccessModal] = useState(false);
+  // const setWave = useWaveStore((s) => s.setWaves);
+
+  const [noSubmit, setNoSubmit] = useState(true);
 
   function submitForm() {
     if (waveFormData.cat === "") return alert("Select a category!");
@@ -58,9 +60,7 @@ const WaveFormModal = ({
         .toLowerCase(),
     };
 
-    waveFormData.formSegment === "wave"
-      ? setWaveFormDetails((prev) => [newWaveFormDetails, ...prev])
-      : "";
+    // waveFormData.formSegment === "wave" ? setWave(newWaveFormDetails) : "";
 
     // SET SUCCESS MODAL ACTIVE
     setPostSuccessModal(!postSuccessModal);
@@ -177,7 +177,8 @@ const WaveFormModal = ({
             </div>
             <button
               type="submit"
-              className="px-[30px] hover:bg-[#d88429] transition-colors duration-300 ease-in-out py-[5px] cursor-pointer text-white rounded-xl bg-[#F49B31]"
+              disabled={noSubmit}
+              className={`px-[30px] ${noSubmit ? "bg-[#edbe85]" : "bg-[#F49B31] hover:bg-[#d88429]"}  transition-colors duration-300 ease-in-out py-[5px] cursor-pointer text-white rounded-xl `}
             >
               Post
             </button>

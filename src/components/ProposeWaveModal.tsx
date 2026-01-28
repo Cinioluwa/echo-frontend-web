@@ -2,6 +2,8 @@ import { useState } from "react";
 import { FaLink } from "react-icons/fa6";
 import CategorySelector from "./CategorySelector";
 import ProposedPingCard from "./ProposedPingCard";
+import useWaveStore from "../services/waveStore";
+import { v4 as uuidv4 } from "uuid";
 
 interface Props {
   onClose: () => void;
@@ -16,6 +18,7 @@ export interface proposedWaveDetails {
   pingTimeStamp: string | undefined;
   pingTitle: string | undefined;
   createdAt: string;
+  id: string;
 }
 
 const ProposeWaveModal = ({
@@ -23,7 +26,6 @@ const ProposeWaveModal = ({
   pingTitle,
   pingTimeStamp,
   setProposeActive,
-
 }: Props) => {
   const [proposedWaveDetails, setProposedWaveDetails] =
     useState<proposedWaveDetails>({
@@ -32,7 +34,10 @@ const ProposeWaveModal = ({
       pingTimeStamp: "",
       pingTitle: "",
       createdAt: "",
+      id: "",
     });
+
+  const setWave = useWaveStore((s) => s.setWaves);
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -44,6 +49,8 @@ const ProposeWaveModal = ({
       cat: proposedWaveDetails.cat,
       pingTimeStamp: pingTimeStamp,
       pingTitle: pingTitle,
+      id: uuidv4(),
+
       createdAt: new Date()
         .toLocaleString("en-US", {
           month: "short",
@@ -58,6 +65,8 @@ const ProposeWaveModal = ({
     // VERIFY DETAILS
     console.log("proposedWaveDetails: ", newProposedWaveDetails);
 
+    setWave(newProposedWaveDetails);
+
     // RESET FORM
     setProposedWaveDetails({
       solution: "",
@@ -65,6 +74,7 @@ const ProposeWaveModal = ({
       pingTimeStamp: "",
       pingTitle: "",
       createdAt: "",
+      id: "",
     });
 
     // UPDATE PROPOSE-btn STATE
