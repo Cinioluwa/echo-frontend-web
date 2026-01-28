@@ -123,7 +123,7 @@ const WaveFormModal = ({
             <p>You must link a Wave to an existing Ping.</p>
           </div>
 
-          <div className="bg-[#FEF5EA] flex items-center justify-start flex-1 py-3 px-2 h-[37px] w-full rounded-[20px]">
+          <div className="bg-[#FEF5EA] flex items-center justify-start flex-1 py-3 px-2 h-[37px] w-full rounded-[20px] has-[input:focus]:ring-1 has-[input:focus]:ring-[#F49B31]">
             <span className="flex justify-center ml-[18px] mr-[3px] items-center">
               <img src={search} alt="" className="w-[80%]" />
             </span>
