@@ -12,14 +12,16 @@ const Categories = () => {
   const setCategory = useSearchStore((state) => state.setCategory);
   const clearCategory = useSearchStore((state) => state.clearCategory);
   const categoryCounts = useSearchStore((state) => state.categoryCounts);
-  const totalCount = useSearchStore((state) => state.totalCount);
-  
+  const totalCount = useSearchStore((state) => {
+    console.log("Total count:", state);
+    return state.totalCount
+  });
   // Categories from global store
   const categories = useCategoriesStore((state) => state.categories);
   const isLoading = useCategoriesStore((state) => state.isLoading);
   const error = useCategoriesStore((state) => state.error);
   const fetchCategories = useCategoriesStore((state) => state.fetchCategories);
-  
+
   const [isActive, setIsActive] = useState(true);
   const [selectedCategory, setLocalSelectedCategory] = useState({} as category);
 

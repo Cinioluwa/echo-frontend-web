@@ -71,11 +71,13 @@ export const useCategoriesStore = create<CategoriesState>()(
 
           set((state) => {
             // Map API data to local category format with optional icons
-            const mappedCategories: CategoryWithIcon[] = data.map((cat: CategoryAPIResponse) => ({
-              id: cat.id,
-              label: cat.name,
-              labelIcon: iconMapper ? iconMapper(cat.name) : undefined,
-            }));
+            const mappedCategories: CategoryWithIcon[] = data.map(
+              (cat: CategoryAPIResponse) => ({
+                id: cat.id,
+                label: cat.name,
+                labelIcon: iconMapper ? iconMapper(cat.name) : undefined,
+              }),
+            );
 
             state.categories = mappedCategories;
 
@@ -85,7 +87,7 @@ export const useCategoriesStore = create<CategoriesState>()(
                 acc[cat.id] = cat;
                 return acc;
               },
-              {} as Record<number, CategoryWithIcon>
+              {} as Record<number, CategoryWithIcon>,
             );
 
             state.lastFetched = Date.now();
@@ -123,6 +125,6 @@ export const useCategoriesStore = create<CategoriesState>()(
         console.log("🔄 Categories store reset");
       },
     })),
-    { name: "CategoriesStore" }
-  )
+    { name: "CategoriesStore" },
+  ),
 );

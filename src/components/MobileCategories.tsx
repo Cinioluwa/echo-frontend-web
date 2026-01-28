@@ -20,7 +20,7 @@ const MobileCategories = ({
   setOpenCat,
 }: Props) => {
   const [isActive, setIsActive] = useState(true);
-  
+
   // Categories from global store
   const categories = useCategoriesStore((state) => state.categories);
   const fetchCategories = useCategoriesStore((state) => state.fetchCategories);
@@ -50,10 +50,10 @@ const MobileCategories = ({
       <button
         onClick={handleClick}
         className={`flex justify-between items-center py-2 px-2.5 ${selectedMobileCat
-            ? ""
-            : isActive
-              ? "bg-[#FAE9D4] shadow"
-              : "bg-transparent"
+          ? ""
+          : isActive
+            ? "bg-[#FAE9D4] shadow"
+            : "bg-transparent"
           } w-full rounded-xl font-bold mb-[5px] text-[12px] gap-[45px] cursor-pointer`}
       >
         All Categories
@@ -67,8 +67,8 @@ const MobileCategories = ({
             key={category.id}
             onClick={() => handleCategoryClick(category)}
             className={`flex justify-start gap-2 cursor-pointer font-semibold ${selectedMobileCat === category.label
-                ? "bg-[#FAE9D4] opacity-100 shadow"
-                : " opacity-64"
+              ? "bg-[#FAE9D4] opacity-100 shadow"
+              : " opacity-64"
               }   px-2.5 w-full rounded-lg py-2 items-center opacity-64 text-[11px] transition ease-in duration-200`}
           >
             <span>

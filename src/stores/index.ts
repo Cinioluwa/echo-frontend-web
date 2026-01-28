@@ -1,3 +1,11 @@
+// Import stores directly for reset utility
+import { useWavesStore } from "./data/useWavesStore";
+import { usePingsStore } from "./data/usePingsStore";
+import { useResolutionsStore } from "./data/useResolutionsStore";
+import { useCategoriesStore } from "./data/useCategoriesStore";
+import { useSurgeStore } from "./interactions/useSurgeStore";
+import { useSearchStore } from "./ui/useSearchStore";
+
 // Re-export all stores
 export * from "./auth/useAuthStore";
 export * from "./ui/useSearchStore";
@@ -12,13 +20,6 @@ export * from "./types";
 
 // Store reset utility (useful for logout)
 export const resetAllStores = () => {
-  const { useWavesStore } = require("./data/useWavesStore");
-  const { usePingsStore } = require("./data/usePingsStore");
-  const { useResolutionsStore } = require("./data/useResolutionsStore");
-  const { useCategoriesStore } = require("./data/useCategoriesStore");
-  const { useSurgeStore } = require("./interactions/useSurgeStore");
-  const { useSearchStore } = require("./ui/useSearchStore");
-
   useWavesStore.getState().reset();
   usePingsStore.getState().reset();
   useResolutionsStore.getState().reset();

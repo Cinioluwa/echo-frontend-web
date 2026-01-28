@@ -28,7 +28,7 @@ const WaveHistory = () => {
   // Group resolutions by date (memoized to prevent infinite loops)
   const groupedResolutions = useMemo(() => {
     // Filter by category if one is selected
-    const filtered = selectedCategoryId 
+    const filtered = selectedCategoryId
       ? resolutions.filter((r) => r.category?.id === selectedCategoryId)
       : resolutions;
 
