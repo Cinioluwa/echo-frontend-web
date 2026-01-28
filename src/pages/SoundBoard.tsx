@@ -52,7 +52,11 @@ const SoundBoard = () => {
         <nav>
           <NavBar />
         </nav>
-        <PageTitleBar pages={activePage} setActivePage={setActivePage}  heading="Sound Board">
+        <PageTitleBar
+          pages={activePage}
+          setActivePage={setActivePage}
+          heading="Sound Board"
+        >
           <button
             onClick={() => {
               setPingForm(!pingForm);

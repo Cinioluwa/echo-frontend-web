@@ -6,8 +6,6 @@ import PageTitleBar from "../components/PageTitleBar";
 import { useState } from "react";
 
 const WaveHistory = () => {
-
-
   // SETTING ACTIVE PAGE BUTTON
   const [activePage, setActivePage] = useState({
     streamActive: false,
@@ -21,7 +19,11 @@ const WaveHistory = () => {
         <nav>
           <NavBar />
         </nav>
-        <PageTitleBar pages={activePage} setActivePage={setActivePage} heading="History" />
+        <PageTitleBar
+          pages={activePage}
+          setActivePage={setActivePage}
+          heading="History"
+        />
       </header>
 
       <aside className=" hidden md:block [scrollbar-width:none] pb-[23px] overflow-y-auto   px-10 fixed h-[calc(100vh-155px)] w-[350px] left-0 bottom-0 whitespace-nowrap ">
@@ -31,11 +33,13 @@ const WaveHistory = () => {
       <main className=" mr-2.5 ml-2.5 mt-5 md:mr-[46px] h-[calc(100vh-155px)]   md:ml-[350px] md:mt-[155px]">
         <div className=" h-full overflow-auto [scrollbar-width:none]">
           <div className="mb-[22px] flex md:block flex-col items-center">
-            <h2 className=" md:mb-[22px] text-[25px] font-semibold">Yesterday</h2>
+            <h2 className=" md:mb-[22px] text-[25px] font-semibold">
+              Yesterday
+            </h2>
             <WaveCard
               waveText="Many students struggle with poor Wi-Fi connectivity in certain areas of the campus, which hinders their ability to access online resources, complete assignments, and participate in online discussions. By improving Wi-Fi coverage and speed throughout the campus, we can ensure that all students have reliable internet access, fostering a more productive and connected learning environment.
             "
-              waveTitle="Increase Wi-Fi Coverage and Speed on Campus"
+              waveTitle="Increase Wi-Fi Coverage and Speed on Campus."
             />
           </div>
           <div className="mb-[22px] flex md:block flex-col items-center">
