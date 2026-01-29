@@ -1,28 +1,36 @@
+import React from "react";
+import { Link } from "react-router-dom";
 import feed from "../../assets/images/History Logo.svg";
 import overview from "../../assets/images/overview.svg";
 import followUp from "../../assets/images/followUp.svg";
-import { Link } from "react-router-dom";
-import Categories from "../../components/Categories";
-
-export interface AdminPages {
-  feedActive: boolean;
-  overviewActive: boolean;
-  followUpActive: boolean;
-}
+import type { AdminPages } from "./AdminSideBar";
 
 interface Props {
   setActivePage: React.Dispatch<React.SetStateAction<AdminPages>>;
+  setMenu: React.Dispatch<React.SetStateAction<boolean>>;
   pages: AdminPages;
+  menu: boolean;
 }
 
-const AdminSideBar = ({ pages, setActivePage }: Props) => {
+const AdminMobileMenu = ({ setMenu, menu, pages, setActivePage }: Props) => {
+  function handleClick() {
+    setMenu(false);
+  }
+
   return (
-    <div>
-      <div className="bg-[#FFC37B]  rounded-[10px]">
-        <Categories />
-      </div>
-      <div className="mt-[15px]">
-        <Link to={"/feed"}>
+    <div
+      onClick={handleClick}
+      className={`${
+        menu ? "opacity-100" : "opacity-0 pointer-events-none"
+      } fixed transition-opacity duration-300 z-20 ease-in inset-0 bg-black/40 md:hidden`}
+    >
+      <div
+        onClick={(e) => e.stopPropagation()}
+        className={`${
+          menu ? "translate-x-0" : "-translate-x-full"
+        } transition-transform transform duration-300 ease-in-out w-[190px] top-[100px] flex flex-col gap-[15px] bg-white p-2 rounded-r-xl absolute left-0  py-[15px]`}
+      >
+        <Link to={"/admin/feed"}>
           <button
             onClick={() =>
               setActivePage({
@@ -35,7 +43,7 @@ const AdminSideBar = ({ pages, setActivePage }: Props) => {
               pages.feedActive
                 ? "bg-[#FFC37B] border-0"
                 : "bg-transparent border-2"
-            }  gap-3 py-[13px] w-full transition  cursor-pointer mb-3.5 ease-in-out duration-700 border-[#F49B31] rounded-[15px]`}
+            }  gap-3 py-[9px] w-full transition  cursor-pointer  ease-in-out duration-700 text-[15px] border-[#F49B31] rounded-[25px]`}
           >
             <span className="ml-6">
               <img src={feed} alt="" />
@@ -43,7 +51,6 @@ const AdminSideBar = ({ pages, setActivePage }: Props) => {
             Feed
           </button>
         </Link>
-
         <Link to={"/admin/overview"}>
           <button
             onClick={() =>
@@ -57,12 +64,12 @@ const AdminSideBar = ({ pages, setActivePage }: Props) => {
               pages.overviewActive
                 ? "bg-[#FFC37B] border-0"
                 : "bg-transparent border-2"
-            }  gap-3 py-[13px] transition w-full cursor-pointer mb-3.5 ease-in-out duration-700 border-[#F49B31] rounded-[15px]`}
+            }  gap-3 py-[9px] text-[15px] transition w-full cursor-pointer  ease-in-out duration-700 border-[#F49B31] rounded-[25px]`}
           >
             <span className="ml-6">
               <img src={overview} alt="" />
             </span>
-            Overview
+            History
           </button>
         </Link>
         <Link to={"/admin/followUp"}>
@@ -78,18 +85,17 @@ const AdminSideBar = ({ pages, setActivePage }: Props) => {
               pages.followUpActive
                 ? "bg-[#FFC37B] border-0"
                 : "bg-transparent border-2"
-            }  gap-3 py-[13px] w-full transition  cursor-pointer ease-in-out duration-700 border-[#F49B31] rounded-[15px]`}
+            }  gap-3 py-[9px] w-full transition cursor-pointer ease-in-out duration-700 text-[15px] border-[#F49B31] rounded-[25px]`}
           >
             <span className="ml-6">
               <img src={followUp} alt="" />
             </span>
-            Follow up
+            Follow Up
           </button>
         </Link>
-        <div></div>
       </div>
     </div>
   );
 };
 
-export default AdminSideBar;
+export default AdminMobileMenu;

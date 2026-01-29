@@ -1,8 +1,19 @@
 import { useState } from "react";
 import PingFormModal from "../../components/PingFormModal";
 import WaveFormModal from "../../components/WaveFormModal";
-import WaveCard from "../../components/WaveHistory/WaveCard";
 import AdminLayout from "../Components/AdminLayout";
+import AdminWaveCard from "../Components/AdminWaveCard";
+
+const proposedWaveDetails = {
+  solution:
+    "Lorem, ipsum dolor sit amet consectetur adipisicing elit. Voluptatem delectus aut ut iure reprehenderit, deleniti ea, commodi a inventore facere aliquam. Vel magnam sapiente, accusamus maxime ullam esse molestiae beatae! Lorem, ipsum dolor sit amet consectetur adipisicing elit. Voluptatem delectus aut ut iure reprehenderit, deleniti ea, commodi a inventore facere aliquam. Vel magnam sapiente, accusamus maxime ullam esse molestiae beatae! Lorem, ipsum dolor sit amet consectetur adipisicing elit. Voluptatem delectus aut ut iure reprehenderit, deleniti ea, commodi a inventore facere aliquam. Vel magnam sapiente, accusamus maxime ullam esse molestiae beatae!",
+  cat: "Academics",
+  pingTimeStamp: "Oct 8, 11:00 am",
+  pingTitle:
+    "The power off policy affects students badly. It disrupts study time.",
+  createdAt: "Feb 29, 09:30 pm",
+  id: "string",
+};
 
 const WaveHistory = () => {
   const [waveForm, setWaveForm] = useState(false);
@@ -61,52 +72,7 @@ const WaveHistory = () => {
           </div>
 
           <div className="mb-[22px] flex md:block flex-col items-center">
-            <h2 className=" md:mb-[22px] text-[25px] font-semibold">
-              Yesterday
-            </h2>
-            <WaveCard
-              waveText="Many students struggle with poor Wi-Fi connectivity in certain areas of the campus, which hinders their ability to access online resources, complete assignments, and participate in online discussions. By improving Wi-Fi coverage and speed throughout the campus, we can ensure that all students have reliable internet access, fostering a more productive and connected learning environment.
-            "
-              waveTitle="Increase Wi-Fi Coverage and Speed on Campus."
-            />
-          </div>
-          <div className="mb-[22px] flex md:block flex-col items-center">
-            <h2 className=" md:mb-[22px] text-[25px] font-semibold">
-              25th May 2025
-            </h2>
-            <WaveCard
-              waveText="The current library facilities are outdated and insufficient to meet the needs of the growing student population. Many students find it challenging to locate necessary resources, and the study areas are often overcrowded. Upgrading the library facilities — including expanding the collection of books and digital resources, increasing seating capacity, and enhancing the study environment — will greatly benefit students and support their academic success.
-            "
-              waveTitle="Upgrade Library Facilities and Resources
-            "
-            />
-          </div>
-          <div className="mb-[22px] flex md:block flex-col items-center">
-            <h2 className=" md:mb-[22px] text-[25px] font-semibold">
-              25th May 2025
-            </h2>
-            <WaveCard
-              waveText="Many students struggle with poor Wi-Fi connectivity in certain areas of the campus, which hinders their ability to access online resources, complete assignments, and participate in online discussions. By improving Wi-Fi coverage and speed throughout the campus, we can ensure that all students have reliable internet access, fostering a more productive and connected learning environment."
-              waveTitle="Increase Wi-Fi Coverage and Speed on Campus"
-            />
-          </div>
-          <div className="mb-[22px] flex  md:block flex-col items-center">
-            <h2 className="md:mb-[22px]  text-[25px] font-semibold">
-              25th May 2025
-            </h2>
-            <WaveCard
-              waveText="Many students struggle with poor Wi-Fi connectivity in certain areas of the campus, which hinders their ability to access online resources, complete assignments, and participate in online discussions. By improving Wi-Fi coverage and speed throughout the campus, we can ensure that all students have reliable internet access, fostering a more productive and connected learning environment."
-              waveTitle="Increase Wi-Fi Coverage and Speed on Campus"
-            />
-          </div>
-          <div className="mb-[22px] flex md:block flex-col items-center">
-            <h2 className="md:mb-[22px] text-[25px] font-semibold">
-              25th May 2025
-            </h2>
-            <WaveCard
-              waveText="The current library facilities are outdated and insufficient to meet the needs of the growing student population. Many students find it challenging to locate necessary resources, and the study areas are often overcrowded. Upgrading the library facilities — including expanding the collection of books and digital resources, increasing seating capacity, and enhancing the study environment — will greatly benefit students and support their academic success."
-              waveTitle="Upgrade Library Facilities and Resources"
-            />
+            <AdminWaveCard waves={proposedWaveDetails} />
           </div>
         </div>
       </main>

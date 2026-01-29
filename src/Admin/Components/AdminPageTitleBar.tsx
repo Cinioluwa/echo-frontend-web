@@ -3,7 +3,8 @@ import filters from "../../assets/images/filters.svg";
 import menuBar from "../../assets/images/menu-hotdog.svg";
 import type { AdminPages } from "./AdminSideBar";
 import MobileCategories from "../../components/MobileCategories";
-
+import MobileMenu from "../../components/MobileMenu";
+import AdminMobileMenu from "./AdminMobileMenu";
 
 interface pageHeaderProps {
   heading: string;
@@ -67,6 +68,12 @@ const AdminPageTitleBar = ({
         {children}
       </div>
 
+      <AdminMobileMenu
+        menu={openMenu}
+        setMenu={setOpenMenu}
+        pages={pages}
+        setActivePage={setActivePage}
+      />
     </div>
   );
 };
