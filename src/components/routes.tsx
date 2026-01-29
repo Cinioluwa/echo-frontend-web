@@ -4,6 +4,9 @@ import SignUp from "../pages/SignUp";
 import WaveHistory from "../pages/WaveHistory";
 import Stream from "../pages/Stream";
 import SoundBoard from "../pages/SoundBoard";
+import Feed from "../Admin/Pages/Feed";
+import FollowUp from "../Admin/Pages/FollowUp";
+import Overview from "../Admin/Pages/Overview";
 
 const router = createBrowserRouter([
   {
@@ -28,6 +31,26 @@ const router = createBrowserRouter([
   {
     path: "soundBoard",
     element: <SoundBoard />,
+  },
+
+  // Admin routes
+
+  {
+    path: "/admin",
+    children: [
+      {
+        path: "feed",
+        element: <Feed />,
+      },
+      {
+        path: "overview",
+        element: <Overview />,
+      },
+      {
+        path: "followUp",
+        element: <FollowUp />,
+      },
+    ],
   },
 ]);
 

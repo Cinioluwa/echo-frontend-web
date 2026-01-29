@@ -49,6 +49,7 @@ const Stream = () => {
                 category={details.cat}
                 createdAt={details.createdAt}
                 pingTimeStamp="Oct 8, 11:00 am"
+                waveTitle={details.pingTitle}
                 pingTitle={
                   details.pingTitle
                     ? details.pingTitle
