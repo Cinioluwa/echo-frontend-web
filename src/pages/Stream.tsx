@@ -4,9 +4,6 @@ import { FaPlus } from "react-icons/fa6";
 import { useState, useEffect } from "react";
 import { categoryImages } from "../components/CategoryImages";
 import NavBar from "../components/NavBar";
-import WaveFormModal, {
-  type WaveFormDetails,
-} from "../components/WaveFormModal";
 import PingFormModal from "../components/PingFormModal";
 import StreamCard from "../components/Stream/StreamCard";
 import { useWavesStore, useSearchStore } from "../stores";
@@ -33,7 +30,7 @@ const Stream = () => {
   );
 
   const [waveForm, setWaveForm] = useState(false);
-  const [formSegment, setFormSegment] = useState("wave");
+  const [formSegment, setFormSegment] = useState<"ping" | "wave">("wave");
 
   // SETTING ACTIVE PAGE BUTTON
   const [activePage, setActivePage] = useState<Pages>({
@@ -41,9 +38,6 @@ const Stream = () => {
     historyActive: false,
     soundBoardActive: false,
   });
-
-  // FETCHED (waveFormDetails) FROM SERVER (MAPPED INTO STREAMCARD):
-  const [waveFormDetails] = useState<WaveFormDetails[]>([]);
 
   // Fetch waves when search/filter changes
   useEffect(() => {
@@ -132,16 +126,16 @@ const Stream = () => {
             {/* Display API fetched waves */}
             {filteredWaves.map((wave) => {
               // Get wave author name
-              const waveAuthorName = wave.author
+              const waveAuthorName = typeof wave.author === 'object' && wave.author
                 ? `${wave.author.firstName} ${wave.author.lastName}`
                 : undefined;
 
               // Get ping author info for the ping card
-              const pingAuthorName = wave.ping?.author
+              const pingAuthorName = wave.ping?.author && typeof wave.ping.author === 'object'
                 ? `${wave.ping.author.firstName} ${wave.ping.author.lastName}`
                 : undefined;
 
-              const pingAuthorId = wave.ping?.author?.id;
+              const pingAuthorId = typeof wave.ping?.author === 'object' ? wave.ping.author?.id : undefined;
 
               return (
                 <div className="mb-[22px]" key={wave.id}>
@@ -159,7 +153,7 @@ const Stream = () => {
                     commentCount={wave._count?.comments || 0}
                     onRefresh={() => fetchWaves({ sort: "trending", days: 7 })}
                     authorName={waveAuthorName}
-                    authorId={wave.author?.id}
+                    authorId={typeof wave.author === 'object' ? wave.author?.id : undefined}
                     rank={wave.rank}
                     pingAuthorName={pingAuthorName}
                     pingAuthorId={pingAuthorId}
@@ -169,23 +163,8 @@ const Stream = () => {
               );
             })}
 
-            {/* Display manually created waves from form */}
-            {waveFormDetails.map((details) => (
-              <div className="mb-[22px]" key={details.id}>
-                <StreamCard
-                  waveText={details.solution}
-                  waveTitle={details.waveTitle}
-                  image={categoryImages[details.cat]}
-                  category={details.cat}
-                  createdAt={details.createdAt}
-                  pingTimeStamp=""
-                  pingTitle=""
-                />
-              </div>
-            ))}
-
             {/* Empty State */}
-            {waves.length === 0 && waveFormDetails.length === 0 && (
+            {waves.length === 0 && (
               <div className="flex items-center justify-center h-full">
                 <div className="text-center">
                   <p className="text-gray-500 text-lg mb-2">No waves yet</p>
@@ -208,37 +187,20 @@ const Stream = () => {
           </div>
         )}
       </main>
-      {formSegment === "ping" && (
-        <div className={`${waveForm ? "" : "hidden"}`}>
-          <PingFormModal
-            formSegment={formSegment}
-            setFormSegment={() => setFormSegment("wave")}
-            setPingForm={() => setWaveForm(!waveForm)}
+      {waveForm && (
+        <PingFormModal
+          formSegment={formSegment}
+          setFormSegment={() => setFormSegment(formSegment === "ping" ? "wave" : "ping")}
+          setPingForm={() => setWaveForm(!waveForm)}
+          onWaveCreated={() => fetchWaves({ sort: "trending", days: 7 })}
+        >
+          <button
+            onClick={() => setWaveForm(!waveForm)}
+            className="text-[13px] underline cursor-pointer"
           >
-            <button
-              onClick={() => setWaveForm(!waveForm)}
-              className="text-[13px] underline cursor-pointer"
-            >
-              cancel
-            </button>
-          </PingFormModal>
-        </div>
-      )}
-      {formSegment === "wave" && (
-        <div className={`${waveForm ? "" : "hidden"}`}>
-          <WaveFormModal
-            formSegment={formSegment}
-            setFormSegment={() => setFormSegment("ping")}
-            setWaveForm={() => setWaveForm(!waveForm)}
-          >
-            <button
-              onClick={() => setWaveForm(!waveForm)}
-              className="text-[13px] underline cursor-pointer"
-            >
-              cancel
-            </button>
-          </WaveFormModal>
-        </div>
+            cancel
+          </button>
+        </PingFormModal>
       )}
     </div>
   );

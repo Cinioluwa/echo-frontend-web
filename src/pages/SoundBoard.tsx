@@ -37,7 +37,7 @@ const SoundBoard = () => {
   );
 
   const [pingForm, setPingForm] = useState(false);
-  const [formSegment, setFormSegment] = useState("ping");
+  const [formSegment, setFormSegment] = useState<"ping" | "wave">("ping");
 
   // SETTING ACTIVE PAGE BUTTON
   const [activePage, setActivePage] = useState({
@@ -233,28 +233,21 @@ const SoundBoard = () => {
           )}
         </div>
       </main>
-      {formSegment === "ping" && (
-        <div className={`${pingForm ? "" : "hidden"}`}>
-          <PingFormModal
-            formSegment={formSegment}
-            setFormSegment={() => setFormSegment("wave")}
-            setPingForm={() => setPingForm(!pingForm)}
-            setPingFormDetails={(details) => setPingFormDetails(details)}
-            onPingCreated={handlePingCreated}
+      {pingForm && (
+        <PingFormModal
+          formSegment={formSegment}
+          setFormSegment={() => setFormSegment(formSegment === "ping" ? "wave" : "ping")}
+          setPingForm={() => setPingForm(!pingForm)}
+          setPingFormDetails={(details) => setPingFormDetails(details)}
+          onPingCreated={handlePingCreated}
+        >
+          <button
+            onClick={() => setPingForm(!pingForm)}
+            className="text-[13px] underline cursor-pointer"
           >
-            <button
-              onClick={() => setPingForm(!pingForm)}
-              className="text-[13px] underline cursor-pointer"
-            >
-              cancel
-            </button>
-          </PingFormModal>
-        </div>
-      )}
-      {formSegment === "wave" && (
-        <div className={`${pingForm ? "" : "hidden"}`}>
-          {/* Wave form commented out - not integrated yet */}
-        </div>
+            cancel
+          </button>
+        </PingFormModal>
       )}
 
       {proposeWaveModal && (
