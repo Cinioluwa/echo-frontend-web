@@ -2,7 +2,7 @@ import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
 import { userService } from "../../api/services";
-import type { User } from "../../api/types";
+import type { User } from "../../api/types/index";
 
 interface AuthState {
   // State

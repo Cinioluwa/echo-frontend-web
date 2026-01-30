@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import type { Ping } from "../../api/types";
+import type { Ping } from "../../api/types/index";
 
 interface Props {
     ping: Ping;

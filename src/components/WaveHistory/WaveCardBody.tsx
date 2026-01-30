@@ -1,5 +1,5 @@
 const general = "/assets/images/General.svg";
-import type { ResolutionLog } from "../../api/types";
+import type { ResolutionLog } from "../../api/types/index";
 
 interface Props {
   resolution: ResolutionLog;

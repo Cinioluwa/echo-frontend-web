@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { FiX, FiChevronDown } from "react-icons/fi";
-import type { Ping } from "../../api/types";
+import type { Ping } from "../../api/types/index";
 
 interface Props {
     ping: Ping;

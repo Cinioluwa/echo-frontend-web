@@ -18,7 +18,7 @@ export { default as representativeService } from "./services/representative.serv
 export { default as healthService } from "./services/health.service";
 
 // Types
-export * from "./types";
+export * from "./types/index";
 
 // Axios config
 export { default as api } from "./axios.config";

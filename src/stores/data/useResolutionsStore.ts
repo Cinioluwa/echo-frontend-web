@@ -2,7 +2,7 @@ import { create } from "zustand";
 import { devtools } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
 import publicService from "../../api/services/public.service";
-import type { ResolutionLog } from "../../api/types";
+import type { ResolutionLog } from "../../api/types/index";
 import { DEFAULT_CACHE_CONFIG } from "../types";
 
 interface FetchParams {

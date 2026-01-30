@@ -16,3 +16,13 @@ body {
 .btn-reset {
   @apply appearance-none bg-transparent border-0 p-0 focus:outline-none;
 }
+
+/* Hide scrollbar for horizontal category selector */
+.scrollbar-hide {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none; /* Chrome, Safari and Opera */
+}

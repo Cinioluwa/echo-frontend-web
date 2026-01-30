@@ -118,13 +118,25 @@ export interface Wave {
   ping?: {
     id: number;
     title: string;
-    content?: string; // Ping description - to be added by backend
+    content?: string;
+    categoryId?: number;
+    hasSurged?: boolean;
+    surgeCount?: number;
     author?: {
       id: number;
       firstName: string;
       lastName: string;
+    } | null;
+    category?: {
+      id: number;
+      name: string;
     };
     createdAt?: string;
+    _count?: {
+      waves?: number;
+      comments?: number;
+      surges?: number;
+    };
   };
   author?: User | string; // Can be populated or just ID
   surgeCount: number;

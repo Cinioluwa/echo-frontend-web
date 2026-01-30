@@ -3,7 +3,7 @@ import { devtools } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
 import publicService from "../../api/services/public.service";
 import searchService from "../../api/services/search.service";
-import type { Ping } from "../../api/types";
+import type { Ping } from "../../api/types/index";
 import { DEFAULT_CACHE_CONFIG } from "../types";
 import { useSurgeStore } from "../interactions/useSurgeStore";
 import { useSearchStore } from "../ui/useSearchStore";

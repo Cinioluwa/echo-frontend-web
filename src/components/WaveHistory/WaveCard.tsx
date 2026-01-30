@@ -1,7 +1,7 @@
 import WaveCardBody from "./WaveCardBody";
 import WaveCardFooter from "./WaveCardFooter";
 import WaveCardHeader from "./WaveCardHeader";
-import type { ResolutionLog } from "../../api/types";
+import type { ResolutionLog } from "../../api/types/index";
 
 interface Props {
   resolution: ResolutionLog;

@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from "framer-motion";
-import type { Ping } from "../../api/types";
+import type { Ping } from "../../api/types/index";
 import PingResultCard from "./PingResultCard";
 import NoPingFoundCard from "./NoPingFoundCard";
 

@@ -1,4 +1,4 @@
-import type { ResolutionLog } from "../../api/types";
+import type { ResolutionLog } from "../../api/types/index";
 import { User } from 'lucide-react';
 
 interface Props {

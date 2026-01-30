@@ -6,7 +6,7 @@ import PageTitleBar from "../components/PageTitleBar";
 import { useState, useEffect, useMemo } from "react";
 import { useResolutionsStore, useSearchStore } from "../stores";
 import { useShallow } from "zustand/react/shallow";
-import type { ResolutionLog } from "../api/types";
+import type { ResolutionLog } from "../api/types/index";
 
 const WaveHistory = () => {
   // Zustand stores

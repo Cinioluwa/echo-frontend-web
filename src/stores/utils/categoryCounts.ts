@@ -3,7 +3,7 @@
  * Calculates category counts from pings and waves data
  */
 
-import type { Ping, Wave } from "../../api/types";
+import type { Ping, Wave } from "../../api/types/index";
 
 export interface CategoryCountsResult {
   counts: Record<number, number>;
