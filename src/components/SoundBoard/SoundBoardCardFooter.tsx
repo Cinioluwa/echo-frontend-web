@@ -13,8 +13,6 @@ interface Props {
 }
 
 function SoundBoardCardFooter({
-  hashtag,
-  timeStamp,
   id,
   onPropose,
   proposeActive,
