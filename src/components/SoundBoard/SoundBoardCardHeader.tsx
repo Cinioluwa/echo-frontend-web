@@ -13,7 +13,7 @@ const SoundBoardCardHeader = ({ timeStamp }: timeProp) => {
           <span className="text-[15px] whitespace-normal sm:whitespace-nowrap inline-block max-w-3 font-semibold">
             Covenant Smith
           </span>
-          <span className="text-[#8B8E8D] text-[13px] ">{timeStamp}</span>
+          <span className="text-[#8B8E8D] text-[13px]">{timeStamp}</span>
         </div>
       </div>
     </div>

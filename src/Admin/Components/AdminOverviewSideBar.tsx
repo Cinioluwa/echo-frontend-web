@@ -2,7 +2,7 @@ import feed from "../../assets/images/History Logo.svg";
 import overview from "../../assets/images/overview.svg";
 import followUp from "../../assets/images/followUp.svg";
 import { Link } from "react-router-dom";
-import Categories from "../../components/Categories";
+
 
 export interface AdminPages {
   feedActive: boolean;
@@ -15,12 +15,9 @@ interface Props {
   pages: AdminPages;
 }
 
-const AdminSideBar = ({ pages, setActivePage }: Props) => {
+const AdminOverviewSidebar = ({ pages, setActivePage }: Props) => {
   return (
     <div>
-      <div className="bg-[#FFC37B]  rounded-[10px]">
-        <Categories />
-      </div>
       <div className="mt-[15px]">
         <Link to={"/admin/feed"}>
           <button
@@ -92,4 +89,4 @@ const AdminSideBar = ({ pages, setActivePage }: Props) => {
   );
 };
 
-export default AdminSideBar;
+export default AdminOverviewSidebar;

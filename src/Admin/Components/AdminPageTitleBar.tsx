@@ -3,7 +3,6 @@ import filters from "../../assets/images/filters.svg";
 import menuBar from "../../assets/images/menu-hotdog.svg";
 import type { AdminPages } from "./AdminSideBar";
 import MobileCategories from "../../components/MobileCategories";
-import MobileMenu from "../../components/MobileMenu";
 import AdminMobileMenu from "./AdminMobileMenu";
 
 interface pageHeaderProps {

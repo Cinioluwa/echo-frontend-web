@@ -1,9 +1,105 @@
-
+import { useState } from "react";
+import AdminLayout from "../Components/AdminLayout";
+import PingFormModal from "../../components/PingFormModal";
+import WaveFormModal from "../../components/WaveFormModal";
 
 const FollowUp = () => {
-  return (
-    <div>FollowUp</div>
-  )
-}
+  const [waveForm, setWaveForm] = useState(false);
+  const [formSegment, setFormSegment] = useState("ping");
 
-export default FollowUp
+  // SETTING ACTIVE PAGE BUTTON
+  const [activePage, setActivePage] = useState({
+    feedActive: false,
+    overviewActive: false,
+    followUpActive: true,
+  });
+
+    const [activePosts, setActivePosts] = useState({
+    all: true,
+    waves: false,
+    pings: false,
+  });
+
+  return (
+    <div>
+      <AdminLayout
+        heading="Follow Up"
+        setFormSegment={setFormSegment}
+        setForm={setWaveForm}
+        activePage={activePage}
+        setActivePage={setActivePage}
+      />
+
+
+
+<main className=" mr-2.5 ml-2.5 mt-5 md:mr-[46px] h-[calc(100vh-155px)]   md:ml-[350px] md:mt-[155px]">
+
+<div className="flex gap-[15px] mb-4">
+            <div
+              onClick={() =>
+                setActivePosts({ all: true, waves: false, pings: false })
+              }
+              className={`${activePosts.all ? "text-white bg-[#F49B31]" : "bg-[#FFC37B]"} p-4 rounded-[18px] w-[100px] flex items-center cursor-pointer justify-center border border-[#7B7B79] h-10`}
+            >
+              All
+            </div>
+            <div
+              onClick={() =>
+                setActivePosts({ all: false, waves: true, pings: false })
+              }
+              className={` ${activePosts.waves ? "bg-[#F49B31] text-white" : "bg-[#FFC37B]"} p-4 rounded-[18px] w-[100px] cursor-pointer flex items-center justify-center border border-[#7B7B79] h-10`}
+            >
+              Waves
+            </div>
+            <div
+              onClick={() =>
+                setActivePosts({ all: false, waves: false, pings: true })
+              }
+              className={` ${activePosts.pings ? "bg-[#F49B31] text-white" : "bg-[#FFC37B]"} p-4 rounded-[18px] w-[100px] flex cursor-pointer items-center justify-center border border-[#7B7B79] h-10`}
+            >
+              Pings
+            </div>
+          </div>
+
+</main>
+
+
+
+
+      {formSegment === "ping" && (
+        <div className={`${waveForm ? "" : "hidden"}`}>
+          <PingFormModal
+            formSegment={formSegment}
+            setFormSegment={() => setFormSegment("wave")}
+            setPingForm={() => setWaveForm(!waveForm)}
+          >
+            <button
+              onClick={() => setWaveForm(!waveForm)}
+              className="text-[13px] underline cursor-pointer"
+            >
+              cancel
+            </button>
+          </PingFormModal>
+        </div>
+      )}
+      {formSegment === "wave" && (
+        <div className={`${waveForm ? "" : "hidden"}`}>
+          <WaveFormModal
+            formSegment={formSegment}
+            setFormSegment={() => setFormSegment("ping")}
+            setWaveForm={() => setWaveForm(!waveForm)}
+          >
+            <button
+              onClick={() => setWaveForm(!waveForm)}
+              className="text-[13px] underline cursor-pointer"
+            >
+              cancel
+            </button>
+          </WaveFormModal>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default FollowUp;

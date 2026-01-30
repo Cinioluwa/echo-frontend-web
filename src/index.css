@@ -16,3 +16,7 @@ body {
 .btn-reset {
   @apply appearance-none bg-transparent border-0 p-0 focus:outline-none;
 }
+
+* {
+  outline: none;
+}

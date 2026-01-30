@@ -3,11 +3,13 @@ import PingFormModal from "../../components/PingFormModal";
 import WaveFormModal from "../../components/WaveFormModal";
 import AdminLayout from "../Components/AdminLayout";
 import AdminWaveCard from "../Components/AdminWaveCard";
+import AdminPingCard from "../Components/AdminPingCard";
 
+// STATIC WAVE DATA USING WAVESTORE- SIMULATING WAVES FROM SERVER.
 const proposedWaveDetails = {
   solution:
     "Lorem, ipsum dolor sit amet consectetur adipisicing elit. Voluptatem delectus aut ut iure reprehenderit, deleniti ea, commodi a inventore facere aliquam. Vel magnam sapiente, accusamus maxime ullam esse molestiae beatae! Lorem, ipsum dolor sit amet consectetur adipisicing elit. Voluptatem delectus aut ut iure reprehenderit, deleniti ea, commodi a inventore facere aliquam. Vel magnam sapiente, accusamus maxime ullam esse molestiae beatae! Lorem, ipsum dolor sit amet consectetur adipisicing elit. Voluptatem delectus aut ut iure reprehenderit, deleniti ea, commodi a inventore facere aliquam. Vel magnam sapiente, accusamus maxime ullam esse molestiae beatae!",
-  cat: "Academics",
+  cat: "Chapel",
   pingTimeStamp: "Oct 8, 11:00 am",
   pingTitle:
     "The power off policy affects students badly. It disrupts study time.",
@@ -15,7 +17,21 @@ const proposedWaveDetails = {
   id: "string",
 };
 
-const WaveHistory = () => {
+// STATIC PING DATA USING PINGSTORE- SIMULATING PINGS FROM SERVER.
+
+const pingFormDetails = {
+  cat: "Academics",
+  pingDesc:
+    "Lorem, ipsum dolor sit amet consectetur adipisicing elit. Voluptatem delectus aut ut iure reprehenderit, deleniti ea, commodi a inventore facere aliquam. Vel magnam sapiente, accusamus maxime ullam esse molestiae beatae! Lorem, ipsum dolor sit amet consectetur adipisicing elit. Voluptatem delectus aut ut iure reprehenderit, deleniti ea, commodi a inventore facere aliquam. Vel magnam sapiente, accusamus maxime ullam esse molestiae beatae! Lorem, ipsum dolor sit amet consectetur adipisicing elit. Voluptatem delectus aut ut iure reprehenderit, deleniti ea, commodi a inventore facere aliquam. Vel magnam sapiente, accusamus maxime ullam esse molestiae beatae!",
+  pingTitle: "Enhance the Microphone System in EIE Large Classroom",
+  createdAt: "Oct 8, 11:00 am",
+  anonymous: true,
+  hashtag: "string",
+  formSegment: "ping",
+  id: "string",
+};
+
+const Feed = () => {
   const [waveForm, setWaveForm] = useState(false);
   const [formSegment, setFormSegment] = useState("ping");
 
@@ -71,8 +87,14 @@ const WaveHistory = () => {
             </div>
           </div>
 
+          {/* MAPPING WAVE DETAILS INTO ADMIN WAVE CARD */}
           <div className="mb-[22px] flex md:block flex-col items-center">
             <AdminWaveCard waves={proposedWaveDetails} />
+          </div>
+
+          {/* MAPPING PING DETAILS INTO ADMIN PING CARD */}
+          <div className="mb-[22px] flex md:block flex-col items-center">
+            <AdminPingCard pings={pingFormDetails} />
           </div>
         </div>
       </main>
@@ -113,4 +135,4 @@ const WaveHistory = () => {
   );
 };
 
-export default WaveHistory;
+export default Feed;

@@ -28,7 +28,7 @@ const SoundBoardCard = ({
   return (
     <>
       <div className="mt-0  m-[15px] md:m-0 px-[25px] py-2.5 bg-[#FEFEFE]  rounded-[10px] ">
-        <div className="block xl:hidden">
+        <div className="block">
           <SoundBoardCardHeader timeStamp={timeStamp} />
         </div>
         <SoundBoardCardBody
