@@ -2,6 +2,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import type { Ping } from "../../api/types/index";
 import PingResultCard from "./PingResultCard";
 import NoPingFoundCard from "./NoPingFoundCard";
+import { dropdownVariants, pingResultCardVariants } from "./animations";
 
 interface Props {
     searchQuery: string;
@@ -29,40 +30,6 @@ const PingSearchDropdown = ({
     // Only show dropdown if visible and user has typed at least 2 characters
     const shouldShowDropdown = isVisible && searchQuery.length >= 2;
 
-    // Animation variants for dropdown container
-    const dropdownVariants = {
-        hidden: {
-            height: 0,
-            opacity: 0,
-            transition: { duration: 0.2 }
-        },
-        visible: {
-            height: 'auto',
-            opacity: 1,
-            transition: {
-                duration: 0.3,
-                when: "beforeChildren",
-                staggerChildren: 0.05
-            }
-        }
-    };
-
-    // Animation variants for individual ping cards
-    const cardVariants = {
-        hidden: {
-            opacity: 0,
-            y: -10
-        },
-        visible: {
-            opacity: 1,
-            y: 0,
-            transition: {
-                duration: 0.2,
-                ease: [0.4, 0, 0.2, 1] as const
-            }
-        }
-    };
-
     return (
         <AnimatePresence>
             {shouldShowDropdown && (
@@ -89,7 +56,7 @@ const PingSearchDropdown = ({
                         ) : searchResults.length === 0 ? (
                             /* Empty State */
                             <motion.div
-                                variants={cardVariants}
+                                variants={pingResultCardVariants}
                                 initial="hidden"
                                 animate="visible"
                             >
@@ -101,7 +68,7 @@ const PingSearchDropdown = ({
                                 {searchResults.map((ping) => (
                                     <motion.div
                                         key={ping.id}
-                                        variants={cardVariants}
+                                        variants={pingResultCardVariants}
                                     >
                                         <PingResultCard
                                             ping={ping}

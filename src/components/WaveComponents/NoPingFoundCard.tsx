@@ -1,4 +1,6 @@
+import { motion } from "framer-motion";
 import { FiPlus } from "react-icons/fi";
+import { noPingFoundVariants } from "./animations";
 
 interface Props {
     onCreatePing: () => void;
@@ -12,7 +14,11 @@ interface Props {
  */
 const NoPingFoundCard = ({ onCreatePing }: Props) => {
     return (
-        <div className="
+        <motion.div
+            variants={noPingFoundVariants}
+            initial="hidden"
+            animate="visible"
+            className="
       w-full p-6 text-center 
       border border-[#7D7D7D] rounded-[10px] 
       bg-white
@@ -44,7 +50,7 @@ const NoPingFoundCard = ({ onCreatePing }: Props) => {
                 <FiPlus className="w-4 h-4" />
                 Create Ping
             </button>
-        </div>
+        </motion.div>
     );
 };
 

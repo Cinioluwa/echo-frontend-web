@@ -1,5 +1,7 @@
-import type { ReactNode } from "react";
+import { type ReactNode } from "react";
+import { motion } from "framer-motion";
 import type { Ping } from "../../api/types/index";
+import { pingCardHoverVariants } from "./animations";
 
 interface Props {
     ping: Ping;
@@ -38,12 +40,14 @@ const highlightSearchTerm = (text: string, query: string): ReactNode => {
  */
 const PingResultCard = ({ ping, searchQuery, onClick, isSelected = false }: Props) => {
     return (
-        <button
+        <motion.button
             onClick={() => onClick(ping)}
+            variants={pingCardHoverVariants}
+            initial="rest"
+            whileHover="hover"
             className={`
         w-full text-left p-3 rounded-[10px] border
         transition-all duration-200
-        hover:scale-[1.01] hover:shadow-md
         ${isSelected
                     ? 'border-[#F49B31] bg-[#FEF5EA]'
                     : 'border-[#7D7D7D] bg-white hover:border-[#F49B31]'
@@ -92,7 +96,7 @@ const PingResultCard = ({ ping, searchQuery, onClick, isSelected = false }: Prop
                     </>
                 )}
             </div>
-        </button>
+        </motion.button>
     );
 };
 

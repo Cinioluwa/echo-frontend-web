@@ -9,3 +9,6 @@ export { default as PingResultCard } from "./PingResultCard";
 export { default as NoPingFoundCard } from "./NoPingFoundCard";
 export { default as PingSearchDropdown } from "./PingSearchDropdown";
 export { default as SelectedPingCard } from "./SelectedPingCard";
+
+// Animation variants
+export * from "./animations";

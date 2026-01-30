@@ -17,6 +17,9 @@ import SelectedPingCard from "./WaveComponents/SelectedPingCard";
 // Shared Components
 import { HorizontalCategorySelector } from "./shared";
 
+// Animation variants
+import { tabVariants as importedTabVariants } from "./WaveComponents/animations";
+
 interface Props {
   children?: ReactNode;
   setPingFormDetails?: React.Dispatch<React.SetStateAction<PingFormDetails[]>>;
@@ -709,8 +712,8 @@ const PingFormModal = ({
             onClick={handleWaveSubmit}
             disabled={isSubmitting || waveFlowState !== "ready-to-submit"}
             className={`px-[30px] py-[5px] text-white rounded-xl bg-[#F49B31] transition-all duration-300 disabled:cursor-not-allowed ${waveFlowState === "ready-to-submit"
-                ? "opacity-100 hover:bg-[#d88429]"
-                : "opacity-50"
+              ? "opacity-100 hover:bg-[#d88429]"
+              : "opacity-50"
               }`}
           >
             {isSubmitting ? "Posting..." : "Post"}
@@ -733,19 +736,8 @@ const PingFormModal = ({
     );
   }
 
-  // Animation variants for tabs
-  const tabVariants = {
-    active: {
-      backgroundColor: "#F49B31",
-      color: "#FFFFFF",
-    },
-    inactive: {
-      backgroundColor: "#FEF5EA",
-      color: "#000000",
-    },
-  };
-
-  const tabTransition = { duration: 0.3, ease: "easeInOut" as const };
+  // Use imported animation variants for tabs
+  const tabVariants = importedTabVariants;
 
   return (
     <div className="flex font-poppins justify-center items-center z-50 inset-0 fixed bg-black/40">
@@ -760,7 +752,6 @@ const PingFormModal = ({
           <motion.button
             variants={tabVariants}
             animate={activeTab === "ping" ? "active" : "inactive"}
-            transition={tabTransition}
             onClick={() => handleTabSwitch("ping")}
             className="inline-block rounded-l-[23px] border-r-2 border-black py-6 px-6 cursor-pointer sm:py-4 sm:px-8"
             type="button"
@@ -770,7 +761,6 @@ const PingFormModal = ({
           <motion.button
             variants={tabVariants}
             animate={activeTab === "wave" ? "active" : "inactive"}
-            transition={tabTransition}
             onClick={() => handleTabSwitch("wave")}
             className="inline-block rounded-r-[23px] cursor-pointer py-6 px-6 sm:py-4 sm:px-8"
             type="button"

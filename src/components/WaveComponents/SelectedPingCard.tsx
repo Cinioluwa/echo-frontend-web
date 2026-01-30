@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { FiX, FiChevronDown } from "react-icons/fi";
 import type { Ping } from "../../api/types/index";
+import { selectedPingVariants } from "./animations";
 
 interface Props {
     ping: Ping;
@@ -32,40 +33,11 @@ const formatTimestamp = (dateString: string): string => {
  * Includes spring animation on mount and slide-out animation on close.
  */
 const SelectedPingCard = ({ ping, onDeselect }: Props) => {
-    // Animation variants
-    const cardVariants = {
-        hidden: {
-            y: -20,
-            opacity: 0,
-            scale: 0.95
-        },
-        visible: {
-            y: 0,
-            opacity: 1,
-            scale: 1,
-            transition: {
-                type: "spring" as const,
-                stiffness: 200,
-                damping: 20
-            }
-        },
-        exit: {
-            y: -20,
-            opacity: 0,
-            scale: 0.95,
-            transition: {
-                duration: 0.3,
-                ease: [0.4, 0, 1, 1] as const
-            }
-        }
-    };
-
     return (
         <motion.div
-            variants={cardVariants}
+            variants={selectedPingVariants}
             initial="hidden"
             animate="visible"
-            exit="exit"
             className="
         relative p-3 rounded-[10px] 
         bg-[#FFC37B] border border-[#F49B31]
