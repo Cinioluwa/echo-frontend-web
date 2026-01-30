@@ -1,6 +1,4 @@
 import { useState } from "react";
-import { FaLink } from "react-icons/fa6";
-import CategorySelector from "./CategorySelector";
 import ProposedPingCard from "./ProposedPingCard";
 import { waveService } from "../api/services";
 
@@ -15,11 +13,6 @@ interface Props {
 
 export interface proposedWaveDetails {
   solution: string;
-  cat: string;
-  catId: number;
-  pingTimeStamp: string | undefined;
-  pingTitle: string | undefined;
-  createdAt: string;
 }
 
 const ProposeWaveModal = ({
@@ -33,19 +26,15 @@ const ProposeWaveModal = ({
   const [proposedWaveDetails, setProposedWaveDetails] =
     useState<proposedWaveDetails>({
       solution: "",
-      cat: "",
-      catId: 0,
-      pingTimeStamp: "",
-      pingTitle: "",
-      createdAt: "",
     });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (proposedWaveDetails.catId === 0 || !proposedWaveDetails.cat) {
-      return alert("Select a category!");
+
+    if (!proposedWaveDetails.solution.trim()) {
+      return alert("Please provide a solution!");
     }
 
     if (!pingId) {
@@ -67,11 +56,6 @@ const ProposeWaveModal = ({
       // RESET FORM
       setProposedWaveDetails({
         solution: "",
-        cat: "",
-        catId: 0,
-        pingTimeStamp: "",
-        pingTitle: "",
-        createdAt: "",
       });
 
       // UPDATE PROPOSE-btn STATE
@@ -139,18 +123,7 @@ const ProposeWaveModal = ({
               />
             </div>
           </fieldset>
-          <div className="overflow-y-scroll [scrollbar-width:none] w-full">
-            <CategorySelector
-              categoryId={proposedWaveDetails.catId}
-              setFormData={(catId, catName) =>
-                setProposedWaveDetails({ ...proposedWaveDetails, catId: catId, cat: catName })
-              }
-            />
-          </div>
-          <div className="w-full flex justify-between">
-            <div className="cursor-pointer">
-              <FaLink fontSize={30} color="#F49B31" />
-            </div>
+          <div className="w-full flex justify-end">
             <button
               type="submit"
               disabled={isSubmitting}

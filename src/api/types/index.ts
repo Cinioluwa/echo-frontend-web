@@ -97,6 +97,7 @@ export interface CreatePingRequest {
   content: string;
   categoryId: number;
   hashtag?: string;
+  isAnonymous?: boolean;
 }
 
 export interface UpdatePingRequest {

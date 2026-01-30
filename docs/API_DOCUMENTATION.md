@@ -535,7 +535,8 @@ Create a new ping.
   "title": "Library Hours Too Short",
   "content": "The library closes at 8pm but students need late-night study spaces...",
   "categoryId": 3,
-  "hashtag": "library" // Optional
+  "hashtag": "library", // Optional
+  "isAnonymous": false // Optional, defaults to false
 }
 ```
 
@@ -551,12 +552,34 @@ Create a new ping.
   "status": "POSTED",
   "progressStatus": "PENDING",
   "surgeCount": 0,
+  "isAnonymous": false,
   "authorId": 1,
   "organizationId": 1,
   "createdAt": "2025-11-07T10:30:00.000Z",
-  "updatedAt": "2025-11-07T10:30:00.000Z"
+  "updatedAt": "2025-11-07T10:30:00.000Z",
+  "author": {
+    "id": 1,
+    "email": "student@university.edu",
+    "firstName": "John",
+    "lastName": "Doe",
+    "level": 200
+  },
+  "category": {
+    "id": 3,
+    "name": "Facilities"
+  },
+  "_count": {
+    "waves": 0,
+    "comments": 0,
+    "surges": 0
+  }
 }
 ```
+
+**Notes:**
+
+- When `isAnonymous` is `true`, the `author` field will be `null` in responses
+- Anonymous pings still store the author ID internally for accountability, but it's not exposed via the API
 
 ---
 
@@ -585,6 +608,7 @@ Get all pings in organization (with filters & pagination).
       "status": "POSTED",
       "surgeCount": 42,
       "hashtag": "library",
+      "isAnonymous": false,
       "createdAt": "2025-11-07T10:30:00.000Z",
       "author": {
         "id": 1,
@@ -614,6 +638,10 @@ Get all pings in organization (with filters & pagination).
   }
 }
 ```
+
+**Notes:**
+
+- `author` field will be `null` if `isAnonymous` is `true`
 
 ---
 
@@ -839,7 +867,8 @@ Create a wave (solution) for a ping.
 
 ```json
 {
-  "solution": "Extend library hours to midnight on weekdays, and offer 24/7 access during finals week."
+  "solution": "Extend library hours to midnight on weekdays, and offer 24/7 access during finals week.",
+  "isAnonymous": false // Optional, defaults to false
 }
 ```
 
@@ -854,11 +883,21 @@ Create a wave (solution) for a ping.
   "surgeCount": 0,
   "viewCount": 0,
   "flaggedForReview": false,
+  "isAnonymous": false,
   "authorId": 1,
   "organizationId": 1,
-  "createdAt": "2025-11-07T11:00:00.000Z"
+  "createdAt": "2025-11-07T11:00:00.000Z",
+  "author": {
+    "id": 1,
+    "firstName": "John",
+    "lastName": "Doe"
+  }
 }
 ```
+
+**Notes:**
+
+- When `isAnonymous` is `true`, the `author` field will be `null` in responses
 
 **Wave Status Values:**
 
@@ -891,6 +930,7 @@ Get all waves for a specific ping.
       "status": "POSTED",
       "surgeCount": 15,
       "viewCount": 200,
+      "isAnonymous": false,
       "createdAt": "2025-11-07T11:00:00.000Z",
       "author": {
         "id": 3,
@@ -901,6 +941,7 @@ Get all waves for a specific ping.
         {
           "id": 1,
           "content": "Great solution!",
+          "isAnonymous": false,
           "author": {
             "id": 2,
             "email": "student2@university.edu",
@@ -926,7 +967,9 @@ Get all waves for a specific ping.
 }
 ```
 
-**Note:** `author` field is omitted if the wave is posted anonymously.
+**Notes:**
+
+- `author` field will be `null` if `isAnonymous` is `true`
 
 ---
 
@@ -985,7 +1028,8 @@ Create a comment on a ping.
 
 ```json
 {
-  "content": "I completely agree with this!"
+  "content": "I completely agree with this!",
+  "isAnonymous": false // Optional, defaults to false
 }
 ```
 
@@ -995,6 +1039,7 @@ Create a comment on a ping.
 {
   "id": 1,
   "content": "I completely agree with this!",
+  "isAnonymous": false,
   "authorId": 1,
   "pingId": 1,
   "createdAt": "2025-11-07T11:30:00.000Z",
@@ -1006,6 +1051,10 @@ Create a comment on a ping.
   }
 }
 ```
+
+**Notes:**
+
+- When `isAnonymous` is `true`, the `author` field will be `null` in responses
 
 ---
 
@@ -1028,6 +1077,7 @@ Get all comments for a ping.
     {
       "id": 1,
       "content": "I completely agree with this!",
+      "isAnonymous": false,
       "createdAt": "2025-11-07T11:30:00.000Z",
       "author": {
         "id": 1,
@@ -1046,6 +1096,10 @@ Get all comments for a ping.
 }
 ```
 
+**Notes:**
+
+- `author` field will be `null` if `isAnonymous` is `true`
+
 ---
 
 ### POST /api/waves/:waveId/comments
@@ -1058,11 +1112,16 @@ Create a comment on a wave.
 
 ```json
 {
-  "content": "This solution makes a lot of sense!"
+  "content": "This solution makes a lot of sense!",
+  "isAnonymous": false // Optional, defaults to false
 }
 ```
 
 **Success Response (201):** Same structure as ping comments
+
+**Notes:**
+
+- When `isAnonymous` is `true`, the `author` field will be `null` in responses
 
 ---
 

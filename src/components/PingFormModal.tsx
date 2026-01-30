@@ -342,6 +342,7 @@ const PingFormModal = ({
         content: pingData.description.trim(),
         categoryId: pingData.categoryId,
         hashtag: pingData.hashtag.trim() || undefined,
+        isAnonymous: pingData.anonymous,
       });
 
       console.log("Ping created successfully:", createdPing);
