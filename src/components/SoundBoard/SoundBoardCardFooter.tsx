@@ -1,5 +1,5 @@
-const reaction = "/reaction.svg";
-import surge from "/surge.svg";
+const reaction = "/assets/images/reaction.svg";
+import surge from "/assets/images/surge.svg";
 import { useSurgeStore } from "../../stores";
 
 interface Props {

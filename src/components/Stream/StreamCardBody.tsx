@@ -1,16 +1,11 @@
 interface Props {
   waveText: string;
-  waveTitle: string;
+  waveTitle?: string;
   image?: string;
   category?: string;
 }
 
-const StreamCardBody = ({
-  waveText,
-  waveTitle,
-  image,
-  category,
-}: Props) => {
+const StreamCardBody = ({ waveText, waveTitle, image, category }: Props) => {
   return (
     <div className="flex flex-col gap-2.5 my-4">
       <div className="flex items-center gap-[13px]">

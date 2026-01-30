@@ -1,4 +1,4 @@
-import surge from "/surge.svg";
+import surge from "/assets/images/surge.svg";
 import { useSurgeStore } from "../../stores";
 
 interface Props {
