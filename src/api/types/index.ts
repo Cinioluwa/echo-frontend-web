@@ -159,8 +159,8 @@ export interface UpdateWaveRequest {
 
 export interface ProposeWaveRequest {
   solution: string;
-  category: CategoryData;
   pingId: string;
+  // Note: category is inherited from the parent ping on backend
 }
 
 // ==================== Surge (Like) Types ====================
