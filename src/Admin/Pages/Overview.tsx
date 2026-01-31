@@ -4,10 +4,13 @@ import WaveFormModal from "../../components/WaveFormModal";
 import AdminOverviewLayout from "../Components/AdminOverviewLayout";
 import PlatformMetrics from "../Components/PlatformMetrics";
 import AdminChart from "../Components/AdminChart";
+import AnnouncementModal from "../Components/AnnouncementModal";
 
 const Overview = () => {
   const [waveForm, setWaveForm] = useState(false);
   const [formSegment, setFormSegment] = useState("ping");
+  const [announcement, setAnnouncement] = useState(false);
+
 
   // SETTING ACTIVE PAGE BUTTON
   const [activePage, setActivePage] = useState({
@@ -19,6 +22,7 @@ const Overview = () => {
   return (
     <>
       <AdminOverviewLayout
+      setAnnouncementModal={setAnnouncement}
         heading="Overview"
         setFormSegment={setFormSegment}
         setForm={setWaveForm}
@@ -49,6 +53,9 @@ const Overview = () => {
           <AdminChart />
         </div>
       </main>
+
+      {announcement && <AnnouncementModal setAnnouncementModal={setAnnouncement}/>}
+
 
       {formSegment === "ping" && (
         <div className={`${waveForm ? "" : "hidden"}`}>

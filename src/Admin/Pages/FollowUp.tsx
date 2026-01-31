@@ -2,6 +2,7 @@ import { useState } from "react";
 import AdminLayout from "../Components/AdminLayout";
 import PingFormModal from "../../components/PingFormModal";
 import WaveFormModal from "../../components/WaveFormModal";
+import AnnouncementModal from "../Components/AnnouncementModal";
 
 const FollowUp = () => {
   const [waveForm, setWaveForm] = useState(false);
@@ -14,10 +15,10 @@ const FollowUp = () => {
     followUpActive: true,
   });
 
-    const [activePosts, setActivePosts] = useState({
-    all: true,
-    waves: false,
-    pings: false,
+  const [activePosts, setActivePosts] = useState({
+    underReview: true,
+    approved: false,
+    rejected: false,
   });
 
   return (
@@ -30,40 +31,46 @@ const FollowUp = () => {
         setActivePage={setActivePage}
       />
 
-
-
-<main className=" mr-2.5 ml-2.5 mt-5 md:mr-[46px] h-[calc(100vh-155px)]   md:ml-[350px] md:mt-[155px]">
-
-<div className="flex gap-[15px] mb-4">
-            <div
-              onClick={() =>
-                setActivePosts({ all: true, waves: false, pings: false })
-              }
-              className={`${activePosts.all ? "text-white bg-[#F49B31]" : "bg-[#FFC37B]"} p-4 rounded-[18px] w-[100px] flex items-center cursor-pointer justify-center border border-[#7B7B79] h-10`}
-            >
-              All
-            </div>
-            <div
-              onClick={() =>
-                setActivePosts({ all: false, waves: true, pings: false })
-              }
-              className={` ${activePosts.waves ? "bg-[#F49B31] text-white" : "bg-[#FFC37B]"} p-4 rounded-[18px] w-[100px] cursor-pointer flex items-center justify-center border border-[#7B7B79] h-10`}
-            >
-              Waves
-            </div>
-            <div
-              onClick={() =>
-                setActivePosts({ all: false, waves: false, pings: true })
-              }
-              className={` ${activePosts.pings ? "bg-[#F49B31] text-white" : "bg-[#FFC37B]"} p-4 rounded-[18px] w-[100px] flex cursor-pointer items-center justify-center border border-[#7B7B79] h-10`}
-            >
-              Pings
-            </div>
+      <main className=" mr-2.5 ml-2.5 mt-5 md:mr-[46px] h-[calc(100vh-155px)]   md:ml-[350px] md:mt-[155px]">
+        <div className="flex whitespace-nowrap gap-[15px] mb-4">
+          <div
+            onClick={() =>
+              setActivePosts({
+                underReview: true,
+                approved: false,
+                rejected: false,
+              })
+            }
+            className={`${activePosts.underReview ? "text-white bg-[#F49B31]" : "bg-[#FFC37B]"} p-4 rounded-[18px] w-full max-w-[200px] flex items-center cursor-pointer justify-center border border-[#7B7B79] font-semibold h-10`}
+          >
+            Under Review
           </div>
-
-</main>
-
-
+          <div
+            onClick={() =>
+              setActivePosts({
+                underReview: false,
+                approved: true,
+                rejected: false,
+              })
+            }
+            className={` ${activePosts.approved ? "bg-[#F49B31] text-white" : "bg-[#FFC37B]"} p-4 rounded-[18px] w-full max-w-[200px] cursor-pointer flex items-center justify-center border border-[#7B7B79] font-semibold h-10`}
+          >
+            Approved
+          </div>
+          <div
+            onClick={() =>
+              setActivePosts({
+                underReview: false,
+                approved: false,
+                rejected: true,
+              })
+            }
+            className={` ${activePosts.rejected ? "bg-[#F49B31] text-white" : "bg-[#FFC37B]"} p-4 rounded-[18px] font-semibold w-full max-w-[200px] flex cursor-pointer items-center justify-center border border-[#7B7B79] h-10`}
+          >
+            Rejected
+          </div>
+        </div>
+      </main>
 
 
       {formSegment === "ping" && (
