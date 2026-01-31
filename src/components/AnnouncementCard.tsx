@@ -1,4 +1,4 @@
-import React from 'react'
+
 import CollapsibleText from './CollapsibleText'
 
 const AnnouncementCard = () => {
