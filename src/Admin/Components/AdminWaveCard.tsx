@@ -7,14 +7,18 @@ import profileImage from "../../assets/images/profileImage.jpeg";
 import CollapsibleText from "../../components/CollapsibleText";
 import type { proposedWaveDetails } from "../../components/ProposeWaveModal";
 import { categoryImages } from "../../components/CategoryImages";
+import PostActionMenu from "./PostActionMenu";
+import { useState } from "react";
 
 interface AdminWaveCardProps {
   waves: proposedWaveDetails;
 }
 
 const AdminWaveCard = ({ waves }: AdminWaveCardProps) => {
+  const [openMenu, setOpenMenu] = useState(false);
+
   return (
-    <div>
+    <div className="relative">
       <div className="m-[15px] md:m-0 px-[25px] py-2.5 bg-[#FEFEFE]  rounded-[10px] ">
         <div className="flex justify-between items-center">
           <div className="flex mb-6 mt-2 items-center gap-3">
@@ -24,9 +28,14 @@ const AdminWaveCard = ({ waves }: AdminWaveCardProps) => {
             <p className="text-[14px] font-semibold">{waves.pingTitle}</p>
           </div>
 
-          <span className="cursor-pointer">
+          <span
+            onClick={() => setOpenMenu(true)}
+            className="cursor-pointer"
+          >
             <img src={waveMenu} alt="" />
           </span>
+
+          {openMenu && <PostActionMenu setOpenMenu={setOpenMenu} />}
         </div>
 
         <div>

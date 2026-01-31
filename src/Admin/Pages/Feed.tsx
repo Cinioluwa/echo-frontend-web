@@ -87,14 +87,17 @@ const Feed = () => {
             </div>
           </div>
 
-          {/* MAPPING WAVE DETAILS INTO ADMIN WAVE CARD */}
-          <div className="mb-[22px] flex md:block flex-col items-center">
-            <AdminWaveCard waves={proposedWaveDetails} />
-          </div>
-
-          {/* MAPPING PING DETAILS INTO ADMIN PING CARD */}
-          <div className="mb-[22px] flex md:block flex-col items-center">
-            <AdminPingCard pings={pingFormDetails} />
+          {/* MAPPING WAVE AND PING DETAILS INTO ADMIN WAVE CARD */}
+          <div className="flex md:block flex-col items-center">
+            <div className="mb-[22px]">
+              <AdminWaveCard waves={proposedWaveDetails} />
+            </div>
+            <div className="mb-[22px]">
+              <AdminWaveCard waves={proposedWaveDetails} />
+            </div>
+            <div className="mb-[22px]">
+              <AdminPingCard pings={pingFormDetails} />
+            </div>
           </div>
         </div>
       </main>
