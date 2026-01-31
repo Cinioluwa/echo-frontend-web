@@ -9,9 +9,11 @@ import PingFormModal from "../components/PingFormModal";
 import Layout from "../components/Layout";
 import type { Pages } from "../components/SideBar";
 import usePingStore from "../services/pingStore";
+import CommentModal from "../components/CommentModal";
 
 const SoundBoard = () => {
   const [pingForm, setPingForm] = useState(false);
+  const [openCommentModal, setOpencommentModal] = useState(false);
   const [formSegment, setFormSegment] = useState("ping");
 
   // SETTING ACTIVE PAGE BUTTON
@@ -66,6 +68,7 @@ const SoundBoard = () => {
                 timeStamp={details.createdAt}
                 id={details.id}
                 onPropose={(id) => handleWaveProposal(id)}
+                setCommentModal={setOpencommentModal}
                 proposeActive={proposeActive}
               />
             </div>
@@ -82,6 +85,7 @@ const SoundBoard = () => {
               hashtag="#welfare #internet"
               timeStamp="feb 29, 09:30 pm"
               id=""
+              setCommentModal={setOpencommentModal}
               onPropose={(id) => handleWaveProposal(id)}
               proposeActive={false}
             />
@@ -95,6 +99,7 @@ const SoundBoard = () => {
               image={categoryImages.General}
               timeStamp="feb 29, 09:30 pm"
               hashtag="#welfare #internet"
+              setCommentModal={setOpencommentModal}
               id=""
               onPropose={(id) => handleWaveProposal(id)}
               proposeActive={false}
@@ -107,6 +112,7 @@ const SoundBoard = () => {
               category="General"
               timeStamp="feb 29, 09:30 pm"
               hashtag="#welfare #internet"
+              setCommentModal={setOpencommentModal}
               image={categoryImages.General}
               id=""
               onPropose={(id) => handleWaveProposal(id)}
@@ -120,6 +126,7 @@ const SoundBoard = () => {
               category="General"
               timeStamp="feb 29, 09:30 pm"
               hashtag="#welfare #internet"
+              setCommentModal={setOpencommentModal}
               image={categoryImages.General}
               id=""
               onPropose={(id) => handleWaveProposal(id)}
@@ -132,6 +139,7 @@ const SoundBoard = () => {
               pingTitle="Increase Wi-Fi Coverage and Speed on Campus"
               category="General"
               timeStamp="feb 29, 09:30 pm"
+              setCommentModal={setOpencommentModal}
               hashtag="#welfare #internet"
               image={categoryImages.General}
               id=""
@@ -145,6 +153,7 @@ const SoundBoard = () => {
               pingTitle="Increase Wi-Fi Coverage and Speed on Campus"
               category="General"
               timeStamp="feb 29, 09:30 pm"
+              setCommentModal={setOpencommentModal}
               hashtag="#welfare #internet"
               image={categoryImages.General}
               id=""
@@ -154,6 +163,11 @@ const SoundBoard = () => {
           </div>
         </div>
       </main>
+
+      {openCommentModal && (
+        <CommentModal setCommentModal={setOpencommentModal} />
+      )}
+
       {formSegment === "ping" && (
         <div className={`${pingForm ? "" : "hidden"}`}>
           <PingFormModal

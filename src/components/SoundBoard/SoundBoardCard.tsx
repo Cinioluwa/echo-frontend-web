@@ -12,6 +12,7 @@ interface Props {
   id: string;
   onPropose: (id: string) => void;
   proposeActive: boolean;
+  setCommentModal: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const SoundBoardCard = ({
@@ -22,6 +23,7 @@ const SoundBoardCard = ({
   hashtag,
   timeStamp,
   id,
+  setCommentModal,
   onPropose,
   proposeActive,
 }: Props) => {
@@ -38,6 +40,7 @@ const SoundBoardCard = ({
           pingText={pingText}
         />
         <SoundBoardCardFooter
+        setCommentModal={setCommentModal}
           proposeActive={proposeActive}
           onPropose={(id) => onPropose(id)}
           id={id}

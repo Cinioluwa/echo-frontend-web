@@ -3,7 +3,6 @@ import AdminLayout from "../Components/AdminLayout";
 import PingFormModal from "../../components/PingFormModal";
 import WaveFormModal from "../../components/WaveFormModal";
 import AdminWaveCard from "../Components/AdminWaveCard";
-import AdminPingCard from "../Components/AdminPingCard";
 
 const proposedWaveDetails = {
   solution:
@@ -19,18 +18,6 @@ const proposedWaveDetails = {
 };
 
 // STATIC PING DATA USING PINGSTORE- SIMULATING PINGS FROM SERVER.
-
-const pingFormDetails = {
-  cat: "Academics",
-  pingDesc:
-    "Lorem, ipsum dolor sit amet consectetur adipisicing elit. Voluptatem delectus aut ut iure reprehenderit, deleniti ea, commodi a inventore facere aliquam. Vel magnam sapiente, accusamus maxime ullam esse molestiae beatae! Lorem, ipsum dolor sit amet consectetur adipisicing elit. Voluptatem delectus aut ut iure reprehenderit, deleniti ea, commodi a inventore facere aliquam. Vel magnam sapiente, accusamus maxime ullam esse molestiae beatae! Lorem, ipsum dolor sit amet consectetur adipisicing elit. Voluptatem delectus aut ut iure reprehenderit, deleniti ea, commodi a inventore facere aliquam. Vel magnam sapiente, accusamus maxime ullam esse molestiae beatae!",
-  pingTitle: "Enhance the Microphone System in EIE Large Classroom",
-  createdAt: "Oct 8, 11:00 am",
-  anonymous: true,
-  hashtag: "string",
-  formSegment: "ping",
-  id: "string",
-};
 
 const FollowUp = () => {
   const [waveForm, setWaveForm] = useState(false);
@@ -104,13 +91,7 @@ const FollowUp = () => {
               <AdminWaveCard waves={proposedWaveDetails} />
             </div>
             <div className="mb-[22px]">
-              <AdminPingCard pings={pingFormDetails} />
-            </div>
-            <div className="mb-[22px]">
               <AdminWaveCard waves={proposedWaveDetails} />
-            </div>
-            <div className="mb-[22px]">
-              <AdminPingCard pings={pingFormDetails} />
             </div>
           </div>
         </div>

@@ -6,6 +6,7 @@ import StreamCard from "../components/Stream/StreamCard";
 import Layout from "../components/Layout";
 import type { Pages } from "../components/SideBar";
 import useWaveStore from "../services/waveStore";
+import AnnouncementCard from "../components/AnnouncementCard";
 
 const Stream = () => {
   const [waveForm, setWaveForm] = useState(false);
@@ -39,6 +40,10 @@ const Stream = () => {
       />
 
       <main className="mr-2.5 ml-2.5 mt-5 flex flex-col md:mr-[46px] h-[calc(100vh-155px)]  md:ml-[350px]   md:mt-[155px]">
+
+<AnnouncementCard />
+
+
         {/* MAP WAVEFORM (proposedWaveForm) DETAILS INTO SOUNDBOARD CARDS */}
         <div className="flex-1 [scrollbar-width:none] h-full overflow-auto">
           {waveDetails.map((details) => (

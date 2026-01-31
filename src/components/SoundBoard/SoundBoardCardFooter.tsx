@@ -8,6 +8,7 @@ interface Props {
   id: string;
   onPropose: (id: string) => void;
   proposeActive: boolean;
+  setCommentModal: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 function SoundBoardCardFooter({
@@ -15,6 +16,7 @@ function SoundBoardCardFooter({
   timeStamp,
   id,
   onPropose,
+  setCommentModal,
   proposeActive,
 }: Props) {
   function handleClick(id: string) {
@@ -32,9 +34,12 @@ function SoundBoardCardFooter({
         </div>
       </div>
       <div className="text-[#454545] text-[10px] lg:text-[13px] gap-2.5 lg:gap-5 flex items-center">
-        <div className=" items-center cursor-pointer gap-1 hidden lg:flex">
+        <div
+          onClick={() => setCommentModal(true)}
+          className=" items-center cursor-pointer gap-1 hidden lg:flex"
+        >
           <img src={reaction} alt="" />
-          <span>3</span> comments
+          <span>4</span> comments
         </div>
         <button
           onClick={() => setSurged(!surged)}

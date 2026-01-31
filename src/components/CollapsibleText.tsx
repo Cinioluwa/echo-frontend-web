@@ -26,7 +26,7 @@ const CollapsibleText = ({ text }: Props) => {
       {displayText}
       <button
         onClick={() => setExpanded(!expanded)}
-        className=" text-[#454545] text-[10px]"
+        className=" text-[#454545] block text-[10px]"
       >
         {expanded ? "Show less" : "Show more"}
       </button>
