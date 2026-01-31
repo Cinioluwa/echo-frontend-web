@@ -8,6 +8,7 @@ import { categoryImages } from "../../components/CategoryImages";
 import type { PingFormDetails } from "../../components/PingFormModal";
 import { useState } from "react";
 import PostActionMenu from "./PostActionMenu";
+import PostEngagementMenu from "./PostEngagementMenu";
 
 interface AdminPingCardProps {
   pings: PingFormDetails;
@@ -16,6 +17,7 @@ interface AdminPingCardProps {
 const AdminPingCard = ({ pings }: AdminPingCardProps) => {
   const [acknowledged, setAcknowledged] = useState(false);
   const [openMenu, setOpenMenu] = useState(false);
+  const [openEngagementMenu, setOpenEngagementMenu] = useState(false);
 
   return (
     <div className="relative">
@@ -91,10 +93,11 @@ const AdminPingCard = ({ pings }: AdminPingCardProps) => {
               </button>
 
               <button className="bg-[#EF6E0B]  rounded-[20px] py-1.5 lg:py-2 pl-2 pr-4">
-                <span className="cursor-pointer">
+                <span onClick={() => setOpenEngagementMenu(true)} className="cursor-pointer">
                   <img src={dropdown_menu} alt="" />
                 </span>
               </button>
+              {openEngagementMenu && <PostEngagementMenu setEngagementMenu={setOpenEngagementMenu}/>}
             </div>
 
             <div className="text-[#454545] text-[14px]">128 Surges</div>

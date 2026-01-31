@@ -19,6 +19,7 @@ export interface proposedWaveDetails {
   pingTitle: string | undefined;
   createdAt: string;
   id: string;
+  status?: string;
 }
 
 const ProposeWaveModal = ({

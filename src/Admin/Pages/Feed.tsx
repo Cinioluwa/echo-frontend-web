@@ -15,6 +15,7 @@ const proposedWaveDetails = {
     "The power off policy affects students badly. It disrupts study time.",
   createdAt: "Feb 29, 09:30 pm",
   id: "string",
+  // BACK-END ATTRIBUTE
 };
 
 // STATIC PING DATA USING PINGSTORE- SIMULATING PINGS FROM SERVER.
@@ -49,7 +50,7 @@ const Feed = () => {
   });
 
   return (
-    <div className=" h-full">
+    <div className="h-full">
       <AdminLayout
         heading="Admin Feed"
         setFormSegment={setFormSegment}
@@ -59,7 +60,7 @@ const Feed = () => {
       />
 
       <main className=" mr-2.5 ml-2.5 mt-5 md:mr-[46px] h-[calc(100vh-155px)]   md:ml-[350px] md:mt-[155px]">
-        <div className=" h-full overflow-auto [scrollbar-width:none]">
+        <div className="h-full overflow-auto [scrollbar-width:none]">
           <div className="flex gap-[15px] mb-4">
             <div
               onClick={() =>
@@ -91,6 +92,9 @@ const Feed = () => {
           <div className="flex md:block flex-col items-center">
             <div className="mb-[22px]">
               <AdminWaveCard waves={proposedWaveDetails} />
+            </div>
+            <div className="mb-[22px]">
+              <AdminPingCard pings={pingFormDetails} />
             </div>
             <div className="mb-[22px]">
               <AdminWaveCard waves={proposedWaveDetails} />

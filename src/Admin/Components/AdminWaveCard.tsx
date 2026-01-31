@@ -16,22 +16,36 @@ interface AdminWaveCardProps {
 
 const AdminWaveCard = ({ waves }: AdminWaveCardProps) => {
   const [openMenu, setOpenMenu] = useState(false);
+  const [approved, setApproved] = useState(false);
 
   return (
     <div className="relative">
       <div className="m-[15px] md:m-0 px-[25px] py-2.5 bg-[#FEFEFE]  rounded-[10px] ">
-        <div className="flex justify-between items-center">
-          <div className="flex mb-6 mt-2 items-center gap-3">
+        <div className="flex mb-6 mt-2 justify-between items-center">
+          <div className="flex  items-center gap-3">
             <span className="cursor-pointer">
               <img src={dropdown} alt="" />
             </span>
             <p className="text-[14px] font-semibold">{waves.pingTitle}</p>
           </div>
 
-          <span
-            onClick={() => setOpenMenu(true)}
-            className="cursor-pointer"
-          >
+          {waves.status && waves.status === "underReview" && (
+            <div className="border border-[#ABEFC6] bg-[#ECFDF3] text-[12px] px-2 py-0.5 rounded-4xl">
+              Under Review
+            </div>
+          )}
+          {waves.status && waves.status === "approved" && (
+            <div className="border border-[#ABEFC6] bg-[#ECFDF3] text-[12px] px-2 py-0.5 rounded-4xl">
+              Approved
+            </div>
+          )}
+          {waves.status && waves.status === "rejected" && (
+            <div className="border text-[#B01212] border-[#B01212] bg-[#FFF7E8] text-[12px] px-2 py-0.5 rounded-4xl">
+              Rejected
+            </div>
+          )}
+
+          <span onClick={() => setOpenMenu(true)} className="cursor-pointer">
             <img src={waveMenu} alt="" />
           </span>
 
@@ -90,11 +104,14 @@ const AdminWaveCard = ({ waves }: AdminWaveCardProps) => {
 
         <div className="flex  justify-between items-center ">
           <div className="flex gap-2.5 mb-2">
-            <button className="flex bg-[#F49B31] cursor-pointer text-white items-center justify-center px-4 py-2 rounded-[15px] gap-2.5">
+            <button
+              onClick={() => setApproved(!approved)}
+              className={`flex ${approved ? "bg-green-500" : "bg-[#F49B31]"} transition-all duration-200 ease-in-out cursor-pointer text-white items-center justify-center px-4 py-2 rounded-[15px] gap-2.5`}
+            >
               <span>
                 <img src={approve} alt="" />
               </span>
-              Approve
+              {approved ? "Approved" : "Approve"}
             </button>
 
             <button className="flex bg-[#B01212] cursor-pointer text-white items-center justify-center pr-7 pl-4 py-2 rounded-[15px] gap-2.5">
