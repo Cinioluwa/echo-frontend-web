@@ -38,7 +38,6 @@ const PingSearchDropdown = ({
                     initial="hidden"
                     animate="visible"
                     exit="hidden"
-                    className="overflow-hidden"
                 >
                     <div className="
             mt-2 p-3 
@@ -46,8 +45,7 @@ const PingSearchDropdown = ({
             bg-white shadow-lg
             max-h-[400px] overflow-y-auto
             [scrollbar-width:thin]
-          ">
-                        {/* Loading State */}
+          ">{/* Loading State */}
                         {isSearching ? (
                             <div className="text-center py-8">
                                 <div className="inline-block w-8 h-8 border-4 border-[#F49B31] border-t-transparent rounded-full animate-spin" />
@@ -69,6 +67,8 @@ const PingSearchDropdown = ({
                                     <motion.div
                                         key={ping.id}
                                         variants={pingResultCardVariants}
+                                        initial="hidden"
+                                        animate="visible"
                                     >
                                         <PingResultCard
                                             ping={ping}

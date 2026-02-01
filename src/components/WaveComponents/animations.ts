@@ -44,18 +44,18 @@ export const formContentVariants: Variants = {
 
 /**
  * Dropdown Animation
- * Slide down from 0 to auto height
+ * Fade and slide down
  * Stagger children by 50ms
  */
 export const dropdownVariants: Variants = {
   hidden: {
-    height: 0,
     opacity: 0,
+    y: -10,
     transition: { duration: 0.2 },
   },
   visible: {
-    height: "auto",
     opacity: 1,
+    y: 0,
     transition: {
       duration: 0.3,
       when: "beforeChildren" as const,

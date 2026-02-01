@@ -111,9 +111,10 @@ const PingFormModal = ({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  // Refs for file inputs
+  // Refs for file inputs and dropdown container
   const pingPhotoInputRef = useRef<HTMLInputElement>(null);
   const wavePhotoInputRef = useRef<HTMLInputElement>(null);
+  const searchContainerRef = useRef<HTMLDivElement>(null);
 
   // Legacy state for compatibility
   const [pingFormData, setPingFormData] = useState<PingFormDetails>({
@@ -132,6 +133,26 @@ const PingFormModal = ({
   useEffect(() => {
     setActiveTab(formSegment);
   }, [formSegment]);
+
+  // Handle clicks outside search dropdown
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        searchContainerRef.current &&
+        !searchContainerRef.current.contains(event.target as Node)
+      ) {
+        setShowSearchDropdown(false);
+      }
+    };
+
+    if (showSearchDropdown) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [showSearchDropdown]);
 
   // Debounced ping search for Wave flow
   useEffect(() => {
@@ -598,29 +619,32 @@ const PingFormModal = ({
 
         {/* Ping Search or Selected Ping */}
         {!waveData.selectedPing ? (
-          <div className="relative">
+          <div className="relative" ref={searchContainerRef}>
             <PingSearchInput
               value={waveData.searchQuery}
-              onChange={(value) =>
-                setWaveData((prev) => ({ ...prev, searchQuery: value }))
-              }
-              onFocus={() => setShowSearchDropdown(true)}
+              onChange={(value) => {
+                setWaveData((prev) => ({ ...prev, searchQuery: value }));
+                // Show dropdown when user has typed enough characters
+                setShowSearchDropdown(value.length >= 2);
+              }}
+              onFocus={() => {
+                // Show dropdown on focus if there's already a valid search query
+                if (waveData.searchQuery.length >= 2) {
+                  setShowSearchDropdown(true);
+                }
+              }}
               placeholder="Search for the ping..."
             />
 
             {/* Search Dropdown */}
-            <AnimatePresence>
-              {showSearchDropdown && waveData.searchQuery.length >= 2 && (
-                <PingSearchDropdown
-                  searchQuery={waveData.searchQuery}
-                  searchResults={searchResults}
-                  isSearching={isSearching}
-                  onSelectPing={handleSelectPing}
-                  onCreatePing={handleCreatePingFromWave}
-                  isVisible={showSearchDropdown}
-                />
-              )}
-            </AnimatePresence>
+            <PingSearchDropdown
+              searchQuery={waveData.searchQuery}
+              searchResults={searchResults}
+              isSearching={isSearching}
+              onSelectPing={handleSelectPing}
+              onCreatePing={handleCreatePingFromWave}
+              isVisible={showSearchDropdown}
+            />
           </div>
         ) : (
           <SelectedPingCard
