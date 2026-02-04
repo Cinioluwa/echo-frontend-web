@@ -35,7 +35,7 @@ const Login = () => {
 
     try {
       await authService.login(formData);
-      navigate("/stream");
+      navigate("/soundBoard");
     } catch (err: any) {
       const status = err?.response?.status;
       const data = err?.response?.data;

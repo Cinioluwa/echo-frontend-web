@@ -22,24 +22,24 @@ const SideBar = ({ pages, setActivePage }: Props) => {
         <Categories />
       </div>
       <div className="mt-[15px]">
-        <Link to={"/stream"}>
+        <Link to={"/soundBoard"}>
           <button
             onClick={() =>
               setActivePage({
-                streamActive: true,
+                streamActive: false,
                 historyActive: false,
-                soundBoardActive: false,
+                soundBoardActive: true,
               })
             }
-            className={`flex items-center ${pages.streamActive
-                ? "bg-[#FFC37B] border-0"
-                : "bg-transparent border-2"
+            className={`flex items-center ${pages.soundBoardActive
+              ? "bg-[#FFC37B] border-0"
+              : "bg-transparent border-2"
               }  gap-3 py-[13px] w-full transition  cursor-pointer mb-3.5 ease-in-out duration-700 border-[#F49B31] rounded-[15px]`}
           >
             <span className="ml-6">
-              <img src={stream} alt="" />
+              <img src={soundBoard} alt="" />
             </span>
-            Stream
+            Sound Board
           </button>
         </Link>
 
@@ -53,8 +53,8 @@ const SideBar = ({ pages, setActivePage }: Props) => {
               })
             }
             className={`flex items-center ${pages.historyActive
-                ? "bg-[#FFC37B] border-0"
-                : "bg-transparent border-2"
+              ? "bg-[#FFC37B] border-0"
+              : "bg-transparent border-2"
               }  gap-3 py-[13px] transition w-full cursor-pointer mb-3.5 ease-in-out duration-700 border-[#F49B31] rounded-[15px]`}
           >
             <span className="ml-6">
@@ -63,24 +63,24 @@ const SideBar = ({ pages, setActivePage }: Props) => {
             History
           </button>
         </Link>
-        <Link to={"/soundBoard"}>
+        <Link to={"/stream"}>
           <button
             onClick={() =>
               setActivePage({
-                streamActive: false,
+                streamActive: true,
                 historyActive: false,
-                soundBoardActive: true,
+                soundBoardActive: false,
               })
             }
-            className={`flex items-center ${pages.soundBoardActive
-                ? "bg-[#FFC37B] border-0"
-                : "bg-transparent border-2"
+            className={`flex items-center ${pages.streamActive
+              ? "bg-[#FFC37B] border-0"
+              : "bg-transparent border-2"
               }  gap-3 py-[13px] w-full transition  cursor-pointer ease-in-out duration-700 border-[#F49B31] rounded-[15px]`}
           >
             <span className="ml-6">
-              <img src={soundBoard} alt="" />
+              <img src={stream} alt="" />
             </span>
-            Sound Board
+            Stream
           </button>
         </Link>
         <div></div>
