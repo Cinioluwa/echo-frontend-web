@@ -8,6 +8,7 @@ import PingFormModal from "../components/PingFormModal";
 import StreamCard from "../components/Stream/StreamCard";
 import { useWavesStore, useSearchStore } from "../stores";
 import { useShallow } from "zustand/react/shallow";
+import { ErrorBanner } from "../components/shared";
 
 const Stream = () => {
   // Zustand stores
@@ -44,7 +45,7 @@ const Stream = () => {
     fetchWaves({
       q: debouncedQuery,
       category: selectedCategoryId || undefined,
-      sort: "trending",
+      sort: "new",
       days: 7,
     });
   }, [debouncedQuery, selectedCategoryId, fetchWaves]);
@@ -69,6 +70,9 @@ const Stream = () => {
 
   return (
     <div className="h-full">
+      {/* Error Banner - shows errors without clearing data */}
+      <ErrorBanner error={error} />
+
       <header className="z-20 md:fixed md:top-0 w-full">
         <nav>
           <NavBar />
@@ -95,8 +99,8 @@ const Stream = () => {
         <SideBar pages={activePage} setActivePage={setActivePage} />
       </aside>
       <main className="mr-2.5 ml-2.5 mt-5 flex flex-col md:mr-[46px] h-[calc(100vh-155px)]  md:ml-[350px]   md:mt-[155px]">
-        {/* Loading State */}
-        {isLoading && (
+        {/* Loading State - only show when no cached data */}
+        {isLoading && waves.length === 0 && (
           <div className="flex-1 flex items-center justify-center">
             <div className="text-center">
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#F49B31] mx-auto"></div>
@@ -105,23 +109,8 @@ const Stream = () => {
           </div>
         )}
 
-        {/* Error State */}
-        {error && !isLoading && (
-          <div className="flex-1 flex items-center justify-center">
-            <div className="text-center">
-              <p className="text-red-500 mb-4">{error}</p>
-              <button
-                onClick={() => fetchWaves({ sort: "trending", days: 7 })}
-                className="bg-[#F49B31] hover:bg-[#d88429] text-white px-6 py-2 rounded-lg transition-colors"
-              >
-                Try Again
-              </button>
-            </div>
-          </div>
-        )}
-
-        {/* Waves List */}
-        {!isLoading && !error && (
+        {/* Waves List - show even when loading/error if we have cached data */}
+        {(waves.length > 0 || (!isLoading && !error)) && (
           <div className="flex-1 [scrollbar-width:none] h-full overflow-auto">
             {/* Display API fetched waves */}
             {filteredWaves.map((wave) => {
@@ -151,7 +140,7 @@ const Stream = () => {
                     pingDescription={wave.ping?.content}
                     surgeCount={wave._count?.surges || wave.surgeCount}
                     commentCount={wave._count?.comments || 0}
-                    onRefresh={() => fetchWaves({ sort: "trending", days: 7 })}
+                    onRefresh={() => fetchWaves({ sort: "new", days: 7 })}
                     authorName={waveAuthorName}
                     authorId={typeof wave.author === 'object' ? wave.author?.id : undefined}
                     rank={wave.rank}
@@ -192,7 +181,7 @@ const Stream = () => {
           formSegment={formSegment}
           setFormSegment={() => setFormSegment(formSegment === "ping" ? "wave" : "ping")}
           setPingForm={() => setWaveForm(!waveForm)}
-          onWaveCreated={() => fetchWaves({ sort: "trending", days: 7 })}
+          onWaveCreated={() => fetchWaves({ sort: "new", days: 7 })}
         >
           <button
             onClick={() => setWaveForm(!waveForm)}

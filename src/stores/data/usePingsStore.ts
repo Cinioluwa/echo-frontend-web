@@ -17,10 +17,25 @@ interface FetchParams {
   category?: number;
 }
 
+interface CachedPingsData {
+  data: Ping[];
+  dataById: Record<string, Ping>;
+  timestamp: number;
+  pagination: {
+    currentPage: number;
+    totalPages: number;
+    hasNextPage: boolean;
+  };
+}
+
 interface PingsState {
   // Data
   pings: Ping[];
   pingsById: Record<string, Ping>;
+
+  // Category-based cache for stale-while-revalidate
+  cache: Record<string, CachedPingsData>;
+  currentCacheKey: string | null;
 
   // Pagination
   currentPage: number;
@@ -29,6 +44,7 @@ interface PingsState {
 
   // Loading & Error
   isLoading: boolean;
+  isFetchingInBackground: boolean;
   error: string | null;
 
   // Cache
@@ -51,10 +67,13 @@ export const usePingsStore = create<PingsState>()(
       // Initial State
       pings: [],
       pingsById: {},
+      cache: {},
+      currentCacheKey: null,
       currentPage: 1,
       totalPages: 1,
       hasNextPage: false,
       isLoading: false,
+      isFetchingInBackground: false,
       error: null,
       lastFetched: null,
       lastParams: null,
@@ -65,22 +84,59 @@ export const usePingsStore = create<PingsState>()(
 
         const state = get();
 
-        // Check cache validity
-        const cacheValid =
-          state.lastFetched &&
-          Date.now() - state.lastFetched < DEFAULT_CACHE_CONFIG.ttl &&
-          JSON.stringify(state.lastParams) === JSON.stringify(params);
+        // Generate cache key based on category and search query
+        const cacheKey = `${category || "all"}_${q || "none"}_${sort}`;
 
-        if (cacheValid && state.pings.length > 0) {
-          console.log("✅ Using cached pings data");
+        // Check if we have cached data for this category/query
+        const cachedData = state.cache[cacheKey];
+        const hasCachedData = cachedData && cachedData.data.length > 0;
+
+        // Immediately show cached data if available (stale-while-revalidate)
+        if (hasCachedData && state.currentCacheKey !== cacheKey) {
+          console.log(`✅ Showing cached data for ${cacheKey}`);
+          set((state) => {
+            state.pings = cachedData.data;
+            state.pingsById = cachedData.dataById;
+            state.currentPage = cachedData.pagination.currentPage;
+            state.totalPages = cachedData.pagination.totalPages;
+            state.hasNextPage = cachedData.pagination.hasNextPage;
+            state.currentCacheKey = cacheKey;
+            state.error = null; // Clear previous errors when showing cached data
+          });
+
+          // Sync surge state from cached data
+          const surgedPingIds = cachedData.data
+            .filter((ping) => ping.hasSurged)
+            .map((ping) => ping.id.toString());
+          useSurgeStore.getState().syncFromAPI("ping", surgedPingIds);
+        }
+
+        // Check if cache is still fresh (no need to refetch)
+        const cacheAge = cachedData
+          ? Date.now() - cachedData.timestamp
+          : Infinity;
+        const isCacheFresh = cacheAge < DEFAULT_CACHE_CONFIG.ttl;
+
+        if (
+          isCacheFresh &&
+          hasCachedData &&
+          page === cachedData.pagination.currentPage
+        ) {
+          console.log(`✅ Cache is fresh for ${cacheKey}, skipping fetch`);
           return;
         }
 
-        if (state.isLoading) return;
+        // Prevent duplicate concurrent fetches
+        if (state.isLoading || state.isFetchingInBackground) return;
 
+        // Set loading state (background if we have cached data, foreground otherwise)
         set((state) => {
-          state.isLoading = true;
-          state.error = null;
+          if (hasCachedData) {
+            state.isFetchingInBackground = true;
+          } else {
+            state.isLoading = true;
+          }
+          // Don't clear error here - keep showing it with stale data
         });
 
         try {
@@ -102,19 +158,38 @@ export const usePingsStore = create<PingsState>()(
             });
           }
 
+          // Build normalized data
+          const dataById: Record<string, Ping> = {};
+          response.data.forEach((ping) => {
+            dataById[ping.id.toString()] = ping;
+          });
+
+          // Update cache and current state
           set((state) => {
+            // Update cache for this category/query
+            state.cache[cacheKey] = {
+              data: response.data,
+              dataById,
+              timestamp: Date.now(),
+              pagination: {
+                currentPage: page,
+                totalPages: response.pagination.totalPages || 1,
+                hasNextPage: response.pagination.hasNextPage || false,
+              },
+            };
+
+            // Update current view
             state.pings = response.data;
-
-            response.data.forEach((ping) => {
-              state.pingsById[ping.id.toString()] = ping;
-            });
-
+            state.pingsById = dataById;
             state.currentPage = page;
             state.totalPages = response.pagination.totalPages || 1;
             state.hasNextPage = response.pagination.hasNextPage || false;
+            state.currentCacheKey = cacheKey;
             state.lastFetched = Date.now();
             state.lastParams = params;
             state.isLoading = false;
+            state.isFetchingInBackground = false;
+            state.error = null; // Clear error on successful fetch
           });
 
           // Calculate and set category counts
@@ -129,8 +204,10 @@ export const usePingsStore = create<PingsState>()(
         } catch (err: any) {
           console.error("Error fetching pings:", err);
           set((state) => {
+            // Keep showing cached data, just update error state
             state.error = err.response?.data?.error || "Failed to load pings";
             state.isLoading = false;
+            state.isFetchingInBackground = false;
           });
         }
       },
@@ -192,10 +269,13 @@ export const usePingsStore = create<PingsState>()(
         set((state) => {
           state.pings = [];
           state.pingsById = {};
+          state.cache = {};
+          state.currentCacheKey = null;
           state.currentPage = 1;
           state.totalPages = 1;
           state.hasNextPage = false;
           state.isLoading = false;
+          state.isFetchingInBackground = false;
           state.error = null;
           state.lastFetched = null;
           state.lastParams = null;

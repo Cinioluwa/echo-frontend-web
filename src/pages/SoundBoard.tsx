@@ -14,6 +14,7 @@ import type { PingFormDetails } from "../components/PingFormModal";
 import PingFormModal from "../components/PingFormModal";
 import { usePingsStore, useSearchStore } from "../stores";
 import { useShallow } from "zustand/react/shallow";
+import { ErrorBanner } from "../components/shared";
 
 const SoundBoard = () => {
   // Zustand stores
@@ -115,6 +116,9 @@ const SoundBoard = () => {
 
   return (
     <div className="h-full">
+      {/* Error Banner - shows errors without clearing data */}
+      <ErrorBanner error={error} />
+
       <header className="z-20 md:fixed md:top-0 w-full">
         <nav>
           <NavBar />
@@ -143,13 +147,9 @@ const SoundBoard = () => {
 
         {/* MAP PINGFORM DETAILS INTO SOUNDBOARD CARDS */}
         <div className="flex-1 [scrollbar-width:none] h-full overflow-auto">
-          {isLoading ? (
+          {isLoading && pings.length === 0 ? (
             <div className="flex justify-center items-center h-40">
               <p className="text-gray-500">Loading pings...</p>
-            </div>
-          ) : error ? (
-            <div className="flex justify-center items-center h-40">
-              <p className="text-red-500">{error}</p>
             </div>
           ) : filteredPings.length === 0 ? (
             <div className="flex justify-center items-center h-40">

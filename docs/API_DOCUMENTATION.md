@@ -17,6 +17,7 @@
   - [Categories](#categories)
   - [Announcements](#announcements)
   - [Notifications](#notifications)
+  - [Uploads & Media](#uploads--media)
   - [Public Feed](#public-feed)
   - [Admin Routes](#admin-routes)
   - [Representative Routes](#representative-routes)
@@ -536,7 +537,8 @@ Create a new ping.
   "content": "The library closes at 8pm but students need late-night study spaces...",
   "categoryId": 3,
   "hashtag": "library", // Optional
-  "isAnonymous": false // Optional, defaults to false
+  "isAnonymous": false, // Optional, defaults to false
+  "mediaIds": [1, 2] // Optional: array of media IDs to attach
 }
 ```
 
@@ -868,7 +870,8 @@ Create a wave (solution) for a ping.
 ```json
 {
   "solution": "Extend library hours to midnight on weekdays, and offer 24/7 access during finals week.",
-  "isAnonymous": false // Optional, defaults to false
+  "isAnonymous": false, // Optional, defaults to false
+  "mediaIds": [3, 4] // Optional: array of media IDs to attach
 }
 ```
 
@@ -1351,6 +1354,288 @@ Mark a notification as read.
 **Error Responses:**
 
 - `404` - Notification not found
+
+---
+
+## Uploads & Media
+
+**Note:** File upload requires Cloudinary configuration. Set `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, and `CLOUDINARY_API_SECRET` in your environment variables.
+
+### POST /api/uploads
+
+Upload one or more media files.
+
+**Auth Required:** Yes
+
+**Request:** `multipart/form-data`
+
+**Form Fields:**
+
+- `files`: File array (max 5 files)
+- `entityType` (optional): Hint for organizing uploads (`ping` or `wave`)
+
+**Supported File Types:**
+
+- **Images:** JPEG, PNG, GIF, WebP (max 5MB each)
+- **Videos:** MP4, WebM, QuickTime (max 50MB each)
+- **Documents:** PDF (max 10MB)
+
+**Success Response (201):**
+
+```json
+{
+  "media": [
+    {
+      "id": 1,
+      "url": "https://res.cloudinary.com/.../image.jpg",
+      "filename": "photo.jpg",
+      "mimeType": "image/jpeg",
+      "size": 245678,
+      "width": 1920,
+      "height": 1080,
+      "createdAt": "2026-02-04T10:30:00.000Z"
+    },
+    {
+      "id": 2,
+      "url": "https://res.cloudinary.com/.../document.pdf",
+      "filename": "report.pdf",
+      "mimeType": "application/pdf",
+      "size": 1024567,
+      "createdAt": "2026-02-04T10:30:00.000Z"
+    }
+  ]
+}
+```
+
+**Error Responses:**
+
+- `400` - No files provided or invalid file type
+- `401` - Unauthorized
+- `503` - Upload service not configured (Cloudinary credentials missing)
+
+**Example Usage:**
+
+```bash
+curl -X POST http://localhost:3000/api/uploads \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -F "files=@photo1.jpg" \
+  -F "files=@photo2.jpg" \
+  -F "entityType=ping"
+```
+
+---
+
+### POST /api/uploads/profile
+
+Upload profile picture for current user.
+
+**Auth Required:** Yes
+
+**Request:** `multipart/form-data`
+
+**Form Fields:**
+
+- `file`: Single image file (JPEG, PNG, GIF, WebP - max 5MB)
+
+**Notes:**
+
+- Image is automatically resized to 400x400
+- Auto-cropped with face detection gravity
+- Replaces any existing profile picture
+
+**Success Response (200):**
+
+```json
+{
+  "media": {
+    "id": 15,
+    "url": "https://res.cloudinary.com/.../profile.jpg",
+    "filename": "avatar.jpg",
+    "mimeType": "image/jpeg",
+    "size": 89456,
+    "width": 400,
+    "height": 400,
+    "createdAt": "2026-02-04T10:35:00.000Z"
+  },
+  "user": {
+    "id": 1,
+    "profilePictureUrl": "https://res.cloudinary.com/.../profile.jpg"
+  }
+}
+```
+
+**Error Responses:**
+
+- `400` - No file provided or invalid file type
+- `401` - Unauthorized
+- `503` - Upload service not configured
+
+---
+
+### POST /api/uploads/attach
+
+Attach previously uploaded media to a ping or wave.
+
+**Auth Required:** Yes
+
+**Request Body:**
+
+```json
+{
+  "mediaIds": [1, 2, 3],
+  "entityType": "ping" | "wave",
+  "entityId": 42
+}
+```
+
+**Success Response (200):**
+
+```json
+{
+  "message": "Media attached successfully",
+  "attachedCount": 3
+}
+```
+
+**Error Responses:**
+
+- `400` - Invalid request (missing fields, invalid entityType)
+- `401` - Unauthorized
+- `403` - Not authorized to modify this ping/wave
+- `404` - Media files or entity not found
+
+**Notes:**
+
+- Only the author of a ping/wave can attach media to it
+- Media files must belong to the same organization
+- Media already attached to another entity will be re-linked
+
+---
+
+### DELETE /api/uploads/:id
+
+Delete a media file.
+
+**Auth Required:** Yes
+
+**Success Response (200):**
+
+```json
+{
+  "message": "File deleted successfully"
+}
+```
+
+**Error Responses:**
+
+- `401` - Unauthorized
+- `403` - Not authorized to delete this file (must be owner or admin)
+- `404` - Media not found
+
+**Notes:**
+
+- Only the file owner or admins can delete media
+- Deletion removes file from both Cloudinary and database
+- Media attached to pings/waves will be unlinked
+
+---
+
+### GET /api/uploads/ping/:pingId
+
+Get all media files attached to a ping.
+
+**Auth Required:** Yes
+
+**Success Response (200):**
+
+```json
+{
+  "media": [
+    {
+      "id": 1,
+      "url": "https://res.cloudinary.com/.../image.jpg",
+      "filename": "evidence.jpg",
+      "mimeType": "image/jpeg",
+      "size": 245678,
+      "width": 1920,
+      "height": 1080,
+      "createdAt": "2026-02-04T10:30:00.000Z"
+    }
+  ]
+}
+```
+
+**Error Responses:**
+
+- `401` - Unauthorized
+- `404` - Ping not found
+
+---
+
+### GET /api/uploads/wave/:waveId
+
+Get all media files attached to a wave.
+
+**Auth Required:** Yes
+
+**Success Response (200):**
+
+```json
+{
+  "media": [
+    {
+      "id": 3,
+      "url": "https://res.cloudinary.com/.../diagram.png",
+      "filename": "solution-diagram.png",
+      "mimeType": "image/png",
+      "size": 156789,
+      "width": 1200,
+      "height": 800,
+      "createdAt": "2026-02-04T11:00:00.000Z"
+    }
+  ]
+}
+```
+
+**Error Responses:**
+
+- `401` - Unauthorized
+- `404` - Wave not found
+
+---
+
+### Media Upload Workflow
+
+**Option 1: Upload then attach**
+
+```bash
+# 1. Upload files
+curl -X POST http://localhost:3000/api/uploads \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -F "files=@photo.jpg"
+# Returns: { "media": [{ "id": 1, "url": "..." }] }
+
+# 2. Create ping with media IDs
+curl -X POST http://localhost:3000/api/pings \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"title": "Issue", "content": "Description", "categoryId": 1, "mediaIds": [1]}'
+```
+
+**Option 2: Attach to existing entity**
+
+```bash
+# 1. Upload files
+curl -X POST http://localhost:3000/api/uploads \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -F "files=@photo.jpg"
+
+# 2. Attach to existing ping
+curl -X POST http://localhost:3000/api/uploads/attach \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"mediaIds": [1], "entityType": "ping", "entityId": 42}'
+```
 
 ---
 
@@ -2343,6 +2628,32 @@ Create official response to a ping.
 3. Backend verifies with Google, creates/logs in user
 4. Returns JWT token
 5. Use JWT for subsequent requests
+
+### File Upload Configuration
+
+To enable file uploads, configure Cloudinary credentials:
+
+**Required Environment Variables:**
+
+- `CLOUDINARY_CLOUD_NAME` - Your Cloudinary cloud name
+- `CLOUDINARY_API_KEY` - Your Cloudinary API key
+- `CLOUDINARY_API_SECRET` - Your Cloudinary API secret
+- `MAX_FILE_SIZE_MB` (optional) - Maximum file size in MB (default: 10)
+
+**File Organization:**
+Files are stored in organization-scoped folders:
+
+- Pings: `echo-uploads/org-{organizationId}/pings/`
+- Waves: `echo-uploads/org-{organizationId}/waves/`
+- Profiles: `echo-uploads/org-{organizationId}/profiles/`
+- General: `echo-uploads/org-{organizationId}/general/`
+
+**File Limits:**
+
+- Images: 5MB max per file
+- Videos: 50MB max per file
+- Documents (PDF): 10MB max per file
+- Maximum 5 files per upload request
 
 ---
 

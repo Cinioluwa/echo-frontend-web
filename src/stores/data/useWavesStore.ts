@@ -18,10 +18,25 @@ interface FetchParams {
   category?: number;
 }
 
+interface CachedWavesData {
+  data: Wave[];
+  dataById: Record<string, Wave>;
+  timestamp: number;
+  pagination: {
+    currentPage: number;
+    totalPages: number;
+    hasNextPage: boolean;
+  };
+}
+
 interface WavesState {
   // Data
   waves: Wave[];
   wavesById: Record<string, Wave>; // Normalized data
+
+  // Category-based cache for stale-while-revalidate
+  cache: Record<string, CachedWavesData>;
+  currentCacheKey: string | null;
 
   // Pagination
   currentPage: number;
@@ -30,6 +45,7 @@ interface WavesState {
 
   // Loading & Error
   isLoading: boolean;
+  isFetchingInBackground: boolean;
   error: string | null;
 
   // Cache
@@ -52,10 +68,13 @@ export const useWavesStore = create<WavesState>()(
       // Initial State
       waves: [],
       wavesById: {},
+      cache: {},
+      currentCacheKey: null,
       currentPage: 1,
       totalPages: 1,
       hasNextPage: false,
       isLoading: false,
+      isFetchingInBackground: false,
       error: null,
       lastFetched: null,
       lastParams: null,
@@ -65,7 +84,7 @@ export const useWavesStore = create<WavesState>()(
         const {
           page = 1,
           limit = 20,
-          sort = "trending",
+          sort = "new",
           days = 7,
           q,
           category,
@@ -73,23 +92,59 @@ export const useWavesStore = create<WavesState>()(
 
         const state = get();
 
-        // Check cache validity
-        const cacheValid =
-          state.lastFetched &&
-          Date.now() - state.lastFetched < DEFAULT_CACHE_CONFIG.ttl &&
-          JSON.stringify(state.lastParams) === JSON.stringify(params);
+        // Generate cache key based on category and search query
+        const cacheKey = `${category || "all"}_${q || "none"}_${sort}_${days}`;
 
-        if (cacheValid && state.waves.length > 0) {
-          console.log("✅ Using cached waves data");
+        // Check if we have cached data for this category/query
+        const cachedData = state.cache[cacheKey];
+        const hasCachedData = cachedData && cachedData.data.length > 0;
+
+        // Immediately show cached data if available (stale-while-revalidate)
+        if (hasCachedData && state.currentCacheKey !== cacheKey) {
+          console.log(`✅ Showing cached data for ${cacheKey}`);
+          set((state) => {
+            state.waves = cachedData.data;
+            state.wavesById = cachedData.dataById;
+            state.currentPage = cachedData.pagination.currentPage;
+            state.totalPages = cachedData.pagination.totalPages;
+            state.hasNextPage = cachedData.pagination.hasNextPage;
+            state.currentCacheKey = cacheKey;
+            state.error = null; // Clear previous errors when showing cached data
+          });
+
+          // Sync surge state from cached data
+          const surgedWaveIds = cachedData.data
+            .filter((wave) => wave.hasSurged)
+            .map((wave) => wave.id.toString());
+          useSurgeStore.getState().syncFromAPI("wave", surgedWaveIds);
+        }
+
+        // Check if cache is still fresh (no need to refetch)
+        const cacheAge = cachedData
+          ? Date.now() - cachedData.timestamp
+          : Infinity;
+        const isCacheFresh = cacheAge < DEFAULT_CACHE_CONFIG.ttl;
+
+        if (
+          isCacheFresh &&
+          hasCachedData &&
+          page === cachedData.pagination.currentPage
+        ) {
+          console.log(`✅ Cache is fresh for ${cacheKey}, skipping fetch`);
           return;
         }
 
         // Prevent duplicate concurrent fetches
-        if (state.isLoading) return;
+        if (state.isLoading || state.isFetchingInBackground) return;
 
+        // Set loading state (background if we have cached data, foreground otherwise)
         set((state) => {
-          state.isLoading = true;
-          state.error = null;
+          if (hasCachedData) {
+            state.isFetchingInBackground = true;
+          } else {
+            state.isLoading = true;
+          }
+          // Don't clear error here - keep showing it with stale data
         });
 
         try {
@@ -112,24 +167,39 @@ export const useWavesStore = create<WavesState>()(
             });
           }
 
+          // Build normalized data
+          const dataById: Record<string, Wave> = {};
+          response.data.forEach((wave) => {
+            dataById[wave.id.toString()] = wave;
+          });
+
           set((state) => {
-            // Store as array
+            // Update cache for this category/query
+            state.cache[cacheKey] = {
+              data: response.data,
+              dataById,
+              timestamp: Date.now(),
+              pagination: {
+                currentPage: page,
+                totalPages: response.pagination.totalPages || 1,
+                hasNextPage: response.pagination.hasNextPage || false,
+              },
+            };
+
+            // Update current view
             state.waves = response.data;
-
-            // Normalize into object for quick lookups
-            response.data.forEach((wave) => {
-              state.wavesById[wave.id.toString()] = wave;
-            });
-
-            // Update pagination
+            state.wavesById = dataById;
             state.currentPage = page;
             state.totalPages = response.pagination.totalPages || 1;
             state.hasNextPage = response.pagination.hasNextPage || false;
+            state.currentCacheKey = cacheKey;
 
-            // Update cache
+            // Update cache timestamps
             state.lastFetched = Date.now();
             state.lastParams = params;
             state.isLoading = false;
+            state.isFetchingInBackground = false;
+            state.error = null; // Clear error on successful fetch
           });
 
           // Calculate and set category counts
@@ -144,8 +214,10 @@ export const useWavesStore = create<WavesState>()(
         } catch (err: any) {
           console.error("Error fetching waves:", err);
           set((state) => {
+            // Keep showing cached data, just update error state
             state.error = err.response?.data?.error || "Failed to load waves";
             state.isLoading = false;
+            state.isFetchingInBackground = false;
           });
         }
       },
@@ -210,10 +282,13 @@ export const useWavesStore = create<WavesState>()(
         set((state) => {
           state.waves = [];
           state.wavesById = {};
+          state.cache = {};
+          state.currentCacheKey = null;
           state.currentPage = 1;
           state.totalPages = 1;
           state.hasNextPage = false;
           state.isLoading = false;
+          state.isFetchingInBackground = false;
           state.error = null;
           state.lastFetched = null;
           state.lastParams = null;
