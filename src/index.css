@@ -26,3 +26,22 @@ body {
 .scrollbar-hide::-webkit-scrollbar {
   display: none; /* Chrome, Safari and Opera */
 }
+
+/* ripple backdrop  */
+.ripple-backdrop {
+  background: radial-gradient(
+    149.28% 81.81% at 34.96% 73.73%,
+    #0d0300 0%,
+    #340c00 10.94%,
+    #541400 26.41%,
+    #831f00 40.1%,
+    #ab2706 54.02%,
+    #c82d0b 62.25%,
+    #e5320f 70.71%,
+    #e74f13 76.71%,
+    #e97318 84.92%,
+    #ea9924 92.22%,
+    #ffcd84 97.04%,
+    #ffcd84 100%
+  );
+}

@@ -1,4 +1,3 @@
-const soundBoardImage = "/assets/images/SoundBoardImage.svg";
 import SoundBoardCard from "../components/SoundBoard/SoundBoardCard";
 import SideBar, { type Pages } from "../components/SideBar";
 import PageTitleBar from "../components/PageTitleBar";
@@ -9,6 +8,7 @@ import { useState, useEffect } from "react";
 import { categoryImages } from "../components/CategoryImages";
 import NavBar from "../components/NavBar";
 import ProposeWaveModal from "../components/ProposeWaveModal";
+import SoundBoardHeader from "../components/SoundBoardHeader";
 
 import type { PingFormDetails } from "../components/PingFormModal";
 import PingFormModal from "../components/PingFormModal";
@@ -138,7 +138,7 @@ const SoundBoard = () => {
       </aside>
       <main className="mr-2.5 ml-2.5 mt-5 flex flex-col md:mr-[46px] h-[calc(100vh-155px)]  md:ml-[350px]   md:mt-[155px]">
         <div className="mb-[25px]">
-          <img src={soundBoardImage} alt="" className=" max-h-[200px] w-full" />
+          <SoundBoardHeader />
         </div>
 
         {/* MAP PINGFORM DETAILS INTO SOUNDBOARD CARDS */}
