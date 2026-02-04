@@ -60,7 +60,7 @@ export const useAuthStore = create<AuthState>()(
               if (err.response?.status === 401) {
                 state.user = null;
                 state.isAuthenticated = false;
-                localStorage.removeItem("token");
+                localStorage.removeItem("authToken");
               }
             });
           }
@@ -71,7 +71,7 @@ export const useAuthStore = create<AuthState>()(
         },
 
         login: async (token: string) => {
-          localStorage.setItem("token", token);
+          localStorage.setItem("authToken", token);
           await get().fetchUser();
         },
 
@@ -81,7 +81,7 @@ export const useAuthStore = create<AuthState>()(
             state.isAuthenticated = false;
             state.error = null;
           });
-          localStorage.removeItem("token");
+          localStorage.removeItem("authToken");
         },
 
         clearError: () => {

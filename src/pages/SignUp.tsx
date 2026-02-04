@@ -8,9 +8,11 @@ const echo = "/assets/images/Echo.svg";
 import InputGroup from "../components/InputGroup";
 import { Link, useNavigate } from "react-router-dom";
 import authService from "../api/services/auth.service";
+import { useAuthStore } from "../stores";
 
 const SignUp = () => {
   const navigate = useNavigate();
+  const login = useAuthStore((state) => state.login);
 
   const [formData, setFormData] = useState({
     email: "",
@@ -51,8 +53,9 @@ const SignUp = () => {
           firstName: "",
           lastName: "",
         });
-      } else {
+      } else if (response.token) {
         // If token is returned, user is auto-logged in
+        await login(response.token);
         setSuccess("Account created successfully!");
         setTimeout(() => navigate("/stream"), 1500);
       }

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useAuthStore } from "../stores";
 const password = "/assets/images/Password.svg";
 const email = "/assets/images/Email.svg";
 const backgroundImage = "/assets/images/backgroundImage.jpg";
@@ -9,6 +10,7 @@ import authService from "../api/services/auth.service";
 
 const MobileSignUp = () => {
   const navigate = useNavigate();
+  const login = useAuthStore((state) => state.login);
 
   const [formData, setFormData] = useState({
     email: "",
@@ -49,8 +51,9 @@ const MobileSignUp = () => {
           firstName: "",
           lastName: "",
         });
-      } else {
+      } else if (response.token) {
         // If token is returned, user is auto-logged in
+        await login(response.token);
         setSuccess("Account created successfully!");
         setTimeout(() => navigate("/stream"), 1500);
       }

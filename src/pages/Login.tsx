@@ -8,9 +8,11 @@ const echo = "/assets/images/Echo.svg";
 import InputGroup from "../components/InputGroup";
 import { Link, useNavigate } from "react-router-dom";
 import authService from "../api/services/auth.service";
+import { useAuthStore } from "../stores";
 
 const Login = () => {
   const navigate = useNavigate();
+  const login = useAuthStore((state) => state.login);
 
   const [formData, setFormData] = useState({
     email: "",
@@ -34,7 +36,8 @@ const Login = () => {
     setLoading(true);
 
     try {
-      await authService.login(formData);
+      const response = await authService.login(formData);
+      await login(response.token);
       navigate("/soundBoard");
     } catch (err: any) {
       const status = err?.response?.status;

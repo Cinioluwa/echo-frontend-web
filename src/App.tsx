@@ -8,7 +8,7 @@ const App = () => {
 
   // Initialize auth on mount
   useEffect(() => {
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("authToken");
     if (token) {
       fetchUser();
     }
