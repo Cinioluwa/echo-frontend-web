@@ -61,7 +61,7 @@ export const usePingsStore = create<PingsState>()(
 
       // Actions
       fetchPings: async (params: FetchParams = {}) => {
-        const { page = 1, limit = 20, sort = "trending", q, category } = params;
+        const { page = 1, limit = 20, sort = "new", q, category } = params;
 
         const state = get();
 

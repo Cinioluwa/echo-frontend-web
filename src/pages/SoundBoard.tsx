@@ -60,7 +60,7 @@ const SoundBoard = () => {
     fetchPings({
       q: debouncedQuery,
       category: selectedCategoryId || undefined,
-      sort: "trending",
+      sort: "new",
     });
   }, [debouncedQuery, selectedCategoryId, fetchPings]);
 
@@ -71,7 +71,7 @@ const SoundBoard = () => {
 
   // REFRESH PINGS AFTER CREATING NEW PING
   const handlePingCreated = () => {
-    fetchPings({ sort: "trending" });
+    fetchPings({ sort: "new" });
   };
 
   // Debug: Log pings data to check hasSurged field
@@ -211,7 +211,7 @@ const SoundBoard = () => {
               {totalPages > 1 && (
                 <div className="flex justify-center items-center gap-4 my-6">
                   <button
-                    onClick={() => fetchPings({ page: Math.max(1, currentPage - 1), sort: "trending" })}
+                    onClick={() => fetchPings({ page: Math.max(1, currentPage - 1), sort: "new" })}
                     disabled={currentPage === 1}
                     className="px-4 py-2 bg-[#F49B31] text-white rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#d88429] transition-colors"
                   >
