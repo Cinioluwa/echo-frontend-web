@@ -14,6 +14,22 @@ const WaveCardBody = ({ resolution }: Props) => {
     return "General";
   };
 
+  // Extract first sentence and make it bold
+  const getFormattedText = (text: string) => {
+    const match = text.match(/^[^.!?]+[.!?]/);
+    if (match) {
+      const firstSentence = match[0];
+      const restOfText = text.slice(firstSentence.length).trim();
+      return (
+        <>
+          <p className="text-black text-[15px] font-bold">{firstSentence}</p>
+          {restOfText && <p className="text-black text-[15px]">{restOfText}</p>}
+        </>
+      );
+    }
+    return <p className="text-black text-[15px] font-bold">{text}</p>;
+  };
+
   return (
     <div className="flex flex-col gap-2.5 my-4">
       <div className="flex items-center gap-[13px]">
@@ -22,12 +38,9 @@ const WaveCardBody = ({ resolution }: Props) => {
         </span>
         {getCategoryName()}
       </div>
-      <p className="font-semibold text-[16px] ">
-        {resolution.title}
-      </p>
-      <p className=" text-[#626665] text-[15px] pb-2 ">
-        {resolution.content}
-      </p>
+      <div className="pb-2">
+        {getFormattedText(resolution.content)}
+      </div>
 
       {/* Approved Wave Solution */}
       {resolution.approvedWave && (

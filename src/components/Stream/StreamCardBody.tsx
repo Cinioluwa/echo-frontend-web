@@ -6,6 +6,22 @@ interface Props {
 }
 
 const StreamCardBody = ({ waveText, waveTitle, image, category }: Props) => {
+  // Extract first sentence and make it bold
+  const getFormattedText = (text: string) => {
+    const match = text.match(/^[^.!?]+[.!?]/);
+    if (match) {
+      const firstSentence = match[0];
+      const restOfText = text.slice(firstSentence.length).trim();
+      return (
+        <>
+          <p className="text-black text-[15px] font-bold">{firstSentence}</p>
+          {restOfText && <p className="text-black text-[15px]">{restOfText}</p>}
+        </>
+      );
+    }
+    return <p className="text-black text-[15px] font-bold">{text}</p>;
+  };
+
   return (
     <div className="flex flex-col gap-2.5 my-4">
       <div className="flex items-center gap-[13px]">
@@ -14,10 +30,9 @@ const StreamCardBody = ({ waveText, waveTitle, image, category }: Props) => {
         </span>
         {category || "General"}
       </div>
-      <p className="font-semibold text-[16px] ">{waveTitle}</p>
-      <p className="text-[#626665] text-[15px] border-b border-[#D3CECE] pb-4">
-        {waveText}
-      </p>
+      <div className="border-b border-[#D3CECE] pb-4">
+        {getFormattedText(waveText)}
+      </div>
     </div>
   );
 };
