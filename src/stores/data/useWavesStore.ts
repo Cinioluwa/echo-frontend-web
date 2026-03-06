@@ -202,9 +202,14 @@ export const useWavesStore = create<WavesState>()(
             state.error = null; // Clear error on successful fetch
           });
 
-          // Calculate and set category counts
-          const { counts, total } = calculateWaveCategoryCounts(response.data);
-          useSearchStore.getState().setCategoryCounts(counts, total);
+          // Calculate and set category counts ONLY when fetching all categories (no filters)
+          // This ensures counts remain stable when switching between categories
+          if (!q && !category) {
+            const { counts, total } = calculateWaveCategoryCounts(
+              response.data,
+            );
+            useSearchStore.getState().setCategoryCounts(counts, total);
+          }
 
           // Sync surge store with hasSurged data from API
           const surgedWaveIds = response.data
@@ -238,10 +243,11 @@ export const useWavesStore = create<WavesState>()(
           state.wavesById[wave.id.toString()] = wave;
         });
 
-        // Recalculate category counts
-        const state = get();
-        const { counts, total } = calculateWaveCategoryCounts(state.waves);
-        useSearchStore.getState().setCategoryCounts(counts, total);
+        // Increment category count for the new wave's category
+        const categoryId = wave.category?.id || wave.ping?.category?.id;
+        if (categoryId) {
+          useSearchStore.getState().incrementCategoryCount(categoryId);
+        }
       },
 
       updateWave: (id: string, updates: Partial<Wave>) => {
@@ -260,15 +266,22 @@ export const useWavesStore = create<WavesState>()(
       },
 
       removeWave: (id: string) => {
+        let removedWave: Wave | undefined;
+
         set((state) => {
+          removedWave = state.wavesById[id];
           delete state.wavesById[id];
           state.waves = state.waves.filter((w) => w.id.toString() !== id);
         });
 
-        // Recalculate category counts
-        const state = get();
-        const { counts, total } = calculateWaveCategoryCounts(state.waves);
-        useSearchStore.getState().setCategoryCounts(counts, total);
+        // Decrement category count for the removed wave's category
+        if (removedWave) {
+          const categoryId =
+            removedWave.category?.id || removedWave.ping?.category?.id;
+          if (categoryId) {
+            useSearchStore.getState().decrementCategoryCount(categoryId);
+          }
+        }
       },
 
       invalidateCache: () => {

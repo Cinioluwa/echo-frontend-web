@@ -7,6 +7,7 @@ import PostSuccessModal from "./PostSuccessModal";
 import { pingService, waveService } from "../api/services";
 import { useDebounce } from "../hooks";
 import type { Ping } from "../api/types/index";
+import { usePingsStore, useWavesStore } from "../stores";
 
 // Wave Components
 import WaveWarningBanner from "./WaveComponents/WaveWarningBanner";
@@ -368,6 +369,9 @@ const PingFormModal = ({
 
       console.log("Ping created successfully:", createdPing);
 
+      // Add the new ping to the store immediately (appears at top)
+      usePingsStore.getState().addPing(createdPing);
+
       // Update legacy state for compatibility
       const newPingFormDetails: PingFormDetails = {
         cat: pingData.categoryName.trim(),
@@ -422,6 +426,9 @@ const PingFormModal = ({
       });
 
       console.log("Wave proposed successfully:", createdWave);
+
+      // Add the new wave to the store immediately (appears at top)
+      useWavesStore.getState().addWave(createdWave);
 
       if (onWaveCreated) {
         onWaveCreated();

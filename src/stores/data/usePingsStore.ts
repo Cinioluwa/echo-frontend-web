@@ -192,9 +192,14 @@ export const usePingsStore = create<PingsState>()(
             state.error = null; // Clear error on successful fetch
           });
 
-          // Calculate and set category counts
-          const { counts, total } = calculatePingCategoryCounts(response.data);
-          useSearchStore.getState().setCategoryCounts(counts, total);
+          // Calculate and set category counts ONLY when fetching all categories (no filters)
+          // This ensures counts remain stable when switching between categories
+          if (!q && !category) {
+            const { counts, total } = calculatePingCategoryCounts(
+              response.data,
+            );
+            useSearchStore.getState().setCategoryCounts(counts, total);
+          }
 
           // Sync surge store with hasSurged data from API
           const surgedPingIds = response.data
@@ -226,10 +231,10 @@ export const usePingsStore = create<PingsState>()(
           state.pingsById[ping.id.toString()] = ping;
         });
 
-        // Recalculate category counts
-        const state = get();
-        const { counts, total } = calculatePingCategoryCounts(state.pings);
-        useSearchStore.getState().setCategoryCounts(counts, total);
+        // Increment category count for the new ping's category
+        if (ping.category?.id) {
+          useSearchStore.getState().incrementCategoryCount(ping.category.id);
+        }
       },
 
       updatePing: (id: string, updates: Partial<Ping>) => {
@@ -247,15 +252,20 @@ export const usePingsStore = create<PingsState>()(
       },
 
       removePing: (id: string) => {
+        let removedPing: Ping | undefined;
+
         set((state) => {
+          removedPing = state.pingsById[id];
           delete state.pingsById[id];
           state.pings = state.pings.filter((p) => p.id.toString() !== id);
         });
 
-        // Recalculate category counts
-        const state = get();
-        const { counts, total } = calculatePingCategoryCounts(state.pings);
-        useSearchStore.getState().setCategoryCounts(counts, total);
+        // Decrement category count for the removed ping's category
+        if (removedPing?.category?.id) {
+          useSearchStore
+            .getState()
+            .decrementCategoryCount(removedPing.category.id);
+        }
       },
 
       invalidateCache: () => {

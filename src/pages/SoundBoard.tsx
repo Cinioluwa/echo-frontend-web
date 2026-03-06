@@ -71,8 +71,10 @@ const SoundBoard = () => {
     : pings;
 
   // REFRESH PINGS AFTER CREATING NEW PING
+  // Note: The PingFormModal now adds the ping directly to the store,
+  // so this callback is no longer needed to refetch
   const handlePingCreated = () => {
-    fetchPings({ sort: "new" });
+    // No action needed - ping is already added to store
   };
 
   // Debug: Log pings data to check hasSurged field

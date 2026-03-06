@@ -181,7 +181,9 @@ const Stream = () => {
           formSegment={formSegment}
           setFormSegment={() => setFormSegment(formSegment === "ping" ? "wave" : "ping")}
           setPingForm={() => setWaveForm(!waveForm)}
-          onWaveCreated={() => fetchWaves({ sort: "new", days: 7 })}
+          onWaveCreated={() => {
+            // No action needed - wave is already added to store
+          }}
         >
           <button
             onClick={() => setWaveForm(!waveForm)}

@@ -16,6 +16,8 @@ interface SearchState {
   setDebouncedQuery: (query: string) => void;
   setCategory: (id: number | null, name: string | null) => void;
   setCategoryCounts: (counts: Record<number, number>, total: number) => void;
+  incrementCategoryCount: (categoryId: number) => void;
+  decrementCategoryCount: (categoryId: number) => void;
   clearCategory: () => void;
   clearSearch: () => void;
   clearAll: () => void;
@@ -60,6 +62,26 @@ export const useSearchStore = create<SearchState>()(
           });
         },
 
+        incrementCategoryCount: (categoryId: number) => {
+          set((state) => {
+            state.categoryCounts[categoryId] =
+              (state.categoryCounts[categoryId] || 0) + 1;
+            state.totalCount = state.totalCount + 1;
+          });
+        },
+
+        decrementCategoryCount: (categoryId: number) => {
+          set((state) => {
+            if (state.categoryCounts[categoryId]) {
+              state.categoryCounts[categoryId] = Math.max(
+                0,
+                state.categoryCounts[categoryId] - 1,
+              );
+            }
+            state.totalCount = Math.max(0, state.totalCount - 1);
+          });
+        },
+
         clearCategory: () => {
           set((state) => {
             state.selectedCategoryId = null;
@@ -85,11 +107,8 @@ export const useSearchStore = create<SearchState>()(
       })),
       {
         name: "search-storage",
-        // Persist user's search preferences
-        partialize: (state) => ({
-          selectedCategoryId: state.selectedCategoryId,
-          selectedCategoryName: state.selectedCategoryName,
-        }),
+        // Don't persist category selection - always start with "All Categories"
+        partialize: () => ({}),
       },
     ),
     { name: "SearchStore" },
