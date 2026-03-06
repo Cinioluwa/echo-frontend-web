@@ -10,6 +10,7 @@ interface Props {
   proposeActive: boolean;
   surgeCount?: number;
   commentCount?: number;
+  onCommentClick?: () => void;
 }
 
 function SoundBoardCardFooter({
@@ -18,6 +19,7 @@ function SoundBoardCardFooter({
   proposeActive,
   surgeCount = 0,
   commentCount = 0,
+  onCommentClick,
 }: Props) {
   function handleClick(id: string) {
     onPropose(id);
@@ -41,7 +43,10 @@ function SoundBoardCardFooter({
 
   return (
     <div className="flex gap-5 justify-end items-center">
-      <button className="flex items-center gap-2 text-[#63637B] text-[14px] cursor-pointer">
+      <button
+        onClick={onCommentClick}
+        className="flex items-center gap-2 text-[#63637B] text-[14px] cursor-pointer hover:text-[#F49B31] transition-colors"
+      >
         <img src={reaction} alt="" className="w-4 h-4" />
         <span>{commentCount} Comments</span>
       </button>

@@ -70,11 +70,10 @@ const SoundBoard = () => {
     ? pings.filter(ping => ping.category?.id === selectedCategoryId)
     : pings;
 
-  // REFRESH PINGS AFTER CREATING NEW PING
-  // Note: The PingFormModal now adds the ping directly to the store,
-  // so this callback is no longer needed to refetch
+  // REFRESH PINGS AFTER CREATING NEW PING OR COMMENT
   const handlePingCreated = () => {
-    // No action needed - ping is already added to store
+    // Re-fetch pings to update counts (comment count, surge count, etc.)
+    fetchPings({ sort: "new" });
   };
 
   // Debug: Log pings data to check hasSurged field
@@ -187,6 +186,7 @@ const SoundBoard = () => {
                       authorName={authorName}
                       onRefresh={handlePingCreated}
                       hasSurged={ping.hasSurged}
+                      ping={ping}
                     />
                   </div>
                 );
