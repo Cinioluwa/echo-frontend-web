@@ -5,7 +5,7 @@ interface Props {
   category?: string;
 }
 
-const StreamCardBody = ({ waveText, waveTitle, image, category }: Props) => {
+const StreamCardBody = ({ waveText, image, category }: Props) => {
   // Extract first sentence and make it bold
   const getFormattedText = (text: string) => {
     const match = text.match(/^[^.!?]+[.!?]/);
