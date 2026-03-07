@@ -15,7 +15,11 @@ const WaveCardBody = ({ resolution }: Props) => {
   };
 
   // Extract first sentence and make it bold
-  const getFormattedText = (text: string) => {
+  const getFormattedText = (text: string | undefined) => {
+    if (!text) {
+      return <p className="text-black text-[15px]">No content available</p>;
+    }
+
     const match = text.match(/^[^.!?]+[.!?]/);
     if (match) {
       const firstSentence = match[0];
