@@ -1,5 +1,5 @@
-import arrowRise from "../../assets/images/ArrowRise.svg";
-import arrowDrop from "../../assets/images/arrowdrop.svg";
+const arrowRise = "/assets/images/ArrowRise.svg";
+const arrowDrop = "/assets/images/arrowdrop.svg";
 
 const PlatformMetrics = () => {
   return (

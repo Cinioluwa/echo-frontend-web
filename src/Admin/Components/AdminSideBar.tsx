@@ -1,6 +1,6 @@
-import feed from "../../assets/images/History Logo.svg";
-import overview from "../../assets/images/overview.svg";
-import followUp from "../../assets/images/followUp.svg";
+const feed = "/assets/images/History Logo.svg";
+const overview = "/assets/images/overview.svg";
+const followUp = "/assets/images/followUp.svg";
 import { Link } from "react-router-dom";
 import Categories from "../../components/Categories";
 
@@ -31,11 +31,10 @@ const AdminSideBar = ({ pages, setActivePage }: Props) => {
                 followUpActive: false,
               })
             }
-            className={`flex items-center ${
-              pages.feedActive
+            className={`flex items-center ${pages.feedActive
                 ? "bg-[#FFC37B] border-0"
                 : "bg-transparent border-2"
-            }  gap-3 py-[13px] w-full transition  cursor-pointer mb-3.5 ease-in-out duration-700 border-[#F49B31] rounded-[15px]`}
+              }  gap-3 py-[13px] w-full transition  cursor-pointer mb-3.5 ease-in-out duration-700 border-[#F49B31] rounded-[15px]`}
           >
             <span className="ml-6">
               <img src={feed} alt="" />
@@ -53,11 +52,10 @@ const AdminSideBar = ({ pages, setActivePage }: Props) => {
                 followUpActive: false,
               })
             }
-            className={`flex items-center ${
-              pages.overviewActive
+            className={`flex items-center ${pages.overviewActive
                 ? "bg-[#FFC37B] border-0"
                 : "bg-transparent border-2"
-            }  gap-3 py-[13px] transition w-full cursor-pointer mb-3.5 ease-in-out duration-700 border-[#F49B31] rounded-[15px]`}
+              }  gap-3 py-[13px] transition w-full cursor-pointer mb-3.5 ease-in-out duration-700 border-[#F49B31] rounded-[15px]`}
           >
             <span className="ml-6">
               <img src={overview} alt="" />
@@ -74,11 +72,10 @@ const AdminSideBar = ({ pages, setActivePage }: Props) => {
                 followUpActive: true,
               })
             }
-            className={`flex items-center ${
-              pages.followUpActive
+            className={`flex items-center ${pages.followUpActive
                 ? "bg-[#FFC37B] border-0"
                 : "bg-transparent border-2"
-            }  gap-3 py-[13px] w-full transition  cursor-pointer ease-in-out duration-700 border-[#F49B31] rounded-[15px]`}
+              }  gap-3 py-[13px] w-full transition  cursor-pointer ease-in-out duration-700 border-[#F49B31] rounded-[15px]`}
           >
             <span className="ml-6">
               <img src={followUp} alt="" />

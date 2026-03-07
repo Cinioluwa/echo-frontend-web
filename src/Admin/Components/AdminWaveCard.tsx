@@ -1,9 +1,9 @@
-import cardProfile from "../../assets/images/wavecardprofile.svg";
-import approve from "../../assets/images/approve.svg";
-import waveMenu from "../../assets/images/waveMenu.svg";
-import reject from "../../assets/images/reject.svg";
-import dropdown from "../../assets/images/customDropdown.svg";
-import profileImage from "../../assets/images/profileImage.jpeg";
+const cardProfile = "/assets/images/wavecardprofile.svg";
+const approve = "/assets/images/approve.svg";
+const waveMenu = "/assets/images/waveMenu.svg";
+const reject = "/assets/images/reject.svg";
+const dropdown = "/assets/images/customDropdown.svg";
+const profileImage = "/assets/images/profileImage.jpeg";
 import CollapsibleText from "../../components/CollapsibleText";
 import type { proposedWaveDetails } from "../../components/ProposeWaveModal";
 import { categoryImages } from "../../components/CategoryImages";

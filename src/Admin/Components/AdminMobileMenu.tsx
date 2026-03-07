@@ -1,8 +1,8 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import feed from "../../assets/images/History Logo.svg";
-import overview from "../../assets/images/overview.svg";
-import followUp from "../../assets/images/followUp.svg";
+const feed = "/assets/images/History Logo.svg";
+const overview = "/assets/images/overview.svg";
+const followUp = "/assets/images/followUp.svg";
 import type { AdminPages } from "./AdminSideBar";
 
 interface Props {
@@ -20,15 +20,13 @@ const AdminMobileMenu = ({ setMenu, menu, pages, setActivePage }: Props) => {
   return (
     <div
       onClick={handleClick}
-      className={`${
-        menu ? "opacity-100" : "opacity-0 pointer-events-none"
-      } fixed transition-opacity duration-300 z-20 ease-in inset-0 bg-black/40 md:hidden`}
+      className={`${menu ? "opacity-100" : "opacity-0 pointer-events-none"
+        } fixed transition-opacity duration-300 z-20 ease-in inset-0 bg-black/40 md:hidden`}
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className={`${
-          menu ? "translate-x-0" : "-translate-x-full"
-        } transition-transform transform duration-300 ease-in-out w-[190px] top-[100px] flex flex-col gap-[15px] bg-white p-2 rounded-r-xl absolute left-0  py-[15px]`}
+        className={`${menu ? "translate-x-0" : "-translate-x-full"
+          } transition-transform transform duration-300 ease-in-out w-[190px] top-[100px] flex flex-col gap-[15px] bg-white p-2 rounded-r-xl absolute left-0  py-[15px]`}
       >
         <Link to={"/admin/feed"}>
           <button
@@ -39,11 +37,10 @@ const AdminMobileMenu = ({ setMenu, menu, pages, setActivePage }: Props) => {
                 followUpActive: false,
               })
             }
-            className={`flex items-center ${
-              pages.feedActive
+            className={`flex items-center ${pages.feedActive
                 ? "bg-[#FFC37B] border-0"
                 : "bg-transparent border-2"
-            }  gap-3 py-[9px] w-full transition  cursor-pointer  ease-in-out duration-700 text-[15px] border-[#F49B31] rounded-[25px]`}
+              }  gap-3 py-[9px] w-full transition  cursor-pointer  ease-in-out duration-700 text-[15px] border-[#F49B31] rounded-[25px]`}
           >
             <span className="ml-6">
               <img src={feed} alt="" />
@@ -60,11 +57,10 @@ const AdminMobileMenu = ({ setMenu, menu, pages, setActivePage }: Props) => {
                 followUpActive: false,
               })
             }
-            className={`flex items-center ${
-              pages.overviewActive
+            className={`flex items-center ${pages.overviewActive
                 ? "bg-[#FFC37B] border-0"
                 : "bg-transparent border-2"
-            }  gap-3 py-[9px] text-[15px] transition w-full cursor-pointer  ease-in-out duration-700 border-[#F49B31] rounded-[25px]`}
+              }  gap-3 py-[9px] text-[15px] transition w-full cursor-pointer  ease-in-out duration-700 border-[#F49B31] rounded-[25px]`}
           >
             <span className="ml-6">
               <img src={overview} alt="" />
@@ -81,11 +77,10 @@ const AdminMobileMenu = ({ setMenu, menu, pages, setActivePage }: Props) => {
                 followUpActive: true,
               })
             }
-            className={`flex items-center ${
-              pages.followUpActive
+            className={`flex items-center ${pages.followUpActive
                 ? "bg-[#FFC37B] border-0"
                 : "bg-transparent border-2"
-            }  gap-3 py-[9px] w-full transition cursor-pointer ease-in-out duration-700 text-[15px] border-[#F49B31] rounded-[25px]`}
+              }  gap-3 py-[9px] w-full transition cursor-pointer ease-in-out duration-700 text-[15px] border-[#F49B31] rounded-[25px]`}
           >
             <span className="ml-6">
               <img src={followUp} alt="" />

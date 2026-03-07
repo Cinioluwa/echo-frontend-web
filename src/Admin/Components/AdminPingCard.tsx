@@ -1,9 +1,9 @@
-import cardProfile from "../../assets/images/wavecardprofile.svg";
-import surge from "../../assets/images/surge.svg";
-import reaction from "../../assets/images/reaction.svg";
-import waveMenu from "../../assets/images/waveMenu.svg";
-import dropdown from "../../assets/images/customDropdown.svg";
-import dropdown_menu from "../../assets/images/dropdown_menu.svg";
+const cardProfile = "/assets/images/wavecardprofile.svg";
+const surge = "/assets/images/surge.svg";
+const reaction = "/assets/images/reaction.svg";
+const waveMenu = "/assets/images/waveMenu.svg";
+const dropdown = "/assets/images/customDropdown.svg";
+const dropdown_menu = "/assets/images/dropdown_menu.svg";
 import { categoryImages } from "../../components/CategoryImages";
 import type { PingFormDetails } from "../../components/PingFormModal";
 import { useState } from "react";
@@ -76,18 +76,16 @@ const AdminPingCard = ({ pings }: AdminPingCardProps) => {
             <div className="flex bg-[#EF6E0B] rounded-[20px]">
               <button
                 onClick={() => setAcknowledged(!acknowledged)}
-                className={`transition-colors cursor-pointer duration-1200 ease-in-out ${
-                  acknowledged
+                className={`transition-colors cursor-pointer duration-1200 ease-in-out ${acknowledged
                     ? "bg-[#F49B31] hover:bg-[#d88429] transition-colors duration-100 ease-out text-white font-bold"
                     : "bg-[#FEF5EA] transition-colors duration-100 ease-in-out hover:bg-[#f2e8d9]"
-                } py-1.5 lg:py-2 lg:px-5 flex text-[12px]  font-bold items-center gap-2.5 border rounded-[20px] px-5`}
+                  } py-1.5 lg:py-2 lg:px-5 flex text-[12px]  font-bold items-center gap-2.5 border rounded-[20px] px-5`}
               >
                 <img
                   src={surge}
                   alt=""
-                  className={`${
-                    acknowledged ? "brightness-0 invert" : ""
-                  } w-[50%] contrast-200 md:w-full`}
+                  className={`${acknowledged ? "brightness-0 invert" : ""
+                    } w-[50%] contrast-200 md:w-full`}
                 />
                 ACKNOWLEDGE
               </button>
@@ -97,7 +95,7 @@ const AdminPingCard = ({ pings }: AdminPingCardProps) => {
                   <img src={dropdown_menu} alt="" />
                 </span>
               </button>
-              {openEngagementMenu && <PostEngagementMenu setEngagementMenu={setOpenEngagementMenu}/>}
+              {openEngagementMenu && <PostEngagementMenu setEngagementMenu={setOpenEngagementMenu} />}
             </div>
 
             <div className="text-[#454545] text-[14px]">128 Surges</div>
