@@ -9,22 +9,25 @@ const router = createBrowserRouter([
   {
     path: "/",
     element: <Login />,
+    children: [
+      {
+        path: "login",
+        element: <Login />,
+      },
+    ],
   },
   {
     path: "/signUp",
     element: <SignUp />,
   },
-
   {
     path: "waveHistory",
     element: <WaveHistory />,
   },
-
   {
     path: "stream",
     element: <Stream />,
   },
-
   {
     path: "soundBoard",
     element: <SoundBoard />,

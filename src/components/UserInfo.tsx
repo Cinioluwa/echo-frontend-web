@@ -1,10 +1,44 @@
+import { useState, useRef, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "../stores";
-import { User } from 'lucide-react';
+import { User, LogOut } from 'lucide-react';
 
 const UserInfo = () => {
   const user = useAuthStore((state) => state.user);
   const isLoading = useAuthStore((state) => state.isLoading);
   const error = useAuthStore((state) => state.error);
+  const logout = useAuthStore((state) => state.logout);
+  const navigate = useNavigate();
+
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsDropdownOpen(false);
+      }
+    };
+
+    if (isDropdownOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isDropdownOpen]);
+
+  const handleLogout = () => {
+    logout();
+    setIsDropdownOpen(false);
+    navigate("/login");
+  };
+
+  const toggleDropdown = () => {
+    setIsDropdownOpen(!isDropdownOpen);
+  };
 
   // Loading state
   if (isLoading) {
@@ -36,15 +70,49 @@ const UserInfo = () => {
   const fullName = `${user.firstName} ${user.lastName}`;
 
   return (
-    <div className="inline-flex mr-2.5 ml-2.5 md:ml-[55px] items-center gap-2.5 md:mr-[35px]">
-      <div className="text-end">
-        <p className="text-[#926B3D] text-[7px] md:text-[12px]">Welcome back!</p>
-        <p className="text-[10px] md:text-[14px]">{fullName}</p>
+    <div className="relative inline-flex mr-2.5 ml-2.5 md:ml-[55px] items-center gap-2.5 md:mr-[35px]" ref={dropdownRef}>
+      <div
+        onClick={toggleDropdown}
+        className="inline-flex items-center gap-2.5 cursor-pointer"
+      >
+        <div className="text-end">
+          <p className="text-[#926B3D] text-[7px] md:text-[12px]">Welcome back!</p>
+          <p className="text-[10px] md:text-[14px]">{fullName}</p>
+        </div>
+
+        <span className="w-[50px] inline-flex items-center justify-center h-[50px] cursor-pointer rounded-full bg-gray-200 hover:bg-gray-300 transition-colors">
+          <User className="w-6 h-6 text-gray-500" />
+        </span>
       </div>
 
-      <span className="w-[50px] inline-flex items-center justify-center h-[50px] cursor-pointer rounded-full bg-gray-200">
-        <User className="w-6 h-6 text-gray-500" />
-      </span>
+      {/* Dropdown Menu */}
+      {isDropdownOpen && (
+        <div className="absolute top-[calc(100%+8px)] right-0 bg-white rounded-tl-lg rounded-tr-lg shadow-lg border border-[#CECECE] z-50 w-[274px] overflow-hidden">
+          {/* User Profile Section */}
+          <div className="border-b border-[#CECECE] p-4 flex items-center gap-3">
+            <div className="w-[42px] h-[42px] rounded-full bg-gray-200 flex items-center justify-center shrink-0">
+              <User className="w-5 h-5 text-gray-500" />
+            </div>
+            <div className="flex flex-col gap-0.5 flex-1 min-w-0">
+              <p className="font-medium text-[18px] text-black truncate tracking-[-0.18px]">
+                {fullName}
+              </p>
+              <p className="font-medium text-[16px] text-[#999999] truncate tracking-[-0.16px]">
+                {user.email}
+              </p>
+            </div>
+          </div>
+
+          {/* Logout Button */}
+          <button
+            onClick={handleLogout}
+            className="w-full px-4 py-3 flex items-center gap-3 hover:bg-gray-50 transition-colors text-left"
+          >
+            <LogOut className="w-5 h-5 text-gray-600" />
+            <span className="font-medium text-[16px] text-black">Logout</span>
+          </button>
+        </div>
+      )}
     </div>
   );
 };
