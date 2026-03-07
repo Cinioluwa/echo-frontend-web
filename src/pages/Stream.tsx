@@ -23,10 +23,11 @@ const Stream = () => {
     }))
   );
 
-  const { debouncedQuery, selectedCategoryId } = useSearchStore(
+  const { debouncedQuery, selectedCategoryId, selectedFilters } = useSearchStore(
     useShallow((state) => ({
       debouncedQuery: state.debouncedQuery,
       selectedCategoryId: state.selectedCategoryId,
+      selectedFilters: state.selectedFilters,
     }))
   );
 
@@ -67,6 +68,56 @@ const Stream = () => {
   const filteredWaves = selectedCategoryId
     ? waves.filter(wave => wave.category?.id === selectedCategoryId || wave.ping?.category?.id === selectedCategoryId)
     : waves;
+
+  // Apply status filters
+  const applyFilters = (wavesToFilter: typeof waves) => {
+    if (selectedFilters.length === 0) {
+      return wavesToFilter;
+    }
+
+    // Apply each filter
+    const results = selectedFilters.flatMap(filter => {
+      switch (filter) {
+        case "top3": {
+          // Get top 3 by surge count or rank
+          return [...wavesToFilter]
+            .sort((a, b) => {
+              // First sort by rank if available (lower rank = higher priority)
+              if (a.rank && b.rank) return a.rank - b.rank;
+              if (a.rank) return -1;
+              if (b.rank) return 1;
+              // Then by surge count
+              return (b.surgeCount || 0) - (a.surgeCount || 0);
+            })
+            .slice(0, 3);
+        }
+        case "underReview":
+          return wavesToFilter.filter(wave => wave.status === "UNDER_REVIEW");
+        case "submitted":
+          // Submitted = Posted status
+          return wavesToFilter.filter(wave => wave.status === "POSTED");
+        case "new": {
+          // New = created within last 7 days
+          const sevenDaysAgo = new Date();
+          sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+          return wavesToFilter.filter(wave => new Date(wave.createdAt) >= sevenDaysAgo);
+        }
+        case "rejected":
+          return wavesToFilter.filter(wave => wave.status === "REJECTED");
+        default:
+          return [];
+      }
+    });
+
+    // Remove duplicates by id
+    const uniqueResults = results.filter((wave, index, self) =>
+      index === self.findIndex((w) => w.id === wave.id)
+    );
+
+    return uniqueResults;
+  };
+
+  const displayedWaves = applyFilters(filteredWaves);
 
   return (
     <div className="h-full">
@@ -112,67 +163,65 @@ const Stream = () => {
         {/* Waves List - show even when loading/error if we have cached data */}
         {(waves.length > 0 || (!isLoading && !error)) && (
           <div className="flex-1 [scrollbar-width:none] h-full overflow-auto">
-            {/* Display API fetched waves */}
-            {filteredWaves.map((wave) => {
-              // Get wave author name
-              const waveAuthorName = typeof wave.author === 'object' && wave.author
-                ? `${wave.author.firstName} ${wave.author.lastName}`
-                : undefined;
-
-              // Get ping author info for the ping card
-              const pingAuthorName = wave.ping?.author && typeof wave.ping.author === 'object'
-                ? `${wave.ping.author.firstName} ${wave.ping.author.lastName}`
-                : undefined;
-
-              const pingAuthorId = typeof wave.ping?.author === 'object' ? wave.ping.author?.id : undefined;
-
-              return (
-                <div className="mb-[22px]" key={wave.id}>
-                  <StreamCard
-                    waveId={wave.id.toString()}
-                    waveText={wave.solution}
-                    waveTitle={wave.ping?.title || "Wave Solution"}
-                    image={categoryImages["General"]}
-                    category={wave.category?.name}
-                    createdAt={formatDate(wave.createdAt)}
-                    pingTimeStamp={wave.ping?.createdAt ? formatDate(wave.ping.createdAt) : ""}
-                    pingTitle={wave.ping?.title || ""}
-                    pingDescription={wave.ping?.content}
-                    surgeCount={wave._count?.surges || wave.surgeCount}
-                    commentCount={wave._count?.comments || 0}
-                    onRefresh={() => fetchWaves({ sort: "new", days: 7 })}
-                    authorName={waveAuthorName}
-                    authorId={typeof wave.author === 'object' ? wave.author?.id : undefined}
-                    rank={wave.rank}
-                    status={wave.status}
-                    pingAuthorName={pingAuthorName}
-                    pingAuthorId={pingAuthorId}
-                    hasSurged={wave.hasSurged}
-                  />
-                </div>
-              );
-            })}
-
-            {/* Empty State */}
-            {waves.length === 0 && (
-              <div className="flex items-center justify-center h-full">
-                <div className="text-center">
-                  <p className="text-gray-500 text-lg mb-2">No waves yet</p>
-                  <p className="text-gray-400 text-sm">Be the first to create a wave!</p>
-                </div>
+            {displayedWaves.length === 0 ? (
+              <div className="flex justify-center items-center h-40">
+                <p className="text-gray-500">No waves available</p>
               </div>
-            )}
+            ) : (
+              <>
+                {/* Display API fetched waves */}
+                {displayedWaves.map((wave) => {
+                  // Get wave author name
+                  const waveAuthorName = typeof wave.author === 'object' && wave.author
+                    ? `${wave.author.firstName} ${wave.author.lastName}`
+                    : undefined;
 
-            {/* Load More Button */}
-            {hasNextPage && (
-              <div className="flex justify-center py-6">
-                <button
-                  onClick={fetchNextPage}
-                  className="bg-[#F49B31] hover:bg-[#d88429] text-white px-6 py-3 rounded-lg transition-colors"
-                >
-                  Load More
-                </button>
-              </div>
+                  // Get ping author info for the ping card
+                  const pingAuthorName = wave.ping?.author && typeof wave.ping.author === 'object'
+                    ? `${wave.ping.author.firstName} ${wave.ping.author.lastName}`
+                    : undefined;
+
+                  const pingAuthorId = typeof wave.ping?.author === 'object' ? wave.ping.author?.id : undefined;
+
+                  return (
+                    <div className="mb-[22px]" key={wave.id}>
+                      <StreamCard
+                        waveId={wave.id.toString()}
+                        waveText={wave.solution}
+                        waveTitle={wave.ping?.title || "Wave Solution"}
+                        image={categoryImages["General"]}
+                        category={wave.category?.name}
+                        createdAt={formatDate(wave.createdAt)}
+                        pingTimeStamp={wave.ping?.createdAt ? formatDate(wave.ping.createdAt) : ""}
+                        pingTitle={wave.ping?.title || ""}
+                        pingDescription={wave.ping?.content}
+                        surgeCount={wave._count?.surges || wave.surgeCount}
+                        commentCount={wave._count?.comments || 0}
+                        onRefresh={() => fetchWaves({ sort: "new", days: 7 })}
+                        authorName={waveAuthorName}
+                        authorId={typeof wave.author === 'object' ? wave.author?.id : undefined}
+                        rank={wave.rank}
+                        status={wave.status}
+                        pingAuthorName={pingAuthorName}
+                        pingAuthorId={pingAuthorId}
+                        hasSurged={wave.hasSurged}
+                      />
+                    </div>
+                  );
+                })}
+
+                {/* Load More Button */}
+                {hasNextPage && (
+                  <div className="flex justify-center py-6">
+                    <button
+                      onClick={fetchNextPage}
+                      className="bg-[#F49B31] hover:bg-[#d88429] text-white px-6 py-3 rounded-lg transition-colors"
+                    >
+                      Load More
+                    </button>
+                  </div>
+                )}
+              </>
             )}
           </div>
         )}

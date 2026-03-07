@@ -2,6 +2,13 @@ import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
 
+export type FilterOption =
+  | "top3"
+  | "underReview"
+  | "submitted"
+  | "new"
+  | "rejected";
+
 interface SearchState {
   // State
   query: string;
@@ -10,6 +17,7 @@ interface SearchState {
   categoryCounts: Record<number, number>;
   totalCount: number;
   debouncedQuery: string;
+  selectedFilters: FilterOption[];
 
   // Actions
   setQuery: (query: string) => void;
@@ -18,6 +26,8 @@ interface SearchState {
   setCategoryCounts: (counts: Record<number, number>, total: number) => void;
   incrementCategoryCount: (categoryId: number) => void;
   decrementCategoryCount: (categoryId: number) => void;
+  setFilters: (filters: FilterOption[]) => void;
+  clearFilters: () => void;
   clearCategory: () => void;
   clearSearch: () => void;
   clearAll: () => void;
@@ -34,6 +44,7 @@ export const useSearchStore = create<SearchState>()(
         categoryCounts: {},
         totalCount: 0,
         debouncedQuery: "",
+        selectedFilters: [],
 
         // Actions
         setQuery: (query: string) => {
@@ -82,6 +93,18 @@ export const useSearchStore = create<SearchState>()(
           });
         },
 
+        setFilters: (filters: FilterOption[]) => {
+          set((state) => {
+            state.selectedFilters = filters;
+          });
+        },
+
+        clearFilters: () => {
+          set((state) => {
+            state.selectedFilters = [];
+          });
+        },
+
         clearCategory: () => {
           set((state) => {
             state.selectedCategoryId = null;
@@ -102,6 +125,7 @@ export const useSearchStore = create<SearchState>()(
             state.debouncedQuery = "";
             state.selectedCategoryId = null;
             state.selectedCategoryName = null;
+            state.selectedFilters = [];
           });
         },
       })),

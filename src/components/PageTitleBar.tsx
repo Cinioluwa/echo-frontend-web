@@ -1,5 +1,6 @@
 import { useState, type ReactNode } from "react";
-const filters = "/assets/images/filters.svg";
+import FilterDropdown, { type FilterOption } from "./FilterDropdown";
+import { useSearchStore } from "../stores";
 const menuBar = "/assets/images/menu-hotdog.svg";
 import MobileMenu from "./MobileMenu";
 import type { Pages } from "./SideBar";
@@ -26,6 +27,14 @@ const PageTitleBar = ({
   const [openMenu, setOpenMenu] = useState(false);
   const [openCat, setOpenCat] = useState(false);
   const [selectedMobileCat, setSelectedMobileCat] = useState("");
+
+  // Get filter state and actions from store
+  const selectedFilters = useSearchStore((state) => state.selectedFilters);
+  const setFilters = useSearchStore((state) => state.setFilters);
+
+  const handleFilterChange = (filters: FilterOption[]) => {
+    setFilters(filters);
+  };
 
   return (
     <div className="flex justify-between items-center mx-[15px] md:mx-[55px] mt-[15px] ">
@@ -60,10 +69,11 @@ const PageTitleBar = ({
       </div>
 
       <div className="flex items-center gap-[19px]">
-        <span className="hidden md:flex items-center gap-1">
-          <img src={filters} alt="" className="inline" />
-          <p className=" text-[#B29494] text-[15px] inline ">Filters</p>
-        </span>
+        <FilterDropdown
+          selectedFilters={selectedFilters}
+          onFilterChange={handleFilterChange}
+          className="hidden md:flex"
+        />
         {children}
       </div>
       <MobileMenu

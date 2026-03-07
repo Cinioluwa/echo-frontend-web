@@ -30,10 +30,11 @@ const SoundBoard = () => {
     }))
   );
 
-  const { debouncedQuery, selectedCategoryId } = useSearchStore(
+  const { debouncedQuery, selectedCategoryId, selectedFilters } = useSearchStore(
     useShallow((state) => ({
       debouncedQuery: state.debouncedQuery,
       selectedCategoryId: state.selectedCategoryId,
+      selectedFilters: state.selectedFilters,
     }))
   );
 
@@ -69,6 +70,50 @@ const SoundBoard = () => {
   const filteredPings = selectedCategoryId
     ? pings.filter(ping => ping.category?.id === selectedCategoryId)
     : pings;
+
+  // Apply status filters
+  const applyFilters = (pingsToFilter: typeof pings) => {
+    if (selectedFilters.length === 0) {
+      return pingsToFilter;
+    }
+
+    // Apply each filter
+    const results = selectedFilters.flatMap(filter => {
+      switch (filter) {
+        case "top3": {
+          // Get top 3 by surge count
+          return [...pingsToFilter]
+            .sort((a, b) => (b.surgeCount || 0) - (a.surgeCount || 0))
+            .slice(0, 3);
+        }
+        case "underReview":
+          return pingsToFilter.filter(ping => ping.status === "UNDER_REVIEW");
+        case "submitted":
+          // Submitted = Posted status
+          return pingsToFilter.filter(ping => ping.status === "POSTED");
+        case "new": {
+          // New = created within last 7 days
+          const sevenDaysAgo = new Date();
+          sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+          return pingsToFilter.filter(ping => new Date(ping.createdAt) >= sevenDaysAgo);
+        }
+        case "rejected":
+          // Rejected is not applicable to pings, only waves
+          return [];
+        default:
+          return [];
+      }
+    });
+
+    // Remove duplicates by id
+    const uniqueResults = results.filter((ping, index, self) =>
+      index === self.findIndex((p) => p.id === ping.id)
+    );
+
+    return uniqueResults;
+  };
+
+  const displayedPings = applyFilters(filteredPings);
 
   // REFRESH PINGS AFTER CREATING NEW PING OR COMMENT
   const handlePingCreated = () => {
@@ -152,14 +197,14 @@ const SoundBoard = () => {
             <div className="flex justify-center items-center h-40">
               <p className="text-gray-500">Loading pings...</p>
             </div>
-          ) : filteredPings.length === 0 ? (
+          ) : displayedPings.length === 0 ? (
             <div className="flex justify-center items-center h-40">
               <p className="text-gray-500">No pings available</p>
             </div>
           ) : (
             <>
               {/* DISPLAY API PINGS */}
-              {filteredPings.map((ping) => {
+              {displayedPings.map((ping) => {
                 const categoryName = ping.category?.name || "General";
                 const authorName = ping.author
                   ? `${ping.author.firstName} ${ping.author.lastName}`
