@@ -4,6 +4,7 @@ import SignUp from "../pages/SignUp";
 import WaveHistory from "../pages/WaveHistory";
 import Stream from "../pages/Stream";
 import SoundBoard from "../pages/SoundBoard";
+import Profile from "../pages/Profile";
 
 const router = createBrowserRouter([
   {
@@ -31,6 +32,10 @@ const router = createBrowserRouter([
   {
     path: "soundBoard",
     element: <SoundBoard />,
+  },
+  {
+    path: "profile",
+    element: <Profile />,
   },
 ]);
 

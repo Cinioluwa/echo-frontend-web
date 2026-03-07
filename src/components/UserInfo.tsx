@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "../stores";
-import { User, LogOut } from 'lucide-react';
+import { User, LogOut, Settings, HelpCircle } from 'lucide-react';
 
 const UserInfo = () => {
   const user = useAuthStore((state) => state.user);
@@ -34,6 +34,11 @@ const UserInfo = () => {
     logout();
     setIsDropdownOpen(false);
     navigate("/login");
+  };
+
+  const handleProfileSettings = () => {
+    setIsDropdownOpen(false);
+    navigate("/profile");
   };
 
   const toggleDropdown = () => {
@@ -103,13 +108,34 @@ const UserInfo = () => {
             </div>
           </div>
 
-          {/* Logout Button */}
+          {/* Profile Settings */}
           <button
-            onClick={handleLogout}
+            onClick={handleProfileSettings}
             className="w-full px-4 py-3 flex items-center gap-3 hover:bg-gray-50 transition-colors text-left"
           >
+            <Settings className="w-5 h-5 text-gray-600" />
+            <span className="font-medium text-[18px] text-black">Profile Settings</span>
+          </button>
+
+          {/* Help */}
+          <button
+            onClick={() => setIsDropdownOpen(false)}
+            className="w-full px-4 py-3 flex items-center gap-3 hover:bg-gray-50 transition-colors text-left"
+          >
+            <HelpCircle className="w-5 h-5 text-gray-600" />
+            <span className="font-medium text-[18px] text-black">Help</span>
+          </button>
+
+          {/* Divider */}
+          <div className="border-t border-[#CECECE] mx-4"></div>
+
+          {/* Sign Out Button */}
+          <button
+            onClick={handleLogout}
+            className="w-full px-4 py-3 flex items-center gap-3 hover:bg-gray-50 transition-colors text-left rounded-bl-lg rounded-br-lg"
+          >
             <LogOut className="w-5 h-5 text-gray-600" />
-            <span className="font-medium text-[16px] text-black">Logout</span>
+            <span className="font-medium text-[18px] text-black">Sign Out</span>
           </button>
         </div>
       )}
