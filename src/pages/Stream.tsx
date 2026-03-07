@@ -144,6 +144,7 @@ const Stream = () => {
                     authorName={waveAuthorName}
                     authorId={typeof wave.author === 'object' ? wave.author?.id : undefined}
                     rank={wave.rank}
+                    status={wave.status}
                     pingAuthorName={pingAuthorName}
                     pingAuthorId={pingAuthorId}
                     hasSurged={wave.hasSurged}

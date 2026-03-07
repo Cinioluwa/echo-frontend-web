@@ -1,5 +1,6 @@
 import type { ResolutionLog } from "../../api/types/index";
 import { User } from 'lucide-react';
+import WaveStatusIndicator from "../WaveStatusIndicator";
 
 interface Props {
   resolution: ResolutionLog;
@@ -46,9 +47,12 @@ const WaveCardHeader = ({ resolution }: Props) => {
           <span className="text-[#8B8E8D] text-[13px] ">{formatDate(resolution.resolvedAt)}</span>
         </div>
       </div>
-      <div className="flex gap-1.5 px-[15px] md:px-[30px] py-[7px] border border-[#626665] rounded-[23px]">
-        <span className="text-green-600 font-semibold">✓</span>
-        Resolved in {getResolutionTime()}
+      <div className="flex items-center gap-3">
+        <WaveStatusIndicator status="APPROVED" />
+        <div className="flex gap-1.5 px-[15px] md:px-[30px] py-[7px] border border-[#626665] rounded-[23px]">
+          <span className="text-green-600 font-semibold">✓</span>
+          Resolved in {getResolutionTime()}
+        </div>
       </div>
     </div>
   );

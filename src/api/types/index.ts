@@ -145,7 +145,7 @@ export interface Wave {
   viewCount: number;
   hasSurged?: boolean; // Whether the current user has surged this wave
   rank?: number; // Top ranking (1-3 for top waves)
-  status?: "active" | "approved" | "rejected" | "implemented";
+  status?: "POSTED" | "UNDER_REVIEW" | "APPROVED" | "REJECTED";
   createdAt: string;
   updatedAt?: string;
   _count?: {
@@ -167,7 +167,7 @@ export interface UpdateWaveRequest {
   description?: string;
   solution?: string;
   category?: CategoryData;
-  status?: "active" | "approved" | "rejected" | "implemented";
+  status?: "POSTED" | "UNDER_REVIEW" | "APPROVED" | "REJECTED";
 }
 
 export interface ProposeWaveRequest {

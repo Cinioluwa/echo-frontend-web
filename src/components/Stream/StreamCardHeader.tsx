@@ -1,28 +1,19 @@
 import { useAuthStore } from "../../stores";
 import { User } from 'lucide-react';
+import WaveStatusIndicator from "../WaveStatusIndicator";
 
 interface StreamCardHeaderProps {
   createdAt: string;
   authorName?: string;
   rank?: number;
+  status?: "POSTED" | "UNDER_REVIEW" | "APPROVED" | "REJECTED";
 }
 
-const StreamCardHeader = ({ createdAt, authorName, rank }: StreamCardHeaderProps) => {
+const StreamCardHeader = ({ createdAt, authorName, rank, status }: StreamCardHeaderProps) => {
   const user = useAuthStore((state) => state.user);
 
   // Use provided authorName or fallback to current user or guest
   const displayName = authorName || (user ? `${user.firstName} ${user.lastName}` : "Guest User");
-
-  // Determine badge color based on rank
-  const getBadgeColor = (rank?: number) => {
-    if (!rank || rank > 3) return null;
-    if (rank === 1) return "bg-[#FFD700]"; // Gold
-    if (rank === 2) return "bg-[#C0C0C0]"; // Silver
-    if (rank === 3) return "bg-[#DDE23B]"; // Bronze/Yellow
-    return null;
-  };
-
-  const badgeColor = getBadgeColor(rank);
 
   return (
     <div className="flex justify-between items-center">
@@ -37,12 +28,7 @@ const StreamCardHeader = ({ createdAt, authorName, rank }: StreamCardHeaderProps
           <span className="text-[#8B8E8D] text-[13px]">{createdAt}</span>
         </div>
       </div>
-      {badgeColor && (
-        <div className="flex gap-2 px-[35px] items-center border rounded-[25px] py-[7px]">
-          <span className={`inline-block w-[9px] h-[9px] rounded-full ${badgeColor}`}></span>
-          Top {rank}
-        </div>
-      )}
+      <WaveStatusIndicator rank={rank} status={status} />
     </div>
   );
 };

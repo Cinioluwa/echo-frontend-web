@@ -18,6 +18,7 @@ interface Props {
   authorName?: string;
   authorId?: number;
   rank?: number;
+  status?: "POSTED" | "UNDER_REVIEW" | "APPROVED" | "REJECTED";
   pingAuthorName?: string;
   pingAuthorId?: number;
   onRefresh?: () => void;
@@ -39,6 +40,7 @@ const StreamCard = ({
   authorName,
   authorId: _authorId,
   rank,
+  status,
   pingAuthorName,
   pingAuthorId,
   onRefresh: _onRefresh,
@@ -52,6 +54,7 @@ const StreamCard = ({
             createdAt={createdAt}
             authorName={authorName}
             rank={rank}
+            status={status}
           />
         </div>
         <div className="my-[15px]">
