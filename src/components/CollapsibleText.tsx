@@ -19,7 +19,7 @@ const CollapsibleText = ({ title, description }: Props) => {
             onClick={() => setExpanded(!expanded)}
             className="text-[#454545] text-[10px] font-semibold whitespace-nowrap"
           >
-            {expanded ? "See less" : "See more"}
+            {expanded ? "Show less" : "Show more"}
           </button>
         )}
       </div>

@@ -45,3 +45,7 @@ body {
     #ffcd84 100%
   );
 }
+
+* {
+  outline: none;
+}

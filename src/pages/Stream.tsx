@@ -9,6 +9,7 @@ import StreamCard from "../components/Stream/StreamCard";
 import { useWavesStore, useSearchStore } from "../stores";
 import { useShallow } from "zustand/react/shallow";
 import { ErrorBanner } from "../components/shared";
+import AnnouncementCard from "../components/AnnouncementCard";
 
 const Stream = () => {
   // Zustand stores
