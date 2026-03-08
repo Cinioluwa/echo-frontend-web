@@ -4,3 +4,4 @@
  */
 
 export { useDebounce } from "./useDebounce";
+export { useNetworkStatus } from "./useNetworkStatus";

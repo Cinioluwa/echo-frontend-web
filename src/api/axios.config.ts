@@ -1,4 +1,5 @@
 import axios from "axios";
+import { parseNetworkError, NetworkErrorType } from "../utils/networkUtils";
 
 // Create axios instance with base configuration
 const api = axios.create({
@@ -8,6 +9,9 @@ const api = axios.create({
     "Content-Type": "application/json",
   },
 });
+
+// Track token expiration status
+let isTokenExpired = false;
 
 // Request interceptor to add auth token
 api.interceptors.request.use(
@@ -20,29 +24,69 @@ api.interceptors.request.use(
   },
   (error) => {
     return Promise.reject(error);
-  }
+  },
 );
 
 // Response interceptor to handle errors globally
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    // Handle rate limiting
-    if (error.response?.status === 429) {
-      console.error("Rate limit exceeded. Please try again later.");
-    }
+    // Parse network error
+    const networkError = parseNetworkError(error);
 
-    // Handle unauthorized
-    if (error.response?.status === 401) {
-      const hadToken = !!localStorage.getItem("authToken");
-      if (hadToken) {
-        localStorage.removeItem("authToken");
-        window.location.href = "/";
-      }
+    // Handle different error types
+    switch (networkError.type) {
+      case NetworkErrorType.RATE_LIMITED:
+        console.error("Rate limit exceeded. Please try again later.");
+        break;
+
+      case NetworkErrorType.UNAUTHORIZED:
+        // Only handle token expiration once to avoid loops
+        if (!isTokenExpired) {
+          isTokenExpired = true;
+          const hadToken = !!localStorage.getItem("authToken");
+
+          if (hadToken) {
+            // Clear token
+            localStorage.removeItem("authToken");
+
+            // Show user-friendly message
+            console.error("Your session has expired. Please log in again.");
+
+            // Redirect to login after a brief delay to allow error display
+            setTimeout(() => {
+              window.location.href = "/login";
+            }, 1000);
+          }
+        }
+        break;
+
+      case NetworkErrorType.OFFLINE:
+        console.error(
+          "Network connection lost. Please check your internet connection.",
+        );
+        break;
+
+      case NetworkErrorType.TIMEOUT:
+        console.error("Request timed out. Please try again.");
+        break;
+
+      case NetworkErrorType.SERVER_ERROR:
+        console.error("Server error occurred. Please try again later.");
+        break;
     }
 
     return Promise.reject(error);
-  }
+  },
 );
+
+// Reset token expiration flag when a new token is stored
+const originalSetItem = localStorage.setItem;
+localStorage.setItem = function (key: string, value: string) {
+  if (key === "authToken") {
+    isTokenExpired = false;
+  }
+  originalSetItem.apply(this, [key, value]);
+};
 
 export default api;

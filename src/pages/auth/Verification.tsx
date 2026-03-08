@@ -6,6 +6,9 @@ import AuthLayout from "../../components/auth/AuthLayout";
 import AuthCard from "../../components/auth/AuthCard";
 import AuthButton from "../../components/auth/AuthButton";
 import AuthFooter from "../../components/auth/AuthFooter";
+import OfflineIndicator from "../../components/auth/OfflineIndicator";
+import { useNetworkStatus } from "../../hooks";
+import { getErrorMessage } from "../../utils/networkUtils";
 
 // Email Icon
 const EmailIcon = () => (
@@ -25,6 +28,7 @@ const Verification: React.FC = () => {
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();
     const fetchUserProfile = useAuthStore((state) => state.fetchUserProfile);
+    const { isOffline } = useNetworkStatus();
 
     // Get email from navigation state or fallback
     const email = location.state?.email || "your email";
@@ -83,7 +87,8 @@ const Verification: React.FC = () => {
                 });
             }
         } catch (err: any) {
-            const message = err?.response?.data?.message || err?.response?.data?.error || "Invalid or expired verification link";
+            console.error("Email verification error:", err);
+            const message = err?.response?.data?.message || err?.response?.data?.error || getErrorMessage(err);
             setVerifyError(message);
         } finally {
             setVerifying(false);
@@ -91,7 +96,7 @@ const Verification: React.FC = () => {
     };
 
     const handleResendVerification = async () => {
-        if (resendCooldown > 0 || isResending) return;
+        if (resendCooldown > 0 || isResending || isOffline) return;
 
         setIsResending(true);
         setResendSuccess(false);
@@ -102,14 +107,16 @@ const Verification: React.FC = () => {
             setResendSuccess(true);
             setResendCooldown(60); // 60 second cooldown
         } catch (err: any) {
+            console.error("Resend verification error:", err);
             const status = err?.response?.status;
             const message = err?.response?.data?.message || err?.response?.data?.error;
 
             if (status === 429) {
                 setResendError("Too many requests. Please wait before trying again.");
-                setResendCooldown(60);
+                setResendCooldown(60); // Enforce 60 second cooldown for rate limit
             } else {
-                setResendError(message || "Failed to resend verification email");
+                const errorMessage = getErrorMessage(err);
+                setResendError(message || errorMessage);
             }
         } finally {
             setIsResending(false);
@@ -117,108 +124,111 @@ const Verification: React.FC = () => {
     };
 
     return (
-        <AuthLayout>
-            <AuthCard>
-                {/* Email Icon */}
-                <div className="flex items-center justify-center">
-                    <EmailIcon />
-                </div>
-
-                {/* Title */}
-                <div className="text-center w-full">
-                    <h1
-                        className="text-[22px] sm:text-[26px] md:text-[28px] font-semibold text-[#4a504e] mb-2.5"
-                        style={{ fontFamily: 'Poppins, sans-serif' }}
-                    >
-                        Verify Your Email
-                    </h1>
-                    <p
-                        className="text-[12px] sm:text-[13px] text-[#838383] font-normal leading-relaxed"
-                        style={{ fontFamily: 'Poppins, sans-serif' }}
-                    >
-                        We've sent a verification link to
-                    </p>
-                    <p
-                        className="text-[13px] sm:text-[14px] text-[#f49b31] font-semibold mt-[5px]"
-                        style={{ fontFamily: 'Poppins, sans-serif' }}
-                    >
-                        {email}
-                    </p>
-                </div>
-
-                {/* Instructions */}
-                <div className="w-full bg-[#fef5ea] border border-[#ffcd71] rounded-xl px-4 sm:px-5 py-3 sm:py-[15px]">
-                    <p
-                        className="text-[12px] text-[#4a504e] text-center leading-relaxed"
-                        style={{ fontFamily: 'Poppins, sans-serif' }}
-                    >
-                        Please check your inbox and click the verification link to complete your registration.
-                    </p>
-                </div>
-
-                {/* Verification Error */}
-                {verifyError && (
-                    <div className="w-full">
-                        <div className="w-full p-3 bg-red-50 border border-red-300 rounded-lg">
-                            <p className="text-red-600 text-sm text-center">{verifyError}</p>
-                        </div>
+        <>
+            <OfflineIndicator />
+            <AuthLayout>
+                <AuthCard>
+                    {/* Email Icon */}
+                    <div className="flex items-center justify-center">
+                        <EmailIcon />
                     </div>
-                )}
 
-                {/* Verifying State */}
-                {verifying && (
-                    <div className="w-full">
-                        <div className="w-full p-3 bg-blue-50 border border-blue-300 rounded-lg">
-                            <p className="text-blue-600 text-sm text-center">Verifying your email...</p>
-                        </div>
+                    {/* Title */}
+                    <div className="text-center w-full">
+                        <h1
+                            className="text-[22px] sm:text-[26px] md:text-[28px] font-semibold text-[#4a504e] mb-2.5"
+                            style={{ fontFamily: 'Poppins, sans-serif' }}
+                        >
+                            Verify Your Email
+                        </h1>
+                        <p
+                            className="text-[12px] sm:text-[13px] text-[#838383] font-normal leading-relaxed"
+                            style={{ fontFamily: 'Poppins, sans-serif' }}
+                        >
+                            We've sent a verification link to
+                        </p>
+                        <p
+                            className="text-[13px] sm:text-[14px] text-[#f49b31] font-semibold mt-[5px]"
+                            style={{ fontFamily: 'Poppins, sans-serif' }}
+                        >
+                            {email}
+                        </p>
                     </div>
-                )}
 
-                {/* Resend Success Message */}
-                {resendSuccess && (
-                    <div className="w-full">
-                        <div className="w-full p-3 bg-green-50 border border-green-300 rounded-lg">
-                            <p className="text-green-600 text-sm text-center">Verification email sent successfully!</p>
-                        </div>
+                    {/* Instructions */}
+                    <div className="w-full bg-[#fef5ea] border border-[#ffcd71] rounded-xl px-4 sm:px-5 py-3 sm:py-[15px]">
+                        <p
+                            className="text-[12px] text-[#4a504e] text-center leading-relaxed"
+                            style={{ fontFamily: 'Poppins, sans-serif' }}
+                        >
+                            Please check your inbox and click the verification link to complete your registration.
+                        </p>
                     </div>
-                )}
 
-                {/* Resend Error Message */}
-                {resendError && (
-                    <div className="w-full">
-                        <div className="w-full p-3 bg-red-50 border border-red-300 rounded-lg">
-                            <p className="text-red-600 text-sm text-center">{resendError}</p>
+                    {/* Verification Error */}
+                    {verifyError && (
+                        <div className="w-full">
+                            <div className="w-full p-3 bg-red-50 border border-red-300 rounded-lg">
+                                <p className="text-red-600 text-sm text-center">{verifyError}</p>
+                            </div>
                         </div>
+                    )}
+
+                    {/* Verifying State */}
+                    {verifying && (
+                        <div className="w-full">
+                            <div className="w-full p-3 bg-blue-50 border border-blue-300 rounded-lg">
+                                <p className="text-blue-600 text-sm text-center">Verifying your email...</p>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Resend Success Message */}
+                    {resendSuccess && (
+                        <div className="w-full">
+                            <div className="w-full p-3 bg-green-50 border border-green-300 rounded-lg">
+                                <p className="text-green-600 text-sm text-center">Verification email sent successfully!</p>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Resend Error Message */}
+                    {resendError && (
+                        <div className="w-full">
+                            <div className="w-full p-3 bg-red-50 border border-red-300 rounded-lg">
+                                <p className="text-red-600 text-sm text-center">{resendError}</p>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Resend Verification Button */}
+                    <div className="w-full">
+                        <AuthButton
+                            type="button"
+                            onClick={handleResendVerification}
+                            disabled={isResending || resendCooldown > 0 || isOffline}
+                            loading={isResending}
+                        >
+                            {isResending
+                                ? "Sending..."
+                                : resendCooldown > 0
+                                    ? `Resend in ${resendCooldown}s`
+                                    : "Resend Verification Email"}
+                        </AuthButton>
                     </div>
-                )}
 
-                {/* Resend Verification Button */}
-                <div className="w-full">
-                    <AuthButton
-                        type="button"
-                        onClick={handleResendVerification}
-                        disabled={isResending || resendCooldown > 0}
-                        loading={isResending}
-                    >
-                        {isResending
-                            ? "Sending..."
-                            : resendCooldown > 0
-                                ? `Resend in ${resendCooldown}s`
-                                : "Resend Verification Email"}
-                    </AuthButton>
-                </div>
+                    {/* Didn't receive email message */}
+                    <div className="text-center">
+                        <p className="text-[12px] text-[#838383]" style={{ fontFamily: 'Poppins, sans-serif' }}>
+                            Didn't receive the email? Check your spam folder or click resend above.
+                        </p>
+                    </div>
 
-                {/* Didn't receive email message */}
-                <div className="text-center">
-                    <p className="text-[12px] text-[#838383]" style={{ fontFamily: 'Poppins, sans-serif' }}>
-                        Didn't receive the email? Check your spam folder or click resend above.
-                    </p>
-                </div>
-
-                {/* Footer */}
-                <AuthFooter />
-            </AuthCard>
-        </AuthLayout>
+                    {/* Footer */}
+                    <AuthFooter />
+                </AuthCard>
+            </AuthLayout>
+        </>
     );
 };
 

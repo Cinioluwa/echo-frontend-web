@@ -201,18 +201,18 @@ const FindInstitution: React.FC = () => {
                                 {showDropdown && (
                                     <div className="absolute z-10 w-full mt-2 bg-white border border-[#cacaca] rounded-xl shadow-lg max-h-[250px] sm:max-h-[300px] overflow-y-auto">
                                         {isLoading ? (
-                                            <div className="px-[20px] sm:px-[25px] md:px-[30px] py-[12px] sm:py-[15px] text-[12px] sm:text-[13px] text-[#626665]">
+                                            <div className="px-5 sm:px-[25px] md:px-[30px] py-3 sm:py-[15px] text-[12px] sm:text-[13px] text-[#626665]">
                                                 Loading...
                                             </div>
                                         ) : organizations.length === 0 ? (
-                                            <div className="px-[20px] sm:px-[25px] md:px-[30px] py-[12px] sm:py-[15px] text-[12px] sm:text-[13px] text-[#626665]">
+                                            <div className="px-5 sm:px-[25px] md:px-[30px] py-3 sm:py-[15px] text-[12px] sm:text-[13px] text-[#626665]">
                                                 No institutions found
                                             </div>
                                         ) : (
                                             organizations.map((org) => (
                                                 <div
                                                     key={org.id}
-                                                    className="px-[20px] sm:px-[25px] md:px-[30px] py-[12px] sm:py-[15px] text-[12px] sm:text-[13px] text-[#626665] hover:bg-[#fbfbfb] cursor-pointer border-b border-[#f0f0f0] last:border-b-0"
+                                                    className="px-5 sm:px-[25px] md:px-[30px] py-3 sm:py-[15px] text-[12px] sm:text-[13px] text-[#626665] hover:bg-[#fbfbfb] cursor-pointer border-b border-[#f0f0f0] last:border-b-0"
                                                     onClick={() => handleSelectOrganization(org)}
                                                 >
                                                     <div className="font-medium">{org.name}</div>

@@ -66,7 +66,7 @@ const FindInstitutionError: React.FC<FindInstitutionErrorProps> = () => {
 
                     {/* Institution Info (if available) */}
                     {selectedOrg && (
-                        <div className="w-full bg-[#fbfbfb] border border-[#cacaca] rounded-xl px-[20px] sm:px-[25px] md:px-[30px] py-3 sm:py-[15px]">
+                        <div className="w-full bg-[#fbfbfb] border border-[#cacaca] rounded-xl px-5 sm:px-[25px] md:px-[30px] py-3 sm:py-[15px]">
                             <div className="text-[13px] sm:text-[14px] font-medium text-[#626665]">
                                 {selectedOrg.name}
                             </div>

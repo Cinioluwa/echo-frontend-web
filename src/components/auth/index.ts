@@ -11,3 +11,5 @@ export { default as ErrorBadge } from "./ErrorBadge";
 export { default as GoogleButton } from "./GoogleButton";
 export { default as EchoLogo } from "./EchoLogo";
 export { default as AuthFooter } from "./AuthFooter";
+export { default as ErrorBoundary } from "./ErrorBoundary";
+export { default as OfflineIndicator } from "./OfflineIndicator";

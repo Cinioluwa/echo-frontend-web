@@ -7,7 +7,11 @@ import {
   AuthButton,
   AuthInput,
   GoogleButton,
+  OfflineIndicator,
 } from "../components/auth";
+import { useNetworkStatus } from "../hooks";
+import { getErrorMessage } from "../utils/networkUtils";
+import { validateLoginForm } from "../utils/validationUtils";
 import type { User } from "../api/types";
 
 // Email and password icons (orange/gold color matching Figma)
@@ -67,6 +71,7 @@ const PasswordIcon = () => (
 const Login = () => {
   const navigate = useNavigate();
   const login = useAuthStore((state) => state.login);
+  const { isOffline } = useNetworkStatus();
 
   const [formData, setFormData] = useState({
     email: "",
@@ -74,6 +79,10 @@ const Login = () => {
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [validationErrors, setValidationErrors] = useState<{
+    email?: string;
+    password?: string;
+  }>({});
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -81,8 +90,11 @@ const Login = () => {
       ...prev,
       [name]: value,
     }));
-    // Clear error when user starts typing
+    // Clear errors when user starts typing
     if (error) setError(null);
+    if (validationErrors[name as keyof typeof validationErrors]) {
+      setValidationErrors((prev) => ({ ...prev, [name]: undefined }));
+    }
   };
 
   /**
@@ -121,6 +133,21 @@ const Login = () => {
   const handleSubmitLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
+    setValidationErrors({});
+
+    // Check if offline
+    if (isOffline) {
+      setError("No internet connection. Please check your network and try again.");
+      return;
+    }
+
+    // Validate form
+    const errors = validateLoginForm(formData);
+    if (Object.keys(errors).length > 0) {
+      setValidationErrors(errors);
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -137,20 +164,24 @@ const Login = () => {
         navigate("/stream");
       }
     } catch (err: any) {
+      console.error("Login error:", err);
+
       const status = err?.response?.status;
       const data = err?.response?.data;
 
-      // Handle different error scenarios
+      // Handle different error scenarios with improved messaging
       if (status === 401) {
-        setError("Invalid email or password");
+        setError("Invalid email or password. Please try again.");
       } else if (status === 403 && data?.code === "ACCOUNT_PENDING_VERIFICATION") {
-        setError("Please verify your email before logging in");
+        setError("Please verify your email before logging in. Check your inbox for the verification link.");
       } else if (status === 400 && data?.code === "GOOGLE_AUTH_REQUIRED") {
         setError("This account uses Google Sign-In. Please use 'Continue with Google'.");
       } else if (status === 404 && data?.code === "ORG_NOT_FOUND") {
-        setError("No organization found for this email domain");
+        setError("No organization found for this email domain.");
       } else {
-        setError(data?.error || "Login failed. Please try again.");
+        // Use network utility for better error messaging
+        const errorMessage = getErrorMessage(err);
+        setError(data?.error || data?.message || errorMessage);
       }
     } finally {
       setLoading(false);
@@ -163,117 +194,122 @@ const Login = () => {
   };
 
   return (
-    <AuthLayout>
-      <AuthCard>
-        {/* Header Section */}
-        <div className="flex flex-col gap-2.5 items-center text-center w-full">
-          <h1
-            className="text-[22px] sm:text-[26px] md:text-[28px] leading-7 sm:leading-8 md:leading-9 text-black"
-            style={{ fontFamily: "Poppins, sans-serif", fontWeight: 600 }}
-          >
-            Enter the Pulse
-          </h1>
-          <p
-            className="text-[14px] sm:text-base leading-5 sm:leading-[21px] text-[#4a504e] opacity-[0.69]"
-            style={{ fontFamily: "Poppins, sans-serif", fontWeight: 500 }}
-          >
-            Pick up where you left off at your institution
-          </p>
-        </div>
-
-        {/* Error Display */}
-        {error && (
-          <div className="w-full p-3 bg-red-50 border border-red-200 rounded-lg">
-            <p className="text-red-600 text-sm text-center">{error}</p>
-          </div>
-        )}
-
-        {/* Form Section */}
-        <div className="flex flex-col gap-5 sm:gap-6 md:gap-[30px] items-center w-full">
-          {/* Input Fields */}
-          <div className="flex flex-col gap-3.5 sm:gap-4 md:gap-5 items-start w-full">
-            {/* Google OAuth Button */}
-            <GoogleButton
-              onClick={handleGoogleLogin}
-              disabled={loading}
-              text="Continue with Google"
-            />
-
-            {/* Email Input */}
-            <AuthInput
-              type="email"
-              name="email"
-              value={formData.email}
-              onChange={handleInputChange}
-              placeholder="Enter Email..."
-              required
-              disabled={loading}
-              icon={<EmailIcon />}
-              autoComplete="email"
-            />
-
-            {/* Password Input */}
-            <AuthInput
-              type="password"
-              name="password"
-              value={formData.password}
-              onChange={handleInputChange}
-              placeholder="Enter Password..."
-              required
-              disabled={loading}
-              icon={<PasswordIcon />}
-              autoComplete="current-password"
-            />
-          </div>
-
-          {/* Submit Button */}
-          <form onSubmit={handleSubmitLogin} className="w-full">
-            <AuthButton
-              type="submit"
-              disabled={loading}
-              loading={loading}
-              fullWidth
+    <>
+      <OfflineIndicator />
+      <AuthLayout>
+        <AuthCard>
+          {/* Header Section */}
+          <div className="flex flex-col gap-2.5 items-center text-center w-full">
+            <h1
+              className="text-[22px] sm:text-[26px] md:text-[28px] leading-7 sm:leading-8 md:leading-9 text-black"
+              style={{ fontFamily: "Poppins, sans-serif", fontWeight: 600 }}
             >
-              {loading ? "Logging in..." : "Log in"}
-            </AuthButton>
-          </form>
-        </div>
-
-        {/* Footer Section */}
-        <div className="flex flex-col gap-4 sm:gap-5 items-center px-3 sm:px-5 w-full">
-          {/* Terms and Privacy */}
-          <div
-            className="flex flex-col gap-3 sm:gap-[15px] items-center text-center text-xs sm:text-sm leading-3.5"
-            style={{ fontFamily: "Poppins, sans-serif", fontWeight: 500 }}
-          >
-            <p className="text-[#838383]">By creating an account, you agree to Echo</p>
-            <Link
-              to="/terms"
-              className="text-[#f49b31] hover:text-[#e08a2a] transition-colors"
+              Enter the Pulse
+            </h1>
+            <p
+              className="text-[14px] sm:text-base leading-5 sm:leading-[21px] text-[#4a504e] opacity-[0.69]"
+              style={{ fontFamily: "Poppins, sans-serif", fontWeight: 500 }}
             >
-              Terms of Use, Privacy Policy
-            </Link>
+              Pick up where you left off at your institution
+            </p>
           </div>
 
-          {/* Divider */}
-          <div className="w-full h-px bg-[#e0e0e0]" />
+          {/* Error Display */}
+          {error && (
+            <div className="w-full p-3 bg-red-50 border border-red-200 rounded-lg">
+              <p className="text-red-600 text-sm text-center">{error}</p>
+            </div>
+          )}
 
-          {/* Sign Up Link */}
-          <div
-            className="text-center text-xs sm:text-sm"
-            style={{ fontFamily: "Poppins, sans-serif", fontWeight: 500 }}
-          >
-            <span className="text-[#838383]">Don't have an account? </span>
-            <Link
-              to="/signUp"
-              className="text-[#f49b31] hover:text-[#e08a2a] transition-colors cursor-pointer"
-            >
-              Sign Up
-            </Link>
+          {/* Form Section */}
+          <div className="flex flex-col gap-5 sm:gap-6 md:gap-[30px] items-center w-full">
+            {/* Input Fields */}
+            <div className="flex flex-col gap-3.5 sm:gap-4 md:gap-5 items-start w-full">
+              {/* Google OAuth Button */}
+              <GoogleButton
+                onClick={handleGoogleLogin}
+                disabled={loading}
+                text="Continue with Google"
+              />
+
+              {/* Email Input */}
+              <AuthInput
+                type="email"
+                name="email"
+                value={formData.email}
+                onChange={handleInputChange}
+                placeholder="Enter Email..."
+                required
+                disabled={loading || isOffline}
+                icon={<EmailIcon />}
+                autoComplete="email"
+                error={validationErrors.email}
+              />
+
+              {/* Password Input */}
+              <AuthInput
+                type="password"
+                name="password"
+                value={formData.password}
+                onChange={handleInputChange}
+                placeholder="Enter Password..."
+                required
+                disabled={loading || isOffline}
+                icon={<PasswordIcon />}
+                autoComplete="current-password"
+                error={validationErrors.password}
+              />
+            </div>
+
+            {/* Submit Button */}
+            <form onSubmit={handleSubmitLogin} className="w-full">
+              <AuthButton
+                type="submit"
+                disabled={loading || isOffline}
+                loading={loading}
+                fullWidth
+              >
+                {loading ? "Logging in..." : "Log in"}
+              </AuthButton>
+            </form>
           </div>
-        </div>
-      </AuthCard>
-    </AuthLayout>
+
+          {/* Footer Section */}
+          <div className="flex flex-col gap-4 sm:gap-5 items-center px-3 sm:px-5 w-full">
+            {/* Terms and Privacy */}
+            <div
+              className="flex flex-col gap-3 sm:gap-[15px] items-center text-center text-xs sm:text-sm leading-3.5"
+              style={{ fontFamily: "Poppins, sans-serif", fontWeight: 500 }}
+            >
+              <p className="text-[#838383]">By creating an account, you agree to Echo</p>
+              <Link
+                to="/terms"
+                className="text-[#f49b31] hover:text-[#e08a2a] transition-colors"
+              >
+                Terms of Use, Privacy Policy
+              </Link>
+            </div>
+
+            {/* Divider */}
+            <div className="w-full h-px bg-[#e0e0e0]" />
+
+            {/* Sign Up Link */}
+            <div
+              className="text-center text-xs sm:text-sm"
+              style={{ fontFamily: "Poppins, sans-serif", fontWeight: 500 }}
+            >
+              <span className="text-[#838383]">Don't have an account? </span>
+              <Link
+                to="/signUp"
+                className="text-[#f49b31] hover:text-[#e08a2a] transition-colors cursor-pointer"
+              >
+                Sign Up
+              </Link>
+            </div>
+          </div>
+        </AuthCard>
+      </AuthLayout>
+    </>
   );
 };
 

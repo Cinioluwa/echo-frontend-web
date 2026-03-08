@@ -7,9 +7,13 @@ import {
     AuthInput,
     AuthFooter,
     ErrorBadge,
+    OfflineIndicator,
 } from "../../components/auth";
 import { useRegistrationStore } from "../../stores/ui/useRegistrationStore";
 import { authService } from "../../api";
+import { useNetworkStatus } from "../../hooks";
+import { getErrorMessage } from "../../utils/networkUtils";
+import { validateOrganizationName, validateUrl } from "../../utils/validationUtils";
 import type { OrganizationWaitlistRequest } from "../../api/types";
 
 // Building/Institution Icon
@@ -43,6 +47,7 @@ const RoleIcon = () => (
 const MakeRequest: React.FC = () => {
     const navigate = useNavigate();
     const location = useLocation();
+    const { isOffline } = useNetworkStatus();
 
     // Get registration data from location state or store
     const locationState = location.state as {
@@ -65,6 +70,7 @@ const MakeRequest: React.FC = () => {
     const [error, setError] = useState<string | null>(null);
     const [validationErrors, setValidationErrors] = useState<{
         organizationName?: string;
+        website?: string;
     }>({});
 
     // User data
@@ -84,10 +90,20 @@ const MakeRequest: React.FC = () => {
      * Validate form before submission
      */
     const validateForm = (): boolean => {
-        const errors: { organizationName?: string } = {};
+        const errors: { organizationName?: string; website?: string } = {};
 
-        if (!organizationName.trim()) {
-            errors.organizationName = "Institution name is required";
+        // Validate organization name
+        const orgNameResult = validateOrganizationName(organizationName);
+        if (!orgNameResult.isValid) {
+            errors.organizationName = orgNameResult.error;
+        }
+
+        // Validate website if provided
+        if (website.trim()) {
+            const urlResult = validateUrl(website);
+            if (!urlResult.isValid) {
+                errors.website = urlResult.error;
+            }
         }
 
         setValidationErrors(errors);
@@ -100,6 +116,12 @@ const MakeRequest: React.FC = () => {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setError(null);
+
+        // Check if offline
+        if (isOffline) {
+            setError("No internet connection. Please check your network and try again.");
+            return;
+        }
 
         // Validate form
         if (!validateForm()) {
@@ -140,9 +162,11 @@ const MakeRequest: React.FC = () => {
             });
         } catch (err: any) {
             console.error("Organization request error:", err);
+            const errorMessage = getErrorMessage(err);
             setError(
                 err.response?.data?.message ||
-                "Failed to submit organization request. Please try again."
+                err.response?.data?.error ||
+                errorMessage
             );
         } finally {
             setIsLoading(false);
@@ -166,158 +190,171 @@ const MakeRequest: React.FC = () => {
     };
 
     return (
-        <AuthLayout>
-            <AuthCard className="max-w-[537px]">
-                {/* Header */}
-                <div className="flex flex-col gap-2.5 items-center text-center w-full">
-                    <h1 className="text-[22px] sm:text-[26px] md:text-[28px] font-semibold text-black leading-7 sm:leading-8 md:leading-9">
-                        Request New Institution
-                    </h1>
-                    <p className="text-[14px] sm:text-[15px] md:text-[16px] font-medium text-[#4a504e] opacity-69 leading-5 sm:leading-[21px]">
-                        Can't find your institution? Request to add it to Echo
-                    </p>
-                </div>
-
-                {/* Error Badge */}
-                {error && (
-                    <div className="w-full">
-                        <ErrorBadge message={error} variant="error" />
+        <>
+            <OfflineIndicator />
+            <AuthLayout>
+                <AuthCard className="max-w-[537px]">
+                    {/* Header */}
+                    <div className="flex flex-col gap-2.5 items-center text-center w-full">
+                        <h1 className="text-[22px] sm:text-[26px] md:text-[28px] font-semibold text-black leading-7 sm:leading-8 md:leading-9">
+                            Request New Institution
+                        </h1>
+                        <p className="text-[14px] sm:text-[15px] md:text-[16px] font-medium text-[#4a504e] opacity-69 leading-5 sm:leading-[21px]">
+                            Can't find your institution? Request to add it to Echo
+                        </p>
                     </div>
-                )}
 
-                {/* Form */}
-                <form onSubmit={handleSubmit} className="flex flex-col gap-4 sm:gap-5 w-full">
-                    {/* Institution Name */}
-                    <div className="flex flex-col gap-3 sm:gap-[15px] w-full">
-                        <div className="flex flex-col gap-[5px] w-full">
-                            <label
-                                htmlFor="organizationName"
-                                className="text-[13px] sm:text-[14px] font-medium text-[#4a504e]"
-                                style={{ fontFamily: 'Poppins, sans-serif' }}
-                            >
-                                Institution Name <span className="text-red-500">*</span>
-                            </label>
-                            <AuthInput
-                                name="organizationName"
-                                type="text"
-                                value={organizationName}
-                                onChange={(e) => {
-                                    setOrganizationName(e.target.value);
-                                    if (validationErrors.organizationName) {
-                                        setValidationErrors((prev) => ({
-                                            ...prev,
-                                            organizationName: undefined,
-                                        }));
-                                    }
-                                }}
-                                placeholder="Enter institution name"
-                                icon={<InstitutionIcon />}
-                                required
-                                error={validationErrors.organizationName}
-                            />
-                            {validationErrors.organizationName && (
-                                <span className="text-xs text-red-500 ml-2">
-                                    {validationErrors.organizationName}
-                                </span>
-                            )}
+                    {/* Error Badge */}
+                    {error && (
+                        <div className="w-full">
+                            <ErrorBadge message={error} variant="error" />
                         </div>
-                    </div>
+                    )}
 
-                    {/* Website */}
-                    <div className="flex flex-col gap-3 sm:gap-[15px] w-full">
-                        <div className="flex flex-col gap-[5px] w-full">
-                            <label
-                                htmlFor="website"
-                                className="text-[13px] sm:text-[14px] font-medium text-[#4a504e]"
-                                style={{ fontFamily: 'Poppins, sans-serif' }}
-                            >
-                                Website (Optional)
-                            </label>
-                            <AuthInput
-                                name="website"
-                                type="url"
-                                value={website}
-                                onChange={(e) => setWebsite(e.target.value)}
-                                placeholder="https://example.edu"
-                                icon={<WebsiteIcon />}
-                            />
+                    {/* Form */}
+                    <form onSubmit={handleSubmit} className="flex flex-col gap-4 sm:gap-5 w-full">
+                        {/* Institution Name */}
+                        <div className="flex flex-col gap-3 sm:gap-[15px] w-full">
+                            <div className="flex flex-col gap-[5px] w-full">
+                                <label
+                                    htmlFor="organizationName"
+                                    className="text-[13px] sm:text-[14px] font-medium text-[#4a504e]"
+                                    style={{ fontFamily: 'Poppins, sans-serif' }}
+                                >
+                                    Institution Name <span className="text-red-500">*</span>
+                                </label>
+                                <AuthInput
+                                    name="organizationName"
+                                    type="text"
+                                    value={organizationName}
+                                    onChange={(e) => {
+                                        setOrganizationName(e.target.value);
+                                        if (validationErrors.organizationName) {
+                                            setValidationErrors((prev) => ({
+                                                ...prev,
+                                                organizationName: undefined,
+                                            }));
+                                        }
+                                    }}
+                                    placeholder="Enter institution name"
+                                    icon={<InstitutionIcon />}
+                                    required
+                                    error={validationErrors.organizationName}
+                                    disabled={isLoading || isOffline}
+                                />
+                                {validationErrors.organizationName && (
+                                    <span className="text-xs text-red-500 ml-2">
+                                        {validationErrors.organizationName}
+                                    </span>
+                                )}
+                            </div>
                         </div>
-                    </div>
 
-                    {/* Role */}
-                    <div className="flex flex-col gap-3 sm:gap-[15px] w-full">
-                        <div className="flex flex-col gap-[5px] w-full">
-                            <label
-                                htmlFor="role"
-                                className="text-[13px] sm:text-[14px] font-medium text-[#4a504e]"
-                                style={{ fontFamily: 'Poppins, sans-serif' }}
-                            >
-                                Your Role (Optional)
-                            </label>
-                            <AuthInput
-                                name="role"
-                                type="text"
-                                value={role}
-                                onChange={(e) => setRole(e.target.value)}
-                                placeholder="e.g., Student, Faculty, Staff"
-                                icon={<RoleIcon />}
-                            />
-                        </div>
-                    </div>
-
-                    {/* Additional Notes */}
-                    <div className="flex flex-col gap-3 sm:gap-[15px] w-full">
-                        <div className="flex flex-col gap-[5px] w-full">
-                            <label
-                                htmlFor="additionalNotes"
-                                className="text-[13px] sm:text-[14px] font-medium text-[#4a504e]"
-                                style={{ fontFamily: 'Poppins, sans-serif' }}
-                            >
-                                Additional Notes (Optional)
-                            </label>
-                            <div className="bg-[#fbfbfb] border border-[#cacaca] rounded-xl p-[15px] sm:p-[18px] md:p-[21px] focus-within:border-[#f49b31] focus-within:ring-1 focus-within:ring-[#f49b31] transition-colors duration-200">
-                                <textarea
-                                    id="additionalNotes"
-                                    name="additionalNotes"
-                                    value={additionalNotes}
-                                    onChange={(e) => setAdditionalNotes(e.target.value)}
-                                    placeholder="Any additional information that might help us..."
-                                    rows={4}
-                                    className="w-full bg-transparent border-none outline-none text-[12px] sm:text-[13px] text-[#4a504e] placeholder:text-[#737373] placeholder:italic resize-none"
-                                    style={{ fontFamily: 'Poppins, sans-serif', fontWeight: 500 }}
+                        {/* Website */}
+                        <div className="flex flex-col gap-3 sm:gap-[15px] w-full">
+                            <div className="flex flex-col gap-[5px] w-full">
+                                <label
+                                    htmlFor="website"
+                                    className="text-[13px] sm:text-[14px] font-medium text-[#4a504e]"
+                                    style={{ fontFamily: 'Poppins, sans-serif' }}
+                                >
+                                    Website (Optional)
+                                </label>
+                                <AuthInput
+                                    name="website"
+                                    type="url"
+                                    value={website}
+                                    onChange={(e) => {
+                                        setWebsite(e.target.value);
+                                        if (validationErrors.website) {
+                                            setValidationErrors(prev => ({ ...prev, website: undefined }));
+                                        }
+                                    }}
+                                    placeholder="https://www.example.edu"
+                                    icon={<WebsiteIcon />}
+                                    error={validationErrors.website}
+                                    disabled={isLoading || isOffline}
                                 />
                             </div>
                         </div>
-                    </div>
 
-                    {/* Submit Button */}
-                    <div className="w-full">
-                        <AuthButton
-                            type="submit"
-                            disabled={isLoading}
-                            loading={isLoading}
-                        >
-                            {isLoading ? "Submitting..." : "Submit Request"}
-                        </AuthButton>
-                    </div>
+                        {/* Role */}
+                        <div className="flex flex-col gap-3 sm:gap-[15px] w-full">
+                            <div className="flex flex-col gap-[5px] w-full">
+                                <label
+                                    htmlFor="role"
+                                    className="text-[13px] sm:text-[14px] font-medium text-[#4a504e]"
+                                    style={{ fontFamily: 'Poppins, sans-serif' }}
+                                >
+                                    Your Role (Optional)
+                                </label>
+                                <AuthInput
+                                    name="role"
+                                    type="text"
+                                    value={role}
+                                    onChange={(e) => setRole(e.target.value)}
+                                    placeholder="e.g., Student, Faculty, Staff"
+                                    icon={<RoleIcon />}
+                                    disabled={isLoading || isOffline}
+                                />
+                            </div>
+                        </div>
 
-                    {/* Back Button */}
-                    <div className="w-full">
-                        <AuthButton
-                            type="button"
-                            variant="outline"
-                            onClick={handleBack}
-                            disabled={isLoading}
-                        >
-                            Back to Find Institution
-                        </AuthButton>
-                    </div>
-                </form>
+                        {/* Additional Notes */}
+                        <div className="flex flex-col gap-3 sm:gap-[15px] w-full">
+                            <div className="flex flex-col gap-[5px] w-full">
+                                <label
+                                    htmlFor="additionalNotes"
+                                    className="text-[13px] sm:text-[14px] font-medium text-[#4a504e]"
+                                    style={{ fontFamily: 'Poppins, sans-serif' }}
+                                >
+                                    Additional Notes (Optional)
+                                </label>
+                                <div className="bg-[#fbfbfb] border border-[#cacaca] rounded-xl p-[15px] sm:p-[18px] md:p-[21px] focus-within:border-[#f49b31] focus-within:ring-1 focus-within:ring-[#f49b31] transition-colors duration-200">
+                                    <textarea
+                                        id="additionalNotes"
+                                        name="additionalNotes"
+                                        value={additionalNotes}
+                                        onChange={(e) => setAdditionalNotes(e.target.value)}
+                                        placeholder="Any additional information that might help us..."
+                                        rows={4}
+                                        disabled={isLoading || isOffline}
+                                        className="w-full bg-transparent border-none outline-none text-[12px] sm:text-[13px] text-[#4a504e] placeholder:text-[#737373] placeholder:italic resize-none disabled:opacity-50 disabled:cursor-not-allowed"
+                                        style={{ fontFamily: 'Poppins, sans-serif', fontWeight: 500 }}
+                                    />
+                                </div>
+                            </div>
+                        </div>
 
-                {/* Footer */}
-                <AuthFooter />
-            </AuthCard>
-        </AuthLayout>
+                        {/* Submit Button */}
+                        <div className="w-full">
+                            <AuthButton
+                                type="submit"
+                                disabled={isLoading || isOffline}
+                                loading={isLoading}
+                            >
+                                {isLoading ? "Submitting..." : "Submit Request"}
+                            </AuthButton>
+                        </div>
+
+                        {/* Back Button */}
+                        <div className="w-full">
+                            <AuthButton
+                                type="button"
+                                variant="outline"
+                                onClick={handleBack}
+                                disabled={isLoading || isOffline}
+                            >
+                                Back to Find Institution
+                            </AuthButton>
+                        </div>
+                    </form>
+
+                    {/* Footer */}
+                    <AuthFooter />
+                </AuthCard>
+            </AuthLayout>
+        </>
     );
 };
 
