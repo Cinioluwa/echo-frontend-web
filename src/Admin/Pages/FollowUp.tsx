@@ -14,7 +14,7 @@ const proposedWaveDetails = {
   createdAt: "Feb 29, 09:30 pm",
   id: "string",
   // BACK-END ATTRIBUTE
-  status: "rejected",
+  status: "rejected" as const,
 };
 
 // STATIC PING DATA USING PINGSTORE- SIMULATING PINGS FROM SERVER.

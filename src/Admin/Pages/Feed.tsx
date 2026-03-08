@@ -22,6 +22,7 @@ const proposedWaveDetails = {
 
 const pingFormDetails = {
   cat: "Academics",
+  catId: 1,
   pingDesc:
     "Lorem, ipsum dolor sit amet consectetur adipisicing elit. Voluptatem delectus aut ut iure reprehenderit, deleniti ea, commodi a inventore facere aliquam. Vel magnam sapiente, accusamus maxime ullam esse molestiae beatae! Lorem, ipsum dolor sit amet consectetur adipisicing elit. Voluptatem delectus aut ut iure reprehenderit, deleniti ea, commodi a inventore facere aliquam. Vel magnam sapiente, accusamus maxime ullam esse molestiae beatae! Lorem, ipsum dolor sit amet consectetur adipisicing elit. Voluptatem delectus aut ut iure reprehenderit, deleniti ea, commodi a inventore facere aliquam. Vel magnam sapiente, accusamus maxime ullam esse molestiae beatae!",
   pingTitle: "Enhance the Microphone System in EIE Large Classroom",

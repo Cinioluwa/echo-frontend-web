@@ -1,4 +1,23 @@
+interface MenuItemProps {
+  label: string;
+  danger?: boolean;
+}
+
+const MenuItem = ({ label, danger }: MenuItemProps) => {
+  return (
+    <button
+      className={`w-full rounded px-4 py-3 text-left text-sm ${
+        danger ? "text-red-600 hover:bg-red-50" : "text-gray-700 hover:bg-gray-100"
+      } transition`}
+    >
+      {label}
+    </button>
+  );
+};
+
 export const PostActionMenu = () => {
+  const close = () => {};
+  
   return (
     <>
       {/* Click outside overlay */}

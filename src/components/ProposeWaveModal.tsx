@@ -13,6 +13,12 @@ interface Props {
 
 export interface proposedWaveDetails {
   solution: string;
+  cat?: string;
+  pingTimeStamp?: string;
+  pingTitle?: string;
+  createdAt?: string;
+  id?: string;
+  status?: "underReview" | "approved" | "rejected";
 }
 
 const ProposeWaveModal = ({

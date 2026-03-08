@@ -68,7 +68,7 @@ const AdminWaveCard = ({ waves }: AdminWaveCardProps) => {
 
             <div className="flex items-center gap-[13px]">
               <span>
-                <img src={categoryImages[waves.cat]} alt="" />
+                {waves.cat && <img src={categoryImages[waves.cat]} alt="" />}
               </span>
               {waves.cat}
             </div>
@@ -92,7 +92,7 @@ const AdminWaveCard = ({ waves }: AdminWaveCardProps) => {
                 </p>
               </div>
             </div>
-            <CollapsibleText text={waves.pingTitle} />
+            <CollapsibleText title={waves.pingTitle} />
           </div>
         </div>
 
