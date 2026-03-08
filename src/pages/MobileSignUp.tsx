@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useAuthStore } from "../stores";
 const password = "/assets/images/Password.svg";
 const email = "/assets/images/Email.svg";
 const backgroundImage = "/assets/images/backgroundImage.jpg";
@@ -10,7 +9,6 @@ import authService from "../api/services/auth.service";
 
 const MobileSignUp = () => {
   const navigate = useNavigate();
-  const login = useAuthStore((state) => state.login);
 
   const [formData, setFormData] = useState({
     email: "",
@@ -39,24 +37,13 @@ const MobileSignUp = () => {
     setLoading(true);
 
     try {
-      const response = await authService.signup(formData);
+      await authService.signup(formData);
 
-      // Check if email verification is required
-      if (response.message.includes("verify your email")) {
-        setSuccess("Account created! Please check your email to verify your account.");
-        // Clear form
-        setFormData({
-          email: "",
-          password: "",
-          firstName: "",
-          lastName: "",
-        });
-      } else if (response.token) {
-        // If token is returned, user is auto-logged in
-        await login(response.token);
-        setSuccess("Account created successfully!");
-        setTimeout(() => navigate("/stream"), 1500);
-      }
+      // After successful signup, redirect to verification screen
+      // Users always need to verify their email (Phase 5 flow)
+      navigate("/verification", {
+        state: { email: formData.email }
+      });
     } catch (err: any) {
       const status = err?.response?.status;
       const data = err?.response?.data;
@@ -64,7 +51,17 @@ const MobileSignUp = () => {
       if (status === 409 && data?.code === "ACCOUNT_EXISTS") {
         setError("An account with this email already exists");
       } else if (status === 404 && data?.code === "ORG_NOT_FOUND") {
-        setError("No organization found for this email domain. Please contact your administrator.");
+        // Redirect to Find Institution flow
+        navigate("/find-institution", {
+          state: {
+            email: formData.email,
+            userData: {
+              firstName: formData.firstName,
+              lastName: formData.lastName,
+              password: formData.password,
+            },
+          },
+        });
       } else if (status === 400) {
         setError(data?.error || "Invalid registration data. Please check all fields.");
       } else {

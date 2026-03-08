@@ -7,7 +7,6 @@ const logo = "/assets/images/Echo Logo.svg";
 const echo = "/assets/images/Echo.svg";
 import InputGroup from "../components/InputGroup";
 import { Link, useNavigate } from "react-router-dom";
-import authService from "../api/services/auth.service";
 import { useAuthStore } from "../stores";
 
 const Login = () => {
@@ -36,9 +35,37 @@ const Login = () => {
     setLoading(true);
 
     try {
-      const response = await authService.login(formData);
-      await login(response.token);
-      navigate("/soundBoard");
+      // Use the auth store's login method (which calls authService internally)
+      await login(formData);
+
+      // Get the user from the store after successful login
+      const user = useAuthStore.getState().user;
+
+      if (user) {
+        // Check if user is active and has organization - go to feed
+        if (user.status === "ACTIVE" && user.organizationId) {
+          navigate("/stream");
+        }
+        // Check if user is pending and has pending requests - go to waiting room
+        else if (user.status === "PENDING" && user.pendingRequests && user.pendingRequests.length > 0) {
+          navigate("/waiting-room");
+        }
+        // Check if user doesn't have organization - go to find institution
+        else if (!user.organizationId) {
+          navigate("/find-institution");
+        }
+        // Check if user needs email verification
+        else if (user.status === "PENDING") {
+          navigate("/verification", { state: { email: user.email } });
+        }
+        // Default fallback - go to stream
+        else {
+          navigate("/stream");
+        }
+      } else {
+        // If no user data in response, go to default route
+        navigate("/stream");
+      }
     } catch (err: any) {
       const status = err?.response?.status;
       const data = err?.response?.data;
