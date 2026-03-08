@@ -244,6 +244,7 @@ const Login = () => {
                 icon={<EmailIcon />}
                 autoComplete="email"
                 error={validationErrors.email}
+                className="w-full"
               />
 
               {/* Password Input */}
@@ -258,6 +259,7 @@ const Login = () => {
                 icon={<PasswordIcon />}
                 autoComplete="current-password"
                 error={validationErrors.password}
+                className="w-full"
               />
             </div>
 
