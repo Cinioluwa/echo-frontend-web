@@ -4,6 +4,7 @@ import AuthLayout from "../../components/auth/AuthLayout";
 import AuthCard from "../../components/auth/AuthCard";
 import AuthButton from "../../components/auth/AuthButton";
 import AuthFooter from "../../components/auth/AuthFooter";
+import { useAuthStore } from "../../stores";
 
 // Success Icon
 const SuccessIcon = () => (
@@ -21,12 +22,18 @@ const SuccessIcon = () => (
 const AllVerified: React.FC = () => {
     const location = useLocation();
     const navigate = useNavigate();
+    const { user } = useAuthStore();
 
     // Get organization name from navigation state or fallback
     const organizationName = location.state?.organizationName || "your organization";
 
     const handleGoToFeed = () => {
-        navigate("/stream"); // Navigate to main feed/stream
+        // Redirect admin users to admin feed, regular users to soundboard
+        if (user?.role === "ADMIN" || user?.role === "SUPER_ADMIN") {
+            navigate("/admin/feed");
+        } else {
+            navigate("/soundBoard");
+        }
     };
 
     return (

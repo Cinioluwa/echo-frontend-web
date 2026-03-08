@@ -102,32 +102,46 @@ const Login = () => {
    * Determines the appropriate page to redirect user after login
    */
   const redirectUser = (user: User) => {
+    console.log("redirectUser called with:", { role: user.role, status: user.status, orgId: user.organizationId });
+
+    // Admin users - go to admin feed
+    if (user.role === "ADMIN" || user.role === "SUPER_ADMIN") {
+      console.log("→ Redirecting to /admin/feed (ADMIN)");
+      navigate("/admin/feed");
+      return;
+    }
+
     // Active user with organization - go to main feed
     if (user.status === "ACTIVE" && user.organizationId) {
-      navigate("/stream");
+      console.log("→ Redirecting to /soundBoard (ACTIVE user)");
+      navigate("/soundBoard");
       return;
     }
 
     // Pending user with pending approval requests - go to waiting room
     if (user.status === "PENDING" && user.pendingRequests && user.pendingRequests.length > 0) {
+      console.log("→ Redirecting to /waiting-room (PENDING with requests)");
       navigate("/waiting-room");
       return;
     }
 
     // User without organization - needs to find institution
     if (!user.organizationId) {
+      console.log("→ Redirecting to /find-institution (no org)");
       navigate("/find-institution");
       return;
     }
 
     // Pending user without organization requests - needs email verification
     if (user.status === "PENDING") {
+      console.log("→ Redirecting to /verification (PENDING)");
       navigate("/verification", { state: { email: user.email } });
       return;
     }
 
-    // Default fallback - go to stream
-    navigate("/stream");
+    // Default fallback - go to soundboard
+    console.log("→ Redirecting to /soundBoard (fallback)");
+    navigate("/soundBoard");
   };
 
   const handleSubmitLogin = async (e: React.FormEvent) => {
@@ -157,11 +171,15 @@ const Login = () => {
       // Get the user from the store after successful login
       const user = useAuthStore.getState().user;
 
+      console.log("After login, user from store:", user ? `${user.email} (${user.role})` : "null");
+
       if (user) {
+        console.log("Redirecting user with role:", user.role);
         redirectUser(user);
       } else {
+        console.warn("No user data after login, redirecting to default soundboard");
         // If no user data in response, go to default route
-        navigate("/stream");
+        navigate("/soundBoard");
       }
     } catch (err: any) {
       console.error("Login error:", err);

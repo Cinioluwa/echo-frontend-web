@@ -52,12 +52,43 @@ export const useAuthStore = create<AuthState>()(
 
           try {
             const response = await authService.login(credentials);
+            console.log(
+              "Login successful, token received:",
+              response.token ? "✓" : "✗",
+            );
+
             set((state) => {
-              state.user = response.user || null;
               state.token = response.token;
               state.isAuthenticated = true;
-              state.isLoading = false;
             });
+
+            // Fetch user profile after login to populate user data
+            // Use getCurrentUser directly instead of fetchUserProfile to avoid isLoading guard
+            try {
+              console.log("Fetching user profile...");
+              const userData = await authService.getCurrentUser();
+              console.log(
+                "User profile loaded:",
+                userData.email,
+                "Role:",
+                userData.role,
+              );
+
+              set((state) => {
+                state.user = userData;
+                state.isLoading = false;
+              });
+            } catch (profileErr: any) {
+              console.error("Error fetching user profile:", profileErr);
+              console.error(
+                "Profile fetch error details:",
+                profileErr.response?.data,
+              );
+              // Even if profile fetch fails, keep the authenticated state
+              set((state) => {
+                state.isLoading = false;
+              });
+            }
           } catch (err: any) {
             console.error("Login error:", err);
             const errorMessage =

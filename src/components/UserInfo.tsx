@@ -10,6 +10,8 @@ const UserInfo = () => {
   const logout = useAuthStore((state) => state.logout);
   const navigate = useNavigate();
 
+  console.log("UserInfo render:", { user: user ? `${user.email} (${user.role})` : "null", isLoading, error });
+
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 

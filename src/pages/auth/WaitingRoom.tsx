@@ -64,7 +64,12 @@ const WaitingRoom: React.FC = () => {
         if (!isLoading && user) {
             // If user can access feed (status is ACTIVE), redirect to main feed
             if (canAccessFeed()) {
-                navigate("/stream");
+                // Redirect admin users to admin feed, regular users to soundboard
+                if (user.role === "ADMIN" || user.role === "SUPER_ADMIN") {
+                    navigate("/admin/feed");
+                } else {
+                    navigate("/soundBoard");
+                }
                 return;
             }
 
