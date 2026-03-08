@@ -15,6 +15,7 @@ interface AuthButtonProps {
  * AuthButton Component
  * Reusable button component for authentication screens
  * Design matches Figma: Orange (#f49b31), rounded-lg, Poppins Medium font
+ * Mobile: Smaller padding for better touch targets and visual balance
  */
 const AuthButton: React.FC<AuthButtonProps> = ({
     children,
@@ -26,7 +27,7 @@ const AuthButton: React.FC<AuthButtonProps> = ({
     fullWidth = true,
     className = "",
 }) => {
-    const baseClasses = "px-[50px] py-[15px] rounded-lg font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed text-sm";
+    const baseClasses = "px-[20px] py-[12px] sm:px-[35px] sm:py-[14px] md:px-[50px] md:py-[15px] rounded-lg font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed text-[13px] sm:text-sm min-h-[44px] sm:min-h-[50px]";
 
     const variantClasses = {
         primary: "bg-[#f49b31] text-white hover:bg-[#e08a2a] focus:ring-[#f49b31]",

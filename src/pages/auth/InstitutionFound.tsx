@@ -101,14 +101,15 @@ const InstitutionFound: React.FC = () => {
         <AuthLayout>
             <AuthCard className="max-w-[537px]">
                 {/* Success Icon */}
-                <div className="flex flex-col gap-[15px] items-center w-full">
-                    <div className="bg-[#f49b31] rounded-full w-[100px] h-[100px] flex items-center justify-center">
+                <div className="flex flex-col gap-3 sm:gap-[15px] items-center w-full">
+                    <div className="bg-[#f49b31] rounded-full w-[70px] h-[70px] sm:w-[85px] sm:h-[85px] md:w-[100px] md:h-[100px] flex items-center justify-center">
                         <svg
                             width="60"
                             height="60"
                             viewBox="0 0 60 60"
                             fill="none"
                             xmlns="http://www.w3.org/2000/svg"
+                            className="w-[45px] h-[45px] sm:w-[52px] sm:h-[52px] md:w-[60px] md:h-[60px]"
                         >
                             <path
                                 d="M10 30L25 45L50 15"
@@ -121,12 +122,12 @@ const InstitutionFound: React.FC = () => {
                     </div>
 
                     {/* Header */}
-                    <h1 className="text-[28px] font-semibold text-black leading-9 text-center min-w-full">
+                    <h1 className="text-[22px] sm:text-[26px] md:text-[28px] font-semibold text-black leading-7 sm:leading-8 md:leading-9 text-center min-w-full">
                         We Found Your Institution
                     </h1>
 
                     {/* Description */}
-                    <p className="text-[14px] font-medium text-[#4a504e] opacity-69 leading-[21px] text-center min-w-full">
+                    <p className="text-[13px] sm:text-[14px] font-medium text-[#4a504e] opacity-69 leading-5 sm:leading-[21px] text-center min-w-full">
                         You're just one step away from joining {organization.name}. Hit
                         the button and dive right in.
                     </p>
@@ -134,13 +135,13 @@ const InstitutionFound: React.FC = () => {
 
                 {/* Error Message */}
                 {error && (
-                    <div className="w-full bg-red-50 border border-red-300 rounded-xl px-5 py-[15px]">
-                        <p className="text-[13px] text-red-800 text-center">{error}</p>
+                    <div className="w-full bg-red-50 border border-red-300 rounded-xl px-4 sm:px-5 py-3 sm:py-[15px]">
+                        <p className="text-[12px] sm:text-[13px] text-red-800 text-center">{error}</p>
                     </div>
                 )}
 
                 {/* Join Button */}
-                <div className="flex flex-col gap-[15px] items-center w-full">
+                <div className="flex flex-col gap-3 sm:gap-[15px] items-center w-full">
                     <AuthButton
                         onClick={handleJoinOrganization}
                         disabled={isLoading}

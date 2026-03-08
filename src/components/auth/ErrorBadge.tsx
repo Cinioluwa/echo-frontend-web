@@ -32,14 +32,14 @@ const ErrorBadge: React.FC<ErrorBadgeProps> = ({
         <div
             className={`
         ${styles.bg} border ${styles.border} rounded-xl
-        px-[15px] py-[10px]
+        px-[12px] sm:px-[15px] py-[8px] sm:py-[10px]
         flex items-center justify-center
         ${className}
       `}
             role="alert"
         >
             <p
-                className={`${styles.text} text-[9px] font-medium uppercase text-center leading-tight`}
+                className={`${styles.text} text-[8px] sm:text-[9px] font-medium uppercase text-center leading-tight`}
                 style={{ fontFamily: 'Poppins, sans-serif', lineHeight: 1.1 }}
             >
                 {message}

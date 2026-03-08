@@ -162,13 +162,13 @@ const SignUp: React.FC = () => {
         {/* Title */}
         <div className="text-center w-full">
           <h1
-            className="text-[28px] font-semibold text-[#4a504e] mb-2.5"
+            className="text-[22px] sm:text-[26px] md:text-[28px] font-semibold text-[#4a504e] mb-2.5"
             style={{ fontFamily: 'Poppins, sans-serif' }}
           >
             Sign up to Echo
           </h1>
           <p
-            className="text-[13px] text-[#838383] font-normal"
+            className="text-[12px] sm:text-[13px] text-[#838383] font-normal"
             style={{ fontFamily: 'Poppins, sans-serif' }}
           >
             Create waves, rally support, track change
@@ -190,16 +190,16 @@ const SignUp: React.FC = () => {
         </div>
 
         {/* Divider */}
-        <div className="w-full flex items-center gap-4">
+        <div className="w-full flex items-center gap-3 sm:gap-4">
           <div className="flex-1 h-px bg-[#e0e0e0]"></div>
-          <span className="text-[13px] text-[#838383] font-normal" style={{ fontFamily: 'Poppins, sans-serif' }}>
+          <span className="text-[12px] sm:text-[13px] text-[#838383] font-normal" style={{ fontFamily: 'Poppins, sans-serif' }}>
             or
           </span>
           <div className="flex-1 h-px bg-[#e0e0e0]"></div>
         </div>
 
         {/* Sign Up Form */}
-        <form onSubmit={handleSubmitSignUp} className="w-full flex flex-col gap-5">
+        <form onSubmit={handleSubmitSignUp} className="w-full flex flex-col gap-3.5 sm:gap-4 md:gap-5">
           {/* First Name */}
           <AuthInput
             type="text"
@@ -253,9 +253,9 @@ const SignUp: React.FC = () => {
 
           {/* Password Requirements */}
           {formData.password && (
-            <div className="w-full bg-[#fef5ea] border border-[#ffcd71] rounded-xl px-[15px] py-3">
+            <div className="w-full bg-[#fef5ea] border border-[#ffcd71] rounded-xl px-[12px] sm:px-[15px] py-2.5 sm:py-3">
               <p
-                className="text-[11px] font-medium text-[#4a504e] mb-2"
+                className="text-[10px] sm:text-[11px] font-medium text-[#4a504e] mb-1.5 sm:mb-2"
                 style={{ fontFamily: 'Poppins, sans-serif' }}
               >
                 Password must contain:
@@ -306,7 +306,7 @@ const SignUp: React.FC = () => {
 
         {/* Login Link */}
         <div className="text-center">
-          <p className="text-[13px] text-[#838383]" style={{ fontFamily: 'Poppins, sans-serif' }}>
+          <p className="text-[12px] sm:text-[13px] text-[#838383]" style={{ fontFamily: 'Poppins, sans-serif' }}>
             Already have an account?{' '}
             <Link to="/login" className="text-[#f49b31] font-medium hover:underline">
               Log in

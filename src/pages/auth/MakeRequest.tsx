@@ -170,10 +170,10 @@ const MakeRequest: React.FC = () => {
             <AuthCard className="max-w-[537px]">
                 {/* Header */}
                 <div className="flex flex-col gap-2.5 items-center text-center w-full">
-                    <h1 className="text-[28px] font-semibold text-black leading-9">
+                    <h1 className="text-[22px] sm:text-[26px] md:text-[28px] font-semibold text-black leading-7 sm:leading-8 md:leading-9">
                         Request New Institution
                     </h1>
-                    <p className="text-[16px] font-medium text-[#4a504e] opacity-69 leading-[21px]">
+                    <p className="text-[14px] sm:text-[15px] md:text-[16px] font-medium text-[#4a504e] opacity-69 leading-5 sm:leading-[21px]">
                         Can't find your institution? Request to add it to Echo
                     </p>
                 </div>
@@ -186,13 +186,13 @@ const MakeRequest: React.FC = () => {
                 )}
 
                 {/* Form */}
-                <form onSubmit={handleSubmit} className="flex flex-col gap-5 w-full">
+                <form onSubmit={handleSubmit} className="flex flex-col gap-4 sm:gap-5 w-full">
                     {/* Institution Name */}
-                    <div className="flex flex-col gap-[15px] w-full">
+                    <div className="flex flex-col gap-3 sm:gap-[15px] w-full">
                         <div className="flex flex-col gap-[5px] w-full">
                             <label
                                 htmlFor="organizationName"
-                                className="text-[14px] font-medium text-[#4a504e]"
+                                className="text-[13px] sm:text-[14px] font-medium text-[#4a504e]"
                                 style={{ fontFamily: 'Poppins, sans-serif' }}
                             >
                                 Institution Name <span className="text-red-500">*</span>
@@ -224,11 +224,11 @@ const MakeRequest: React.FC = () => {
                     </div>
 
                     {/* Website */}
-                    <div className="flex flex-col gap-[15px] w-full">
+                    <div className="flex flex-col gap-3 sm:gap-[15px] w-full">
                         <div className="flex flex-col gap-[5px] w-full">
                             <label
                                 htmlFor="website"
-                                className="text-[14px] font-medium text-[#4a504e]"
+                                className="text-[13px] sm:text-[14px] font-medium text-[#4a504e]"
                                 style={{ fontFamily: 'Poppins, sans-serif' }}
                             >
                                 Website (Optional)
@@ -245,11 +245,11 @@ const MakeRequest: React.FC = () => {
                     </div>
 
                     {/* Role */}
-                    <div className="flex flex-col gap-[15px] w-full">
+                    <div className="flex flex-col gap-3 sm:gap-[15px] w-full">
                         <div className="flex flex-col gap-[5px] w-full">
                             <label
                                 htmlFor="role"
-                                className="text-[14px] font-medium text-[#4a504e]"
+                                className="text-[13px] sm:text-[14px] font-medium text-[#4a504e]"
                                 style={{ fontFamily: 'Poppins, sans-serif' }}
                             >
                                 Your Role (Optional)
@@ -266,16 +266,16 @@ const MakeRequest: React.FC = () => {
                     </div>
 
                     {/* Additional Notes */}
-                    <div className="flex flex-col gap-[15px] w-full">
+                    <div className="flex flex-col gap-3 sm:gap-[15px] w-full">
                         <div className="flex flex-col gap-[5px] w-full">
                             <label
                                 htmlFor="additionalNotes"
-                                className="text-[14px] font-medium text-[#4a504e]"
+                                className="text-[13px] sm:text-[14px] font-medium text-[#4a504e]"
                                 style={{ fontFamily: 'Poppins, sans-serif' }}
                             >
                                 Additional Notes (Optional)
                             </label>
-                            <div className="bg-[#fbfbfb] border border-[#cacaca] rounded-xl p-[21px] focus-within:border-[#f49b31] focus-within:ring-1 focus-within:ring-[#f49b31] transition-colors duration-200">
+                            <div className="bg-[#fbfbfb] border border-[#cacaca] rounded-xl p-[15px] sm:p-[18px] md:p-[21px] focus-within:border-[#f49b31] focus-within:ring-1 focus-within:ring-[#f49b31] transition-colors duration-200">
                                 <textarea
                                     id="additionalNotes"
                                     name="additionalNotes"
@@ -283,7 +283,7 @@ const MakeRequest: React.FC = () => {
                                     onChange={(e) => setAdditionalNotes(e.target.value)}
                                     placeholder="Any additional information that might help us..."
                                     rows={4}
-                                    className="w-full bg-transparent border-none outline-none text-[13px] text-[#4a504e] placeholder:text-[#737373] placeholder:italic resize-none"
+                                    className="w-full bg-transparent border-none outline-none text-[12px] sm:text-[13px] text-[#4a504e] placeholder:text-[#737373] placeholder:italic resize-none"
                                     style={{ fontFamily: 'Poppins, sans-serif', fontWeight: 500 }}
                                 />
                             </div>

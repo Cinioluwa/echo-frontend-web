@@ -9,7 +9,7 @@ import AuthFooter from "../../components/auth/AuthFooter";
 
 // Email Icon
 const EmailIcon = () => (
-    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-10 h-10 sm:w-12 sm:h-12">
         <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" stroke="#f49b31" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
         <polyline points="22,6 12,13 2,6" stroke="#f49b31" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
@@ -127,19 +127,19 @@ const Verification: React.FC = () => {
                 {/* Title */}
                 <div className="text-center w-full">
                     <h1
-                        className="text-[28px] font-semibold text-[#4a504e] mb-2.5"
+                        className="text-[22px] sm:text-[26px] md:text-[28px] font-semibold text-[#4a504e] mb-2.5"
                         style={{ fontFamily: 'Poppins, sans-serif' }}
                     >
                         Verify Your Email
                     </h1>
                     <p
-                        className="text-[13px] text-[#838383] font-normal leading-relaxed"
+                        className="text-[12px] sm:text-[13px] text-[#838383] font-normal leading-relaxed"
                         style={{ fontFamily: 'Poppins, sans-serif' }}
                     >
                         We've sent a verification link to
                     </p>
                     <p
-                        className="text-[14px] text-[#f49b31] font-semibold mt-[5px]"
+                        className="text-[13px] sm:text-[14px] text-[#f49b31] font-semibold mt-[5px]"
                         style={{ fontFamily: 'Poppins, sans-serif' }}
                     >
                         {email}
@@ -147,7 +147,7 @@ const Verification: React.FC = () => {
                 </div>
 
                 {/* Instructions */}
-                <div className="w-full bg-[#fef5ea] border border-[#ffcd71] rounded-xl px-5 py-[15px]">
+                <div className="w-full bg-[#fef5ea] border border-[#ffcd71] rounded-xl px-4 sm:px-5 py-3 sm:py-[15px]">
                     <p
                         className="text-[12px] text-[#4a504e] text-center leading-relaxed"
                         style={{ fontFamily: 'Poppins, sans-serif' }}

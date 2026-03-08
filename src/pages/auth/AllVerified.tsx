@@ -7,7 +7,7 @@ import AuthFooter from "../../components/auth/AuthFooter";
 
 // Success Icon
 const SuccessIcon = () => (
-    <svg width="64" height="64" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <svg width="64" height="64" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16">
         <circle cx="12" cy="12" r="10" stroke="#10b981" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none" />
         <path d="M9 12l2 2 4-4" stroke="#10b981" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
@@ -40,13 +40,13 @@ const AllVerified: React.FC = () => {
                 {/* Title */}
                 <div className="text-center w-full">
                     <h1
-                        className="text-[32px] font-bold text-[#10b981] mb-[15px]"
+                        className="text-[26px] sm:text-[30px] md:text-[32px] font-bold text-[#10b981] mb-3 sm:mb-[15px]"
                         style={{ fontFamily: 'Poppins, sans-serif' }}
                     >
                         All Verified!
                     </h1>
                     <p
-                        className="text-[14px] text-[#4a504e] font-medium leading-relaxed"
+                        className="text-[13px] sm:text-[14px] text-[#4a504e] font-medium leading-relaxed"
                         style={{ fontFamily: 'Poppins, sans-serif' }}
                     >
                         Your email has been successfully verified.
@@ -54,9 +54,9 @@ const AllVerified: React.FC = () => {
                 </div>
 
                 {/* Welcome Message */}
-                <div className="w-full bg-[#f0fdf4] border border-[#86efac] rounded-xl px-5 py-[18px]">
+                <div className="w-full bg-[#f0fdf4] border border-[#86efac] rounded-xl px-4 sm:px-5 py-4 sm:py-[18px]">
                     <p
-                        className="text-[13px] text-[#4a504e] text-center leading-relaxed"
+                        className="text-[12px] sm:text-[13px] text-[#4a504e] text-center leading-relaxed"
                         style={{ fontFamily: 'Poppins, sans-serif' }}
                     >
                         Welcome to <span className="font-semibold text-[#f49b31]">{organizationName}</span>!
@@ -76,7 +76,7 @@ const AllVerified: React.FC = () => {
 
                 {/* Additional Info */}
                 <div className="text-center">
-                    <p className="text-[12px] text-[#838383] leading-relaxed" style={{ fontFamily: 'Poppins, sans-serif' }}>
+                    <p className="text-[11px] sm:text-[12px] text-[#838383] leading-relaxed" style={{ fontFamily: 'Poppins, sans-serif' }}>
                         Start making your voice heard by creating pings, proposing waves, and engaging with your community.
                     </p>
                 </div>

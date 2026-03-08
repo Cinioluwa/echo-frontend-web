@@ -141,10 +141,10 @@ const FindInstitution: React.FC = () => {
             <AuthCard className="max-w-[537px]">
                 {/* Header */}
                 <div className="flex flex-col gap-2.5 items-center text-center w-full">
-                    <h1 className="text-[28px] font-semibold text-black leading-9">
+                    <h1 className="text-[22px] sm:text-[26px] md:text-[28px] font-semibold text-black leading-7 sm:leading-8 md:leading-9">
                         Find your Institution
                     </h1>
-                    <p className="text-[16px] font-medium text-[#4a504e] opacity-69 leading-[21px]">
+                    <p className="text-[14px] sm:text-[15px] md:text-[16px] font-medium text-[#4a504e] opacity-69 leading-5 sm:leading-[21px]">
                         Search for your institution to join the discussion
                     </p>
                 </div>
@@ -157,14 +157,14 @@ const FindInstitution: React.FC = () => {
                 )}
 
                 {/* Form */}
-                <div className="flex flex-col gap-5 items-center w-full">
+                <div className="flex flex-col gap-4 sm:gap-5 items-center w-full">
                     {/* Institution Selector */}
-                    <div className="flex flex-col gap-[15px] items-start w-full">
+                    <div className="flex flex-col gap-3 sm:gap-[15px] items-start w-full">
                         <div className="flex flex-col gap-[5px] items-end w-full">
                             {/* Dropdown Input */}
                             <div className="relative w-full">
                                 <div
-                                    className="bg-[#fbfbfb] border border-[#cacaca] flex h-[59px] items-center justify-between pl-[30px] pr-[21px] py-[11px] rounded-xl w-full cursor-pointer"
+                                    className="bg-[#fbfbfb] border border-[#cacaca] flex h-[50px] sm:h-[55px] md:h-[59px] items-center justify-between pl-[15px] sm:pl-[25px] md:pl-[30px] pr-[15px] sm:pr-[18px] md:pr-[21px] py-[11px] rounded-xl w-full cursor-pointer"
                                     onClick={() => setShowDropdown(!showDropdown)}
                                 >
                                     <input
@@ -175,7 +175,7 @@ const FindInstitution: React.FC = () => {
                                             setSearchQuery(e.target.value);
                                             setShowDropdown(true);
                                         }}
-                                        className="flex-1 bg-transparent text-[13px] font-medium text-[#626665] placeholder:text-[#626665] placeholder:italic outline-none"
+                                        className="flex-1 bg-transparent text-[12px] sm:text-[13px] font-medium text-[#626665] placeholder:text-[#626665] placeholder:italic outline-none"
                                         disabled={isLoading}
                                     />
                                     <svg
@@ -199,24 +199,24 @@ const FindInstitution: React.FC = () => {
 
                                 {/* Dropdown Menu */}
                                 {showDropdown && (
-                                    <div className="absolute z-10 w-full mt-2 bg-white border border-[#cacaca] rounded-xl shadow-lg max-h-[300px] overflow-y-auto">
+                                    <div className="absolute z-10 w-full mt-2 bg-white border border-[#cacaca] rounded-xl shadow-lg max-h-[250px] sm:max-h-[300px] overflow-y-auto">
                                         {isLoading ? (
-                                            <div className="px-[30px] py-[15px] text-[13px] text-[#626665]">
+                                            <div className="px-[20px] sm:px-[25px] md:px-[30px] py-[12px] sm:py-[15px] text-[12px] sm:text-[13px] text-[#626665]">
                                                 Loading...
                                             </div>
                                         ) : organizations.length === 0 ? (
-                                            <div className="px-[30px] py-[15px] text-[13px] text-[#626665]">
+                                            <div className="px-[20px] sm:px-[25px] md:px-[30px] py-[12px] sm:py-[15px] text-[12px] sm:text-[13px] text-[#626665]">
                                                 No institutions found
                                             </div>
                                         ) : (
                                             organizations.map((org) => (
                                                 <div
                                                     key={org.id}
-                                                    className="px-[30px] py-[15px] text-[13px] text-[#626665] hover:bg-[#fbfbfb] cursor-pointer border-b border-[#f0f0f0] last:border-b-0"
+                                                    className="px-[20px] sm:px-[25px] md:px-[30px] py-[12px] sm:py-[15px] text-[12px] sm:text-[13px] text-[#626665] hover:bg-[#fbfbfb] cursor-pointer border-b border-[#f0f0f0] last:border-b-0"
                                                     onClick={() => handleSelectOrganization(org)}
                                                 >
                                                     <div className="font-medium">{org.name}</div>
-                                                    <div className="text-[11px] text-[#999] mt-1">
+                                                    <div className="text-[10px] sm:text-[11px] text-[#999] mt-1">
                                                         @{org.domain}
                                                     </div>
                                                 </div>
@@ -236,7 +236,7 @@ const FindInstitution: React.FC = () => {
                                         },
                                     })
                                 }
-                                className="text-[9px] font-medium text-[#f49b31] leading-[13px] hover:underline"
+                                className="text-[9px] sm:text-[10px] font-medium text-[#f49b31] leading-[13px] hover:underline mt-1"
                             >
                                 Can't find Institution?{" "}
                                 <span className="font-semibold">Make Request</span>

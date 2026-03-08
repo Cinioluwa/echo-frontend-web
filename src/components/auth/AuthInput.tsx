@@ -19,6 +19,7 @@ interface AuthInputProps {
  * AuthInput Component
  * Styled input with icon and vertical separator matching Figma design
  * Design: Light gray background (#fbfbfb), gray border (#cacaca), icon with separator line
+ * Mobile: Responsive sizing and padding, minimum touch target of 44px
  */
 const AuthInput = forwardRef<HTMLInputElement, AuthInputProps>(
     (
@@ -41,19 +42,21 @@ const AuthInput = forwardRef<HTMLInputElement, AuthInputProps>(
         return (
             <div className={className}>
                 <div className={`
-          bg-[#fbfbfb] border rounded-xl h-[59px]
-          flex items-center gap-[13px] px-[21px] py-[11px]
+          bg-[#fbfbfb] border rounded-xl
+          h-[50px] sm:h-[55px] md:h-[59px]
+          flex items-center gap-[10px] sm:gap-[12px] md:gap-[13px]
+          px-[15px] sm:px-[18px] md:px-[21px] py-[11px]
           ${error ? "border-red-500" : "border-[#cacaca]"}
           transition-colors duration-200
           focus-within:border-[#f49b31] focus-within:ring-1 focus-within:ring-[#f49b31]
         `}>
                     {icon && (
                         <>
-                            <div className="shrink-0 w-[26px] h-[26px] flex items-center justify-center text-[#cacaca]">
+                            <div className="shrink-0 w-[22px] h-[22px] sm:w-[24px] sm:h-[24px] md:w-[26px] md:h-[26px] flex items-center justify-center text-[#cacaca]">
                                 {icon}
                             </div>
                             {/* Vertical separator line */}
-                            <div className="w-0 h-[38px] flex items-center justify-center">
+                            <div className="w-0 h-[32px] sm:h-[36px] md:h-[38px] flex items-center justify-center">
                                 <div className="h-full w-[1px] bg-[#e0e0e0]"></div>
                             </div>
                         </>
@@ -72,7 +75,7 @@ const AuthInput = forwardRef<HTMLInputElement, AuthInputProps>(
                         autoComplete={autoComplete}
                         className="
               flex-1 bg-transparent border-none outline-none
-              text-[13px] text-[#4a504e]
+              text-[12px] sm:text-[13px] text-[#4a504e]
               placeholder:text-[#737373] placeholder:italic
               disabled:cursor-not-allowed
             "
@@ -80,7 +83,7 @@ const AuthInput = forwardRef<HTMLInputElement, AuthInputProps>(
                     />
                 </div>
                 {error && (
-                    <p className="mt-2 text-sm text-red-600" role="alert" style={{ fontFamily: 'Poppins, sans-serif' }}>
+                    <p className="mt-2 text-xs sm:text-sm text-red-600" role="alert" style={{ fontFamily: 'Poppins, sans-serif' }}>
                         {error}
                     </p>
                 )}

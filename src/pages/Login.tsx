@@ -168,13 +168,13 @@ const Login = () => {
         {/* Header Section */}
         <div className="flex flex-col gap-2.5 items-center text-center w-full">
           <h1
-            className="text-[28px] leading-9 text-black"
+            className="text-[22px] sm:text-[26px] md:text-[28px] leading-7 sm:leading-8 md:leading-9 text-black"
             style={{ fontFamily: "Poppins, sans-serif", fontWeight: 600 }}
           >
             Enter the Pulse
           </h1>
           <p
-            className="text-base leading-[21px] text-[#4a504e] opacity-[0.69]"
+            className="text-[14px] sm:text-base leading-5 sm:leading-[21px] text-[#4a504e] opacity-[0.69]"
             style={{ fontFamily: "Poppins, sans-serif", fontWeight: 500 }}
           >
             Pick up where you left off at your institution
@@ -189,9 +189,9 @@ const Login = () => {
         )}
 
         {/* Form Section */}
-        <div className="flex flex-col gap-[30px] items-center w-full">
+        <div className="flex flex-col gap-5 sm:gap-6 md:gap-[30px] items-center w-full">
           {/* Input Fields */}
-          <div className="flex flex-col gap-5 items-start w-full">
+          <div className="flex flex-col gap-3.5 sm:gap-4 md:gap-5 items-start w-full">
             {/* Google OAuth Button */}
             <GoogleButton
               onClick={handleGoogleLogin}
@@ -240,10 +240,10 @@ const Login = () => {
         </div>
 
         {/* Footer Section */}
-        <div className="flex flex-col gap-5 items-center px-5 w-full">
+        <div className="flex flex-col gap-4 sm:gap-5 items-center px-3 sm:px-5 w-full">
           {/* Terms and Privacy */}
           <div
-            className="flex flex-col gap-[15px] items-center text-center text-sm leading-3.5"
+            className="flex flex-col gap-3 sm:gap-[15px] items-center text-center text-xs sm:text-sm leading-3.5"
             style={{ fontFamily: "Poppins, sans-serif", fontWeight: 500 }}
           >
             <p className="text-[#838383]">By creating an account, you agree to Echo</p>
@@ -260,7 +260,7 @@ const Login = () => {
 
           {/* Sign Up Link */}
           <div
-            className="text-center text-sm"
+            className="text-center text-xs sm:text-sm"
             style={{ fontFamily: "Poppins, sans-serif", fontWeight: 500 }}
           >
             <span className="text-[#838383]">Don't have an account? </span>
