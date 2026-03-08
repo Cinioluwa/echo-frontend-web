@@ -9,8 +9,9 @@ import Feed from "../Admin/Pages/Feed";
 import FollowUp from "../Admin/Pages/FollowUp";
 import Overview from "../Admin/Pages/Overview";
 
-// Auth flow pages (to be created in Phase 2+)
+// Auth flow pages
 import Verification from "../pages/auth/Verification";
+import SignUpError from "../pages/auth/SignUpError";
 import FindInstitution from "../pages/auth/FindInstitution";
 import InstitutionFound from "../pages/auth/InstitutionFound";
 import MakeRequest from "../pages/auth/MakeRequest";
@@ -34,6 +35,10 @@ const router = createBrowserRouter([
     element: <SignUp />,
   },
   // Auth flow routes
+  {
+    path: "/signup-error",
+    element: <SignUpError />,
+  },
   {
     path: "/verification",
     element: <Verification />,

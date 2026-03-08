@@ -1,19 +1,92 @@
 import React from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import AuthLayout from "../../components/auth/AuthLayout";
+import AuthCard from "../../components/auth/AuthCard";
+import AuthButton from "../../components/auth/AuthButton";
+import AuthFooter from "../../components/auth/AuthFooter";
+
+// Success Icon
+const SuccessIcon = () => (
+    <svg width="64" height="64" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="12" cy="12" r="10" stroke="#10b981" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+        <path d="M9 12l2 2 4-4" stroke="#10b981" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+);
 
 /**
- * All Verified Screen
+ * AllVerified Component - Phase 2 Implementation
  * Success screen after email verification (OPEN policy organizations)
- * Implementation: Phase 2
+ * Figma: Desktop (3819:8192) | Mobile (3835:11221)
  */
 const AllVerified: React.FC = () => {
+    const location = useLocation();
+    const navigate = useNavigate();
+
+    // Get organization name from navigation state or fallback
+    const organizationName = location.state?.organizationName || "your organization";
+
+    const handleGoToFeed = () => {
+        navigate("/stream"); // Navigate to main feed/stream
+    };
+
     return (
-        <div className="min-h-screen flex items-center justify-center">
-            <div className="text-center">
-                <h1 className="text-2xl font-bold mb-4">All Verified!</h1>
-                <p className="text-gray-600">This screen will be implemented in Phase 2</p>
-            </div>
-        </div>
+        <AuthLayout>
+            <AuthCard>
+                {/* Success Icon */}
+                <div className="flex items-center justify-center">
+                    <SuccessIcon />
+                </div>
+
+                {/* Title */}
+                <div className="text-center w-full">
+                    <h1
+                        className="text-[32px] font-bold text-[#10b981] mb-[15px]"
+                        style={{ fontFamily: 'Poppins, sans-serif' }}
+                    >
+                        All Verified!
+                    </h1>
+                    <p
+                        className="text-[14px] text-[#4a504e] font-medium leading-relaxed"
+                        style={{ fontFamily: 'Poppins, sans-serif' }}
+                    >
+                        Your email has been successfully verified.
+                    </p>
+                </div>
+
+                {/* Welcome Message */}
+                <div className="w-full bg-[#f0fdf4] border border-[#86efac] rounded-xl px-5 py-[18px]">
+                    <p
+                        className="text-[13px] text-[#4a504e] text-center leading-relaxed"
+                        style={{ fontFamily: 'Poppins, sans-serif' }}
+                    >
+                        Welcome to <span className="font-semibold text-[#f49b31]">{organizationName}</span>!
+                        You can now access your feed and start creating waves.
+                    </p>
+                </div>
+
+                {/* Go to Feed Button */}
+                <div className="w-full">
+                    <AuthButton
+                        type="button"
+                        onClick={handleGoToFeed}
+                    >
+                        Go to Feed
+                    </AuthButton>
+                </div>
+
+                {/* Additional Info */}
+                <div className="text-center">
+                    <p className="text-[12px] text-[#838383] leading-relaxed" style={{ fontFamily: 'Poppins, sans-serif' }}>
+                        Start making your voice heard by creating pings, proposing waves, and engaging with your community.
+                    </p>
+                </div>
+
+                {/* Footer */}
+                <AuthFooter />
+            </AuthCard>
+        </AuthLayout>
     );
 };
 
 export default AllVerified;
+
