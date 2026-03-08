@@ -13,6 +13,7 @@ import Overview from "../Admin/Pages/Overview";
 import Verification from "../pages/auth/Verification";
 import SignUpError from "../pages/auth/SignUpError";
 import FindInstitution from "../pages/auth/FindInstitution";
+import FindInstitutionError from "../pages/auth/FindInstitutionError";
 import InstitutionFound from "../pages/auth/InstitutionFound";
 import MakeRequest from "../pages/auth/MakeRequest";
 import RequestSubmitted from "../pages/auth/RequestSubmitted";
@@ -46,6 +47,10 @@ const router = createBrowserRouter([
   {
     path: "/find-institution",
     element: <FindInstitution />,
+  },
+  {
+    path: "/find-institution-error",
+    element: <FindInstitutionError />,
   },
   {
     path: "/institution-found",
