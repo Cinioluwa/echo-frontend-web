@@ -8,11 +8,16 @@ interface GoogleButtonProps {
 }
 
 /**
- * GoogleButton Component
+ * GoogleButton Component - Phase 10 Enhanced
  * Google OAuth button matching Figma design
  * Design: Orange background (#f49b31), white text, Google icon in white square
+ * 
+ * Phase 10 Enhancements:
+ * - Added hover scale effect
+ * - Enhanced ARIA labels for screen readers
+ * - Performance optimized with React.memo
  */
-const GoogleButton: React.FC<GoogleButtonProps> = ({
+const GoogleButton: React.FC<GoogleButtonProps> = React.memo(({
     onClick,
     disabled = false,
     loading = false,
@@ -26,13 +31,16 @@ const GoogleButton: React.FC<GoogleButtonProps> = ({
             className="
         w-full h-[50px] sm:h-[53px] md:h-[55px] bg-[#f49b31] rounded-xl
         font-medium text-white text-[13px] sm:text-sm
-        hover:bg-[#e08a2a]
+        hover:bg-[#e08a2a] hover:shadow-md
         focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#f49b31]
         disabled:opacity-50 disabled:cursor-not-allowed
-        transition-all duration-200
+        transition-all duration-200 active:scale-[0.98]
         flex items-center justify-center gap-3 sm:gap-4 md:gap-5 px-[30px] sm:px-[45px] md:px-[60px] py-[11px]
       "
             style={{ fontFamily: 'Poppins, sans-serif' }}
+            aria-label={text}
+            aria-busy={loading}
+            aria-disabled={disabled || loading}
         >
             {loading ? (
                 <div className="flex items-center">
@@ -41,6 +49,7 @@ const GoogleButton: React.FC<GoogleButtonProps> = ({
                         xmlns="http://www.w3.org/2000/svg"
                         fill="none"
                         viewBox="0 0 24 24"
+                        aria-hidden="true"
                     >
                         <circle
                             className="opacity-25"
@@ -62,7 +71,12 @@ const GoogleButton: React.FC<GoogleButtonProps> = ({
                 <>
                     {/* White square with Google icon */}
                     <div className="bg-white rounded-md w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center shrink-0">
-                        <svg className="w-4 h-4 sm:w-5 sm:h-5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <svg
+                            className="w-4 h-4 sm:w-5 sm:h-5"
+                            viewBox="0 0 24 24"
+                            xmlns="http://www.w3.org/2000/svg"
+                            aria-hidden="true"
+                        >
                             <path
                                 d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
                                 fill="#4285F4"
@@ -86,6 +100,8 @@ const GoogleButton: React.FC<GoogleButtonProps> = ({
             )}
         </button>
     );
-};
+});
+
+GoogleButton.displayName = "GoogleButton";
 
 export default GoogleButton;

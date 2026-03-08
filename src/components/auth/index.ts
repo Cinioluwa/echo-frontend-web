@@ -13,3 +13,4 @@ export { default as EchoLogo } from "./EchoLogo";
 export { default as AuthFooter } from "./AuthFooter";
 export { default as ErrorBoundary } from "./ErrorBoundary";
 export { default as OfflineIndicator } from "./OfflineIndicator";
+export { default as SkipLink } from "./SkipLink";

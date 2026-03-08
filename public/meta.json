@@ -1,0 +1,19 @@
+{
+  "title": "Echo - Institutional Social Platform",
+  "description": "Join your institution's social network. Connect, share, and engage with your community on Echo.",
+  "keywords": "social network, institution, university, community, Echo",
+  "author": "Echo Team",
+  "viewport": "width=device-width, initial-scale=1.0",
+  "theme-color": "#f49b31",
+  "og": {
+    "title": "Echo - Your Institutional Social Platform",
+    "description": "Connect with your institution's community on Echo",
+    "type": "website",
+    "image": "/assets/images/og-image.png"
+  },
+  "twitter": {
+    "card": "summary_large_image",
+    "title": "Echo - Your Institutional Social Platform",
+    "description": "Connect with your institution's community on Echo"
+  }
+}

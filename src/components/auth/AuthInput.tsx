@@ -16,10 +16,15 @@ interface AuthInputProps {
 }
 
 /**
- * AuthInput Component
+ * AuthInput Component - Phase 10 Enhanced
  * Styled input with icon and vertical separator matching Figma design
  * Design: Light gray background (#fbfbfb), gray border (#cacaca), icon with separator line
  * Mobile: Responsive sizing and padding, minimum touch target of 44px
+ * 
+ * Phase 10 Enhancements:
+ * - Enhanced ARIA labels and descriptions for screen readers
+ * - Improved error messaging with aria-live regions
+ * - Better focus management and keyboard navigation
  */
 const AuthInput = forwardRef<HTMLInputElement, AuthInputProps>(
     (
@@ -39,6 +44,8 @@ const AuthInput = forwardRef<HTMLInputElement, AuthInputProps>(
         },
         ref
     ) => {
+        const errorId = error ? `${name}-error` : undefined;
+
         return (
             <div className={className}>
                 <div className={`
@@ -73,6 +80,10 @@ const AuthInput = forwardRef<HTMLInputElement, AuthInputProps>(
                         required={required}
                         disabled={disabled}
                         autoComplete={autoComplete}
+                        aria-label={placeholder || name}
+                        aria-required={required}
+                        aria-invalid={!!error}
+                        aria-describedby={errorId}
                         className="
               flex-1 bg-transparent border-none outline-none
               text-[12px] sm:text-[13px] text-[#4a504e]
@@ -83,7 +94,13 @@ const AuthInput = forwardRef<HTMLInputElement, AuthInputProps>(
                     />
                 </div>
                 {error && (
-                    <p className="mt-2 text-xs sm:text-sm text-red-600" role="alert" style={{ fontFamily: 'Poppins, sans-serif' }}>
+                    <p
+                        id={errorId}
+                        className="mt-2 text-xs sm:text-sm text-red-600 animate-slide-up"
+                        role="alert"
+                        aria-live="polite"
+                        style={{ fontFamily: 'Poppins, sans-serif' }}
+                    >
                         {error}
                     </p>
                 )}

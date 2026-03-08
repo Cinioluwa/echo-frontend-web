@@ -1,24 +1,39 @@
+import { lazy, Suspense } from "react";
 import { createBrowserRouter } from "react-router-dom";
+import LoadingFallback from "./auth/LoadingFallback";
+
+// Eager load critical auth pages for immediate user experience
 import Login from "../pages/Login";
 import SignUp from "../pages/SignUp";
-import WaveHistory from "../pages/WaveHistory";
-import Stream from "../pages/Stream";
-import SoundBoard from "../pages/SoundBoard";
-import Profile from "../pages/Profile";
-import Feed from "../Admin/Pages/Feed";
-import FollowUp from "../Admin/Pages/FollowUp";
-import Overview from "../Admin/Pages/Overview";
 
-// Auth flow pages
-import Verification from "../pages/auth/Verification";
-import SignUpError from "../pages/auth/SignUpError";
-import FindInstitution from "../pages/auth/FindInstitution";
-import FindInstitutionError from "../pages/auth/FindInstitutionError";
-import InstitutionFound from "../pages/auth/InstitutionFound";
-import MakeRequest from "../pages/auth/MakeRequest";
-import RequestSubmitted from "../pages/auth/RequestSubmitted";
-import AllVerified from "../pages/auth/AllVerified";
-import WaitingRoom from "../pages/auth/WaitingRoom";
+// Lazy load auth flow pages - Phase 10 Performance Optimization
+const Verification = lazy(() => import("../pages/auth/Verification"));
+const SignUpError = lazy(() => import("../pages/auth/SignUpError"));
+const FindInstitution = lazy(() => import("../pages/auth/FindInstitution"));
+const FindInstitutionError = lazy(() => import("../pages/auth/FindInstitutionError"));
+const InstitutionFound = lazy(() => import("../pages/auth/InstitutionFound"));
+const MakeRequest = lazy(() => import("../pages/auth/MakeRequest"));
+const RequestSubmitted = lazy(() => import("../pages/auth/RequestSubmitted"));
+const AllVerified = lazy(() => import("../pages/auth/AllVerified"));
+const WaitingRoom = lazy(() => import("../pages/auth/WaitingRoom"));
+
+// Lazy load main app pages
+const WaveHistory = lazy(() => import("../pages/WaveHistory"));
+const Stream = lazy(() => import("../pages/Stream"));
+const SoundBoard = lazy(() => import("../pages/SoundBoard"));
+const Profile = lazy(() => import("../pages/Profile"));
+
+// Lazy load admin pages
+const Feed = lazy(() => import("../Admin/Pages/Feed"));
+const FollowUp = lazy(() => import("../Admin/Pages/FollowUp"));
+const Overview = lazy(() => import("../Admin/Pages/Overview"));
+
+// Helper to wrap lazy-loaded components with Suspense
+const withSuspense = (Component: React.LazyExoticComponent<React.ComponentType<any>>) => (
+  <Suspense fallback={<LoadingFallback />}>
+    <Component />
+  </Suspense>
+);
 
 const router = createBrowserRouter([
   {
@@ -35,58 +50,58 @@ const router = createBrowserRouter([
     path: "/signUp",
     element: <SignUp />,
   },
-  // Auth flow routes
+  // Auth flow routes with lazy loading
   {
     path: "/signup-error",
-    element: <SignUpError />,
+    element: withSuspense(SignUpError),
   },
   {
     path: "/verification",
-    element: <Verification />,
+    element: withSuspense(Verification),
   },
   {
     path: "/find-institution",
-    element: <FindInstitution />,
+    element: withSuspense(FindInstitution),
   },
   {
     path: "/find-institution-error",
-    element: <FindInstitutionError />,
+    element: withSuspense(FindInstitutionError),
   },
   {
     path: "/institution-found",
-    element: <InstitutionFound />,
+    element: withSuspense(InstitutionFound),
   },
   {
     path: "/make-request",
-    element: <MakeRequest />,
+    element: withSuspense(MakeRequest),
   },
   {
     path: "/request-submitted",
-    element: <RequestSubmitted />,
+    element: withSuspense(RequestSubmitted),
   },
   {
     path: "/all-verified",
-    element: <AllVerified />,
+    element: withSuspense(AllVerified),
   },
   {
     path: "/waiting-room",
-    element: <WaitingRoom />,
+    element: withSuspense(WaitingRoom),
   },
   {
     path: "waveHistory",
-    element: <WaveHistory />,
+    element: withSuspense(WaveHistory),
   },
   {
     path: "stream",
-    element: <Stream />,
+    element: withSuspense(Stream),
   },
   {
     path: "soundBoard",
-    element: <SoundBoard />,
+    element: withSuspense(SoundBoard),
   },
   {
     path: "profile",
-    element: <Profile />,
+    element: withSuspense(Profile),
   },
 
   // Admin routes
@@ -96,15 +111,15 @@ const router = createBrowserRouter([
     children: [
       {
         path: "feed",
-        element: <Feed />,
+        element: withSuspense(Feed),
       },
       {
         path: "overview",
-        element: <Overview />,
+        element: withSuspense(Overview),
       },
       {
         path: "followUp",
-        element: <FollowUp />,
+        element: withSuspense(FollowUp),
       },
     ],
   },

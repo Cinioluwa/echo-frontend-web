@@ -9,15 +9,21 @@ interface AuthButtonProps {
     variant?: "primary" | "secondary" | "outline";
     fullWidth?: boolean;
     className?: string;
+    ariaLabel?: string;
 }
 
 /**
- * AuthButton Component
+ * AuthButton Component - Phase 10 Enhanced
  * Reusable button component for authentication screens
  * Design matches Figma: Orange (#f49b31), rounded-lg, Poppins Medium font
  * Mobile: Smaller padding for better touch targets and visual balance
+ * 
+ * Phase 10 Enhancements:
+ * - Added hover scale effect for better interactivity
+ * - Enhanced ARIA labels for accessibility
+ * - Performance optimized with React.memo
  */
-const AuthButton: React.FC<AuthButtonProps> = ({
+const AuthButton: React.FC<AuthButtonProps> = React.memo(({
     children,
     onClick,
     type = "button",
@@ -26,8 +32,9 @@ const AuthButton: React.FC<AuthButtonProps> = ({
     variant = "primary",
     fullWidth = true,
     className = "",
+    ariaLabel,
 }) => {
-    const baseClasses = "px-[20px] py-[12px] sm:px-[35px] sm:py-[14px] md:px-[50px] md:py-[15px] rounded-lg font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed text-[13px] sm:text-sm min-h-[44px] sm:min-h-[50px]";
+    const baseClasses = "px-[20px] py-[12px] sm:px-[35px] sm:py-[14px] md:px-[50px] md:py-[15px] rounded-lg font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed text-[13px] sm:text-sm min-h-[44px] sm:min-h-[50px] active:scale-[0.98] hover:shadow-md";
 
     const variantClasses = {
         primary: "bg-[#f49b31] text-white hover:bg-[#e08a2a] focus:ring-[#f49b31]",
@@ -44,6 +51,9 @@ const AuthButton: React.FC<AuthButtonProps> = ({
             disabled={disabled || loading}
             className={`${baseClasses} ${variantClasses[variant]} ${widthClass} ${className}`}
             style={{ fontFamily: 'Poppins, sans-serif' }}
+            aria-label={ariaLabel}
+            aria-busy={loading}
+            aria-disabled={disabled || loading}
         >
             {loading ? (
                 <div className="flex items-center justify-center">
@@ -52,6 +62,7 @@ const AuthButton: React.FC<AuthButtonProps> = ({
                         xmlns="http://www.w3.org/2000/svg"
                         fill="none"
                         viewBox="0 0 24 24"
+                        aria-hidden="true"
                     >
                         <circle
                             className="opacity-25"
@@ -74,6 +85,8 @@ const AuthButton: React.FC<AuthButtonProps> = ({
             )}
         </button>
     );
-};
+});
+
+AuthButton.displayName = "AuthButton";
 
 export default AuthButton;
