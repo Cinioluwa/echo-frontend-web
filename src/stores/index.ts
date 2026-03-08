@@ -3,17 +3,21 @@ import { useWavesStore } from "./data/useWavesStore";
 import { usePingsStore } from "./data/usePingsStore";
 import { useResolutionsStore } from "./data/useResolutionsStore";
 import { useCategoriesStore } from "./data/useCategoriesStore";
+import { useOrganizationStore } from "./data/useOrganizationStore";
 import { useSurgeStore } from "./interactions/useSurgeStore";
 import { useSearchStore } from "./ui/useSearchStore";
+import { useRegistrationStore } from "./ui/useRegistrationStore";
 
 // Re-export all stores
 export * from "./auth/useAuthStore";
 export * from "./ui/useSearchStore";
+export * from "./ui/useRegistrationStore";
 export * from "./interactions/useSurgeStore";
 export * from "./data/useWavesStore";
 export * from "./data/usePingsStore";
 export * from "./data/useResolutionsStore";
 export * from "./data/useCategoriesStore";
+export * from "./data/useOrganizationStore";
 
 // Re-export types
 export * from "./types";
@@ -26,4 +30,7 @@ export const resetAllStores = () => {
   useCategoriesStore.getState().reset();
   useSurgeStore.getState().clearSurges();
   useSearchStore.getState().clearAll();
+  useOrganizationStore.getState().clearSelection();
+  useOrganizationStore.getState().clearError();
+  useRegistrationStore.getState().clearAll();
 };

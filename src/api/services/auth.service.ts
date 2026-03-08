@@ -64,12 +64,23 @@ const authService = {
 
   /**
    * Verify email with verification token
-   * @param token Email verification token
+   * @param token Email verification token from URL
    */
   verifyEmail: async (token: string): Promise<{ message: string }> => {
+    const response = await api.get<{ message: string }>(
+      `/users/verify-email?token=${token}`,
+    );
+    return response.data;
+  },
+
+  /**
+   * Resend verification email
+   * @param email User's email address
+   */
+  resendVerification: async (email: string): Promise<{ message: string }> => {
     const response = await api.post<{ message: string }>(
-      "/users/verify-email",
-      { token }
+      "/users/resend-verification",
+      { email },
     );
     return response.data;
   },
@@ -81,7 +92,7 @@ const authService = {
   forgotPassword: async (email: string): Promise<{ message: string }> => {
     const response = await api.post<{ message: string }>(
       "/users/forgot-password",
-      { email }
+      { email },
     );
     return response.data;
   },
@@ -93,14 +104,14 @@ const authService = {
    */
   resetPassword: async (
     token: string,
-    newPassword: string
+    newPassword: string,
   ): Promise<{ message: string }> => {
     const response = await api.patch<{ message: string }>(
       "/users/reset-password",
       {
         token,
         newPassword,
-      }
+      },
     );
     return response.data;
   },
@@ -110,11 +121,11 @@ const authService = {
    * @param data Organization waitlist request data
    */
   joinOrganizationWaitlist: async (
-    data: OrganizationWaitlistRequest
+    data: OrganizationWaitlistRequest,
   ): Promise<{ message: string }> => {
     const response = await api.post<{ message: string }>(
       "/users/organization-waitlist",
-      data
+      data,
     );
     return response.data;
   },

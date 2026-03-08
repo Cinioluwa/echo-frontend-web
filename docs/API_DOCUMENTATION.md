@@ -10,6 +10,7 @@
 - [Rate Limiting](#rate-limiting)
 - [API Endpoints](#api-endpoints)
   - [Authentication & Users](#authentication--users)
+    - [Organization Selection & Onboarding](#organization-selection--onboarding)
   - [Pings (Posts/Issues)](#pings-postsissues)
   - [Waves (Solutions)](#waves-solutions)
   - [Comments](#comments)
@@ -20,6 +21,7 @@
   - [Uploads & Media](#uploads--media)
   - [Public Feed](#public-feed)
   - [Admin Routes](#admin-routes)
+    - [Organization Management](#organization-management-super-admin)
   - [Representative Routes](#representative-routes)
 
 ---
@@ -356,11 +358,53 @@ Reset password with token from email.
 
 ---
 
+### GET /api/users/organizations
+
+List organizations available for onboarding selection.
+
+**Auth Required:** No
+
+**Description:** Returns active organizations for selection-only onboarding. If no match is found in the UI, users should submit `/organization-waitlist` instead of creating organizations directly.
+
+**Query Parameters:**
+
+- `query` (optional): Case-insensitive search by organization name or domain
+- `limit` (optional): Maximum results (default: 25, max: 100)
+
+**Success Response (200):**
+
+```json
+[
+  {
+    "id": 1,
+    "name": "University of Lagos",
+    "domain": "unilag.edu.ng",
+    "status": "ACTIVE"
+  },
+  {
+    "id": 2,
+    "name": "Covenant University",
+    "domain": "cu.edu.ng",
+    "status": "ACTIVE"
+  }
+]
+```
+
+---
+
 ### POST /api/users/organization-waitlist
 
 Request new organization onboarding.
 
 **Auth Required:** No
+
+**Description:** Submit a reviewed request to add a new organization to the platform. This endpoint does not create an organization immediately. It queues the request for super-admin approval.
+
+**Flow:**
+
+1. User submits their organization details
+2. Request is reviewed by super admins
+3. If approved, organization is created and users can register
 
 **Request Body:**
 
@@ -368,7 +412,9 @@ Request new organization onboarding.
 {
   "email": "admin@neworg.edu",
   "organizationName": "New University",
-  "message": "We'd like to use Echo for our campus"
+  "metadata": {
+    "message": "We'd like to use Echo for our campus"
+  }
 }
 ```
 
@@ -376,9 +422,113 @@ Request new organization onboarding.
 
 ```json
 {
-  "message": "Request submitted. We'll contact you shortly."
+  "message": "Organization request received. Your request will be reviewed by platform admins."
 }
 ```
+
+**Error Responses:**
+
+- `400` - Invalid input or duplicate request
+- `500` - Internal server error
+
+---
+
+### POST /api/users/organizations/:id/claim
+
+Submit leadership claim for a preseeded organization.
+
+**Auth Required:** No
+
+**Description:** Submit a claim request to become the verified organization leader/admin for a preseeded organization.
+
+**Guardrails:**
+
+- Request email domain must exactly match the organization's configured domain
+- Open-domain organizations are not claimable through this endpoint
+- Duplicate pending claims from the same user are rejected
+
+**Path Parameters:**
+
+- `id`: Organization ID
+
+**Request Body:**
+
+```json
+{
+  "email": "staff@cu.edu.ng",
+  "firstName": "Ada",
+  "lastName": "Okafor",
+  "password": "Password123!",
+  "metadata": {
+    "role": "IT Director",
+    "department": "Information Technology"
+  }
+}
+```
+
+**Success Response (201):**
+
+```json
+{
+  "message": "Claim submitted successfully. You'll be contacted once your request is reviewed."
+}
+```
+
+**Error Responses:**
+
+- `400` - Invalid payload or unsupported claim target
+- `403` - Claim email domain does not match organization domain
+- `404` - Organization not found
+- `409` - Organization already claimed or duplicate pending claim
+
+---
+
+### POST /api/users/organizations/:id/request-admin-access
+
+Request admin access for a verified organization.
+
+**Auth Required:** No
+
+**Description:** Submit a leadership-transfer/admin-access request when an organization already has verified leadership.
+
+**Guardrails:**
+
+- Organization must already be leadership-verified
+- Request email domain must match organization domain when domain is configured
+- Duplicate pending admin-access requests from the same user are rejected
+
+**Path Parameters:**
+
+- `id`: Organization ID
+
+**Request Body:**
+
+```json
+{
+  "email": "newadmin@cu.edu.ng",
+  "firstName": "Chidi",
+  "lastName": "Nwankwo",
+  "password": "Password123!",
+  "reason": "New IT Director taking over system administration",
+  "metadata": {
+    "previousAdmin": "old.admin@cu.edu.ng"
+  }
+}
+```
+
+**Success Response (201):**
+
+```json
+{
+  "message": "Admin access request submitted successfully. Your request will be reviewed."
+}
+```
+
+**Error Responses:**
+
+- `403` - Domain mismatch
+- `404` - Organization not found
+- `409` - Organization not verified yet or duplicate request
 
 ---
 
@@ -398,8 +548,42 @@ Get current user profile.
   "lastName": "Doe",
   "level": 200,
   "role": "USER",
+  "status": "ACTIVE",
   "organizationId": 1,
-  "createdAt": "2025-11-07T10:30:00.000Z"
+  "createdAt": "2025-11-07T10:30:00.000Z",
+  "pendingJoinRequest": null
+}
+```
+
+**Response Fields:**
+
+- `role`: User role (USER, ADMIN, REPRESENTATIVE, SUPER_ADMIN)
+- `status`: Account status (PENDING, ACTIVE, SUSPENDED, BANNED)
+- `pendingJoinRequest`: Most recent pending join request if user is in waiting room, null otherwise
+
+**Example - User in Waiting Room:**
+
+```json
+{
+  "id": 2,
+  "email": "newuser@cu.edu.ng",
+  "firstName": "Amaka",
+  "lastName": "Obi",
+  "level": null,
+  "role": "USER",
+  "status": "PENDING",
+  "organizationId": null,
+  "createdAt": "2026-03-08T14:20:00.000Z",
+  "pendingJoinRequest": {
+    "id": 5,
+    "status": "PENDING",
+    "createdAt": "2026-03-08T14:20:00.000Z",
+    "organization": {
+      "id": 3,
+      "name": "Covenant University",
+      "domain": "cu.edu.ng"
+    }
+  }
 }
 ```
 
@@ -1019,6 +1203,65 @@ Get a specific wave by ID (increments view count).
 
 ---
 
+### PATCH /api/waves/:id
+
+Update a wave (author only).
+
+**Auth Required:** Yes (must be author)
+
+**Request Body:**
+
+```json
+{
+  "solution": "Updated solution with better WiFi boosters and mesh network"
+}
+```
+
+**Success Response (200):**
+
+```json
+{
+  "id": 1,
+  "solution": "Updated solution with better WiFi boosters and mesh network",
+  "updatedAt": "2025-11-07T12:00:00.000Z"
+}
+```
+
+**Error Responses:**
+
+- `401` - Unauthorized
+- `403` - Not authorized to update this wave (must be author)
+- `404` - Wave not found
+
+---
+
+### DELETE /api/waves/:id
+
+Delete a wave (author or admin only).
+
+**Auth Required:** Yes (must be author or ADMIN)
+
+**Success Response (200):**
+
+```json
+{
+  "message": "Wave deleted successfully"
+}
+```
+
+**Notes:**
+
+- Only the wave author or admins can delete waves
+- Deleting a wave also deletes all associated comments and surges
+
+**Error Responses:**
+
+- `401` - Unauthorized
+- `403` - Not authorized to delete this wave
+- `404` - Wave not found
+
+---
+
 ## Comments
 
 ### POST /api/pings/:pingId/comments
@@ -1196,23 +1439,60 @@ Get all categories for the organization.
 **Success Response (200):**
 
 ```json
+[
+  {
+    "id": 1,
+    "name": "Academic"
+  },
+  {
+    "id": 2,
+    "name": "Facilities"
+  },
+  {
+    "id": 3,
+    "name": "Events"
+  }
+]
+```
+
+---
+
+### POST /api/categories
+
+Create a new category.
+
+**Auth Required:** Yes (ADMIN)
+
+**Description:** Create a new category for the organization. Requires admin role and organization must have verified leadership claim.
+
+**Request Body:**
+
+```json
 {
-  "data": [
-    {
-      "id": 1,
-      "name": "Academic"
-    },
-    {
-      "id": 2,
-      "name": "Facilities"
-    },
-    {
-      "id": 3,
-      "name": "Events"
-    }
-  ]
+  "name": "Transportation"
 }
 ```
+
+**Success Response (201):**
+
+```json
+{
+  "id": 4,
+  "name": "Transportation",
+  "organizationId": 1
+}
+```
+
+**Error Responses:**
+
+- `400` - Invalid input or category already exists
+- `401` - Unauthorized
+- `403` - Category customization is locked pending leadership verification, or caller lacks required role
+
+**Notes:**
+
+- Category customization is locked until organization leadership is verified
+- Category names must be unique within the organization
 
 ---
 
@@ -1852,7 +2132,7 @@ Get a log of resolved pings with their approved solutions and official responses
 
 ## Admin Routes
 
-All admin routes require `ADMIN` role.
+All admin routes require `ADMIN` role unless specified as `SUPER_ADMIN`.
 
 ### GET /api/admin/stats
 
@@ -1871,6 +2151,401 @@ Get platform statistics.
   "totalComments": 2100
 }
 ```
+
+---
+
+### Organization Management (Super Admin)
+
+The following endpoints are for super admins to manage organization onboarding requests and leadership claims.
+
+### GET /api/admin/organization-requests
+
+List organization onboarding requests.
+
+**Auth Required:** Yes (SUPER_ADMIN)
+
+**Description:** List all pending organization onboarding requests that users have submitted via `/api/users/organization-waitlist`.
+
+**Query Parameters:**
+
+- `status` (optional): Filter by status (PENDING, APPROVED, REJECTED)
+
+**Success Response (200):**
+
+```json
+[
+  {
+    "id": 1,
+    "email": "admin@newschool.edu",
+    "organizationName": "New School University",
+    "status": "PENDING",
+    "metadata": {
+      "message": "We'd like to use Echo for our campus"
+    },
+    "createdAt": "2026-03-01T10:00:00.000Z",
+    "updatedAt": "2026-03-01T10:00:00.000Z"
+  }
+]
+```
+
+---
+
+### POST /api/admin/organization-requests/:id/approve
+
+Approve an organization onboarding request.
+
+**Auth Required:** Yes (SUPER_ADMIN)
+
+**Description:** Approve a pending organization onboarding request. Creates the organization and enables user registration.
+
+**Path Parameters:**
+
+- `id`: Organization request ID
+
+**Success Response (200):**
+
+```json
+{
+  \"message\": \"Organization request approved successfully\",
+  \"organization\": {
+    \"id\": 5,
+    \"name\": \"New School University\",
+    \"domain\": \"newschool.edu\",
+    \"status\": \"ACTIVE\"
+  }
+}
+```
+
+**Error Responses:**
+
+- `404` - Request not found
+- `403` - Super Admin access required
+
+---
+
+### POST /api/admin/organization-requests/:id/reject
+
+Reject an organization onboarding request.
+
+**Auth Required:** Yes (SUPER_ADMIN)
+
+**Description:** Reject a pending organization onboarding request.
+
+**Path Parameters:**
+
+- `id`: Organization request ID
+
+**Success Response (200):**
+
+```json
+{
+  \"message\": \"Organization request rejected successfully\"
+}
+```
+
+**Error Responses:**
+
+- `404` - Request not found
+- `403` - Super Admin access required
+
+---
+
+### GET /api/admin/organization-claims
+
+List organization leadership claims.
+
+**Auth Required:** Yes (SUPER_ADMIN)
+
+**Description:** List leadership claims for preseeded organizations. These are submitted via `/api/users/organizations/:id/claim`.
+
+**Query Parameters:**
+
+- `status` (optional): Filter by status (PENDING, APPROVED, REJECTED)
+
+**Success Response (200):**
+
+```json
+[
+  {
+    \"id\": 1,
+    \"organizationId\": 3,
+    \"email\": \"staff@cu.edu.ng\",
+    \"firstName\": \"Ada\",
+    \"lastName\": \"Okafor\",
+    \"status\": \"PENDING\",
+    \"claimType\": \"INITIAL_CLAIM\",
+    \"metadata\": {
+      \"role\": \"IT Director\"
+    },
+    \"organization\": {
+      \"id\": 3,
+      \"name\": \"Covenant University\",
+      \"domain\": \"cu.edu.ng\"
+    },
+    \"createdAt\": \"2026-03-02T10:00:00.000Z\"
+  }
+]
+```
+
+---
+
+### GET /api/admin/organization-admin-access-requests
+
+List organization admin access requests.
+
+**Auth Required:** Yes (SUPER_ADMIN)
+
+**Description:** List admin access requests for already-verified organizations. These are submitted via `/api/users/organizations/:id/request-admin-access`.
+
+**Query Parameters:**
+
+- `status` (optional): Filter by status (PENDING, APPROVED, REJECTED)
+
+**Success Response (200):**
+
+```json
+[
+  {
+    \"id\": 2,
+    \"organizationId\": 3,
+    \"email\": \"newadmin@cu.edu.ng\",
+    \"firstName\": \"Chidi\",
+    \"lastName\": \"Nwankwo\",
+    \"status\": \"PENDING\",
+    \"claimType\": \"ADMIN_ACCESS\",
+    \"reason\": \"New IT Director taking over\",
+    \"organization\": {
+      \"id\": 3,
+      \"name\": \"Covenant University\"
+    },
+    \"createdAt\": \"2026-03-05T14:00:00.000Z\"
+  }
+]
+```
+
+---
+
+### POST /api/admin/organization-claims/:id/approve
+
+Approve an organization leadership claim.
+
+**Auth Required:** Yes (SUPER_ADMIN)
+
+**Description:** Approves a pending leadership claim. This marks leadership as verified, unlocks category customization, and grants organization admin authority to the claimant.
+
+**Path Parameters:**
+
+- `id`: Claim ID
+
+**Success Response (200):**
+
+```json
+{
+  \"message\": \"Claim approved successfully\",
+  \"user\": {
+    \"id\": 10,
+    \"email\": \"staff@cu.edu.ng\",
+    \"role\": \"ADMIN\",
+    \"organizationId\": 3
+  }
+}
+```
+
+**Error Responses:**
+
+- `400` - Claimant email not verified
+- `404` - Claim not found
+- `409` - Claim not pending or organization already claimed
+
+---
+
+### POST /api/admin/organization-claims/:id/reject
+
+Reject an organization leadership claim.
+
+**Auth Required:** Yes (SUPER_ADMIN)
+
+**Description:** Rejects a pending leadership claim.
+
+**Path Parameters:**
+
+- `id`: Claim ID
+
+**Request Body (optional):**
+
+```json
+{
+  \"reason\": \"Unable to verify credentials\"
+}
+```
+
+**Success Response (200):**
+
+```json
+{
+  \"message\": \"Claim rejected successfully\"
+}
+```
+
+**Error Responses:**
+
+- `404` - Claim not found
+- `409` - Claim not pending
+
+---
+
+### GET /api/admin/organization/settings
+
+Get organization join settings.
+
+**Auth Required:** Yes (ADMIN)
+
+**Description:** Retrieve join policy settings for your organization.
+
+**Success Response (200):**
+
+```json
+{
+  \"organizationId\": 3,
+  \"joinPolicy\": \"OPEN\",
+  \"requiresApproval\": false,
+  \"updatedAt\": \"2026-03-01T10:00:00.000Z\"
+}
+```
+
+**Notes:**
+
+- `joinPolicy`: `OPEN` (anyone with domain email can join) or `APPROVAL_REQUIRED` (requires admin approval)
+
+---
+
+### PATCH /api/admin/organization/join-policy
+
+Update organization join policy.
+
+**Auth Required:** Yes (ADMIN)
+
+**Request Body:**
+
+```json
+{
+  \"joinPolicy\": \"APPROVAL_REQUIRED\",
+  \"requiresApproval\": true
+}
+```
+
+**Success Response (200):**
+
+```json
+{
+  \"message\": \"Join policy updated successfully\",
+  \"settings\": {
+    \"joinPolicy\": \"APPROVAL_REQUIRED\",
+    \"requiresApproval\": true
+  }
+}
+```
+
+---
+
+### GET /api/admin/organization/join-requests
+
+List pending join requests for your organization.
+
+**Auth Required:** Yes (ADMIN)
+
+**Query Parameters:**
+
+- `status` (optional): Filter by status (PENDING, APPROVED, REJECTED)
+- `page` (optional): Page number (default: 1)
+- `limit` (optional): Items per page (default: 20)
+
+**Success Response (200):**
+
+```json
+{
+  \"data\": [
+    {
+      \"id\": 1,
+      \"email\": \"newuser@cu.edu.ng\",
+      \"firstName\": \"Amaka\",
+      \"lastName\": \"Obi\",
+      \"status\": \"PENDING\",
+      \"createdAt\": \"2026-03-06T10:00:00.000Z\"
+    }
+  ],
+  \"pagination\": {
+    \"page\": 1,
+    \"limit\": 20,
+    \"total\": 5
+  }
+}
+```
+
+---
+
+### POST /api/admin/organization/join-requests/:id/approve
+
+Approve a join request.
+
+**Auth Required:** Yes (ADMIN)
+
+**Path Parameters:**
+
+- `id`: Join request ID
+
+**Success Response (200):**
+
+```json
+{
+  \"message\": \"Join request approved successfully\",
+  \"user\": {
+    \"id\": 15,
+    \"email\": \"newuser@cu.edu.ng\",
+    \"organizationId\": 3
+  }
+}
+```
+
+**Side Effects:**
+
+- Updates user status from PENDING to ACTIVE
+- Assigns user to organization
+- Sends approval email notification to user with login link
+
+---
+
+### POST /api/admin/organization/join-requests/:id/reject
+
+Reject a join request.
+
+**Auth Required:** Yes (ADMIN)
+
+**Path Parameters:**
+
+- `id`: Join request ID
+
+**Request Body (optional):**
+
+```json
+{
+  \"reason\": \"Email verification failed\"
+}
+```
+
+**Success Response (200):**
+
+```json
+{
+  \"message\": \"Join request rejected successfully\"
+}
+```
+
+**Side Effects:**
+
+- Updates join request status to REJECTED
+- Stores rejection reason if provided
+- Sends rejection email notification to user (includes reason if provided)
 
 ---
 
@@ -2352,6 +3027,98 @@ Get priority pings based on engagement score.
 
 ---
 
+### POST /api/admin/pings/:id/acknowledge
+
+Acknowledge a ping.
+
+**Auth Required:** Yes (ADMIN)
+
+**Description:** Mark a ping as acknowledged, setting the acknowledgedAt timestamp. This indicates the admin team has seen and is reviewing the issue.
+
+**Success Response (200):**
+
+```json
+{
+  "id": 1,
+  "title": "Library Hours Too Short",
+  "progressStatus": "ACKNOWLEDGED",
+  "acknowledgedAt": "2025-11-08T10:00:00.000Z"
+}
+```
+
+**Error Responses:**
+
+- `401` - Unauthorized
+- `403` - Admin access required
+- `404` - Ping not found
+
+---
+
+### POST /api/admin/pings/:id/resolve
+
+Resolve a ping.
+
+**Auth Required:** Yes (ADMIN)
+
+**Description:** Mark a ping as resolved, setting the resolvedAt timestamp. This indicates the issue has been addressed.
+
+**Success Response (200):**
+
+```json
+{
+  "id": 1,
+  "title": "Library Hours Too Short",
+  "progressStatus": "RESOLVED",
+  "resolvedAt": "2025-11-15T14:30:00.000Z"
+}
+```
+
+**Error Responses:**
+
+- `401` - Unauthorized
+- `403` - Admin access required
+- `404` - Ping not found
+
+---
+
+### GET /api/admin/export/pings
+
+Export pings as CSV.
+
+**Auth Required:** Yes (ADMIN)
+
+**Description:** Download all pings in the organization as a CSV file for reporting and analysis.
+
+**Success Response (200):**
+
+Returns a CSV file with headers:
+
+- ID
+- Title
+- Content
+- Category
+- Status
+- Progress Status
+- Author Email
+- Surge Count
+- Comment Count
+- Wave Count
+- Created At
+- Updated At
+- Acknowledged At
+- Resolved At
+
+**Content-Type:** `text/csv`
+
+**File Name:** `pings-export-{organizationName}-{timestamp}.csv`
+
+**Error Responses:**
+
+- `401` - Unauthorized
+- `403` - Admin access required
+
+---
+
 ### GET /api/admin/waves
 
 Get all waves with admin filters.
@@ -2567,7 +3334,49 @@ Create official response to a ping.
 }
 ```
 
-**Note:** Only one official response per ping (subsequent calls will error with unique constraint).
+**Notes:**
+
+- Only one official response per ping
+- Subsequent attempts to create another official response will fail
+- Only representatives or admins can create official responses
+
+---
+
+### PATCH /api/pings/:pingId/official-response
+
+Update official response to a ping.
+
+**Auth Required:** Yes (REPRESENTATIVE or ADMIN)
+
+**Description:** Update an existing official response. Only the original author or an admin can update.
+
+**Request Body:**
+
+```json
+{
+  "content": "Update: WiFi boosters have been installed and testing shows significant improvement."
+}
+```
+
+**Success Response (200):**
+
+```json
+{
+  "id": 1,
+  "content": "Update: WiFi boosters have been installed and testing shows significant improvement.",
+  "authorId": 3,
+  "pingId": 1,
+  "organizationId": 1,
+  "createdAt": "2025-11-08T09:00:00.000Z",
+  "updatedAt": "2025-11-09T14:00:00.000Z"
+}
+```
+
+**Error Responses:**
+
+- `401` - Unauthorized
+- `403` - Not authorized to update this response
+- `404` - Official response not found
 
 ---
 

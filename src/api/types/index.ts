@@ -11,11 +11,23 @@ export interface User {
   firstName: string;
   lastName: string;
   level?: number; // Student year/level
-  role: "USER" | "ADMIN" | "REPRESENTATIVE";
-  organizationId: number;
-  status?: "PENDING_VERIFICATION" | "ACTIVE" | "SUSPENDED";
+  role: "USER" | "ADMIN" | "REPRESENTATIVE" | "LEADER" | "SUPER_ADMIN";
+  organizationId: number | null;
+  status: "PENDING" | "ACTIVE" | "SUSPENDED";
   createdAt: string;
   updatedAt?: string;
+  pendingRequests?: Array<{
+    id: number;
+    organizationId: number;
+    organizationName: string;
+    status: "PENDING" | "APPROVED" | "REJECTED";
+    createdAt: string;
+  }>;
+  organization?: {
+    id: number;
+    name: string;
+    logoUrl?: string;
+  };
 }
 
 export interface LoginRequest {
@@ -29,6 +41,7 @@ export interface SignupRequest {
   firstName: string;
   lastName: string;
   level?: number;
+  organizationId?: number; // Optional - for manual organization selection
 }
 
 export interface AuthResponse {
@@ -55,9 +68,28 @@ export interface ResetPasswordRequest {
 }
 
 export interface OrganizationWaitlistRequest {
-  email: string;
   organizationName: string;
-  message?: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  password: string;
+  metadata?: {
+    website?: string;
+    role?: string;
+    additionalNotes?: string;
+  };
+}
+
+// ==================== Organization Types ====================
+
+export interface Organization {
+  id: number;
+  name: string;
+  domain: string;
+  logoUrl?: string;
+  joinPolicy: "OPEN" | "REQUIRES_APPROVAL";
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 // ==================== Category Types ====================
