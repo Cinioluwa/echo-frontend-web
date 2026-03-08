@@ -6,9 +6,8 @@ interface MenuItemProps {
 const MenuItem = ({ label, danger }: MenuItemProps) => {
   return (
     <button
-      className={`w-full rounded px-4 py-3 text-left text-sm ${
-        danger ? "text-red-600 hover:bg-red-50" : "text-gray-700 hover:bg-gray-100"
-      } transition`}
+      className={`w-full rounded px-4 py-3 text-left text-sm ${danger ? "text-red-600 hover:bg-red-50" : "text-gray-700 hover:bg-gray-100"
+        } transition`}
     >
       {label}
     </button>
@@ -16,8 +15,8 @@ const MenuItem = ({ label, danger }: MenuItemProps) => {
 };
 
 export const PostActionMenu = () => {
-  const close = () => {};
-  
+  const close = () => { };
+
   return (
     <>
       {/* Click outside overlay */}
