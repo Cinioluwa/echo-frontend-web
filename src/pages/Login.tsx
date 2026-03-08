@@ -1,14 +1,69 @@
 import { useState } from "react";
-const google = "/assets/images/Google (2).svg";
-const password = "/assets/images/Password.svg";
-const email = "/assets/images/Email.svg";
-const backgroundImage = "/assets/images/backgroundImage.jpg";
-const logo = "/assets/images/Echo Logo.svg";
-const echo = "/assets/images/Echo.svg";
-import InputGroup from "../components/InputGroup";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuthStore } from "../stores";
+import {
+  AuthLayout,
+  AuthCard,
+  AuthButton,
+  AuthInput,
+  GoogleButton,
+} from "../components/auth";
+import type { User } from "../api/types";
 
+// Email and password icons (orange/gold color matching Figma)
+const EmailIcon = () => (
+  <svg width="26" height="26" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path
+      d="M4.333 6.5c0-.92.746-1.667 1.667-1.667h14c.92 0 1.667.746 1.667 1.667v13c0 .92-.746 1.667-1.667 1.667H6A1.667 1.667 0 0 1 4.333 19.5v-13Z"
+      stroke="#ffc37b"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <path
+      d="m4.333 6.5 8.667 6.5 8.667-6.5"
+      stroke="#ffc37b"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+);
+
+const PasswordIcon = () => (
+  <svg width="26" height="26" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect
+      x="5"
+      y="11"
+      width="16"
+      height="10"
+      rx="2"
+      stroke="#ffc37b"
+      strokeWidth="2"
+    />
+    <path
+      d="M8 11V8a5 5 0 0 1 10 0v3"
+      stroke="#ffc37b"
+      strokeWidth="2"
+      strokeLinecap="round"
+    />
+    <circle cx="13" cy="16" r="1.5" fill="#ffc37b" />
+  </svg>
+);
+
+/**
+ * Login Component
+ * User login screen with email/password and Google OAuth
+ * Implements smart routing based on user status after successful login
+ *
+ * Design: Figma Desktop (3753:8252) | Mobile (3835:11391)
+ *
+ * Routing Logic:
+ * - ACTIVE + organizationId → /stream (main feed)
+ * - PENDING + pendingRequests → /waiting-room (approval pending)
+ * - No organizationId → /find-institution (needs org selection)
+ * - PENDING without requests → /verification (email verification needed)
+ */
 const Login = () => {
   const navigate = useNavigate();
   const login = useAuthStore((state) => state.login);
@@ -26,42 +81,57 @@ const Login = () => {
       ...prev,
       [name]: value,
     }));
+    // Clear error when user starts typing
     if (error) setError(null);
   };
 
-  async function handleSubmitLogin(e: React.FormEvent) {
+  /**
+   * Smart routing logic based on user status
+   * Determines the appropriate page to redirect user after login
+   */
+  const redirectUser = (user: User) => {
+    // Active user with organization - go to main feed
+    if (user.status === "ACTIVE" && user.organizationId) {
+      navigate("/stream");
+      return;
+    }
+
+    // Pending user with pending approval requests - go to waiting room
+    if (user.status === "PENDING" && user.pendingRequests && user.pendingRequests.length > 0) {
+      navigate("/waiting-room");
+      return;
+    }
+
+    // User without organization - needs to find institution
+    if (!user.organizationId) {
+      navigate("/find-institution");
+      return;
+    }
+
+    // Pending user without organization requests - needs email verification
+    if (user.status === "PENDING") {
+      navigate("/verification", { state: { email: user.email } });
+      return;
+    }
+
+    // Default fallback - go to stream
+    navigate("/stream");
+  };
+
+  const handleSubmitLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
     setLoading(true);
 
     try {
-      // Use the auth store's login method (which calls authService internally)
+      // Use the auth store's login method
       await login(formData);
 
       // Get the user from the store after successful login
       const user = useAuthStore.getState().user;
 
       if (user) {
-        // Check if user is active and has organization - go to feed
-        if (user.status === "ACTIVE" && user.organizationId) {
-          navigate("/stream");
-        }
-        // Check if user is pending and has pending requests - go to waiting room
-        else if (user.status === "PENDING" && user.pendingRequests && user.pendingRequests.length > 0) {
-          navigate("/waiting-room");
-        }
-        // Check if user doesn't have organization - go to find institution
-        else if (!user.organizationId) {
-          navigate("/find-institution");
-        }
-        // Check if user needs email verification
-        else if (user.status === "PENDING") {
-          navigate("/verification", { state: { email: user.email } });
-        }
-        // Default fallback - go to stream
-        else {
-          navigate("/stream");
-        }
+        redirectUser(user);
       } else {
         // If no user data in response, go to default route
         navigate("/stream");
@@ -70,6 +140,7 @@ const Login = () => {
       const status = err?.response?.status;
       const data = err?.response?.data;
 
+      // Handle different error scenarios
       if (status === 401) {
         setError("Invalid email or password");
       } else if (status === 403 && data?.code === "ACCOUNT_PENDING_VERIFICATION") {
@@ -84,122 +155,125 @@ const Login = () => {
     } finally {
       setLoading(false);
     }
-  }
+  };
 
-  function handleGoogleLogin() {
+  const handleGoogleLogin = () => {
+    // TODO: Implement Google OAuth flow
     setError("Google Sign-In is not configured yet.");
-  }
+  };
 
   return (
-    <div
-      style={{ backgroundImage: `url(${backgroundImage})` }}
-      className="h-screen bg-cover overflow-y bg-no-repeat bg-center gap-[25px] flex flex-col p-2.5 md:block overflow-x-hidden"
-    >
-      <header>
-        <img
-          className="mx-auto md:mb-[15px] mt-5 md:mt-2.5 md:ml-16 contrast-200"
-          src={logo}
-          alt="Echo Logo"
-        />
-      </header>
-      <main className="flex items-center h-[calc(100vh - 42.99px)] justify-center">
-        <div className="p-7 md:flex bg-white md:p-4 gap-8 rounded-4xl">
-          <div className="bg-[#FFC37B] hidden rounded-2xl md:flex flex-col justify-center items-center px-16 py-10 lg:py-10">
-            <span className="block whitespace-nowrap font-bold text-2xl mb-4.5">
-              Bridge Gap Between
-            </span>
-            <span className="block font-semibold text-[26px] xl mb-8">
-              Students{" "}
-              <span className="block text-center text-[26px]">and</span>
-            </span>
+    <AuthLayout>
+      <AuthCard>
+        {/* Header Section */}
+        <div className="flex flex-col gap-2.5 items-center text-center w-full">
+          <h1
+            className="text-[28px] leading-9 text-black"
+            style={{ fontFamily: "Poppins, sans-serif", fontWeight: 600 }}
+          >
+            Enter the Pulse
+          </h1>
+          <p
+            className="text-base leading-[21px] text-[#4a504e] opacity-[0.69]"
+            style={{ fontFamily: "Poppins, sans-serif", fontWeight: 500 }}
+          >
+            Pick up where you left off at your institution
+          </p>
+        </div>
 
-            <img src={echo} alt="Echo" />
-            <span className="block mt-8 font-bold text-2xl mb-4.5">
-              Management
-            </span>
+        {/* Error Display */}
+        {error && (
+          <div className="w-full p-3 bg-red-50 border border-red-200 rounded-lg">
+            <p className="text-red-600 text-sm text-center">{error}</p>
           </div>
+        )}
 
-          <div className="flex flex-col md:mr-[15px] mx-2.5 md:mx-0 items-center md:mt-5 justify-center">
-            <span className="block font-semibold max-w-[330px] text-center text-4xl">
-              Echo: Your Voice at CU
-            </span>
-            <p className="block font-normal mt-[15px] mb-[15px] text-1xl text-center text-[#838383]">
-              Create waves, rally support, track change
-            </p>
-
-            {error && (
-              <div className="w-full mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
-                <p className="text-red-600 text-sm text-center">{error}</p>
-              </div>
-            )}
-
-            <button
-              type="button"
+        {/* Form Section */}
+        <div className="flex flex-col gap-[30px] items-center w-full">
+          {/* Input Fields */}
+          <div className="flex flex-col gap-5 items-start w-full">
+            {/* Google OAuth Button */}
+            <GoogleButton
               onClick={handleGoogleLogin}
               disabled={loading}
-              className="flex cursor-pointer w-full my-4 h-16 items-center justify-center gap-1 rounded-xl bg-[#F49B31] py-1 md:py-2.5 disabled:opacity-50 disabled:cursor-not-allowed"
+              text="Continue with Google"
+            />
+
+            {/* Email Input */}
+            <AuthInput
+              type="email"
+              name="email"
+              value={formData.email}
+              onChange={handleInputChange}
+              placeholder="Enter Email..."
+              required
+              disabled={loading}
+              icon={<EmailIcon />}
+              autoComplete="email"
+            />
+
+            {/* Password Input */}
+            <AuthInput
+              type="password"
+              name="password"
+              value={formData.password}
+              onChange={handleInputChange}
+              placeholder="Enter Password..."
+              required
+              disabled={loading}
+              icon={<PasswordIcon />}
+              autoComplete="current-password"
+            />
+          </div>
+
+          {/* Submit Button */}
+          <form onSubmit={handleSubmitLogin} className="w-full">
+            <AuthButton
+              type="submit"
+              disabled={loading}
+              loading={loading}
+              fullWidth
             >
-              <span className="flex h-8 w-8 items-center justify-center rounded-md bg-white overflow-hidden">
-                <img src={google} alt="Google logo" />
-              </span>
-              <p className="text-white">Continue with Google</p>
-            </button>
+              {loading ? "Logging in..." : "Log in"}
+            </AuthButton>
+          </form>
+        </div>
 
-            <form
-              onSubmit={handleSubmitLogin}
-              className="flex w-full flex-col justify-center items-center mb-8"
+        {/* Footer Section */}
+        <div className="flex flex-col gap-5 items-center px-5 w-full">
+          {/* Terms and Privacy */}
+          <div
+            className="flex flex-col gap-[15px] items-center text-center text-sm leading-3.5"
+            style={{ fontFamily: "Poppins, sans-serif", fontWeight: 500 }}
+          >
+            <p className="text-[#838383]">By creating an account, you agree to Echo</p>
+            <Link
+              to="/terms"
+              className="text-[#f49b31] hover:text-[#e08a2a] transition-colors"
             >
-              <div className="w-full">
-                <InputGroup
-                  type="email"
-                  name="email"
-                  iconSrc={email}
-                  placeholder="Enter email..."
-                  value={formData.email}
-                  onChange={handleInputChange}
-                  disabled={loading}
-                />
-                <InputGroup
-                  type="password"
-                  name="password"
-                  iconSrc={password}
-                  placeholder="Enter password..."
-                  value={formData.password}
-                  onChange={handleInputChange}
-                  disabled={loading}
-                />
-              </div>
+              Terms of Use, Privacy Policy
+            </Link>
+          </div>
 
-              <button
-                type="submit"
-                disabled={loading}
-                className="w-full py-[30px] whitespace-nowrap flex items-center justify-center text-white h-8 cursor-pointer bg-[#F49B31] rounded-[9px] disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {loading ? "Logging in..." : "Log in"}
-              </button>
-            </form>
+          {/* Divider */}
+          <div className="w-full h-px bg-[#e0e0e0]" />
 
-            <p className="text-[#838383] text-center text-[14px]">
-              By Logging into an account, you agree to Echo
-            </p>
-            <span className="text-[#F49B31] text-[14px] mt-3">
-              <a href="#">Terms of Use</a>, <a href="#">Privacy Policy</a>
-            </span>
-            <div className="mb-2.5 md:mb-5 pt-5 border-t border-[#D3CECE] mt-5 self-end w-full">
-              <p className="text-center text-[#838383]">
-                Don't have an account?
-                <Link
-                  to="/signUp"
-                  className="pl-1 text-[#F49B31] whitespace-nowrap cursor-pointer"
-                >
-                  sign up
-                </Link>
-              </p>
-            </div>
+          {/* Sign Up Link */}
+          <div
+            className="text-center text-sm"
+            style={{ fontFamily: "Poppins, sans-serif", fontWeight: 500 }}
+          >
+            <span className="text-[#838383]">Don't have an account? </span>
+            <Link
+              to="/signUp"
+              className="text-[#f49b31] hover:text-[#e08a2a] transition-colors cursor-pointer"
+            >
+              Sign Up
+            </Link>
           </div>
         </div>
-      </main>
-    </div>
+      </AuthCard>
+    </AuthLayout>
   );
 };
 
