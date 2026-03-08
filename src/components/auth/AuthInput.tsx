@@ -44,7 +44,7 @@ const AuthInput = forwardRef<HTMLInputElement, AuthInputProps>(
                 <div className={`
           bg-[#fbfbfb] border rounded-xl
           h-[50px] sm:h-[55px] md:h-[59px]
-          flex items-center gap-[10px] sm:gap-[12px] md:gap-[13px]
+          flex items-center gap-2.5 sm:gap-3 md:gap-[13px]
           px-[15px] sm:px-[18px] md:px-[21px] py-[11px]
           ${error ? "border-red-500" : "border-[#cacaca]"}
           transition-colors duration-200
@@ -52,12 +52,12 @@ const AuthInput = forwardRef<HTMLInputElement, AuthInputProps>(
         `}>
                     {icon && (
                         <>
-                            <div className="shrink-0 w-[22px] h-[22px] sm:w-[24px] sm:h-[24px] md:w-[26px] md:h-[26px] flex items-center justify-center text-[#cacaca]">
+                            <div className="shrink-0 w-[22px] h-[22px] sm:w-6 sm:h-6 md:w-[26px] md:h-[26px] flex items-center justify-center text-[#cacaca]">
                                 {icon}
                             </div>
                             {/* Vertical separator line */}
-                            <div className="w-0 h-[32px] sm:h-[36px] md:h-[38px] flex items-center justify-center">
-                                <div className="h-full w-[1px] bg-[#e0e0e0]"></div>
+                            <div className="w-0 h-8 sm:h-9 md:h-[38px] flex items-center justify-center">
+                                <div className="h-full w-px bg-[#e0e0e0]"></div>
                             </div>
                         </>
                     )}
