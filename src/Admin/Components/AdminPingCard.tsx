@@ -12,9 +12,10 @@ import PostEngagementMenu from "./PostEngagementMenu";
 
 interface AdminPingCardProps {
   pings: PingFormDetails;
+  onUpdate?: () => void;
 }
 
-const AdminPingCard = ({ pings }: AdminPingCardProps) => {
+const AdminPingCard = ({ pings, onUpdate }: AdminPingCardProps) => {
   const [acknowledged, setAcknowledged] = useState(false);
   const [openMenu, setOpenMenu] = useState(false);
   const [openEngagementMenu, setOpenEngagementMenu] = useState(false);

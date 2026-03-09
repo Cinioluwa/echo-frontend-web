@@ -1,29 +1,15 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import AdminLayout from "../Components/AdminLayout";
 import PingFormModal from "../../components/PingFormModal";
 import WaveFormModal from "../../components/WaveFormModal";
 import AdminWaveCard from "../Components/AdminWaveCard";
-
-const proposedWaveDetails = {
-  solution:
-    "Lorem, ipsum dolor sit amet consectetur adipisicing elit. Voluptatem delectus aut ut iure reprehenderit, deleniti ea, commodi a inventore facere aliquam. Vel magnam sapiente, accusamus maxime ullam esse molestiae beatae! Lorem, ipsum dolor sit amet consectetur adipisicing elit. Voluptatem delectus aut ut iure reprehenderit, deleniti ea, commodi a inventore facere aliquam. Vel magnam sapiente, accusamus maxime ullam esse molestiae beatae! Lorem, ipsum dolor sit amet consectetur adipisicing elit. Voluptatem delectus aut ut iure reprehenderit, deleniti ea, commodi a inventore facere aliquam. Vel magnam sapiente, accusamus maxime ullam esse molestiae beatae!",
-  cat: "Chapel",
-  pingTimeStamp: "Oct 8, 11:00 am",
-  pingTitle:
-    "The power off policy affects students badly. It disrupts study time.",
-  createdAt: "Feb 29, 09:30 pm",
-  id: "string",
-  // BACK-END ATTRIBUTE
-  status: "rejected" as const,
-};
-
-// STATIC PING DATA USING PINGSTORE- SIMULATING PINGS FROM SERVER.
+import { adminService } from "../../api";
+import type { AdminWave } from "../../api/types/admin.types";
 
 const FollowUp = () => {
   const [waveForm, setWaveForm] = useState(false);
   const [formSegment, setFormSegment] = useState("ping");
 
-  // SETTING ACTIVE PAGE BUTTON
   const [activePage, setActivePage] = useState({
     feedActive: false,
     overviewActive: false,
@@ -35,6 +21,56 @@ const FollowUp = () => {
     approved: false,
     rejected: false,
   });
+
+  const [waves, setWaves] = useState<AdminWave[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+
+  useEffect(() => {
+    fetchWaves();
+  }, [activePosts, currentPage]);
+
+  const fetchWaves = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      let status: 'UNDER_REVIEW' | 'APPROVED' | 'REJECTED';
+
+      if (activePosts.underReview) {
+        status = 'UNDER_REVIEW';
+      } else if (activePosts.approved) {
+        status = 'APPROVED';
+      } else {
+        status = 'REJECTED';
+      }
+
+      const wavesData = await adminService.getWaves({
+        status,
+        page: currentPage,
+        limit: 20,
+      });
+
+      setWaves(wavesData.data);
+      setHasMore(wavesData.pagination.hasNextPage || false);
+    } catch (err: any) {
+      console.error('Failed to fetch waves:', err);
+      setError(err.message || 'Failed to load waves');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleStatusChange = (status: 'underReview' | 'approved' | 'rejected') => {
+    setActivePosts({
+      underReview: status === 'underReview',
+      approved: status === 'approved',
+      rejected: status === 'rejected',
+    });
+    setCurrentPage(1);
+  };
 
   return (
     <div>
@@ -48,55 +84,81 @@ const FollowUp = () => {
 
       <main className=" mr-2.5 ml-2.5 mt-5 md:mr-[46px] h-[calc(100vh-155px)] md:ml-[350px] md:mt-[155px]">
         <div className=" h-full overflow-auto [scrollbar-width:none]">
+          {/* Status filter buttons */}
           <div className="flex whitespace-nowrap gap-[15px] mb-4">
-            <div
-              onClick={() =>
-                setActivePosts({
-                  underReview: true,
-                  approved: false,
-                  rejected: false,
-                })
-              }
-              className={`${activePosts.underReview ? "text-white bg-[#F49B31]" : "bg-[#FFC37B]"} p-4 rounded-[18px] w-full max-w-[200px] flex items-center cursor-pointer justify-center border border-[#7B7B79] font-semibold h-10`}
-            >
-              Under Review
-            </div>
-            <div
-              onClick={() =>
-                setActivePosts({
-                  underReview: false,
-                  approved: true,
-                  rejected: false,
-                })
-              }
-              className={` ${activePosts.approved ? "bg-[#F49B31] text-white" : "bg-[#FFC37B]"} p-4 rounded-[18px] w-full max-w-[200px] cursor-pointer flex items-center justify-center border border-[#7B7B79] font-semibold h-10`}
-            >
-              Approved
-            </div>
-            <div
-              onClick={() =>
-                setActivePosts({
-                  underReview: false,
-                  approved: false,
-                  rejected: true,
-                })
-              }
-              className={` ${activePosts.rejected ? "bg-[#F49B31] text-white" : "bg-[#FFC37B]"} p-4 rounded-[18px] font-semibold w-full max-w-[200px] flex cursor-pointer items-center justify-center border border-[#7B7B79] h-10`}
-            >
-              Rejected
-            </div>
+            <StatusButton
+              label="Under Review"
+              active={activePosts.underReview}
+              onClick={() => handleStatusChange('underReview')}
+            />
+            <StatusButton
+              label="Approved"
+              active={activePosts.approved}
+              onClick={() => handleStatusChange('approved')}
+            />
+            <StatusButton
+              label="Rejected"
+              active={activePosts.rejected}
+              onClick={() => handleStatusChange('rejected')}
+            />
           </div>
-          <div className="flex md:block flex-col items-center">
-            <div className="mb-[22px]">
-              <AdminWaveCard waves={proposedWaveDetails} />
+
+          {/* Error state */}
+          {error && (
+            <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-red-600 mb-4">
+              {error}
+              <button
+                onClick={fetchWaves}
+                className="ml-4 underline hover:no-underline"
+              >
+                Retry
+              </button>
             </div>
-            <div className="mb-[22px]">
-              <AdminWaveCard waves={proposedWaveDetails} />
+          )}
+
+          {/* Loading state */}
+          {loading && (
+            <div className="flex justify-center items-center py-12">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#F49B31]"></div>
             </div>
-          </div>
+          )}
+
+          {/* Waves list */}
+          {!loading && (
+            <div className="flex md:block flex-col items-center">
+              {waves.map((wave) => (
+                <div key={wave.id} className="mb-[22px]">
+                  <AdminWaveCard
+                    waves={wave}
+                    onUpdate={fetchWaves}
+                  />
+                </div>
+              ))}
+
+              {/* Empty state */}
+              {waves.length === 0 && (
+                <div className="text-center py-12 text-gray-500">
+                  No waves {activePosts.underReview ? 'under review' : activePosts.approved ? 'approved' : 'rejected'}
+                </div>
+              )}
+
+              {/* Load more */}
+              {hasMore && !loading && waves.length > 0 && (
+                <div className="flex justify-center mt-6 mb-6">
+                  <button
+                    onClick={() => setCurrentPage(p => p + 1)}
+                    className="bg-[#F49B31] text-white px-6 py-3 rounded-lg hover:bg-[#d88429] transition"
+                  >
+                    Load More
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </main>
 
+      {/* Modals */}
       {formSegment === "ping" && (
         <div className={`${waveForm ? "" : "hidden"}`}>
           <PingFormModal
@@ -132,5 +194,24 @@ const FollowUp = () => {
     </div>
   );
 };
+
+const StatusButton = ({
+  label,
+  active,
+  onClick,
+}: {
+  label: string;
+  active: boolean;
+  onClick: () => void;
+}) => (
+  <div
+    onClick={onClick}
+    className={`${
+      active ? "text-white bg-[#F49B31]" : "bg-[#FFC37B]"
+    } p-4 rounded-[18px] w-full max-w-[200px] flex items-center cursor-pointer justify-center border border-[#7B7B79] font-semibold h-10`}
+  >
+    {label}
+  </div>
+);
 
 export default FollowUp;

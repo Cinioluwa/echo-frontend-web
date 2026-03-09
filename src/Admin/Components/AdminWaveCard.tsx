@@ -12,9 +12,10 @@ import { useState } from "react";
 
 interface AdminWaveCardProps {
   waves: proposedWaveDetails;
+  onUpdate?: () => void;
 }
 
-const AdminWaveCard = ({ waves }: AdminWaveCardProps) => {
+const AdminWaveCard = ({ waves, onUpdate }: AdminWaveCardProps) => {
   const [openMenu, setOpenMenu] = useState(false);
   const [approved, setApproved] = useState(false);
 
