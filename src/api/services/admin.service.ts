@@ -1,146 +1,178 @@
 import api from "../axios.config";
 import type {
-  User,
-  Ping,
-  Stats,
-  AnalyticsData,
+  PlatformStats,
+  AdminPing,
+  AdminWave,
   PaginatedResponse,
-  PaginationParams,
-} from "../types/index";
-
-export interface GetAdminPingsParams extends PaginationParams {
-  category?: number;
-  status?: "POSTED" | "UNDER_REVIEW" | "ARCHIVED";
-}
-
-export interface UpdateUserRoleRequest {
-  role: "USER" | "ADMIN" | "REPRESENTATIVE";
-}
-
-export interface CreateAnnouncementRequest {
-  title: string;
-  content: string;
-  categoryIds?: number[];
-}
-
-export interface UpdateAnnouncementRequest {
-  title?: string;
-  content?: string;
-  categoryIds?: number[];
-}
+  Announcement,
+  CreateAnnouncementDto,
+  UpdateWaveStatusDto,
+  UpdatePingProgressDto,
+} from "../types/admin.types";
+import type { User } from "../types/index";
 
 /**
  * Admin Service
  * Handles admin-only operations (requires ADMIN role)
  */
-const adminService = {
+export const adminService = {
+  // ==================== Stats ====================
+
   /**
    * Get platform statistics
    */
-  getStats: async (): Promise<Stats> => {
-    const response = await api.get<Stats>("/admin/stats");
-    return response.data;
+  async getStats(): Promise<PlatformStats> {
+    const { data } = await api.get("/admin/stats");
+    return data;
   },
+
+  // ==================== Pings ====================
 
   /**
    * Get all pings (admin view with filters)
    * @param params Query parameters for filtering and pagination
    */
-  getAllPings: async (
-    params?: GetAdminPingsParams
-  ): Promise<PaginatedResponse<Ping>> => {
-    const response = await api.get<PaginatedResponse<Ping>>("/admin/pings", {
-      params,
-    });
-    return response.data;
+  async getPings(params?: {
+    page?: number;
+    limit?: number;
+    category?: number;
+    status?: string;
+  }): Promise<PaginatedResponse<AdminPing>> {
+    const { data } = await api.get("/admin/pings", { params });
+    return data;
   },
 
   /**
    * Delete any ping (admin privilege)
    * @param id Ping ID
    */
-  deletePing: async (id: number): Promise<void> => {
+  async deletePing(id: number): Promise<void> {
     await api.delete(`/admin/pings/${id}`);
   },
 
   /**
-   * Get all users in organization
+   * Acknowledge a ping (mark as seen/acknowledged by admin)
+   * @param id Ping ID
    */
-  getAllUsers: async (): Promise<User[]> => {
-    const response = await api.get<User[]>("/admin/users");
-    return response.data;
+  async acknowledgePing(id: number): Promise<AdminPing> {
+    const { data } = await api.post(`/admin/pings/${id}/acknowledge`);
+    return data;
   },
 
   /**
-   * Get detailed user info including activity
-   * @param id User ID
+   * Mark a ping as resolved
+   * @param id Ping ID
    */
-  getUserById: async (id: number): Promise<User> => {
-    const response = await api.get<User>(`/admin/users/${id}`);
-    return response.data;
+  async resolvePing(id: number): Promise<AdminPing> {
+    const { data } = await api.post(`/admin/pings/${id}/resolve`);
+    return data;
   },
 
   /**
-   * Update user role
-   * @param id User ID
-   * @param data New role
+   * Update ping progress status
+   * @param id Ping ID
+   * @param dto Status update data
    */
-  updateUserRole: async (
+  async updatePingProgress(
     id: number,
-    data: UpdateUserRoleRequest
-  ): Promise<User> => {
-    const response = await api.patch<User>(`/admin/users/${id}/role`, data);
-    return response.data;
+    dto: UpdatePingProgressDto,
+  ): Promise<AdminPing> {
+    const { data } = await api.patch(`/admin/pings/${id}/progress-status`, dto);
+    return data;
   },
+
+  // ==================== Waves ====================
+
+  /**
+   * Get all waves (admin view with filters)
+   * @param params Query parameters for filtering and pagination
+   */
+  async getWaves(params?: {
+    page?: number;
+    limit?: number;
+    status?: "POSTED" | "UNDER_REVIEW" | "APPROVED" | "REJECTED";
+  }): Promise<PaginatedResponse<AdminWave>> {
+    const { data } = await api.get("/admin/waves", { params });
+    return data;
+  },
+
+  /**
+   * Update wave status (approve, reject, etc.)
+   * @param id Wave ID
+   * @param dto Status update data
+   */
+  async updateWaveStatus(
+    id: number,
+    dto: UpdateWaveStatusDto,
+  ): Promise<AdminWave> {
+    const { data } = await api.patch(`/admin/waves/${id}/status`, dto);
+    return data;
+  },
+
+  // ==================== Announcements ====================
 
   /**
    * Create an announcement
-   * @param data Announcement details
+   * @param dto Announcement details
    */
-  createAnnouncement: async (data: CreateAnnouncementRequest): Promise<any> => {
-    const response = await api.post("/admin/announcements", data);
-    return response.data;
+  async createAnnouncement(dto: CreateAnnouncementDto): Promise<Announcement> {
+    const { data } = await api.post("/admin/announcements", dto);
+    return data;
   },
 
   /**
    * Update an announcement
    * @param id Announcement ID
-   * @param data Updated announcement data
+   * @param dto Updated announcement data
    */
-  updateAnnouncement: async (
+  async updateAnnouncement(
     id: number,
-    data: UpdateAnnouncementRequest
-  ): Promise<any> => {
-    const response = await api.patch(`/admin/announcements/${id}`, data);
-    return response.data;
+    dto: Partial<CreateAnnouncementDto>,
+  ): Promise<Announcement> {
+    const { data } = await api.patch(`/admin/announcements/${id}`, dto);
+    return data;
   },
 
   /**
    * Delete an announcement
    * @param id Announcement ID
    */
-  deleteAnnouncement: async (id: number): Promise<void> => {
+  async deleteAnnouncement(id: number): Promise<void> {
     await api.delete(`/admin/announcements/${id}`);
   },
 
+  // ==================== Users ====================
+
   /**
-   * Get ping statistics by student level
+   * Get all users in organization
    */
-  getAnalyticsByLevel: async (): Promise<AnalyticsData[]> => {
-    const response = await api.get<AnalyticsData[]>(
-      "/admin/analytics/by-level"
-    );
-    return response.data;
+  async getUsers(): Promise<User[]> {
+    const { data } = await api.get("/admin/users");
+    return data;
   },
 
   /**
-   * Get ping statistics by category
+   * Get detailed user info including activity
+   * @param id User ID
    */
-  getAnalyticsByCategory: async (): Promise<AnalyticsData[]> => {
-    const response = await api.get<AnalyticsData[]>(
-      "/admin/analytics/by-category"
-    );
-    return response.data;
+  async getUserById(id: number): Promise<User> {
+    const { data } = await api.get(`/admin/users/${id}`);
+    return data;
+  },
+
+  /**
+   * Update user role
+   * @param id User ID
+   * @param role New role
+   */
+  async updateUserRole(
+    id: number,
+    role: "USER" | "ADMIN" | "REPRESENTATIVE",
+  ): Promise<User> {
+    const { data } = await api.patch(`/admin/users/${id}/role`, {
+      role,
+    });
+    return data;
   },
 };
 

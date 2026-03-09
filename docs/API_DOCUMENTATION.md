@@ -256,7 +256,7 @@ Login with email and password.
 
 ### POST /api/auth/google
 
-Authenticate with Google OAuth.
+Authenticate with Google OAuth (Recommended).
 
 **Auth Required:** No
 
@@ -272,8 +272,16 @@ Authenticate with Google OAuth.
 
 ```json
 {
-  "message": "Login successful",
-  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+  "message": "Google authentication successful",
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "user": {
+    "id": 1,
+    "email": "student@university.edu",
+    "firstName": "John",
+    "lastName": "Doe",
+    "role": "USER",
+    "profilePicture": "https://..."
+  }
 }
 ```
 
@@ -282,12 +290,46 @@ Authenticate with Google OAuth.
 - Auto-creates user if doesn't exist
 - Auto-verifies email (Google already verified)
 - Rejects consumer email domains (gmail.com, yahoo.com, etc.)
+- Can link existing accounts on first Google sign-in
+
+**Legacy Alternative:** `POST /api/users/google` is also available but deprecated. New integrations should use `/api/auth/google`.
+
+---
+
+### GET /api/users/verify-email
+
+Verify email via browser link (with automatic redirect).
+
+**Auth Required:** No
+
+**Query Parameters:**
+
+- `token` (required): Email verification token from the email link
+
+**Success Response (302):**
+
+Redirects to the application URL (`APP_URL` from env) with verification status.
+
+**Typical Flow:**
+
+1. User clicks verification link in email
+2. Browser visits `GET /api/users/verify-email?token=xxx`
+3. Server verifies email and redirects to app
+4. App displays success message
+
+**Error Response (400):**
+
+```json
+{
+  "error": "Invalid or expired token"
+}
+```
 
 ---
 
 ### POST /api/users/verify-email
 
-Verify email address with token sent via email.
+Verify email via API (for programmatic use).
 
 **Auth Required:** No
 
@@ -306,6 +348,8 @@ Verify email address with token sent via email.
   "message": "Email verified successfully. You can now log in."
 }
 ```
+
+**Note:** Use this endpoint when integrating with API clients, Postman, or mobile apps. For browser-based verification, use the GET variant above.
 
 ---
 
@@ -3200,7 +3244,7 @@ Update wave status and optionally resolve parent ping.
 
 All representative routes require `REPRESENTATIVE` role.
 
-### GET /api/representatives/pings/submitted
+### GET /api/representative/pings/submitted
 
 Get pings submitted for review (status: UNDER_REVIEW).
 
@@ -3245,7 +3289,7 @@ Get pings submitted for review (status: UNDER_REVIEW).
 
 ---
 
-### GET /api/representatives/waves/top
+### GET /api/representative/waves/top
 
 Get top waves for review (most surged).
 
@@ -3282,7 +3326,7 @@ Get top waves for review (most surged).
 
 ---
 
-### POST /api/representatives/waves/forward
+### POST /api/representative/waves/forward
 
 Forward waves for review (flag them).
 
@@ -3468,11 +3512,47 @@ Files are stored in organization-scoped folders:
 
 ## Healthcheck
 
-### GET /healthz
+### GET /health
 
-Check if server is running.
+Deep health check with database connectivity verification.
 
 **Auth Required:** No
+
+**Description:** Performs a comprehensive health check including database connectivity. Use this endpoint for monitoring systems and deployment health checks.
+
+**Success Response (200):**
+
+```json
+{
+  "status": "OK",
+  "timestamp": "2026-03-09T12:00:00.000Z",
+  "services": {
+    "database": "healthy"
+  }
+}
+```
+
+**Error Response (503):**
+
+```json
+{
+  "status": "Error",
+  "timestamp": "2026-03-09T12:00:00.000Z",
+  "services": {
+    "database": "unhealthy"
+  }
+}
+```
+
+---
+
+### GET /healthz
+
+Shallow health check (no database dependency).
+
+**Auth Required:** No
+
+**Description:** Quick health check that only verifies the application is running. Does not check database or external services. Useful for basic uptime monitoring.
 
 **Success Response (200):**
 

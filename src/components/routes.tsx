@@ -1,6 +1,8 @@
 import { lazy, Suspense } from "react";
 import { createBrowserRouter } from "react-router-dom";
 import LoadingFallback from "./auth/LoadingFallback";
+import AdminRoute from "./auth/AdminRoute";
+import ProtectedRoute from "./auth/ProtectedRoute";
 
 // Eager load critical auth pages for immediate user experience
 import Login from "../pages/Login";
@@ -89,19 +91,35 @@ const router = createBrowserRouter([
   },
   {
     path: "waveHistory",
-    element: withSuspense(WaveHistory),
+    element: (
+      <ProtectedRoute>
+        {withSuspense(WaveHistory)}
+      </ProtectedRoute>
+    ),
   },
   {
     path: "stream",
-    element: withSuspense(Stream),
+    element: (
+      <ProtectedRoute>
+        {withSuspense(Stream)}
+      </ProtectedRoute>
+    ),
   },
   {
     path: "soundBoard",
-    element: withSuspense(SoundBoard),
+    element: (
+      <ProtectedRoute>
+        {withSuspense(SoundBoard)}
+      </ProtectedRoute>
+    ),
   },
   {
     path: "profile",
-    element: withSuspense(Profile),
+    element: (
+      <ProtectedRoute>
+        {withSuspense(Profile)}
+      </ProtectedRoute>
+    ),
   },
 
   // Admin routes
@@ -111,15 +129,27 @@ const router = createBrowserRouter([
     children: [
       {
         path: "feed",
-        element: withSuspense(Feed),
+        element: (
+          <AdminRoute>
+            {withSuspense(Feed)}
+          </AdminRoute>
+        ),
       },
       {
         path: "overview",
-        element: withSuspense(Overview),
+        element: (
+          <AdminRoute>
+            {withSuspense(Overview)}
+          </AdminRoute>
+        ),
       },
       {
         path: "followUp",
-        element: withSuspense(FollowUp),
+        element: (
+          <AdminRoute>
+            {withSuspense(FollowUp)}
+          </AdminRoute>
+        ),
       },
     ],
   },

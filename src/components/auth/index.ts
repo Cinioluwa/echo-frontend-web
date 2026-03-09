@@ -14,3 +14,5 @@ export { default as AuthFooter } from "./AuthFooter";
 export { default as ErrorBoundary } from "./ErrorBoundary";
 export { default as OfflineIndicator } from "./OfflineIndicator";
 export { default as SkipLink } from "./SkipLink";
+export { default as ProtectedRoute } from "./ProtectedRoute";
+export { default as AdminRoute } from "./AdminRoute";

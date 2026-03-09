@@ -7,6 +7,7 @@ import { useOrganizationStore } from "./data/useOrganizationStore";
 import { useSurgeStore } from "./interactions/useSurgeStore";
 import { useSearchStore } from "./ui/useSearchStore";
 import { useRegistrationStore } from "./ui/useRegistrationStore";
+import { useAdminStore } from "./adminStore";
 
 // Re-export all stores
 export * from "./auth/useAuthStore";
@@ -18,6 +19,7 @@ export * from "./data/usePingsStore";
 export * from "./data/useResolutionsStore";
 export * from "./data/useCategoriesStore";
 export * from "./data/useOrganizationStore";
+export * from "./adminStore";
 
 // Re-export types
 export * from "./types";
@@ -33,4 +35,5 @@ export const resetAllStores = () => {
   useOrganizationStore.getState().clearSelection();
   useOrganizationStore.getState().clearError();
   useRegistrationStore.getState().clearAll();
+  useAdminStore.getState().reset();
 };

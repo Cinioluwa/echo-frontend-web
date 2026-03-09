@@ -14,11 +14,13 @@ export { default as categoryService } from "./services/category.service";
 export { default as announcementService } from "./services/announcement.service";
 export { default as publicService } from "./services/public.service";
 export { default as adminService } from "./services/admin.service";
+export { default as analyticsService } from "./services/analytics.service";
 export { default as representativeService } from "./services/representative.service";
 export { default as healthService } from "./services/health.service";
 
 // Types
 export * from "./types/index";
+export * from "./types/admin.types";
 
 // Axios config
 export { default as api } from "./axios.config";
