@@ -54,7 +54,7 @@ const Feed = () => {
         setPings(pingsData.data);
         setWaves(wavesData.data);
         setHasMore(
-          pingsData.pagination.hasNextPage || wavesData.pagination.hasNextPage
+          (pingsData.pagination.hasNextPage ?? false) || (wavesData.pagination.hasNextPage ?? false)
         );
       } else if (activePosts.waves) {
         // Fetch only waves
@@ -64,7 +64,7 @@ const Feed = () => {
         });
         setWaves(wavesData.data);
         setPings([]);
-        setHasMore(wavesData.pagination.hasNextPage || false);
+        setHasMore(wavesData.pagination.hasNextPage ?? false);
       } else if (activePosts.pings) {
         // Fetch only pings
         const pingsData = await adminService.getPings({
@@ -73,7 +73,7 @@ const Feed = () => {
         });
         setPings(pingsData.data);
         setWaves([]);
-        setHasMore(pingsData.pagination.hasNextPage || false);
+        setHasMore(pingsData.pagination.hasNextPage ?? false);
       }
     } catch (err: any) {
       console.error('Failed to fetch feed data:', err);
@@ -257,9 +257,8 @@ const FilterButton = ({
 }) => (
   <div
     onClick={onClick}
-    className={`${
-      active ? "text-white bg-[#F49B31]" : "bg-[#FFC37B]"
-    } p-4 rounded-[18px] w-[100px] flex items-center cursor-pointer justify-center border border-[#7B7B79] h-10`}
+    className={`${active ? "text-white bg-[#F49B31]" : "bg-[#FFC37B]"
+      } p-4 rounded-[18px] w-[100px] flex items-center cursor-pointer justify-center border border-[#7B7B79] h-10`}
   >
     {label}
   </div>

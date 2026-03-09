@@ -54,7 +54,7 @@ const FollowUp = () => {
       });
 
       setWaves(wavesData.data);
-      setHasMore(wavesData.pagination.hasNextPage || false);
+      setHasMore(wavesData.pagination.hasNextPage ?? false);
     } catch (err: any) {
       console.error('Failed to fetch waves:', err);
       setError(err.message || 'Failed to load waves');
@@ -206,9 +206,8 @@ const StatusButton = ({
 }) => (
   <div
     onClick={onClick}
-    className={`${
-      active ? "text-white bg-[#F49B31]" : "bg-[#FFC37B]"
-    } p-4 rounded-[18px] w-full max-w-[200px] flex items-center cursor-pointer justify-center border border-[#7B7B79] font-semibold h-10`}
+    className={`${active ? "text-white bg-[#F49B31]" : "bg-[#FFC37B]"
+      } p-4 rounded-[18px] w-full max-w-[200px] flex items-center cursor-pointer justify-center border border-[#7B7B79] font-semibold h-10`}
   >
     {label}
   </div>

@@ -5,17 +5,17 @@ const reject = "/assets/images/reject.svg";
 const dropdown = "/assets/images/customDropdown.svg";
 const profileImage = "/assets/images/profileImage.jpeg";
 import CollapsibleText from "../../components/CollapsibleText";
-import type { proposedWaveDetails } from "../../components/ProposeWaveModal";
+import type { AdminWave } from "../../api/types/admin.types";
 import { categoryImages } from "../../components/CategoryImages";
 import PostActionMenu from "./PostActionMenu";
 import { useState } from "react";
 
 interface AdminWaveCardProps {
-  waves: proposedWaveDetails;
+  waves: AdminWave;
   onUpdate?: () => void;
 }
 
-const AdminWaveCard = ({ waves, onUpdate }: AdminWaveCardProps) => {
+const AdminWaveCard = ({ waves }: AdminWaveCardProps) => {
   const [openMenu, setOpenMenu] = useState(false);
   const [approved, setApproved] = useState(false);
 
@@ -27,20 +27,20 @@ const AdminWaveCard = ({ waves, onUpdate }: AdminWaveCardProps) => {
             <span className="cursor-pointer">
               <img src={dropdown} alt="" />
             </span>
-            <p className="text-[14px] font-semibold">{waves.pingTitle}</p>
+            <p className="text-[14px] font-semibold">{waves.ping.title}</p>
           </div>
 
-          {waves.status && waves.status === "underReview" && (
+          {waves.status && waves.status === "UNDER_REVIEW" && (
             <div className="border border-[#ABEFC6] bg-[#ECFDF3] text-[12px] px-2 py-0.5 rounded-4xl">
               Under Review
             </div>
           )}
-          {waves.status && waves.status === "approved" && (
+          {waves.status && waves.status === "APPROVED" && (
             <div className="border border-[#ABEFC6] bg-[#ECFDF3] text-[12px] px-2 py-0.5 rounded-4xl">
               Approved
             </div>
           )}
-          {waves.status && waves.status === "rejected" && (
+          {waves.status && waves.status === "REJECTED" && (
             <div className="border text-[#B01212] border-[#B01212] bg-[#FFF7E8] text-[12px] px-2 py-0.5 rounded-4xl">
               Rejected
             </div>
@@ -59,19 +59,19 @@ const AdminWaveCard = ({ waves, onUpdate }: AdminWaveCardProps) => {
               <img src={cardProfile} alt="" />
               <div className="flex flex-col">
                 <span className="text-[15px] whitespace-normal sm:whitespace-nowrap inline-block max-w-3 font-semibold">
-                  Covenant Smith
+                  {waves.author ? `${waves.author.firstName} ${waves.author.lastName}` : 'Anonymous'}
                 </span>
                 <span className="text-[#8B8E8D] text-[13px]">
-                  {waves.createdAt}
+                  {new Date(waves.createdAt).toLocaleDateString()}
                 </span>
               </div>
             </div>
 
             <div className="flex items-center gap-[13px]">
               <span>
-                {waves.cat && <img src={categoryImages[waves.cat]} alt="" />}
+                <img src={categoryImages['Chapel']} alt="" />
               </span>
-              {waves.cat}
+              Related Ping
             </div>
           </div>
         </div>
@@ -86,14 +86,14 @@ const AdminWaveCard = ({ waves, onUpdate }: AdminWaveCardProps) => {
               </span>
               <div className="text-start">
                 <p className="text-[#926B3D] text-[0.45rem] md:text-[0.74rem] ">
-                  Osagumwenro Ugbo
+                  Original Ping
                 </p>
                 <p className="text-[0.62rem] md:text-[0.55rem] ">
-                  {waves.pingTimeStamp}
+                  {new Date(waves.ping.createdAt).toLocaleDateString()}
                 </p>
               </div>
             </div>
-            <CollapsibleText title={waves.pingTitle} />
+            <CollapsibleText title={waves.ping.title} />
           </div>
         </div>
 
@@ -123,7 +123,7 @@ const AdminWaveCard = ({ waves, onUpdate }: AdminWaveCardProps) => {
             </button>
           </div>
 
-          <div className="text-[#454545] text-[14px]">192 Surges</div>
+          <div className="text-[#454545] text-[14px]">{waves.surgeCount} Surges</div>
         </div>
       </div>
     </div>

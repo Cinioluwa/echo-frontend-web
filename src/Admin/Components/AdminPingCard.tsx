@@ -5,17 +5,17 @@ const waveMenu = "/assets/images/waveMenu.svg";
 const dropdown = "/assets/images/customDropdown.svg";
 const dropdown_menu = "/assets/images/dropdown_menu.svg";
 import { categoryImages } from "../../components/CategoryImages";
-import type { PingFormDetails } from "../../components/PingFormModal";
+import type { AdminPing } from "../../api/types/admin.types";
 import { useState } from "react";
 import PostActionMenu from "./PostActionMenu";
 import PostEngagementMenu from "./PostEngagementMenu";
 
 interface AdminPingCardProps {
-  pings: PingFormDetails;
+  pings: AdminPing;
   onUpdate?: () => void;
 }
 
-const AdminPingCard = ({ pings, onUpdate }: AdminPingCardProps) => {
+const AdminPingCard = ({ pings }: AdminPingCardProps) => {
   const [acknowledged, setAcknowledged] = useState(false);
   const [openMenu, setOpenMenu] = useState(false);
   const [openEngagementMenu, setOpenEngagementMenu] = useState(false);
@@ -28,7 +28,7 @@ const AdminPingCard = ({ pings, onUpdate }: AdminPingCardProps) => {
             <span className="cursor-pointer">
               <img src={dropdown} alt="" />
             </span>
-            <p className="text-[14px] font-semibold">{pings.pingTitle}</p>
+            <p className="text-[14px] font-semibold">{pings.title}</p>
           </div>
 
           <span onClick={() => setOpenMenu(true)} className="cursor-pointer">
@@ -44,26 +44,26 @@ const AdminPingCard = ({ pings, onUpdate }: AdminPingCardProps) => {
               <img src={cardProfile} alt="" />
               <div className="flex flex-col">
                 <span className="text-[15px] whitespace-normal sm:whitespace-nowrap inline-block max-w-3 font-semibold">
-                  Covenant Smith
+                  {pings.isAnonymous ? 'Anonymous' : pings.author ? `${pings.author.firstName} ${pings.author.lastName}` : 'Anonymous'}
                 </span>
                 <span className="text-[#8B8E8D] text-[13px]">
-                  {pings.createdAt}
+                  {new Date(pings.createdAt).toLocaleDateString()}
                 </span>
               </div>
             </div>
 
             <div className="flex items-center gap-[13px]">
               <span>
-                <img src={categoryImages[pings.cat]} alt="" />
+                <img src={categoryImages[pings.category.name]} alt="" />
               </span>
-              {pings.cat}
+              {pings.category.name}
             </div>
           </div>
         </div>
 
         <div className="flex flex-col gap-2.5 my-4">
           <p className="text-[#626665] text-[15px] border-b border-[#D3CECE] pb-4">
-            {pings.pingDesc}
+            {pings.content}
           </p>
         </div>
 
@@ -71,15 +71,15 @@ const AdminPingCard = ({ pings, onUpdate }: AdminPingCardProps) => {
           <div className="flex gap-4 items-center">
             <div className=" items-center cursor-pointer gap-1 hidden lg:flex">
               <img src={reaction} alt="" />
-              <span>3</span> comments
+              <span>{pings._count.comments}</span> comments
             </div>
 
             <div className="flex bg-[#EF6E0B] rounded-[20px]">
               <button
                 onClick={() => setAcknowledged(!acknowledged)}
                 className={`transition-colors cursor-pointer duration-1200 ease-in-out ${acknowledged
-                    ? "bg-[#F49B31] hover:bg-[#d88429] transition-colors duration-100 ease-out text-white font-bold"
-                    : "bg-[#FEF5EA] transition-colors duration-100 ease-in-out hover:bg-[#f2e8d9]"
+                  ? "bg-[#F49B31] hover:bg-[#d88429] transition-colors duration-100 ease-out text-white font-bold"
+                  : "bg-[#FEF5EA] transition-colors duration-100 ease-in-out hover:bg-[#f2e8d9]"
                   } py-1.5 lg:py-2 lg:px-5 flex text-[12px]  font-bold items-center gap-2.5 border rounded-[20px] px-5`}
               >
                 <img
@@ -99,7 +99,7 @@ const AdminPingCard = ({ pings, onUpdate }: AdminPingCardProps) => {
               {openEngagementMenu && <PostEngagementMenu setEngagementMenu={setOpenEngagementMenu} />}
             </div>
 
-            <div className="text-[#454545] text-[14px]">128 Surges</div>
+            <div className="text-[#454545] text-[14px]">{pings.surgeCount} Surges</div>
           </div>
         </div>
       </div>
