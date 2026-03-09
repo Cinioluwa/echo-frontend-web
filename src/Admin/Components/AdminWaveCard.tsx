@@ -9,15 +9,64 @@ import type { AdminWave } from "../../api/types/admin.types";
 import { categoryImages } from "../../components/CategoryImages";
 import PostActionMenu from "./PostActionMenu";
 import { useState } from "react";
+import { adminService } from "../../api";
 
 interface AdminWaveCardProps {
   waves: AdminWave;
   onUpdate?: () => void;
 }
 
-const AdminWaveCard = ({ waves }: AdminWaveCardProps) => {
+const AdminWaveCard = ({ waves, onUpdate }: AdminWaveCardProps) => {
   const [openMenu, setOpenMenu] = useState(false);
-  const [approved, setApproved] = useState(false);
+  const [approved, setApproved] = useState(waves.status === 'APPROVED');
+  const [rejected, setRejected] = useState(waves.status === 'REJECTED');
+  const [loading, setLoading] = useState(false);
+
+  const handleApprove = async () => {
+    if (loading || approved) return;
+
+    try {
+      setLoading(true);
+      await adminService.updateWaveStatus(waves.id, { status: 'APPROVED' });
+      setApproved(true);
+      setRejected(false);
+
+      // Show success notification
+      alert('Wave approved successfully! Parent ping has been resolved.');
+
+      // Refresh the list
+      if (onUpdate) onUpdate();
+    } catch (error: any) {
+      console.error('Failed to approve wave:', error);
+      alert(error.response?.data?.error || 'Failed to approve wave');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleReject = async () => {
+    if (loading || rejected) return;
+
+    if (!confirm('Are you sure you want to reject this wave?')) return;
+
+    try {
+      setLoading(true);
+      await adminService.updateWaveStatus(waves.id, { status: 'REJECTED' });
+      setRejected(true);
+      setApproved(false);
+
+      // Show success notification
+      alert('Wave rejected');
+
+      // Refresh the list
+      if (onUpdate) onUpdate();
+    } catch (error: any) {
+      console.error('Failed to reject wave:', error);
+      alert(error.response?.data?.error || 'Failed to reject wave');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="relative">
@@ -50,7 +99,14 @@ const AdminWaveCard = ({ waves }: AdminWaveCardProps) => {
             <img src={waveMenu} alt="" />
           </span>
 
-          {openMenu && <PostActionMenu setOpenMenu={setOpenMenu} />}
+          {openMenu && (
+            <PostActionMenu
+              setOpenMenu={setOpenMenu}
+              entityType="wave"
+              entityId={waves.id}
+              onUpdate={onUpdate}
+            />
+          )}
         </div>
 
         <div>
@@ -106,24 +162,39 @@ const AdminWaveCard = ({ waves }: AdminWaveCardProps) => {
         <div className="flex  justify-between items-center ">
           <div className="flex gap-2.5 mb-2">
             <button
-              onClick={() => setApproved(!approved)}
-              className={`flex ${approved ? "bg-green-500" : "bg-[#F49B31]"} transition-all duration-200 ease-in-out cursor-pointer text-white items-center justify-center px-4 py-2 rounded-[15px] gap-2.5`}
+              onClick={handleApprove}
+              disabled={loading || approved || rejected}
+              className={`flex ${approved
+                  ? "bg-green-500"
+                  : "bg-[#F49B31] hover:bg-[#d88429]"
+                } ${loading ? "opacity-50 cursor-not-allowed" : "cursor-pointer"
+                } transition-all duration-200 ease-in-out text-white items-center justify-center px-4 py-2 rounded-[15px] gap-2.5`}
             >
               <span>
                 <img src={approve} alt="" />
               </span>
-              {approved ? "Approved" : "Approve"}
+              {approved ? "Approved" : loading ? "Processing..." : "Approve"}
             </button>
 
-            <button className="flex bg-[#B01212] cursor-pointer text-white items-center justify-center pr-7 pl-4 py-2 rounded-[15px] gap-2.5">
+            <button
+              onClick={handleReject}
+              disabled={loading || approved || rejected}
+              className={`flex ${rejected
+                  ? "bg-gray-500"
+                  : "bg-[#B01212] hover:bg-[#900f0f]"
+                } ${loading ? "opacity-50 cursor-not-allowed" : "cursor-pointer"
+                } text-white items-center justify-center pr-7 pl-4 py-2 rounded-[15px] gap-2.5`}
+            >
               <span>
                 <img src={reject} alt="" />
               </span>
-              Reject
+              {rejected ? "Rejected" : "Reject"}
             </button>
           </div>
 
-          <div className="text-[#454545] text-[14px]">{waves.surgeCount} Surges</div>
+          <div className="text-[#454545] text-[14px]">
+            {waves.surgeCount || waves._count.surges} Surges
+          </div>
         </div>
       </div>
     </div>

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import AnnouncementCollege from "./AnnouncementCollege";
 import AnnouncementGroup from "./AnnouncementGroup";
+import { adminService } from "../../api";
 
 interface AnnouncementDetails {
   title: string;
@@ -24,31 +25,67 @@ const AnnouncementModal = ({
       college: "",
     },
   );
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  function submitForm() {
-    if (announcementData.college === "") return alert("Select a college!");
-    if (announcementData.group === "") return alert("Select a group!");
+  // Helper function to map UI selections to category IDs
+  const mapToCategories = (college: string, group: string): number[] => {
+    // Implement mapping logic based on your categories
+    // This is a placeholder - you'll need to adjust based on your actual category structure
+    const categories: number[] = [];
 
-    //ANNOUNCMENT DETAILS OBJECT TO BE SENT TO SERVER:
-    const newAnnouncementFormDetails: AnnouncementDetails = {
-      title: announcementData.title.trim(),
-      description: announcementData.description.trim(),
-      group: announcementData.group,
-      college: announcementData.college,
-    };
+    // Example: if you have a way to map college/group strings to category IDs
+    // You might need to fetch categories first or maintain a mapping
+    // For now, returning empty array as placeholder
+    return categories;
+  };
 
-    // VERIFY ANNOUNCEMENT DETAILS
-    console.log("pingFormDetails: ", newAnnouncementFormDetails);
+  async function submitForm() {
+    if (announcementData.college === "") {
+      alert("Select a college!");
+      return;
+    }
+    if (announcementData.group === "") {
+      alert("Select a group!");
+      return;
+    }
 
-    setAnnouncementModal(false);
+    try {
+      setLoading(true);
+      setError(null);
 
-    // RESET ANNOUNCEMENT FORM
-    setAnnouncementData({
-      title: "",
-      description: "",
-      group: "",
-      college: "",
-    });
+      // Map college/group to categoryIds if needed
+      // This depends on your category structure
+      const categoryIds = mapToCategories(
+        announcementData.college,
+        announcementData.group
+      );
+
+      await adminService.createAnnouncement({
+        title: announcementData.title.trim(),
+        content: announcementData.description.trim(),
+        categoryIds,
+      });
+
+      alert("Announcement published successfully!");
+
+      // Reset form
+      setAnnouncementData({
+        title: "",
+        description: "",
+        group: "",
+        college: "",
+      });
+
+      setAnnouncementModal(false);
+    } catch (err: any) {
+      console.error("Failed to create announcement:", err);
+      const errorMessage = err.response?.data?.error || "Failed to publish announcement";
+      setError(errorMessage);
+      alert(errorMessage);
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -134,11 +171,19 @@ const AnnouncementModal = ({
             </div>
           </fieldset>
 
+          {error && (
+            <div className="w-full bg-red-50 border border-red-200 rounded p-3 text-red-600 text-sm">
+              {error}
+            </div>
+          )}
+
           <button
             type="submit"
-            className="text-[18px] my-[25px] text-white py-2 text-center w-full bg-[#F49B31] rounded-[17px]"
+            disabled={loading}
+            className={`text-[18px] my-[25px] text-white py-2 text-center w-full bg-[#F49B31] rounded-[17px] hover:bg-[#d88429] transition ${loading ? "opacity-50 cursor-not-allowed" : ""
+              }`}
           >
-            Publish
+            {loading ? "Publishing..." : "Publish"}
           </button>
           <button
             type="button"

@@ -9,16 +9,39 @@ import type { AdminPing } from "../../api/types/admin.types";
 import { useState } from "react";
 import PostActionMenu from "./PostActionMenu";
 import PostEngagementMenu from "./PostEngagementMenu";
+import { adminService } from "../../api";
 
 interface AdminPingCardProps {
   pings: AdminPing;
   onUpdate?: () => void;
 }
 
-const AdminPingCard = ({ pings }: AdminPingCardProps) => {
-  const [acknowledged, setAcknowledged] = useState(false);
+const AdminPingCard = ({ pings, onUpdate }: AdminPingCardProps) => {
+  const [acknowledged, setAcknowledged] = useState(!!pings.acknowledgedAt);
   const [openMenu, setOpenMenu] = useState(false);
   const [openEngagementMenu, setOpenEngagementMenu] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  const handleAcknowledge = async () => {
+    if (loading || acknowledged) return;
+
+    try {
+      setLoading(true);
+      await adminService.acknowledgePing(pings.id);
+      setAcknowledged(true);
+
+      // Show success notification
+      alert('Ping acknowledged successfully');
+
+      // Refresh the list
+      if (onUpdate) onUpdate();
+    } catch (error: any) {
+      console.error('Failed to acknowledge ping:', error);
+      alert(error.response?.data?.error || 'Failed to acknowledge ping');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="relative">
@@ -35,7 +58,14 @@ const AdminPingCard = ({ pings }: AdminPingCardProps) => {
             <img src={waveMenu} alt="" />
           </span>
 
-          {openMenu && <PostActionMenu setOpenMenu={setOpenMenu} />}
+          {openMenu && (
+            <PostActionMenu
+              setOpenMenu={setOpenMenu}
+              entityType="ping"
+              entityId={pings.id}
+              onUpdate={onUpdate}
+            />
+          )}
         </div>
 
         <div>
@@ -76,10 +106,12 @@ const AdminPingCard = ({ pings }: AdminPingCardProps) => {
 
             <div className="flex bg-[#EF6E0B] rounded-[20px]">
               <button
-                onClick={() => setAcknowledged(!acknowledged)}
+                onClick={handleAcknowledge}
+                disabled={loading || acknowledged}
                 className={`transition-colors cursor-pointer duration-1200 ease-in-out ${acknowledged
-                  ? "bg-[#F49B31] hover:bg-[#d88429] transition-colors duration-100 ease-out text-white font-bold"
-                  : "bg-[#FEF5EA] transition-colors duration-100 ease-in-out hover:bg-[#f2e8d9]"
+                    ? "bg-[#F49B31] hover:bg-[#d88429] transition-colors duration-100 ease-out text-white font-bold"
+                    : "bg-[#FEF5EA] transition-colors duration-100 ease-in-out hover:bg-[#f2e8d9]"
+                  } ${loading ? "opacity-50 cursor-not-allowed" : ""
                   } py-1.5 lg:py-2 lg:px-5 flex text-[12px]  font-bold items-center gap-2.5 border rounded-[20px] px-5`}
               >
                 <img
@@ -88,18 +120,27 @@ const AdminPingCard = ({ pings }: AdminPingCardProps) => {
                   className={`${acknowledged ? "brightness-0 invert" : ""
                     } w-[50%] contrast-200 md:w-full`}
                 />
-                ACKNOWLEDGE
+                {acknowledged ? "ACKNOWLEDGED" : loading ? "PROCESSING..." : "ACKNOWLEDGE"}
               </button>
 
               <button className="bg-[#EF6E0B]  rounded-[20px] py-1.5 lg:py-2 pl-2 pr-4">
-                <span onClick={() => setOpenEngagementMenu(true)} className="cursor-pointer">
+                <span
+                  onClick={() => setOpenEngagementMenu(true)}
+                  className="cursor-pointer"
+                >
                   <img src={dropdown_menu} alt="" />
                 </span>
               </button>
-              {openEngagementMenu && <PostEngagementMenu setEngagementMenu={setOpenEngagementMenu} />}
+              {openEngagementMenu && (
+                <PostEngagementMenu
+                  setEngagementMenu={setOpenEngagementMenu}
+                />
+              )}
             </div>
 
-            <div className="text-[#454545] text-[14px]">{pings.surgeCount} Surges</div>
+            <div className="text-[#454545] text-[14px]">
+              {pings.surgeCount || pings._count.surges} Surges
+            </div>
           </div>
         </div>
       </div>
