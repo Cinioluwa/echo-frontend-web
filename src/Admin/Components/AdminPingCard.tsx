@@ -82,12 +82,14 @@ const AdminPingCard = ({ pings, onUpdate }: AdminPingCardProps) => {
               </div>
             </div>
 
-            <div className="flex items-center gap-[13px]">
-              <span>
-                <img src={categoryImages[pings.category.name]} alt="" />
-              </span>
-              {pings.category.name}
-            </div>
+            {pings.category && (
+              <div className="flex items-center gap-[13px]">
+                <span>
+                  <img src={categoryImages[pings.category.name]} alt="" />
+                </span>
+                {pings.category.name}
+              </div>
+            )}
           </div>
         </div>
 
@@ -109,8 +111,8 @@ const AdminPingCard = ({ pings, onUpdate }: AdminPingCardProps) => {
                 onClick={handleAcknowledge}
                 disabled={loading || acknowledged}
                 className={`transition-colors cursor-pointer duration-1200 ease-in-out ${acknowledged
-                    ? "bg-[#F49B31] hover:bg-[#d88429] transition-colors duration-100 ease-out text-white font-bold"
-                    : "bg-[#FEF5EA] transition-colors duration-100 ease-in-out hover:bg-[#f2e8d9]"
+                  ? "bg-[#F49B31] hover:bg-[#d88429] transition-colors duration-100 ease-out text-white font-bold"
+                  : "bg-[#FEF5EA] transition-colors duration-100 ease-in-out hover:bg-[#f2e8d9]"
                   } ${loading ? "opacity-50 cursor-not-allowed" : ""
                   } py-1.5 lg:py-2 lg:px-5 flex text-[12px]  font-bold items-center gap-2.5 border rounded-[20px] px-5`}
               >
