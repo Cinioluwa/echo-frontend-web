@@ -11,7 +11,7 @@
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { FaPlus } from "react-icons/fa6";
-import MobileCategories from "./MobileCategories";
+import MobileCategoryDropdown from "./MobileCategoryDropdown";
 import MobileOptionsDropdown from "./MobileOptionsDropdown";
 
 const menuBar = "/assets/images/menu-hotdog.svg";
@@ -27,10 +27,11 @@ const MobileHeader = ({ onCreatePing }: MobileHeaderProps) => {
     const location = useLocation();
     const navigate = useNavigate();
 
-    const isFeedPage =
-        location.pathname === "/feed" || location.pathname.startsWith("/feed/");
+    const isFeedPage = location.pathname === "/feed";
+    const isPingDetail =
+        location.pathname !== "/feed" && location.pathname.startsWith("/feed/");
     const isHistoryPage = location.pathname.startsWith("/history");
-    const pageTitle = isFeedPage ? "Feed" : "History";
+    const pageTitle = isHistoryPage ? "History" : "Feed";
 
     return (
         <div className="flex justify-between items-center mx-[15px] mt-[15px]">
@@ -53,40 +54,41 @@ const MobileHeader = ({ onCreatePing }: MobileHeaderProps) => {
                     </span>
                 </div>
 
-                {/* Category pill (+ Back button for history pages) */}
+                {/* Back button (history) OR Back button (ping detail) OR Category pill (feed) */}
                 <div className="flex items-center gap-2">
-                    {isHistoryPage && (
+                    {(isHistoryPage || isPingDetail) ? (
+                        /* Back button — shown on History and Ping Detail pages */
                         <button
-                            onClick={() => navigate("/feed")}
+                            onClick={() => navigate(isHistoryPage ? "/feed" : "/feed")}
                             className="flex items-center gap-1 bg-[#fefefe] border border-[#D0D0D0] rounded-[18px] px-2 py-[5px] h-[25px] w-[59px] cursor-pointer"
                         >
                             <span className="text-[10px] font-medium font-['Poppins',sans-serif] text-black leading-normal whitespace-nowrap">
                                 ← Back
                             </span>
                         </button>
-                    )}
-
-                    {/* Category pill */}
-                    <button
-                        onClick={() => setOpenCat(!openCat)}
-                        className="flex items-center justify-center px-[13px] py-[3px] h-5 w-[90px] border border-[#7D7D7D] rounded-[25px] cursor-pointer"
-                    >
-                        <span className="text-[9px] font-medium font-['Poppins',sans-serif] text-black leading-normal">
-                            Category :{" "}
-                            <span className="text-[#F49B31]">
-                                {selectedMobileCat || "ALL"}
+                    ) : (
+                        /* Category pill — shown on main feed page only */
+                        <button
+                            onClick={() => setOpenCat(!openCat)}
+                            className="flex items-center justify-center px-[13px] py-[3px] h-5 w-[90px] border border-[#7D7D7D] rounded-[25px] cursor-pointer"
+                        >
+                            <span className="text-[9px] font-medium font-['Poppins',sans-serif] text-black leading-normal">
+                                Category :{" "}
+                                <span className="text-[#F49B31]">
+                                    {selectedMobileCat || "ALL"}
+                                </span>
                             </span>
-                        </span>
-                    </button>
+                        </button>
+                    )}
                 </div>
 
-                {/* Category dropdown overlay */}
-                {openCat && (
+                {/* Category dropdown overlay — only on main feed page */}
+                {openCat && isFeedPage && (
                     <div
                         onClick={() => setOpenCat(false)}
                         className="fixed z-10 transition-opacity duration-300 ease-in inset-0 bg-black/40"
                     >
-                        <MobileCategories
+                        <MobileCategoryDropdown
                             selectedMobileCat={selectedMobileCat}
                             setOpenCat={setOpenCat}
                             setSelectedMobileCat={(cat) => setSelectedMobileCat(cat)}

@@ -99,17 +99,17 @@ const UnifiedPingCard = ({ ping, waves = [] }: UnifiedPingCardProps) => {
                 <div className="flex items-center justify-between">
                     <div className="flex items-center gap-4">
                         {/* Avatar */}
-                        <div className="w-[53px] h-[53px] rounded-full bg-[#FFC37B] flex items-center justify-center shrink-0 overflow-hidden">
-                            <span className="font-['Poppins',sans-serif] font-bold text-[18px] text-white">
+                        <div className="w-7 h-7 md:w-[53px] md:h-[53px] rounded-full bg-[#FFC37B] flex items-center justify-center shrink-0 overflow-hidden">
+                            <span className="font-['Poppins',sans-serif] font-bold text-[10px] md:text-[18px] text-white">
                                 {authorInitials}
                             </span>
                         </div>
                         {/* Name + timestamp */}
                         <div className="flex flex-col">
-                            <span className="font-['Poppins',sans-serif] font-semibold text-[15px] text-black leading-normal">
+                            <span className="font-['Poppins',sans-serif] font-semibold text-[13px] md:text-[15px] text-black leading-normal">
                                 {authorName}
                             </span>
-                            <span className="font-['Poppins',sans-serif] font-medium text-[13px] text-[#8B8E8D] leading-normal">
+                            <span className="font-['Poppins',sans-serif] font-medium text-[11px] md:text-[13px] text-[#8B8E8D] leading-normal">
                                 {timestamp}
                             </span>
                         </div>
@@ -145,9 +145,9 @@ const UnifiedPingCard = ({ ping, waves = [] }: UnifiedPingCardProps) => {
                 {categoryName && (
                     <div className="flex items-center gap-[9px]">
                         {categoryIcon && (
-                            <img src={categoryIcon} alt={categoryName} className="w-5 h-5 object-contain" />
+                            <img src={categoryIcon} alt={categoryName} className="w-[13px] h-[13px] md:w-5 md:h-5 object-contain" />
                         )}
-                        <span className="font-['Poppins',sans-serif] font-medium text-[15px] text-[#171717]">
+                        <span className="font-['Poppins',sans-serif] font-medium text-[13px] md:text-[15px] text-[#171717]">
                             {categoryName}
                         </span>
                     </div>
@@ -156,11 +156,11 @@ const UnifiedPingCard = ({ ping, waves = [] }: UnifiedPingCardProps) => {
 
             {/* ─── Body ────────────────────────────────── */}
             <div className="flex flex-col gap-[13px]">
-                <h3 className="font-['Poppins',sans-serif] font-semibold text-[16px] text-black leading-normal">
+                <h3 className="font-['Poppins',sans-serif] font-semibold text-[14px] md:text-[16px] text-black leading-normal">
                     {ping.title}
                 </h3>
                 {ping.content && (
-                    <p className="font-['Poppins',sans-serif] font-medium text-[14px] text-black/70 leading-relaxed line-clamp-3">
+                    <p className="font-['Poppins',sans-serif] font-medium text-[12px] md:text-[14px] text-black/70 leading-relaxed line-clamp-3">
                         {ping.content}
                     </p>
                 )}
@@ -179,7 +179,7 @@ const UnifiedPingCard = ({ ping, waves = [] }: UnifiedPingCardProps) => {
                     <svg width="12" height="16" viewBox="0 0 12 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                         <path d="M6.5 1L1 9h5l-0.5 6 6-8H7l0.5-6z" fill={hasSurged ? "white" : "#4A504E"} />
                     </svg>
-                    <span className="font-['Poppins',sans-serif] font-semibold text-[14px] leading-normal">
+                    <span className="font-['Poppins',sans-serif] font-semibold text-[12px] md:text-[14px] leading-normal">
                         {surgeCount}
                     </span>
                 </button>
@@ -192,7 +192,7 @@ const UnifiedPingCard = ({ ping, waves = [] }: UnifiedPingCardProps) => {
                             <rect width="32" height="32" rx="6" fill="#FEF5EA" />
                             <path d="M5 16c2-4 4-4 6 0s4 4 6 0 4-4 6 0" stroke="#F49B31" strokeWidth="1.8" strokeLinecap="round" />
                         </svg>
-                        <span className="font-['Inter',sans-serif] font-medium text-[14px] text-[#63637B] leading-5">
+                        <span className="font-['Inter',sans-serif] font-medium text-[12px] md:text-[14px] text-[#63637B] leading-5">
                             {waveCount} Waves Proposed
                         </span>
                     </div>
@@ -205,7 +205,7 @@ const UnifiedPingCard = ({ ping, waves = [] }: UnifiedPingCardProps) => {
                         <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                             <path d="M14 1H2a1 1 0 00-1 1v9a1 1 0 001 1h2v3l4-3h6a1 1 0 001-1V2a1 1 0 00-1-1z" stroke="#63637B" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" />
                         </svg>
-                        <span className="font-['Inter',sans-serif] font-medium text-[14px] text-[#63637B] leading-5">
+                        <span className="font-['Inter',sans-serif] font-medium text-[12px] md:text-[14px] text-[#63637B] leading-5">
                             {commentCount} Comments
                         </span>
                     </button>

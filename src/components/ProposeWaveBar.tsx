@@ -51,12 +51,12 @@ const ProposeWaveBar = ({ pingId, pingTitle, pingCreatedAt, onWaveProposed }: Pr
                     </button>
                 </div>
 
-                {/* Row 2: PROPOSE A WAVE button (right-aligned) */}
+                {/* Row 2: PROPOSE A WAVE button — full-width on mobile, right-aligned on desktop */}
                 <div className="flex justify-end">
                     <button
                         type="button"
                         onClick={openModal}
-                        className="bg-[#fef5ea] border border-black rounded-[20px] h-[39px] px-2.5 flex items-center gap-[5px] cursor-pointer"
+                        className="w-full md:w-auto bg-[#fef5ea] border border-black rounded-[20px] h-[39px] px-2.5 flex items-center gap-[5px] cursor-pointer justify-center md:justify-start"
                     >
                         {/* Wave icon */}
                         <svg
