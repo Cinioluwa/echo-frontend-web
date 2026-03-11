@@ -10,6 +10,7 @@ import { useState } from "react";
 import { useAuthStore } from "../stores";
 import ProposeWaveModal from "./ProposeWaveModal";
 
+const waveIcon = "/assets/icon/wave.svg";
 interface Props {
     pingId: string;
     pingTitle?: string;
@@ -59,30 +60,7 @@ const ProposeWaveBar = ({ pingId, pingTitle, pingCreatedAt, onWaveProposed }: Pr
                         className="w-full md:w-auto bg-[#fef5ea] border border-black rounded-[20px] h-[39px] px-2.5 flex items-center gap-[5px] cursor-pointer justify-center md:justify-start"
                     >
                         {/* Wave icon */}
-                        <svg
-                            width="32"
-                            height="32"
-                            viewBox="0 0 32 32"
-                            fill="none"
-                            xmlns="http://www.w3.org/2000/svg"
-                            className="shrink-0"
-                        >
-                            <path
-                                d="M4 16c2-4 4-6 6-6s4 4 6 4 4-6 6-6 4 2 6 6"
-                                stroke="#f49b31"
-                                strokeWidth="2.5"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                            />
-                            <path
-                                d="M4 22c2-4 4-6 6-6s4 4 6 4 4-6 6-6 4 2 6 6"
-                                stroke="#f49b31"
-                                strokeWidth="2.5"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                            />
-                        </svg>
-
+                        <img src={waveIcon} alt="Wave icon" className="w-5 h-5" />
                         <span className="font-['Baloo_Bhai_2:SemiBold',sans-serif] text-[13px] text-black uppercase tracking-wide">
                             Propose a Wave
                         </span>

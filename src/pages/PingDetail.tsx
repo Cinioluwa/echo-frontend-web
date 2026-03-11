@@ -196,11 +196,11 @@ const WaveCard = ({ wave, isOwner, onDelete }: WaveCardProps) => {
             {/* Header: avatar + name/time + badge */}
             <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2.5">
-                    <div className="w-7 h-7 rounded-full bg-[#ffc37b] flex items-center justify-center shrink-0 overflow-hidden">
-                        <span className="font-semibold text-[10px] text-white">{initials}</span>
+                    <div className="w-10 h-10 rounded-full bg-[#ffc37b] flex items-center justify-center shrink-0 overflow-hidden">
+                        <span className="font-semibold text-[13px] text-white">{initials}</span>
                     </div>
                     <div className="flex flex-col">
-                        <span className="font-['Poppins:SemiBold',sans-serif] text-[9px] text-black">
+                        <span className="font-['Poppins:SemiBold',sans-serif] text-[13px] text-black">
                             {authorName}
                         </span>
                         <span className="font-['Poppins:Medium',sans-serif] text-[8px] text-[#8b8e8d]">
@@ -215,7 +215,7 @@ const WaveCard = ({ wave, isOwner, onDelete }: WaveCardProps) => {
                             className="w-[5px] h-[5px] rounded-full shrink-0"
                             style={{ backgroundColor: badge.color }}
                         />
-                        <span className="font-['Poppins:Medium',sans-serif] text-[9px] text-black">
+                        <span className="font-['Poppins:Medium',sans-serif] text-[13px] text-black">
                             {badge.label}
                         </span>
                     </div>
@@ -376,13 +376,13 @@ const PingDetail = () => {
                 {/* Author row */}
                 <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2.5">
-                        <div className="w-7 h-7 rounded-full bg-[#ffc37b] flex items-center justify-center shrink-0 overflow-hidden">
-                            <span className="font-semibold text-[10px] text-white">
+                        <div className="w-10 h-10 rounded-full bg-[#ffc37b] flex items-center justify-center shrink-0 overflow-hidden">
+                            <span className="font-semibold text-[13px] text-white">
                                 {authorInitials}
                             </span>
                         </div>
                         <div className="flex flex-col">
-                            <span className="font-['Poppins:SemiBold',sans-serif] text-[9px] text-black">
+                            <span className="font-['Poppins:SemiBold',sans-serif] text-[13px] text-black">
                                 {authorName}
                             </span>
                             <span className="font-['Poppins:Medium',sans-serif] text-[8px] text-[#8b8e8d]">
@@ -401,7 +401,7 @@ const PingDetail = () => {
                                     className="w-3 h-3 object-contain"
                                 />
                             )}
-                            <span className="font-['Poppins:Medium',sans-serif] text-[9px] text-[#171717]">
+                            <span className="font-['Poppins:Medium',sans-serif] text-[13px] text-[#171717]">
                                 {categoryName}
                             </span>
                         </div>

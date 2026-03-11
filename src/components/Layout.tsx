@@ -35,9 +35,9 @@ const Layout = () => {
         </nav>
       </header>
 
-      <div className="md:mt-[70px] flex">
+      <div className="md:mt-[70px] flex ">
         {/* Desktop Sidebar — fixed, narrower (280px with padding) */}
-        <aside className="hidden md:block fixed left-0 top-[70px] bottom-0 w-[280px] overflow-y-auto [scrollbar-width:none] px-[18px] pt-[15px]">
+        <aside className="hidden md:block fixed left-0 top-[70px] bottom-0 w-[280px] overflow-y-auto [scrollbar-width:none] px-[18px] pt-[15px] ">
           <SideBar />
         </aside>
 
@@ -48,7 +48,7 @@ const Layout = () => {
             <MobileHeader />
           </div>
 
-          <main className="mx-[15px] mt-[15px] md:mx-5 md:mt-5">
+          <main className={`mx-[15px] mt-[15px] md:mx-5 md:mt-5 md:w-[calc(100vw-45vw)] ${isFeedPage || pingDetailId ? 'lg:max-w-[calc(100vw-680px)]' : 'lg:max-w-[calc(100vw-30vw)]'} lg:mx-auto `}>
             <Outlet />
           </main>
         </div>

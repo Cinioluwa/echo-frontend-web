@@ -9,7 +9,17 @@
  * Desktop: h-[257px], Mobile: h-[111px] with rounded-[8px]
  */
 
+import { useEffect, useState } from 'react';
+import { motion } from 'framer-motion';
+
+
 const HistoryBanner = () => {
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => {
+        setMounted(true);
+    }, []);
+
     return (
         <div
             className="relative w-full overflow-hidden md:rounded-none rounded-lg"
@@ -17,36 +27,90 @@ const HistoryBanner = () => {
         >
             {/* Desktop size */}
             <div className="hidden md:block h-[257px] relative bg-black overflow-hidden w-full">
-                {/* Sphere glow layers — replicating Figma orange/red radial blobs */}
-                <div
-                    className="absolute"
-                    style={{
-                        bottom: "-80px",
-                        left: "50%",
-                        transform: "translateX(-50%)",
-                        width: "560px",
-                        height: "560px",
-                        borderRadius: "50%",
-                        background:
-                            "radial-gradient(ellipse at center, #F49B31 0%, #D4420A 30%, #8B1A00 55%, transparent 75%)",
-                        opacity: 0.95,
-                    }}
-                />
-                {/* Inner highlight */}
-                <div
-                    className="absolute"
-                    style={{
-                        bottom: "-50px",
-                        left: "50%",
-                        transform: "translateX(-50%)",
-                        width: "280px",
-                        height: "280px",
-                        borderRadius: "50%",
-                        background:
-                            "radial-gradient(ellipse at 40% 35%, #FFD580 0%, #F49B31 40%, transparent 70%)",
-                        opacity: 0.85,
-                    }}
-                />
+                {/* Animated Circles Container */}
+                <div className="absolute inset-0 flex items-center justify-center">
+
+                    {/* Circle 4 */}
+                    <motion.div
+                        className="absolute w-[600px] h-[300px] rounded-[50%] ripple-backdrop"
+                        initial={{ y: 72, opacity: 1, filter: 'blur(16px)' }}
+                        animate={mounted ? {
+                            y: 62,
+                            filter: 'blur(32px)',
+                            opacity: 0,
+                            height: '400px',
+                            width: '800px'
+                        } : {}}
+                        transition={{
+                            duration: 1.2,
+                            ease: 'easeInOut',
+                            repeat: Infinity
+                        }}
+                    />
+
+                    {/* Circle 3  */}
+                    <motion.div
+                        className="absolute w-[400px] h-[200px] rounded-[50%] ripple-backdrop"
+                        initial={{ y: 82, filter: 'blur(5px)', opacity: 1 }}
+                        animate={mounted ? {
+                            y: 72,
+                            filter: 'blur(16px)',
+                            opacity: 1,
+                            height: '300px',
+                            width: '600px'
+                        } : {}}
+                        transition={{
+                            duration: 1.2,
+                            ease: 'easeInOut',
+                            repeat: Infinity
+                        }}
+                    />
+
+                    {/* Circle 2 */}
+                    <motion.div
+                        className="absolute w-[280px] h-[140px] rounded-[50%] ripple-backdrop"
+                        initial={{ y: 127, filter: 'blur(0px)', opacity: 1 }}
+                        animate={mounted ? {
+                            y: 82,
+                            filter: 'blur(6px)',
+                            opacity: 1,
+                            height: '200px',
+                            width: '400px'
+                        } : {}}
+                        transition={{
+                            duration: 1.2,
+                            ease: 'easeInOut',
+                            repeat: Infinity
+                        }}
+                    />
+
+                    {/* Circle 1 */}
+                    <motion.div
+                        className="absolute w-[100px] h-[50px] rounded-[50%] ripple-backdrop"
+                        initial={{ y: 200, opacity: 1 }}
+                        animate={mounted ? {
+                            y: 127,
+                            opacity: 1,
+                            height: '140px',
+                            width: '280px'
+                        } : {}}
+                        transition={{
+                            duration: 1.2,
+                            ease: 'easeInOut',
+                            repeat: Infinity
+                        }}
+                    />
+
+                    {/* Ambient glow underneath */}
+                    <div
+                        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[200px]"
+                        style={{
+                            filter: 'blur(60px)',
+                        }}
+                    >
+                        <div className="w-full h-full rounded-[50%] bg-gradient-radial from-orange-500/20 via-orange-600/10 to-transparent" />
+                    </div>
+                </div>
                 {/* Noise texture overlay */}
                 <div
                     className="absolute inset-0 opacity-[0.08] pointer-events-none"

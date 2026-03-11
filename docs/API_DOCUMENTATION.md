@@ -23,6 +23,8 @@
   - [Admin Routes](#admin-routes)
     - [Organization Management](#organization-management-super-admin)
   - [Representative Routes](#representative-routes)
+  - [Analytics](#analytics)
+  - [WebSocket Events](#websocket-events)
 
 ---
 
@@ -35,7 +37,7 @@ Echo is a multi-tenant platform for organizational feedback and community engage
 - **Organization**: Multi-tenant isolation - all data is organization-scoped
 - **Ping**: A post/issue/question raised by a user
 - **Wave**: A solution or response to a ping
-- **Surge**: A like/upvote on a ping or wave
+- **Surge**: A like/upvote on a ping, wave, or comment
 - **Comment**: Discussion on pings or waves
 - **Official Response**: Representative's official answer to a ping
 
@@ -749,6 +751,85 @@ Get all comments by current user.
 
 ---
 
+### GET /api/users/me/analytics
+
+Get activity analytics for the current user.
+
+**Auth Required:** Yes
+
+**Query Parameters:**
+
+- `period` (optional): `current` (default) or `previous` — selects current or previous Sunday–Saturday week
+
+**Success Response (200):**
+
+```json
+{
+  "totalSurges": 42,
+  "totalComments": 18,
+  "totalWaves": 7,
+  "chartData": [
+    {
+      "date": "2026-03-08",
+      "day": "Sun",
+      "surges": 3,
+      "comments": 1,
+      "waves": 0
+    },
+    {
+      "date": "2026-03-09",
+      "day": "Mon",
+      "surges": 0,
+      "comments": 2,
+      "waves": 1
+    },
+    {
+      "date": "2026-03-10",
+      "day": "Tue",
+      "surges": 5,
+      "comments": 0,
+      "waves": 0
+    },
+    {
+      "date": "2026-03-11",
+      "day": "Wed",
+      "surges": 2,
+      "comments": 3,
+      "waves": 2
+    },
+    {
+      "date": "2026-03-12",
+      "day": "Thu",
+      "surges": 0,
+      "comments": 1,
+      "waves": 0
+    },
+    {
+      "date": "2026-03-13",
+      "day": "Fri",
+      "surges": 8,
+      "comments": 4,
+      "waves": 1
+    },
+    {
+      "date": "2026-03-14",
+      "day": "Sat",
+      "surges": 1,
+      "comments": 0,
+      "waves": 0
+    }
+  ]
+}
+```
+
+**Notes:**
+
+- `totalSurges`, `totalComments`, `totalWaves` are all-time counts for the user
+- `chartData` always contains exactly 7 entries (one per day, Sunday through Saturday)
+- `period=current` uses the current week; `period=previous` uses the prior week
+
+---
+
 ## Pings (Posts/Issues)
 
 ### POST /api/pings
@@ -1330,6 +1411,7 @@ Create a comment on a ping.
   "id": 1,
   "content": "I completely agree with this!",
   "isAnonymous": false,
+  "surgeCount": 0,
   "authorId": 1,
   "pingId": 1,
   "createdAt": "2025-11-07T11:30:00.000Z",
@@ -1466,6 +1548,24 @@ Toggle surge (like/unlike) on a wave.
 
 ---
 
+### POST /api/comments/:commentId/surge
+
+Toggle surge (like/unlike) on a comment.
+
+**Auth Required:** Yes
+
+**Success Response (200 or 201):**
+
+```json
+{
+  "message": "Comment surged", // or "Surge removed from comment"
+  "surged": true, // or false
+  "surgeCount": 5
+}
+```
+
+---
+
 ## Categories
 
 ### GET /api/categories
@@ -1548,10 +1648,6 @@ Get all announcements for the organization.
 
 **Auth Required:** Yes
 
-**Query Parameters:**
-
-- `categoryId` (optional): Filter by category
-
 **Success Response (200):**
 
 ```json
@@ -1564,13 +1660,7 @@ Get all announcements for the organization.
     "author": {
       "firstName": "Admin",
       "lastName": "User"
-    },
-    "categories": [
-      {
-        "id": 2,
-        "name": "Facilities"
-      }
-    ]
+    }
   }
 ]
 ```
@@ -2708,8 +2798,7 @@ Create an announcement.
 ```json
 {
   "title": "Campus Maintenance Notice",
-  "content": "The library will be closed for maintenance on Nov 15.",
-  "categoryIds": [2, 3] // Optional: array of category IDs
+  "content": "The library will be closed for maintenance on Nov 15."
 }
 ```
 
@@ -2726,13 +2815,7 @@ Create an announcement.
   "author": {
     "firstName": "Admin",
     "lastName": "User"
-  },
-  "categories": [
-    {
-      "id": 2,
-      "name": "Facilities"
-    }
-  ]
+  }
 }
 ```
 
@@ -2749,8 +2832,7 @@ Update an announcement.
 ```json
 {
   "title": "Updated Title", // Optional
-  "content": "Updated content...", // Optional
-  "categoryIds": [2, 4] // Optional
+  "content": "Updated content..." // Optional
 }
 ```
 
@@ -3507,6 +3589,292 @@ Files are stored in organization-scoped folders:
 - Videos: 50MB max per file
 - Documents (PDF): 10MB max per file
 - Maximum 5 files per upload request
+
+---
+
+## Analytics
+
+### GET /api/analytics/admin/overview
+
+Get admin overview summary cards and a 6-month year-over-year chart.
+
+**Auth Required:** Yes
+
+**Success Response (200):**
+
+```json
+{
+  "summaryCards": {
+    "waves": { "total": 120, "percentChange": 15.5 },
+    "pings": { "total": 85, "percentChange": -5.0 },
+    "wavesUnderReview": { "total": 12, "percentChange": 8.3 },
+    "activeUsers": { "total": 340, "percentChange": 2.1 }
+  },
+  "chartData": [
+    {
+      "month": "Oct",
+      "thisYear": { "totalUsers": 45, "waves": 30, "surges": 120 },
+      "lastYear": { "totalUsers": 32, "waves": 22, "surges": 88 }
+    }
+  ]
+}
+```
+
+**Notes:**
+
+- `summaryCards.percentChange` compares the last 30 days vs the prior 30-day window
+- `chartData` contains the rolling last 6 months, with year-over-year comparison
+
+---
+
+### GET /api/analytics/admin/categories
+
+Get ping and wave breakdown by category.
+
+**Auth Required:** Yes
+
+**Success Response (200):**
+
+```json
+{
+  "totalPings": 85,
+  "totalWaves": 120,
+  "totalResolvedPings": 23,
+  "categories": [
+    {
+      "category": "Infrastructure",
+      "pings": { "count": 20, "percentage": 23.5 },
+      "waves": { "count": 35, "percentage": 29.2 },
+      "resolvedPings": { "count": 8, "percentage": 34.8 }
+    }
+  ]
+}
+```
+
+**Notes:**
+
+- `percentage` values are relative to their respective totals (`totalPings`, `totalWaves`, `totalResolvedPings`)
+
+---
+
+### GET /api/analytics/pings/:id/levels
+
+Get user-level distribution of engagement on a specific ping.
+
+**Auth Required:** Yes
+
+**Path Parameters:**
+
+- `id`: Ping ID
+
+**Success Response (200):**
+
+```json
+{
+  "totalSurges": 42,
+  "surgeBreakdown": [
+    { "level": 200, "count": 18, "percentage": 42.9 },
+    { "level": 300, "count": 14, "percentage": 33.3 }
+  ],
+  "totalComments": 15,
+  "commentBreakdown": [{ "level": 100, "count": 6, "percentage": 40.0 }],
+  "totalWaves": 5,
+  "waveBreakdown": [{ "level": 400, "count": 3, "percentage": 60.0 }]
+}
+```
+
+---
+
+## WebSocket Events
+
+Echo uses Socket.IO for real-time updates. Connect to the same server URL used for the REST API.
+
+### Connection & Authentication
+
+Authenticate by passing the JWT token as a query parameter on connect:
+
+```js
+const socket = io("https://your-api-url", {
+  auth: { token: "YOUR_JWT_TOKEN" },
+});
+```
+
+On successful connection the server automatically joins the client to:
+
+- `user:{userId}` — for personal events (notifications)
+- `org:{organizationId}` — for organization-wide events
+
+### Client → Server Events
+
+| Event        | Payload              | Description                                        |
+| ------------ | -------------------- | -------------------------------------------------- |
+| `join:ping`  | `{ pingId: number }` | Subscribe to real-time updates for a specific ping |
+| `leave:ping` | `{ pingId: number }` | Unsubscribe from a specific ping's room            |
+| `join:wave`  | `{ waveId: number }` | Subscribe to real-time updates for a specific wave |
+| `leave:wave` | `{ waveId: number }` | Unsubscribe from a specific wave's room            |
+
+### Server → Client Events
+
+#### `notification:new`
+
+Emitted to `user:{userId}` when a new notification is created for that user.
+
+```json
+{
+  "id": 1,
+  "type": "WAVE_APPROVED",
+  "title": "Your wave was approved!",
+  "body": "Your solution for 'Library Hours Too Short' has been approved.",
+  "createdAt": "2026-03-11T10:30:00.000Z",
+  "pingId": 5,
+  "waveId": 12,
+  "announcementId": null
+}
+```
+
+---
+
+#### `ping:surgeUpdate`
+
+Emitted to `org:{organizationId}` and `ping:{pingId}` when a ping is surged or unsurged.
+
+```json
+{
+  "pingId": 5,
+  "surgeCount": 43,
+  "surged": true
+}
+```
+
+---
+
+#### `wave:surgeUpdate`
+
+Emitted to `org:{organizationId}` and `wave:{waveId}` when a wave is surged or unsurged.
+
+```json
+{
+  "waveId": 12,
+  "surgeCount": 18,
+  "surged": true
+}
+```
+
+---
+
+#### `comment:surgeUpdate`
+
+Emitted to `org:{organizationId}` when a comment is surged or unsurged.
+
+```json
+{
+  "commentId": 7,
+  "surgeCount": 5,
+  "surged": true
+}
+```
+
+---
+
+#### `ping:created`
+
+Emitted to `org:{organizationId}` when a new ping is posted.
+
+```json
+{
+  "id": 25,
+  "title": "New Issue Title",
+  "content": "Issue description...",
+  "categoryId": 3,
+  "surgeCount": 0,
+  "isAnonymous": false,
+  "createdAt": "2026-03-11T10:35:00.000Z"
+}
+```
+
+---
+
+#### `ping:deleted`
+
+Emitted to `org:{organizationId}` when a ping is deleted.
+
+```json
+{
+  "pingId": 25
+}
+```
+
+---
+
+#### `wave:created`
+
+Emitted to `org:{organizationId}` and `ping:{pingId}` when a new wave is posted.
+
+```json
+{
+  "id": 30,
+  "pingId": 5,
+  "solution": "New solution text...",
+  "surgeCount": 0,
+  "isAnonymous": false,
+  "createdAt": "2026-03-11T10:40:00.000Z"
+}
+```
+
+---
+
+#### `wave:deleted`
+
+Emitted to `org:{organizationId}` and `ping:{pingId}` when a wave is deleted.
+
+```json
+{
+  "waveId": 30,
+  "pingId": 5
+}
+```
+
+---
+
+#### `comment:created`
+
+Emitted to `org:{organizationId}` and the relevant `ping:{pingId}` or `wave:{waveId}` room when a comment is posted.
+
+```json
+{
+  "id": 50,
+  "content": "Great point!",
+  "pingId": 5,
+  "waveId": null,
+  "isAnonymous": false,
+  "surgeCount": 0,
+  "createdAt": "2026-03-11T10:45:00.000Z",
+  "author": {
+    "id": 1,
+    "firstName": "John",
+    "lastName": "Doe"
+  }
+}
+```
+
+---
+
+#### `announcement:new`
+
+Emitted to `org:{organizationId}` when an admin creates a new announcement.
+
+```json
+{
+  "id": 10,
+  "title": "Campus Maintenance Notice",
+  "content": "The library will be closed for maintenance on Nov 15.",
+  "createdAt": "2026-03-11T09:00:00.000Z",
+  "author": {
+    "firstName": "Admin",
+    "lastName": "User"
+  }
+}
+```
 
 ---
 

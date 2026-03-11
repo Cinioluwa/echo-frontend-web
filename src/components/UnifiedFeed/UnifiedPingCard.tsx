@@ -14,6 +14,8 @@ import InlineWavePreview from "./InlineWavePreview";
 import type { Ping, Wave } from "../../api/types";
 import { categoryImages } from "../CategoryImages";
 
+const waveIcon = "/assets/icon/wave.svg";
+const commentIcon = "/assets/icon/comment.svg";
 interface UnifiedPingCardProps {
     ping: Ping;
     waves?: Wave[];
@@ -76,7 +78,7 @@ const UnifiedPingCard = ({ ping, waves = [] }: UnifiedPingCardProps) => {
         }
     };
 
-    const handleCommentClick = (e: React.MouseEvent) => {
+    const handleCommentandWaveClick = (e: React.MouseEvent) => {
         e.stopPropagation();
         navigate(`/feed/${ping.id}`);
     };
@@ -187,11 +189,12 @@ const UnifiedPingCard = ({ ping, waves = [] }: UnifiedPingCardProps) => {
                 {/* Wave + comment counts */}
                 <div className="flex items-center gap-3.5">
                     {/* Wave count */}
-                    <div className="flex items-center gap-0" onClick={(e) => e.stopPropagation()}>
-                        <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                            <rect width="32" height="32" rx="6" fill="#FEF5EA" />
-                            <path d="M5 16c2-4 4-4 6 0s4 4 6 0 4-4 6 0" stroke="#F49B31" strokeWidth="1.8" strokeLinecap="round" />
-                        </svg>
+                    <div className="flex items-center gap-0" onClick={handleCommentandWaveClick}>
+                        <img
+                            src={waveIcon}
+                            className=" h-[27px] w-[25px]"
+                            alt="waveIcon"
+                        />
                         <span className="font-['Inter',sans-serif] font-medium text-[12px] md:text-[14px] text-[#63637B] leading-5">
                             {waveCount} Waves Proposed
                         </span>
@@ -199,12 +202,14 @@ const UnifiedPingCard = ({ ping, waves = [] }: UnifiedPingCardProps) => {
 
                     {/* Comment count */}
                     <button
-                        onClick={handleCommentClick}
-                        className="flex items-center gap-0 hover:text-[#F49B31] transition-colors cursor-pointer"
+                        onClick={handleCommentandWaveClick}
+                        className="flex items-center gap-1 hover:text-[#F49B31] transition-colors cursor-pointer"
                     >
-                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                            <path d="M14 1H2a1 1 0 00-1 1v9a1 1 0 001 1h2v3l4-3h6a1 1 0 001-1V2a1 1 0 00-1-1z" stroke="#63637B" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" />
-                        </svg>
+                        <img
+                            src={commentIcon}
+                            className=" h-[27px] w-[25px]"
+                            alt="commentIcon"
+                        />
                         <span className="font-['Inter',sans-serif] font-medium text-[12px] md:text-[14px] text-[#63637B] leading-5">
                             {commentCount} Comments
                         </span>

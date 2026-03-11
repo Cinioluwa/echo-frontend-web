@@ -54,7 +54,7 @@ const Top3Widget = ({ pings = MOCK_TOP3 }: Top3WidgetProps) => {
     const top3 = pings.slice(0, 3);
 
     return (
-        <div className="bg-white border-2 border-[#FFC37B] rounded-[15px] flex flex-col gap-2.5 items-start px-[15px] py-5 w-[276px]">
+        <div className="bg-[#FFC37B] border-2 border-[#FFC37B] rounded-[15px] flex flex-col gap-2.5 items-start px-[15px] py-5 w-[276px]">
             {/* Header */}
             <h3 className="font-['Poppins',sans-serif] font-bold text-[18px] text-black leading-normal">
                 Top 3
@@ -75,12 +75,7 @@ const Top3Widget = ({ pings = MOCK_TOP3 }: Top3WidgetProps) => {
                         .slice(0, 2);
 
                     return (
-                        <div key={ping.id} className="flex items-center gap-2 w-full">
-                            {/* Colored indicator dot */}
-                            <div
-                                className="w-2 h-2 rounded-full shrink-0"
-                                style={{ backgroundColor: DOT_COLORS[index] }}
-                            />
+                        <div key={ping.id} className="flex items-center gap-2 w-full bg-[#fef0e0] rounded-lg px-3.5 py-2.5">
                             {/* Avatar */}
                             <div className="w-[30px] h-[30px] rounded-full flex items-center justify-center shrink-0 overflow-hidden" style={{ backgroundColor: DOT_COLORS[index] }}>
                                 <span className="font-['Poppins',sans-serif] font-bold text-[10px] text-white leading-none">
