@@ -24,7 +24,7 @@ interface Props {
 
 const SideBar = ({ onCreatePing }: Props) => {
   return (
-    <div className="flex flex-col gap-[20px]">
+    <div className="flex flex-col gap-5">
       {/* Category Card */}
       <div className="bg-[#FFC37B] rounded-[10px] w-[244px]">
         <Categories />
@@ -36,7 +36,7 @@ const SideBar = ({ onCreatePing }: Props) => {
           // TODO: API — Open ping creation (Phase 2: InlinePingCreator replaces this)
           onCreatePing?.();
         }}
-        className="flex items-center gap-[26px] h-[48px] bg-[#F49B31] hover:bg-[#d88429] transition-colors cursor-pointer rounded-[15px] pl-[26px] w-[244px] text-white"
+        className="flex items-center gap-[26px] h-12 bg-[#F49B31] hover:bg-[#d88429] transition-colors cursor-pointer rounded-[15px] pl-[26px] w-[244px] text-white"
       >
         <FaPlus className="w-[18px] h-[18px]" />
         <span className="font-semibold text-[15px] font-['Poppins',sans-serif]">
@@ -47,9 +47,9 @@ const SideBar = ({ onCreatePing }: Props) => {
       {/* History Button */}
       <Link
         to="/history"
-        className="flex items-center gap-[12px] h-[48px] bg-[#FEF5EA] border border-[#F49B31] rounded-[15px] pl-[24px] w-[244px] cursor-pointer hover:bg-[#fae9d4] transition-colors"
+        className="flex items-center gap-3 h-12 bg-[#FEF5EA] border border-[#F49B31] rounded-[15px] pl-6 w-[244px] cursor-pointer hover:bg-[#fae9d4] transition-colors"
       >
-        <img src={historyIcon} alt="History" className="w-[20px] h-[20px]" />
+        <img src={historyIcon} alt="History" className="w-5 h-5" />
         <span className="font-semibold text-[15px] text-black font-['Poppins',sans-serif]">
           History
         </span>
