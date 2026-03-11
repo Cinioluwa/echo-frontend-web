@@ -9,7 +9,7 @@
  * - Right: Orange "Create Ping" button with + icon
  */
 import { useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { FaPlus } from "react-icons/fa6";
 import MobileCategories from "./MobileCategories";
 import MobileOptionsDropdown from "./MobileOptionsDropdown";
@@ -25,9 +25,11 @@ const MobileHeader = ({ onCreatePing }: MobileHeaderProps) => {
     const [openCat, setOpenCat] = useState(false);
     const [selectedMobileCat, setSelectedMobileCat] = useState("");
     const location = useLocation();
+    const navigate = useNavigate();
 
     const isFeedPage =
         location.pathname === "/feed" || location.pathname.startsWith("/feed/");
+    const isHistoryPage = location.pathname.startsWith("/history");
     const pageTitle = isFeedPage ? "Feed" : "History";
 
     return (
@@ -51,18 +53,32 @@ const MobileHeader = ({ onCreatePing }: MobileHeaderProps) => {
                     </span>
                 </div>
 
-                {/* Category pill */}
-                <button
-                    onClick={() => setOpenCat(!openCat)}
-                    className="flex items-center justify-center px-[13px] py-[3px] h-5 w-[90px] border border-[#7D7D7D] rounded-[25px] cursor-pointer"
-                >
-                    <span className="text-[9px] font-medium font-['Poppins',sans-serif] text-black leading-normal">
-                        Category :{" "}
-                        <span className="text-[#F49B31]">
-                            {selectedMobileCat || "ALL"}
+                {/* Category pill (+ Back button for history pages) */}
+                <div className="flex items-center gap-2">
+                    {isHistoryPage && (
+                        <button
+                            onClick={() => navigate("/feed")}
+                            className="flex items-center gap-1 bg-[#fefefe] border border-[#D0D0D0] rounded-[18px] px-2 py-[5px] h-[25px] w-[59px] cursor-pointer"
+                        >
+                            <span className="text-[10px] font-medium font-['Poppins',sans-serif] text-black leading-normal whitespace-nowrap">
+                                ← Back
+                            </span>
+                        </button>
+                    )}
+
+                    {/* Category pill */}
+                    <button
+                        onClick={() => setOpenCat(!openCat)}
+                        className="flex items-center justify-center px-[13px] py-[3px] h-5 w-[90px] border border-[#7D7D7D] rounded-[25px] cursor-pointer"
+                    >
+                        <span className="text-[9px] font-medium font-['Poppins',sans-serif] text-black leading-normal">
+                            Category :{" "}
+                            <span className="text-[#F49B31]">
+                                {selectedMobileCat || "ALL"}
+                            </span>
                         </span>
-                    </span>
-                </button>
+                    </button>
+                </div>
 
                 {/* Category dropdown overlay */}
                 {openCat && (

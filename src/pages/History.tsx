@@ -1,30 +1,83 @@
 /**
  * History
- * Figma ref: 4183:13259 (desktop pings tab), 4183:13137 (mobile pings tab)
- * Phase: 4 (placeholder created in Phase 1 for routing)
+ * Figma ref: 4183:13259 (desktop pings tab), 4183:13137 (mobile pings tab),
+ *            4183:17017 (desktop section), 4183:17018 (mobile section)
+ * Phase: 4
  *
- * TODO: Phase 4 — Full implementation with:
- * - Tabbed activity hub (Pings / Waves / Comments / Surged)
- * - History banner
- * - Tab content for each tab
+ * Tabbed activity hub — Pings | Waves | Comments | Surged
+ * Desktop layout:
+ *   Row 1: "← Go back to feed" (left) + "+ Create a Ping" (right)
+ *   Row 2: HistoryBanner
+ *   Row 3: HistoryTabs (picker)
+ *   Row 4: Tab content
  */
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import {
+    HistoryBanner,
+    HistoryTabs,
+    HistoryTabsMobile,
+    HistoryPingsList,
+    HistoryWavesList,
+    HistoryCommentsList,
+    HistorySurgedList,
+} from "../components/History";
+import type { HistoryTab } from "../components/History";
+import { FaPlus } from "react-icons/fa6";
+
+const VALID_TABS: HistoryTab[] = ["pings", "waves", "comments", "surged"];
 
 const History = () => {
     const { tab } = useParams<{ tab: string }>();
+    const navigate = useNavigate();
+
+    const activeTab: HistoryTab =
+        tab && VALID_TABS.includes(tab as HistoryTab)
+            ? (tab as HistoryTab)
+            : "pings";
 
     return (
-        <div>
-            <h1 className="text-[22px] font-semibold mb-4">History</h1>
-            {tab && (
-                <p className="text-sm text-[#F49B31] mb-2">
-                    Active tab: {tab}
-                </p>
-            )}
-            <p className="text-gray-500 text-sm">
-                Tabbed history page coming in Phase 4.
-            </p>
-            {/* TODO: Phase 4 — History banner, tab picker, tab content */}
+        <div className="flex flex-col w-full">
+            {/* ─── Desktop action buttons row ─────────────────────────────── */}
+            <div className="hidden md:flex items-center justify-between mb-[22px]">
+                <button
+                    onClick={() => navigate("/feed")}
+                    className="flex items-center gap-2 border border-[#626665] rounded-[18px] px-5 py-[5px] font-['Poppins',sans-serif] font-medium text-[15px] text-[#171717] hover:bg-[#F5F5F5] transition-colors cursor-pointer"
+                >
+                    ← Go back to feed
+                </button>
+                <button
+                    onClick={() => navigate("/feed")}
+                    className="flex items-center gap-2 bg-[#F49B31] hover:bg-[#d88429] transition-colors rounded-[18px] px-5 py-[5px] cursor-pointer"
+                >
+                    <FaPlus className="w-3 h-3 text-white" />
+                    <span className="font-['Poppins',sans-serif] font-medium text-[15px] text-white">
+                        Create a Ping
+                    </span>
+                </button>
+            </div>
+
+            {/* ─── Banner ────────────────────────────────────────────────── */}
+            <HistoryBanner />
+
+            {/* ─── Tab picker ─────────────────────────────────────────────── */}
+            <div className="mt-[15px]">
+                {/* Desktop tabs */}
+                <div className="hidden md:block">
+                    <HistoryTabs activeTab={activeTab} />
+                </div>
+                {/* Mobile tabs */}
+                <div className="md:hidden">
+                    <HistoryTabsMobile activeTab={activeTab} />
+                </div>
+            </div>
+
+            {/* ─── Tab content ────────────────────────────────────────────── */}
+            <div className="mt-[15px]">
+                {activeTab === "pings" && <HistoryPingsList />}
+                {activeTab === "waves" && <HistoryWavesList />}
+                {activeTab === "comments" && <HistoryCommentsList />}
+                {activeTab === "surged" && <HistorySurgedList />}
+            </div>
         </div>
     );
 };
