@@ -34,14 +34,14 @@ const AnnouncementWidget = ({ announcement = MOCK_ANNOUNCEMENT }: AnnouncementWi
 
     return (
         <div
-            className="bg-white border-2 border-[#FFC37B] rounded-[15px] flex flex-col gap-[10px] items-start px-[15px] py-[20px] w-[276px]"
+            className="bg-white border-2 border-[#FFC37B] rounded-[15px] flex flex-col gap-2.5 items-start px-[15px] py-5 w-[276px]"
             style={{ maxHeight: isExpanded ? "400px" : "290px" }}
         >
             {/* Announcement content */}
-            <div className="flex flex-col gap-[10px] w-full text-black">
+            <div className="flex flex-col gap-2.5 w-full text-black">
                 <div className="flex flex-col gap-[5px] whitespace-nowrap">
                     {/* Header: "GENERAL ANNOUNCEMENT" */}
-                    <p className="font-['Inter',sans-serif] font-extrabold text-[16px] underline decoration-solid leading-[20px]">
+                    <p className="font-['Inter',sans-serif] font-extrabold text-[16px] underline decoration-solid leading-5">
                         GENERAL ANNOUNCEMENT
                     </p>
                     {/* Title */}

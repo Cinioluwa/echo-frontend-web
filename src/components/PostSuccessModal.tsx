@@ -1,4 +1,14 @@
-const tick = "/assets/images/Tick icon.svg";
+/**
+ * PostSuccessModal — replaced by lightweight Toast notification
+ * Figma ref: 3878:9112 (ping posted), 3878:9115 (wave posted)
+ * Phase: 5
+ *
+ * This component now renders a non-blocking toast instead of a full-screen modal.
+ * The existing Props interface is preserved for backward compatibility with
+ * PingFormModal and WaveFormModal.
+ */
+
+import { useEffect } from "react";
 
 interface Props {
   setPostSuccessModal: () => void;
@@ -6,35 +16,48 @@ interface Props {
 }
 
 const PostSuccessModal = ({ setPostSuccessModal, formSegment }: Props) => {
+  const isWave = formSegment === "wave";
+  const message = isWave ? "Wave Posted Successfully" : "Ping Posted Successfully";
+
+  // Auto-dismiss after 3 seconds
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setPostSuccessModal();
+    }, 3000);
+    return () => clearTimeout(timer);
+  }, [setPostSuccessModal]);
+
   return (
-    <div className="flex font-poppins justify-center items-center z-50 inset-0 fixed bg-black/40">
-      <div className="bg-white p-5 md:p-10 rounded-2xl flex flex-col  gap-5 items-center justify-center">
-        <div className=" flex flex-col items-center gap-2.5">
-          <div className="flex justify-center gap-2.5 ">
-            <img src={tick} alt="" />
-            <p className="text-[26px]">Thank You!</p>
-          </div>
-          <p className="font-light">
-            {formSegment === "ping"
-              ? "Ping was successfully posted."
-              : "Wave was successfully posted."}
-          </p>
-        </div>
-        <div className="text-white flex gap-3 flex-col">
-          <button
-            className="px-[125px] py-[17px] rounded-lg hover:bg-[#d88429] transition-colors duration-300 ease-in-out
- bg-[#F49B31]"
+    <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-100">
+      <div
+        role="status"
+        aria-live="polite"
+        className="bg-[#ffc37b] flex gap-2 items-center overflow-hidden
+          px-[11px] py-2.5 rounded-[15px] font-poppins shadow-lg"
+      >
+        {/* Orange icon circle */}
+        <div className="bg-[#f49b31] mix-blend-luminosity rounded-full shrink-0 w-[30px] h-[30px] flex items-center justify-center">
+          <svg
+            className="w-4 h-4"
+            viewBox="0 0 16 16"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            aria-hidden="true"
           >
-            Share
-          </button>
-          <button
-            onClick={setPostSuccessModal}
-            className="px-[125px] py-[17px] rounded-lg bg-[#654927] transition-colors duration-300 ease-in-out hover:bg-[#553c21]
-"
-          >
-            Close
-          </button>
+            <path
+              d="M13.5 4.5L6.5 11.5L3 8"
+              stroke="white"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
         </div>
+
+        {/* Message */}
+        <p className="font-medium text-[16px] leading-normal whitespace-nowrap text-[#454545]">
+          {message}
+        </p>
       </div>
     </div>
   );
