@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { useAuthStore } from "../stores";
-import NavBar from "../components/NavBar";
 import ProfileChart from "../components/ProfileChart";
 import { ArrowLeft, Eye, EyeOff } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -20,11 +19,6 @@ const Profile = () => {
 
     return (
         <div className="min-h-screen bg-[#FAE9D4]">
-            {/* Navbar */}
-            <header className="z-20">
-                <NavBar />
-            </header>
-
             {/* Main Content */}
             <main className="pt-12 pb-16">
                 <div className="max-w-[709px] mx-auto px-4">

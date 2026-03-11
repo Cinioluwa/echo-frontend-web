@@ -1,0 +1,105 @@
+/**
+ * MobileHeader
+ * Figma ref: 3912:9552 (Feed header area), 4183:13566 (History header area)
+ * Phase: 1
+ *
+ * Replaces PageTitleBar.tsx. Structure:
+ * - Left: Hamburger icon + page title ("Feed" or "History")
+ * - Below title: "Category: ALL" pill (opens MobileCategoryDropdown)
+ * - Right: Orange "Create Ping" button with + icon
+ */
+import { useState } from "react";
+import { useLocation } from "react-router-dom";
+import { FaPlus } from "react-icons/fa6";
+import MobileCategories from "./MobileCategories";
+import MobileOptionsDropdown from "./MobileOptionsDropdown";
+
+const menuBar = "/assets/images/menu-hotdog.svg";
+
+interface MobileHeaderProps {
+    onCreatePing?: () => void;
+}
+
+const MobileHeader = ({ onCreatePing }: MobileHeaderProps) => {
+    const [openMenu, setOpenMenu] = useState(false);
+    const [openCat, setOpenCat] = useState(false);
+    const [selectedMobileCat, setSelectedMobileCat] = useState("");
+    const location = useLocation();
+
+    const isFeedPage =
+        location.pathname === "/feed" || location.pathname.startsWith("/feed/");
+    const pageTitle = isFeedPage ? "Feed" : "History";
+
+    return (
+        <div className="flex justify-between items-center mx-[15px] mt-[15px]">
+            {/* Left side: Hamburger + Title + Category pill */}
+            <div className="flex flex-col gap-2.5 items-start justify-center">
+                {/* Menu identifier line */}
+                <div className="flex gap-[7px] items-center justify-center">
+                    <button
+                        className="cursor-pointer h-3 w-5"
+                        onClick={() => setOpenMenu(!openMenu)}
+                    >
+                        <img
+                            src={menuBar}
+                            alt="menu"
+                            className="w-full h-full object-contain"
+                        />
+                    </button>
+                    <span className="font-semibold text-[13px] text-black font-['Poppins',sans-serif] leading-normal">
+                        {pageTitle}
+                    </span>
+                </div>
+
+                {/* Category pill */}
+                <button
+                    onClick={() => setOpenCat(!openCat)}
+                    className="flex items-center justify-center px-[13px] py-[3px] h-5 w-[90px] border border-[#7D7D7D] rounded-[25px] cursor-pointer"
+                >
+                    <span className="text-[9px] font-medium font-['Poppins',sans-serif] text-black leading-normal">
+                        Category :{" "}
+                        <span className="text-[#F49B31]">
+                            {selectedMobileCat || "ALL"}
+                        </span>
+                    </span>
+                </button>
+
+                {/* Category dropdown overlay */}
+                {openCat && (
+                    <div
+                        onClick={() => setOpenCat(false)}
+                        className="fixed z-10 transition-opacity duration-300 ease-in inset-0 bg-black/40"
+                    >
+                        <MobileCategories
+                            selectedMobileCat={selectedMobileCat}
+                            setOpenCat={setOpenCat}
+                            setSelectedMobileCat={(cat) => setSelectedMobileCat(cat)}
+                        />
+                    </div>
+                )}
+            </div>
+
+            {/* Right side: Create Ping button */}
+            <button
+                onClick={() => {
+                    // TODO: API — Open ping creation (Phase 2: InlinePingCreator replaces this)
+                    onCreatePing?.();
+                }}
+                className="flex items-center justify-center gap-2 bg-[#F49B31] hover:bg-[#d88429] transition-colors rounded-[25px] px-3 py-2 cursor-pointer"
+            >
+                <FaPlus className="w-3 h-3 text-white" />
+                <span className="text-[11px] font-medium text-white font-['Poppins',sans-serif] leading-normal whitespace-nowrap">
+                    Create Ping
+                </span>
+            </button>
+
+            {/* Mobile Options Dropdown */}
+            <MobileOptionsDropdown
+                isOpen={openMenu}
+                onClose={() => setOpenMenu(false)}
+            />
+        </div>
+    );
+};
+
+export default MobileHeader;

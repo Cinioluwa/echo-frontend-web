@@ -1,23 +1,39 @@
+/**
+ * NavBar
+ * Figma ref: 3643:8422 (desktop top bar), 3912:9536 (mobile nav)
+ * Phase: 1
+ */
+import ProfileDropdown from "./ProfileDropdown";
+
 const logo = "/assets/images/Echo Logo_black.svg";
 const echoBrand = "/assets/images/Echo brand.svg";
-import SearchInput from "./SearchInput";
-import UserInfo from "./UserInfo";
 
-interface NavBarProps {
-  onSearch?: (query: string) => void;
-}
-
-const NavBar = ({ onSearch }: NavBarProps) => {
+const NavBar = () => {
   return (
-    <div className="bg-[#FFC37B] flex items-center justify-between">
-      <div className=" hidden md:block">
-        <img src={logo} className=" brightness-0 contrast-200" />
+    <div className="bg-[#FFC37B] flex items-center justify-between px-5 md:px-[45px] py-2.5">
+      {/* Desktop: Logo icon + "Echo" text */}
+      <div className="hidden md:flex items-center gap-[5px]">
+        <img
+          src={logo}
+          className="brightness-0 contrast-200 h-[27px] w-[25px]"
+          alt="Echo logo"
+        />
+        <span className="font-bold text-[30px] text-black font-['Poppins',sans-serif] leading-normal">
+          Echo
+        </span>
       </div>
-      <div className="block md:hidden min-w-[20%]">
-        <img src={echoBrand} className=" brightness-0 contrast-200" />
+
+      {/* Mobile: Logo icon only */}
+      <div className="block md:hidden">
+        <img
+          src={echoBrand}
+          className="brightness-0 contrast-200 h-5 w-[19px]"
+          alt="Echo logo"
+        />
       </div>
-      <SearchInput onSearch={onSearch} />
-      <UserInfo />
+
+      {/* User profile + dropdown */}
+      <ProfileDropdown />
     </div>
   );
 };

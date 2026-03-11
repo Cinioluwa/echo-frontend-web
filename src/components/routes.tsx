@@ -1,8 +1,20 @@
+/**
+ * Routes
+ * Phase: 1 — Updated routing structure
+ *
+ * Changes:
+ * - Removed /soundBoard, /stream, /waveHistory routes
+ * - Added /feed, /feed/:pingId, /history, /history/:tab
+ * - App pages now nested under Layout (Outlet-based wrapper)
+ * - Added redirects from old paths for backward compatibility
+ * - Auth and admin routes unchanged
+ */
 import { lazy, Suspense } from "react";
-import { createBrowserRouter } from "react-router-dom";
+import { createBrowserRouter, Navigate } from "react-router-dom";
 import LoadingFallback from "./auth/LoadingFallback";
 import AdminRoute from "./auth/AdminRoute";
 import ProtectedRoute from "./auth/ProtectedRoute";
+import Layout from "./Layout";
 
 // Eager load critical auth pages for immediate user experience
 import Login from "../pages/Login";
@@ -19,10 +31,10 @@ const RequestSubmitted = lazy(() => import("../pages/auth/RequestSubmitted"));
 const AllVerified = lazy(() => import("../pages/auth/AllVerified"));
 const WaitingRoom = lazy(() => import("../pages/auth/WaitingRoom"));
 
-// Lazy load main app pages
-const WaveHistory = lazy(() => import("../pages/WaveHistory"));
-const Stream = lazy(() => import("../pages/Stream"));
-const SoundBoard = lazy(() => import("../pages/SoundBoard"));
+// Lazy load main app pages (new unified architecture)
+const UnifiedFeed = lazy(() => import("../pages/UnifiedFeed"));
+const PingDetail = lazy(() => import("../pages/PingDetail"));
+const History = lazy(() => import("../pages/History"));
 const Profile = lazy(() => import("../pages/Profile"));
 
 // Lazy load admin pages
@@ -89,41 +101,53 @@ const router = createBrowserRouter([
     path: "/waiting-room",
     element: withSuspense(WaitingRoom),
   },
+
+  // Main app routes — nested under Layout
   {
-    path: "waveHistory",
     element: (
       <ProtectedRoute>
-        {withSuspense(WaveHistory)}
+        <Layout />
       </ProtectedRoute>
     ),
+    children: [
+      {
+        path: "feed",
+        element: withSuspense(UnifiedFeed),
+      },
+      {
+        path: "feed/:pingId",
+        element: withSuspense(PingDetail),
+      },
+      {
+        path: "history",
+        element: withSuspense(History),
+      },
+      {
+        path: "history/:tab",
+        element: withSuspense(History),
+      },
+      {
+        path: "profile",
+        element: withSuspense(Profile),
+      },
+    ],
+  },
+
+  // Redirects from old routes for backward compatibility
+  {
+    path: "soundBoard",
+    element: <Navigate to="/feed" replace />,
   },
   {
     path: "stream",
-    element: (
-      <ProtectedRoute>
-        {withSuspense(Stream)}
-      </ProtectedRoute>
-    ),
+    element: <Navigate to="/feed" replace />,
   },
   {
-    path: "soundBoard",
-    element: (
-      <ProtectedRoute>
-        {withSuspense(SoundBoard)}
-      </ProtectedRoute>
-    ),
-  },
-  {
-    path: "profile",
-    element: (
-      <ProtectedRoute>
-        {withSuspense(Profile)}
-      </ProtectedRoute>
-    ),
+    path: "waveHistory",
+    element: <Navigate to="/history" replace />,
   },
 
   // Admin routes
-
   {
     path: "/admin",
     children: [

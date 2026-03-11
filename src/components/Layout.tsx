@@ -1,51 +1,60 @@
-import React from "react";
-import { FaPlus } from "react-icons/fa6";
+/**
+ * Layout
+ * Figma ref: 3643:8353 (desktop full frame), 3912:9533 (mobile full frame)
+ * Phase: 1
+ *
+ * New layout structure:
+ * - NavBar (simplified top bar, fixed on desktop)
+ * - Sidebar (narrower 280px, desktop only)
+ * - MobileHeader (mobile only, replaces PageTitleBar)
+ * - Main content area (Outlet)
+ * - Right aside slot (desktop only, feed page only — Phase 2 widgets)
+ */
+import { Outlet, useLocation } from "react-router-dom";
 import NavBar from "./NavBar";
-import PageTitleBar from "./PageTitleBar";
-import SideBar, { type Pages } from "./SideBar";
+import SideBar from "./SideBar";
+import MobileHeader from "./MobileHeader";
 
-interface LayoutProps {
-  setFormSegment: React.Dispatch<React.SetStateAction<string>>;
-  setForm: React.Dispatch<React.SetStateAction<boolean>>;
-  setActivePage: React.Dispatch<React.SetStateAction<Pages>>;
-  activePage: Pages;
-  heading: string;
-}
+const Layout = () => {
+  const location = useLocation();
+  const isFeedPage =
+    location.pathname === "/feed" || location.pathname.startsWith("/feed/");
 
-const Layout = ({
-  setFormSegment,
-  setForm,
-  setActivePage,
-  activePage,
-  heading,
-}: LayoutProps) => {
   return (
-    <div>
+    <div className="min-h-screen">
+      {/* Top NavBar — fixed on desktop, static on mobile */}
       <header className="z-20 md:fixed md:top-0 w-full">
         <nav>
           <NavBar />
         </nav>
-        <PageTitleBar
-          pages={activePage}
-          setActivePage={setActivePage}
-          heading={heading}
-        >
-          <button
-            onClick={() => {
-              setForm(true);
-              setFormSegment("ping");
-            }}
-            className="flex cursor-pointer justify-center text-[13px] items-center gap-[7px] text-white transition-colors overflow-hidden whitespace-nowrap ease-in-out duration-300 rounded-[40px] hover:bg-[#d88429]
-         bg-[#F49B31] py-2.5  px-[15px] text-center"
-          >
-            <FaPlus fontSize={20} />
-            Create a ping
-          </button>
-        </PageTitleBar>
       </header>
-      <aside className="hidden md:block [scrollbar-width:none]  overflow-y-auto   px-10 fixed h-[calc(100vh-155px)] w-[350px] left-0 bottom-0 whitespace-nowrap ">
-        <SideBar pages={activePage} setActivePage={setActivePage} />
-      </aside>
+
+      <div className="md:mt-[70px] flex">
+        {/* Desktop Sidebar — fixed, narrower (280px with padding) */}
+        <aside className="hidden md:block fixed left-0 top-[70px] bottom-0 w-[280px] overflow-y-auto [scrollbar-width:none] px-[18px] pt-[15px]">
+          <SideBar />
+        </aside>
+
+        {/* Main content area */}
+        <div className="flex-1 md:ml-[280px]">
+          {/* Mobile header — replaces PageTitleBar, mobile only */}
+          <div className="md:hidden">
+            <MobileHeader />
+          </div>
+
+          <main className="mx-[15px] mt-[15px] md:mx-5 md:mt-5">
+            <Outlet />
+          </main>
+        </div>
+
+        {/* Right aside — desktop only, feed page only (Phase 2: AnnouncementWidget, Top3Widget) */}
+        {isFeedPage && (
+          <aside className="hidden lg:block w-[250px] shrink-0 pt-[15px] pr-5">
+            {/* TODO: Phase 2 — AnnouncementWidget */}
+            {/* TODO: Phase 2 — Top3Widget */}
+          </aside>
+        )}
+      </div>
     </div>
   );
 };

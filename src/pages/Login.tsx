@@ -113,8 +113,8 @@ const Login = () => {
 
     // Active user with organization - go to main feed
     if (user.status === "ACTIVE" && user.organizationId) {
-      console.log("→ Redirecting to /soundBoard (ACTIVE user)");
-      navigate("/soundBoard");
+      console.log("→ Redirecting to /feed (ACTIVE user)");
+      navigate("/feed");
       return;
     }
 
@@ -139,9 +139,9 @@ const Login = () => {
       return;
     }
 
-    // Default fallback - go to soundboard
-    console.log("→ Redirecting to /soundBoard (fallback)");
-    navigate("/soundBoard");
+    // Default fallback - go to feed
+    console.log("→ Redirecting to /feed (fallback)");
+    navigate("/feed");
   };
 
   const handleSubmitLogin = async (e: React.FormEvent) => {
@@ -177,9 +177,9 @@ const Login = () => {
         console.log("Redirecting user with role:", user.role);
         redirectUser(user);
       } else {
-        console.warn("No user data after login, redirecting to default soundboard");
+        console.warn("No user data after login, redirecting to default feed");
         // If no user data in response, go to default route
-        navigate("/soundBoard");
+        navigate("/feed");
       }
     } catch (err: any) {
       console.error("Login error:", err);
