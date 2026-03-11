@@ -14,6 +14,8 @@ import { Outlet, useLocation } from "react-router-dom";
 import NavBar from "./NavBar";
 import SideBar from "./SideBar";
 import MobileHeader from "./MobileHeader";
+import AnnouncementWidget from "./UnifiedFeed/AnnouncementWidget";
+import Top3Widget from "./UnifiedFeed/Top3Widget";
 
 const Layout = () => {
   const location = useLocation();
@@ -49,9 +51,11 @@ const Layout = () => {
 
         {/* Right aside — desktop only, feed page only (Phase 2: AnnouncementWidget, Top3Widget) */}
         {isFeedPage && (
-          <aside className="hidden lg:block w-[250px] shrink-0 pt-[15px] pr-5">
-            {/* TODO: Phase 2 — AnnouncementWidget */}
-            {/* TODO: Phase 2 — Top3Widget */}
+          <aside className="hidden lg:block w-[310px] shrink-0 pt-[15px] pr-5">
+            <div className="flex flex-col gap-[15px]">
+              <AnnouncementWidget />
+              <Top3Widget />
+            </div>
           </aside>
         )}
       </div>
