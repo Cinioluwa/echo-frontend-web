@@ -1,3 +1,16 @@
+/**
+ * CategorySelector
+ * Figma ref: 3687:8314 (Selector in Create Ping - Desktop)
+ * Phase: 7
+ *
+ * Horizontal connected pill bar. All category buttons share a continuous
+ * border — first has rounded-l-[25px], last has rounded-r-[25px],
+ * middle buttons have flat sides with thin shared borders.
+ *
+ * Default: bg-[#fef5ea], border-[#454545], black text
+ * Selected: bg-[#f49b31], white text
+ */
+
 import { useEffect, useState } from "react";
 import { categoryService } from "../api/services";
 import type { CategoryData } from "../api/types/index";
@@ -27,24 +40,46 @@ const CategorySelector = ({ categoryId, setFormData }: CategorySelectorProps) =>
 
   if (isLoading) {
     return (
-      <div className="border-2 rounded-[20px] p-4 text-center text-gray-500">
-        Loading categories...
+      <div className="flex items-center px-5 py-2.5 text-[14px] text-[#454545] border-2 border-[#454545] rounded-[25px]">
+        Loading…
       </div>
     );
   }
 
   return (
-    <div className=" border-2  rounded-[20px] overflow-hidden inline-flex min-w-max">
-      {categories.map((cat) => (
-        <div
-          key={cat.id}
-          onClick={() => setFormData(cat.id, cat.name)}
-          className={`cursor-pointer  ${categoryId === cat.id ? "bg-[#F49B31] text-white" : "bg-[#FEF5EA] transition-colors duration-300 ease-in-out hover:bg-[#f2e8d9]"
-            } py-2.5 border-r transition-colors duration-500 ease-in-out px-[25px] min-w-fit`}
-        >
-          {cat.name}
-        </div>
-      ))}
+    // Horizontally scrollable so it never wraps; container clips overflow
+    <div className="flex overflow-x-auto cursor-pointer select-none">
+      {categories.map((cat, index) => {
+        const isFirst = index === 0;
+        const isLast = index === categories.length - 1;
+        const isSelected = categoryId === cat.id;
+
+        return (
+          <button
+            key={cat.id}
+            type="button"
+            onClick={() => setFormData(cat.id, cat.name)}
+            className={[
+              // Base layout
+              "flex items-center justify-center px-5 py-2.5 shrink-0 whitespace-nowrap",
+              // Typography
+              "text-[14px] font-medium leading-normal",
+              // Border — outer borders are 2px; shared inner borders are 1px
+              "border-t-2 border-b-2 border-solid",
+              isFirst ? "border-l-2 border-r" : isLast ? "border-l border-r-2" : "border-l border-r",
+              // Radius
+              isFirst ? "rounded-l-[25px]" : "",
+              isLast ? "rounded-r-[25px]" : "",
+              // Colour states
+              isSelected
+                ? "bg-[#f49b31] border-[#f49b31] text-white"
+                : "bg-[#fef5ea] border-[#454545] text-black hover:bg-[#fde8c6] transition-colors duration-200",
+            ].join(" ")}
+          >
+            {cat.name}
+          </button>
+        );
+      })}
     </div>
   );
 };
