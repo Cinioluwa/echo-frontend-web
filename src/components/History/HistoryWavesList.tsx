@@ -9,84 +9,49 @@
  * - Category label
  * - Wave title + full description (solution)
  * - Surge count + delete option
- *
- * TODO: API — GET /api/users/me/waves with pagination
  */
 
+import { useState } from "react";
 import WaveStatusIndicator from "../WaveStatusIndicator";
 import type { Wave } from "../../api/types";
 import { categoryImages } from "../CategoryImages";
 import { LoadingSpinner } from "../shared/LoadingSpinner";
 import { EmptyState } from "../shared/EmptyState";
-
-// ---------------------------------------------------------------------------
-// Mock data — replace with /api/users/me/waves once available
-// ---------------------------------------------------------------------------
-const MOCK_WAVES: Wave[] = [
-    {
-        id: 201,
-        solution: "Upgrade the pumping machines in the water facility",
-        title: "Install High-Capacity Water Pumps",
-        description:
-            "The current pumps are outdated and cannot sustain the demand from all halls simultaneously. Installing modern, high-capacity pumps would resolve the instability issue permanently.",
-        surgeCount: 87,
-        viewCount: 240,
-        status: "APPROVED",
-        rank: 1,
-        createdAt: "2024-05-30T11:00:00.000Z",
-        author: {
-            id: 1,
-            firstName: "Felix",
-            lastName: "Oluwapelumi",
-            email: "felix@echo.com",
-            role: "USER",
-            organizationId: 1,
-            status: "ACTIVE",
-            createdAt: "2024-01-01T00:00:00.000Z",
-        },
-        ping: {
-            id: 1,
-            title: "The water is not stable in the halls",
-            category: { id: 4, name: "Hall" },
-        },
-        _count: { surges: 87, comments: 12 },
-    },
-    {
-        id: 202,
-        solution: "Engage a sound technician to overhaul the PA system",
-        title: "Chapel PA System Overhaul",
-        description:
-            "A professional assessment and full overhaul of the amplifiers, mixers, and speaker units would fix the crackling. Budget estimate: ₦150,000.",
-        surgeCount: 34,
-        viewCount: 120,
-        status: "POSTED",
-        createdAt: "2024-03-15T14:00:00.000Z",
-        author: {
-            id: 1,
-            firstName: "Felix",
-            lastName: "Oluwapelumi",
-            email: "felix@echo.com",
-            role: "USER",
-            organizationId: 1,
-            status: "ACTIVE",
-            createdAt: "2024-01-01T00:00:00.000Z",
-        },
-        ping: {
-            id: 2,
-            title: "The chapel PA system needs urgent repair",
-            category: { id: 3, name: "Chapel" },
-        },
-        _count: { surges: 34, comments: 5 },
-    },
-];
-// ---------------------------------------------------------------------------
+import { waveService } from "../../api/services";
 
 interface HistoryWavesListProps {
     isLoading?: boolean;
 }
 
-const HistoryWavesList = ({ isLoading = false }: HistoryWavesListProps) => {
-    if (isLoading) {
+const HistoryWavesList = ({ isLoading: parentIsLoading = false }: HistoryWavesListProps) => {
+    const [waves, setWaves] = useState<Wave[]>([]);
+    // isLoading starts false because the fetch below is waiting on a new backend endpoint
+    const [isLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+
+    // TODO: waiting on backend — GET /api/waves/me is a new endpoint not yet implemented
+    // useEffect(() => {
+    //     setIsLoading(true);
+    //     waveService
+    //         .getMyWaves({ page: 1, limit: 20 })
+    //         .then((res) => {
+    //             setWaves(res.data);
+    //             setHasNextPage(res.pagination.hasNextPage);
+    //         })
+    //         .catch(() => setError("Failed to load your waves"))
+    //         .finally(() => setIsLoading(false));
+    // }, []);
+
+    const handleDeleteWave = async (waveId: number) => {
+        try {
+            await waveService.deleteWave(String(waveId));
+            setWaves((prev) => prev.filter((w) => w.id !== waveId));
+        } catch {
+            setError("Failed to delete wave");
+        }
+    };
+
+    if (parentIsLoading || isLoading) {
         return (
             <div className="flex justify-center py-10">
                 <LoadingSpinner />
@@ -94,7 +59,11 @@ const HistoryWavesList = ({ isLoading = false }: HistoryWavesListProps) => {
         );
     }
 
-    if (MOCK_WAVES.length === 0) {
+    if (error) {
+        return <p className="text-red-500">{error}</p>;
+    }
+
+    if (waves.length === 0) {
         return (
             <EmptyState
                 title="No waves yet"
@@ -105,10 +74,9 @@ const HistoryWavesList = ({ isLoading = false }: HistoryWavesListProps) => {
 
     return (
         <div className="flex flex-col gap-[15px]">
-            {MOCK_WAVES.map((wave) => (
-                <WaveHistoryCard key={wave.id} wave={wave} />
+            {waves.map((wave) => (
+                <WaveHistoryCard key={wave.id} wave={wave} onDelete={handleDeleteWave} />
             ))}
-            {/* TODO: API — pagination when /api/users/me/waves is integrated */}
         </div>
     );
 };
@@ -118,9 +86,10 @@ const HistoryWavesList = ({ isLoading = false }: HistoryWavesListProps) => {
 // ---------------------------------------------------------------------------
 interface WaveHistoryCardProps {
     wave: Wave;
+    onDelete: (waveId: number) => void;
 }
 
-const WaveHistoryCard = ({ wave }: WaveHistoryCardProps) => {
+const WaveHistoryCard = ({ wave, onDelete }: WaveHistoryCardProps) => {
     const authorName =
         typeof wave.author === "object" && wave.author
             ? `${wave.author.firstName} ${wave.author.lastName}`
@@ -148,8 +117,7 @@ const WaveHistoryCard = ({ wave }: WaveHistoryCardProps) => {
     const surgeCount = wave.surgeCount || wave._count?.surges || 0;
 
     const handleDelete = () => {
-        // TODO: API — DELETE /api/waves/:waveId
-        console.log("Delete wave:", wave.id);
+        onDelete(wave.id);
     };
 
     return (

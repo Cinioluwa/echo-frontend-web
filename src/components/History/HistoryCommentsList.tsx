@@ -6,17 +6,17 @@
  * Content for the "Comments" tab on the History page.
  * Shows pings/waves the user has commented on – compact card with
  * the user's comment highlighted below.
- *
- * TODO: API — GET /api/users/me/comments with pagination
  */
 
+import { useState, useEffect } from "react";
 import type { Comment } from "../../api/types";
 import { categoryImages } from "../CategoryImages";
 import { LoadingSpinner } from "../shared/LoadingSpinner";
 import { EmptyState } from "../shared/EmptyState";
+import { userService } from "../../api/services";
 
 // ---------------------------------------------------------------------------
-// Mock data — replace with /api/users/me/comments once available
+// Extended Comment type that includes embedded ping context from the API
 // ---------------------------------------------------------------------------
 interface CommentWithContext extends Comment {
     ping?: {
@@ -30,75 +30,41 @@ interface CommentWithContext extends Comment {
     };
 }
 
-const MOCK_COMMENTS: CommentWithContext[] = [
-    {
-        id: "c-301",
-        content:
-            "I totally agree. This has been an issue for over three weeks now. Management needs to act fast.",
-        author: {
-            id: 1,
-            firstName: "Felix",
-            lastName: "Oluwapelumi",
-            email: "felix@echo.com",
-            role: "USER",
-            organizationId: 1,
-            status: "ACTIVE",
-            createdAt: "2024-01-01T00:00:00.000Z",
-        },
-        targetType: "ping",
-        targetId: "1",
-        replyCount: 2,
-        createdAt: "2024-03-01T08:30:00.000Z",
-        updatedAt: "2024-03-01T08:30:00.000Z",
-        ping: {
-            id: 1,
-            title: "The water is not stable in the halls",
-            content:
-                "The water supply in the halls has been inconsistent for the past few weeks.",
-            category: { id: 4, name: "Hall" },
-            author: { firstName: "Isaac", lastName: "Israel" },
-            surgeCount: 674,
-            createdAt: "2024-02-29T21:30:00.000Z",
-        },
-    },
-    {
-        id: "c-302",
-        content:
-            "Can we escalate this to the facilities committee? There should be a timeline for repair.",
-        author: {
-            id: 1,
-            firstName: "Felix",
-            lastName: "Oluwapelumi",
-            email: "felix@echo.com",
-            role: "USER",
-            organizationId: 1,
-            status: "ACTIVE",
-            createdAt: "2024-01-01T00:00:00.000Z",
-        },
-        targetType: "ping",
-        targetId: "2",
-        replyCount: 0,
-        createdAt: "2024-03-11T10:15:00.000Z",
-        updatedAt: "2024-03-11T10:15:00.000Z",
-        ping: {
-            id: 2,
-            title: "The chapel PA system needs urgent repair",
-            content: "During last Sunday's service, the speakers were crackling badly.",
-            category: { id: 3, name: "Chapel" },
-            author: { firstName: "Emmanuel", lastName: "Okonkwo" },
-            surgeCount: 312,
-            createdAt: "2024-03-10T09:00:00.000Z",
-        },
-    },
-];
-// ---------------------------------------------------------------------------
-
 interface HistoryCommentsListProps {
     isLoading?: boolean;
 }
 
-const HistoryCommentsList = ({ isLoading = false }: HistoryCommentsListProps) => {
-    if (isLoading) {
+const HistoryCommentsList = ({ isLoading: parentIsLoading = false }: HistoryCommentsListProps) => {
+    const [comments, setComments] = useState<CommentWithContext[]>([]);
+    const [page, setPage] = useState(1);
+    const [hasNextPage, setHasNextPage] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+
+    useEffect(() => {
+        userService
+            .getMyComments({ page: 1, limit: 20 })
+            .then((res) => {
+                setComments(res.data as unknown as CommentWithContext[]);
+                setHasNextPage(res.pagination.hasNextPage);
+            })
+            .catch(() => setError("Failed to load your comments"))
+            .finally(() => setIsLoading(false));
+    }, []);
+
+    const loadMore = async () => {
+        const nextPage = page + 1;
+        try {
+            const res = await userService.getMyComments({ page: nextPage, limit: 20 });
+            setComments((prev) => [...prev, ...(res.data as unknown as CommentWithContext[])]);
+            setPage(nextPage);
+            setHasNextPage(res.pagination.hasNextPage);
+        } catch {
+            setError("Failed to load more comments");
+        }
+    };
+
+    if (parentIsLoading || isLoading) {
         return (
             <div className="flex justify-center py-10">
                 <LoadingSpinner />
@@ -106,7 +72,11 @@ const HistoryCommentsList = ({ isLoading = false }: HistoryCommentsListProps) =>
         );
     }
 
-    if (MOCK_COMMENTS.length === 0) {
+    if (error) {
+        return <p className="text-red-500">{error}</p>;
+    }
+
+    if (comments.length === 0) {
         return (
             <EmptyState
                 title="No comments yet"
@@ -117,10 +87,17 @@ const HistoryCommentsList = ({ isLoading = false }: HistoryCommentsListProps) =>
 
     return (
         <div className="flex flex-col gap-[15px]">
-            {MOCK_COMMENTS.map((comment) => (
+            {comments.map((comment) => (
                 <CommentedPingCard key={comment.id} comment={comment} />
             ))}
-            {/* TODO: API — pagination when /api/users/me/comments is integrated */}
+            {hasNextPage && (
+                <button
+                    onClick={loadMore}
+                    className="mt-2 text-sm text-[#F49B31] font-medium self-center cursor-pointer"
+                >
+                    Load more
+                </button>
+            )}
         </div>
     );
 };
