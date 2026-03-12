@@ -4,8 +4,6 @@
  * Phase: 5
  */
 
-// TODO: API — DELETE /api/pings/:pingId
-
 interface DeleteConfirmationModalProps {
     onConfirm: () => void;
     onCancel: () => void;

@@ -8,9 +8,12 @@
  * Clicking the card navigates to /feed/:pingId.
  */
 
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuthStore, useSurgeStore } from "../../stores";
+import { useAuthStore, useSurgeStore, usePingsStore } from "../../stores";
+import { pingService } from "../../api/services";
 import InlineWavePreview from "./InlineWavePreview";
+import DeleteConfirmationModal from "../DeleteConfirmationModal";
 import type { Ping } from "../../api/types";
 import { categoryImages } from "../CategoryImages";
 
@@ -20,8 +23,6 @@ interface UnifiedPingCardProps {
     ping: Ping;
 }
 
-// TODO: API — delete ping via pingService.deletePing()
-
 const UnifiedPingCard = ({ ping }: UnifiedPingCardProps) => {
     const navigate = useNavigate();
     const currentUser = useAuthStore((state) => state.user);
@@ -30,6 +31,9 @@ const UnifiedPingCard = ({ ping }: UnifiedPingCardProps) => {
     const isToggling = useSurgeStore(
         (state) => state.isToggling[`ping-${ping.id}`] || false,
     );
+
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [isDeleting, setIsDeleting] = useState(false);
 
     const isOwner = currentUser?.id === (typeof ping.author === "object" ? ping.author?.id : undefined);
 
@@ -83,11 +87,24 @@ const UnifiedPingCard = ({ ping }: UnifiedPingCardProps) => {
 
     const handleDelete = (e: React.MouseEvent) => {
         e.stopPropagation();
-        // TODO: API — delete ping via pingService.deletePing()
-        console.log("Delete ping:", ping.id);
+        setShowDeleteModal(true);
+    };
+
+    const handleDeleteConfirm = async () => {
+        setIsDeleting(true);
+        try {
+            await pingService.deletePing(String(ping.id));
+            usePingsStore.getState().removePing(String(ping.id));
+        } catch (err) {
+            console.error("Failed to delete ping:", err);
+        } finally {
+            setIsDeleting(false);
+            setShowDeleteModal(false);
+        }
     };
 
     return (
+        <>
         <div
             className="bg-[#FEFEFE] rounded-[10px] px-5 py-[15px] flex flex-col gap-[15px] cursor-pointer hover:shadow-sm transition-shadow w-full"
             onClick={handleCardClick}
@@ -221,6 +238,15 @@ const UnifiedPingCard = ({ ping }: UnifiedPingCardProps) => {
             {/* ─── Inline Wave Preview ─────────────────── */}
             <InlineWavePreview pingId={ping.id} />
         </div>
+
+        {showDeleteModal && (
+            <DeleteConfirmationModal
+                onConfirm={handleDeleteConfirm}
+                onCancel={() => setShowDeleteModal(false)}
+                isLoading={isDeleting}
+            />
+        )}
+        </>
     );
 };
 
