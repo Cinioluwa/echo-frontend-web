@@ -130,6 +130,7 @@ export interface CreatePingRequest {
   categoryId: number;
   hashtag?: string;
   isAnonymous?: boolean;
+  mediaIds?: number[];
 }
 
 export interface UpdatePingRequest {

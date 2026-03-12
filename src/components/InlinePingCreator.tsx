@@ -10,15 +10,13 @@
  */
 
 import { useState, useRef } from "react";
-import { useAuthStore } from "../stores";
+import { useAuthStore, useCategoriesStore, usePingsStore } from "../stores";
+import { pingService, uploadService } from "../api/services";
 
 type ExpansionState = "collapsed" | "expanded" | "with-photos";
 
 const CATEGORIES = ["General", "Academics", "Chapel", "Finance", "Hall", "Sport", "Welfare"] as const;
 type Category = typeof CATEGORIES[number];
-
-// TODO: API — POST /api/pings { title, content, category, anonymous, photos }
-// TODO: API — upload photos via multipart form
 
 const InlinePingCreator = () => {
     const user = useAuthStore((state) => state.user);
@@ -29,6 +27,7 @@ const InlinePingCreator = () => {
     const [photos, setPhotos] = useState<File[]>([]);
     const [isAnonymous, setIsAnonymous] = useState(false);
     const [isPosting, setIsPosting] = useState(false);
+    const [error, setError] = useState<string | null>(null);
 
     const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -65,12 +64,35 @@ const InlinePingCreator = () => {
 
     const handlePost = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!title.trim()) return;
+        if (!title.trim() || !selectedCategory) return;
         setIsPosting(true);
+        setError(null);
         try {
-            // TODO: API — POST /api/pings { title, content: body, category: selectedCategory, anonymous: isAnonymous, photos }
-            console.log("Creating ping:", { title, body, selectedCategory, isAnonymous, photos });
+            let mediaIds: number[] = [];
+            if (photos.length > 0) {
+                const uploaded = await uploadService.uploadFiles(photos, "ping");
+                mediaIds = uploaded.map((m) => m.id);
+            }
+
+            const categories = useCategoriesStore.getState().categories;
+            const categoryId = categories.find((c) => c.label === selectedCategory)?.id;
+            if (!categoryId) throw new Error("Category not found");
+
+            await pingService.createPing({
+                title: title.trim(),
+                content: body.trim(),
+                categoryId,
+                isAnonymous,
+                mediaIds: mediaIds.length > 0 ? mediaIds : undefined,
+            });
+
+            usePingsStore.getState().invalidateCache();
+            usePingsStore.getState().fetchPings({ sort: "trending" });
+
             handleCancel();
+        } catch (err) {
+            console.error("Failed to create ping:", err);
+            setError("Failed to create ping. Please try again.");
         } finally {
             setIsPosting(false);
         }
@@ -216,6 +238,9 @@ const InlinePingCreator = () => {
                     )}
                 </div>
             )}
+
+            {/* Error message */}
+            {error && <p className="text-red-500 text-[13px] font-['Poppins',sans-serif]">{error}</p>}
 
             {/* Cancel link */}
             <button

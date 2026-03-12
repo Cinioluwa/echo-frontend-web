@@ -14,6 +14,7 @@ export { default as categoryService } from "./category.service";
 export { default as searchService } from "./search.service";
 export { default as announcementService } from "./announcement.service";
 export { default as organizationService } from "./organization.service";
+export { default as uploadService } from "./upload.service";
 
 // Re-export types for convenience
 export type * from "../types/index";
