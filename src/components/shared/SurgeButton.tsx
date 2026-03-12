@@ -7,7 +7,6 @@
  *  - Default (surged=false): light yellow bg (#fef5ea), black border, dark text
  *  - Active  (surged=true):  orange bg (#f49b31), white text
  *
- * TODO: API — toggleSurge via useSurgeStore
  */
 
 interface SurgeButtonProps {

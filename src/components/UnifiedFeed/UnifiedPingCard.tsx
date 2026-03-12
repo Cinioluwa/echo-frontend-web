@@ -11,20 +11,18 @@
 import { useNavigate } from "react-router-dom";
 import { useAuthStore, useSurgeStore } from "../../stores";
 import InlineWavePreview from "./InlineWavePreview";
-import type { Ping, Wave } from "../../api/types";
+import type { Ping } from "../../api/types";
 import { categoryImages } from "../CategoryImages";
 
 const waveIcon = "/assets/icon/wave.svg";
 const commentIcon = "/assets/icon/comment.svg";
 interface UnifiedPingCardProps {
     ping: Ping;
-    waves?: Wave[];
 }
 
-// TODO: API — surge toggle via useSurgeStore.toggleSurge()
 // TODO: API — delete ping via pingService.deletePing()
 
-const UnifiedPingCard = ({ ping, waves = [] }: UnifiedPingCardProps) => {
+const UnifiedPingCard = ({ ping }: UnifiedPingCardProps) => {
     const navigate = useNavigate();
     const currentUser = useAuthStore((state) => state.user);
     const toggleSurge = useSurgeStore((state) => state.toggleSurge);
@@ -61,8 +59,8 @@ const UnifiedPingCard = ({ ping, waves = [] }: UnifiedPingCardProps) => {
     const categoryIcon = categoryImages[categoryName];
 
     const surgeCount = ping.surgeCount || ping._count?.surges || 0;
+    const waveCount = ping._count?.waves || 0;
     const commentCount = ping._count?.comments || 0;
-    const waveCount = ping._count?.waves || waves.length || 0;
 
     const handleCardClick = () => {
         navigate(`/feed/${ping.id}`);
@@ -221,7 +219,7 @@ const UnifiedPingCard = ({ ping, waves = [] }: UnifiedPingCardProps) => {
             <div className="h-px w-full bg-black/10" />
 
             {/* ─── Inline Wave Preview ─────────────────── */}
-            <InlineWavePreview waves={waves} />
+            <InlineWavePreview pingId={ping.id} />
         </div>
     );
 };
