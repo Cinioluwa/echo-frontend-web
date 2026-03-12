@@ -20,7 +20,7 @@ import ClaimSpaceModal from "../components/ClaimSpaceModal";
 import InviteLeaderModal from "../components/InviteLeaderModal";
 import InlinePingCreator from "../components/InlinePingCreator";
 import UnifiedPingCard from "../components/UnifiedFeed/UnifiedPingCard";
-import { usePingsStore, useSearchStore } from "../stores";
+import { usePingsStore, useSearchStore, useAuthStore } from "../stores";
 
 const UnifiedFeed = () => {
     // ── Pings store ────────────────────────────────────────────────────────────
@@ -43,6 +43,9 @@ const UnifiedFeed = () => {
             selectedCategoryId: state.selectedCategoryId,
         }))
     );
+
+    // ── Auth store — for organizationId passed to claim/invite modals ─────────
+    const organizationId = useAuthStore((state) => state.user?.organizationId ?? null);
 
     // ── Modal state ─────────────────────────────────────────────────────────────
     const [isClaimModalOpen, setClaimModalOpen] = useState(false);
@@ -115,10 +118,12 @@ const UnifiedFeed = () => {
             <ClaimSpaceModal
                 isOpen={isClaimModalOpen}
                 onClose={() => setClaimModalOpen(false)}
+                organizationId={organizationId}
             />
             <InviteLeaderModal
                 isOpen={isInviteModalOpen}
                 onClose={() => setInviteModalOpen(false)}
+                organizationId={organizationId}
             />
         </div>
     );

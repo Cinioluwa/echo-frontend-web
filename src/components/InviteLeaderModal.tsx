@@ -8,28 +8,34 @@
  */
 
 import { useState } from "react";
+import { organizationService } from "../api/services";
 
 interface InviteLeaderModalProps {
     isOpen: boolean;
     onClose: () => void;
+    organizationId: number | null;
 }
 
-// TODO: API — POST /api/organization/:id/invite-leader  { name, email, proofLink }
-
-const InviteLeaderModal = ({ isOpen, onClose }: InviteLeaderModalProps) => {
+const InviteLeaderModal = ({ isOpen, onClose, organizationId }: InviteLeaderModalProps) => {
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [proofLink, setProofLink] = useState("");
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [error, setError] = useState<string | null>(null);
 
     if (!isOpen) return null;
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        if (!organizationId) return;
         setIsSubmitting(true);
+        setError(null);
         try {
-            // TODO: API — POST /api/organization/:id/invite-leader  { name, email, proofLink }
-            console.log("Invite leader submission:", { name, email, proofLink });
+            // TODO: waiting on backend — POST /api/organization/:id/invite-leader
+            await organizationService.inviteLeader(organizationId, { name, email, proofLink });
+            onClose();
+        } catch {
+            setError("Failed to send invite. Please try again.");
         } finally {
             setIsSubmitting(false);
         }
@@ -125,6 +131,8 @@ const InviteLeaderModal = ({ isOpen, onClose }: InviteLeaderModalProps) => {
                             />
                         </div>
                     </div>
+
+                    {error && <p className="text-red-500 text-[13px] text-center w-full">{error}</p>}
 
                     {/* Invite Button */}
                     <button

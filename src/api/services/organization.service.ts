@@ -1,5 +1,14 @@
 import api from "../axios.config";
+import axios from "axios";
 import type { Organization } from "../types/index";
+
+// Unauthed axios instance — used for endpoints that must not carry a Bearer token
+// (e.g. the claim flow, which is a pre-registration step)
+const unauthApi = axios.create({
+  baseURL: import.meta.env.VITE_API_BASE_URL || "http://127.0.0.1:3000/api",
+  timeout: 10000,
+  headers: { "Content-Type": "application/json" },
+});
 
 /**
  * Organization Service
@@ -28,6 +37,47 @@ const organizationService = {
    */
   getOrganizationById: async (id: number): Promise<Organization> => {
     const response = await api.get<Organization>(`/users/organizations/${id}`);
+    return response.data;
+  },
+
+  /**
+   * Submit a leadership claim for a preseeded organization.
+   * Auth Required: No — uses unauthed axios instance.
+   * @param orgId Organization ID
+   * @param data Claim payload
+   */
+  claimOrganization: async (
+    orgId: number,
+    data: {
+      email: string;
+      firstName: string;
+      lastName: string;
+      password: string;
+      metadata?: { role?: string; department?: string };
+    }
+  ): Promise<{ message: string }> => {
+    const response = await unauthApi.post<{ message: string }>(
+      `/users/organizations/${orgId}/claim`,
+      data
+    );
+    return response.data;
+  },
+
+  /**
+   * Invite a leader to claim the organization.
+   * Requires new backend endpoint: POST /api/organization/:id/invite-leader
+   * @param orgId Organization ID
+   * @param data Invite payload
+   */
+  inviteLeader: async (
+    orgId: number,
+    data: { name: string; email: string; proofLink: string }
+  ): Promise<{ message: string }> => {
+    // TODO: waiting on backend — POST /api/organization/:id/invite-leader
+    const response = await api.post<{ message: string }>(
+      `/organization/${orgId}/invite-leader`,
+      data
+    );
     return response.data;
   },
 };
