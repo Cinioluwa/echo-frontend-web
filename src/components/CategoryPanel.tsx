@@ -31,7 +31,6 @@ const CategoryPanel = () => {
     const [selectedCategory, setLocalSelectedCategory] = useState<CategoryItem | null>(null);
 
     useEffect(() => {
-        // TODO: API — useCategoriesStore.fetchCategories() on mount
         fetchCategories((name: string) => categoryImages[name] || categoryImages.General);
     }, [fetchCategories]);
 

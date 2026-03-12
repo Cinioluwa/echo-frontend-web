@@ -5,10 +5,6 @@ export interface GetCategoriesParams {
   q?: string;
 }
 
-export interface CategoriesResponse {
-  data: CategoryData[];
-}
-
 /**
  * Category Service
  * Handles category management
@@ -19,10 +15,10 @@ const categoryService = {
    * @param params Query parameters for filtering
    */
   getAll: async (params?: GetCategoriesParams): Promise<CategoryData[]> => {
-    const response = await api.get<CategoriesResponse>("/categories", {
+    const response = await api.get<CategoryData[]>("/categories", {
       params,
     });
-    return response.data.data;
+    return response.data;
   },
 };
 

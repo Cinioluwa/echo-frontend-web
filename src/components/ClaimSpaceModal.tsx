@@ -64,10 +64,10 @@ const ClaimSpaceModal = ({
                 </div>
 
                 {/* Header */}
-                <div className="flex flex-col gap-[10px] items-center text-center w-full">
+                <div className="flex flex-col gap-2.5 items-center text-center w-full">
                     <h2
                         id="claim-space-title"
-                        className="font-['Poppins',sans-serif] font-semibold text-[28px] text-black leading-[36px] w-full"
+                        className="font-['Poppins',sans-serif] font-semibold text-[28px] text-black leading-9 w-full"
                     >
                         Take the lead
                     </h2>
@@ -77,10 +77,10 @@ const ClaimSpaceModal = ({
                 </div>
 
                 {/* Form */}
-                <form onSubmit={handleSubmit} className="flex flex-col gap-[20px] items-center w-full">
+                <form onSubmit={handleSubmit} className="flex flex-col gap-5 items-center w-full">
                     <div className="flex flex-col gap-[15px] items-center w-full">
                         {/* Job Title */}
-                        <div className="bg-[#FBFBFB] border border-[#CACACA] rounded-[12px] flex items-center gap-[13px] h-[59px] px-[21px] py-[11px] w-full">
+                        <div className="bg-[#FBFBFB] border border-[#CACACA] rounded-xl flex items-center gap-[13px] h-[59px] px-[21px] py-[11px] w-full">
                             <svg className="w-[26px] h-[26px] shrink-0 text-[#F49B31]" fill="none" viewBox="0 0 26 26" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                                 <circle cx="13" cy="8" r="5" stroke="#F49B31" strokeWidth="1.5" />
                                 <path d="M3 22c0-4.418 4.477-8 10-8s10 3.582 10 8" stroke="#F49B31" strokeWidth="1.5" strokeLinecap="round" />
@@ -97,7 +97,7 @@ const ClaimSpaceModal = ({
                         </div>
 
                         {/* Proof Link */}
-                        <div className="bg-[#FBFBFB] border border-[#CACACA] rounded-[12px] flex items-center gap-[13px] h-[59px] px-[21px] py-[11px] w-full">
+                        <div className="bg-[#FBFBFB] border border-[#CACACA] rounded-xl flex items-center gap-[13px] h-[59px] px-[21px] py-[11px] w-full">
                             <svg className="w-[26px] h-[26px] shrink-0" fill="none" viewBox="0 0 26 26" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                                 <path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71" stroke="#F49B31" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                                 <path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71" stroke="#F49B31" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
@@ -118,7 +118,7 @@ const ClaimSpaceModal = ({
                     <button
                         type="submit"
                         disabled={isSubmitting}
-                        className="bg-[#F49B31] text-[#FFFEFE] font-['Poppins',sans-serif] font-medium text-[14px] leading-[14px] px-[50px] py-[15px] rounded-[8px] cursor-pointer hover:bg-[#d88429] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="bg-[#F49B31] text-[#FFFEFE] font-['Poppins',sans-serif] font-medium text-[14px] leading-3.5 px-[50px] py-[15px] rounded-lg cursor-pointer hover:bg-[#d88429] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                         {isSubmitting ? "Submitting..." : "Submit"}
                     </button>

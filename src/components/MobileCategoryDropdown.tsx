@@ -15,8 +15,6 @@ import { useEffect, type SetStateAction } from "react";
 import { categoryImages } from "./CategoryImages";
 import { useCategoriesStore } from "../stores";
 
-// TODO: API — useCategoriesStore
-
 interface Props {
     setSelectedMobileCat: React.Dispatch<SetStateAction<string>>;
     setOpenCat: React.Dispatch<SetStateAction<boolean>>;

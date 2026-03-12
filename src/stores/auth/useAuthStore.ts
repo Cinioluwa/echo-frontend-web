@@ -1,7 +1,8 @@
 import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
-import { authService } from "../../api/services";
+import { authService, userService } from "../../api/services";
+import { useSurgeStore } from "../interactions/useSurgeStore";
 import type { User, LoginRequest, SignupRequest } from "../../api/types/index";
 
 interface AuthState {
@@ -78,6 +79,30 @@ export const useAuthStore = create<AuthState>()(
                 state.user = userData;
                 state.isLoading = false;
               });
+
+              // Seed surge state so ping/wave cards show correct "surged" status
+              try {
+                const surgesRes = await userService.getMySurges({ limit: 100 });
+                const surgedPingIds: string[] = [];
+                const surgedWaveIds: string[] = [];
+
+                for (const surge of surgesRes.data) {
+                  // API returns pingId/waveId fields on each surge item
+                  const raw = surge as unknown as Record<string, unknown>;
+                  if (raw.pingId) surgedPingIds.push(String(raw.pingId));
+                  if (raw.waveId) surgedWaveIds.push(String(raw.waveId));
+                }
+
+                if (surgedPingIds.length > 0) {
+                  useSurgeStore.getState().syncFromAPI("ping", surgedPingIds);
+                }
+                if (surgedWaveIds.length > 0) {
+                  useSurgeStore.getState().syncFromAPI("wave", surgedWaveIds);
+                }
+              } catch (surgeErr) {
+                // Non-critical — surge state will be corrected on first interaction
+                console.error("Failed to seed surge state:", surgeErr);
+              }
             } catch (profileErr: any) {
               console.error("Error fetching user profile:", profileErr);
               console.error(
