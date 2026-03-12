@@ -13,44 +13,9 @@ interface Top3WidgetProps {
     pings?: Ping[];
 }
 
-// TODO: API — fetch top 3 pings sorted by surgeCount desc, limit 3
-
-const MOCK_TOP3: Ping[] = [
-    {
-        id: 1,
-        title: "The wifi is too slow",
-        content: "",
-        surgeCount: 128,
-        status: "POSTED",
-        createdAt: new Date().toISOString(),
-        author: { id: 1, email: "", firstName: "Osagumwenro", lastName: "Ugbo", role: "USER", organizationId: null, status: "ACTIVE", createdAt: "" },
-        category: { id: 1, name: "General" },
-    },
-    {
-        id: 2,
-        title: "Chapel attendance policy needs revision",
-        content: "",
-        surgeCount: 105,
-        status: "POSTED",
-        createdAt: new Date().toISOString(),
-        author: { id: 2, email: "", firstName: "Isaac", lastName: "Israel", role: "USER", organizationId: null, status: "ACTIVE", createdAt: "" },
-        category: { id: 3, name: "Chapel" },
-    },
-    {
-        id: 3,
-        title: "Cafeteria food quality has dropped",
-        content: "",
-        surgeCount: 89,
-        status: "POSTED",
-        createdAt: new Date().toISOString(),
-        author: { id: 3, email: "", firstName: "Felix", lastName: "Oluwapelumi", role: "USER", organizationId: null, status: "ACTIVE", createdAt: "" },
-        category: { id: 7, name: "Welfare" },
-    },
-];
-
 const DOT_COLORS = ["#F49B31", "#FF6B6B", "#FFC37B"];
 
-const Top3Widget = ({ pings = MOCK_TOP3 }: Top3WidgetProps) => {
+const Top3Widget = ({ pings = [] }: Top3WidgetProps) => {
     const top3 = pings.slice(0, 3);
 
     return (

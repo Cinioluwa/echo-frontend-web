@@ -12,6 +12,7 @@
  *     - /feed          → AnnouncementWidget + Top3Widget (Phase 2)
  *     - /feed/:pingId  → CommentsPanel (Phase 3)
  */
+import { useState, useEffect } from "react";
 import { Outlet, useLocation } from "react-router-dom";
 import NavBar from "./NavBar";
 import SideBar from "./SideBar";
@@ -19,12 +20,27 @@ import MobileHeader from "./MobileHeader";
 import AnnouncementWidget from "./UnifiedFeed/AnnouncementWidget";
 import Top3Widget from "./UnifiedFeed/Top3Widget";
 import CommentsPanel from "./CommentsPanel";
+import { announcementService, publicService } from "../api/services";
+import type { Announcement, Ping } from "../api/types";
 
 const Layout = () => {
   const location = useLocation();
   const isFeedPage = location.pathname === "/feed";
   const pingDetailMatch = location.pathname.match(/^\/feed\/([^/]+)$/);
   const pingDetailId = pingDetailMatch?.[1] ?? null;
+
+  const [announcement, setAnnouncement] = useState<Announcement | null>(null);
+  const [top3, setTop3] = useState<Ping[]>([]);
+
+  useEffect(() => {
+    if (!isFeedPage) return;
+    announcementService.getAll().then((list) => {
+      if (list.length > 0) setAnnouncement(list[0]);
+    });
+    publicService.getSoundboard({ sort: "trending", top: 3 }).then((res) => {
+      setTop3(res.data);
+    });
+  }, [isFeedPage]);
 
   return (
     <div className="min-h-screen">
@@ -57,8 +73,8 @@ const Layout = () => {
         {isFeedPage && (
           <aside className="hidden lg:block w-[310px] shrink-0 pt-[15px] pr-5">
             <div className="flex flex-col gap-[15px]">
-              <AnnouncementWidget />
-              <Top3Widget />
+              <AnnouncementWidget announcement={announcement} />
+              <Top3Widget pings={top3} />
             </div>
           </aside>
         )}

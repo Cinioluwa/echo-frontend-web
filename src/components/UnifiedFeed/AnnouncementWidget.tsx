@@ -9,28 +9,15 @@
  */
 
 import { useState } from "react";
-
-interface Announcement {
-    id: number;
-    title: string;
-    description: string;
-}
+import type { Announcement } from "../../api/types";
 
 interface AnnouncementWidgetProps {
-    announcement?: Announcement;
+    announcement?: Announcement | null;
 }
 
-// TODO: API — fetch announcements from announcementService
-
-const MOCK_ANNOUNCEMENT: Announcement = {
-    id: 1,
-    title: "BAN OF SHUTTLE TO EIE",
-    description:
-        "Starting from 23rd of May shuttles can no longer drop students at engineering buildings. Shuttles must now drop at Cafeteria 2. Only Welfare Shuttles are exempted from this new policy.",
-};
-
-const AnnouncementWidget = ({ announcement = MOCK_ANNOUNCEMENT }: AnnouncementWidgetProps) => {
+const AnnouncementWidget = ({ announcement = null }: AnnouncementWidgetProps) => {
     const [isExpanded, setIsExpanded] = useState(false);
+    if (!announcement) return null;
 
     return (
         <div
@@ -54,14 +41,14 @@ const AnnouncementWidget = ({ announcement = MOCK_ANNOUNCEMENT }: AnnouncementWi
                 <div className="font-extrabold text-[0px] min-w-full w-min">
                     <p className="text-[14px] font-['Poppins',sans-serif]">
                         <span className="font-medium leading-[1.8]">
-                            {isExpanded ? announcement.description : announcement.description.slice(0, 160) + (announcement.description.length > 160 ? "..." : "")}
+                            {isExpanded ? announcement.content : announcement.content.slice(0, 160) + (announcement.content.length > 160 ? "..." : "")}
                         </span>
                     </p>
                 </div>
             </div>
 
             {/* Show more / Show less */}
-            {announcement.description.length > 160 && (
+            {announcement.content.length > 160 && (
                 <button
                     onClick={() => setIsExpanded(!isExpanded)}
                     className="font-['Poppins',sans-serif] font-medium text-[13px] text-[#F49B31] cursor-pointer hover:underline text-left w-full"
