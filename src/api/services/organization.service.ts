@@ -54,11 +54,11 @@ const organizationService = {
       lastName: string;
       password: string;
       metadata?: { role?: string; department?: string };
-    }
+    },
   ): Promise<{ message: string }> => {
     const response = await unauthApi.post<{ message: string }>(
       `/users/organizations/${orgId}/claim`,
-      data
+      data,
     );
     return response.data;
   },
@@ -71,12 +71,12 @@ const organizationService = {
    */
   inviteLeader: async (
     orgId: number,
-    data: { name: string; email: string; proofLink: string }
+    data: { name: string; email: string; proofLink: string },
   ): Promise<{ message: string }> => {
     // TODO: waiting on backend — POST /api/organization/:id/invite-leader
     const response = await api.post<{ message: string }>(
       `/organization/${orgId}/invite-leader`,
-      data
+      data,
     );
     return response.data;
   },
