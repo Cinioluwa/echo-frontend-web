@@ -105,147 +105,147 @@ const UnifiedPingCard = ({ ping }: UnifiedPingCardProps) => {
 
     return (
         <>
-        <div
-            className="bg-[#FEFEFE] rounded-[10px] px-5 py-[15px] flex flex-col gap-[15px] cursor-pointer hover:shadow-sm transition-shadow w-full"
-            onClick={handleCardClick}
-            role="article"
-        >
-            {/* ─── Header ─────────────────────────────── */}
-            <div className="flex flex-col gap-2.5">
-                {/* Author row */}
-                <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-4">
-                        {/* Avatar */}
-                        <div className="w-7 h-7 md:w-[53px] md:h-[53px] rounded-full bg-[#FFC37B] flex items-center justify-center shrink-0 overflow-hidden">
-                            <span className="font-['Poppins',sans-serif] font-bold text-[10px] md:text-[18px] text-white">
-                                {authorInitials}
-                            </span>
-                        </div>
-                        {/* Name + timestamp */}
-                        <div className="flex flex-col">
-                            <span className="font-['Poppins',sans-serif] font-semibold text-[13px] md:text-[15px] text-black leading-normal">
-                                {authorName}
-                            </span>
-                            <span className="font-['Poppins',sans-serif] font-medium text-[11px] md:text-[13px] text-[#8B8E8D] leading-normal">
-                                {timestamp}
-                            </span>
-                        </div>
-                    </div>
-
-                    {/* Badges: Top 3 + delete */}
-                    <div className="flex items-center gap-5">
-                        {/* "Top 3" badge — shown if ping is in top */}
-                        {(ping as Ping & { isTop3?: boolean }).isTop3 && (
-                            <div className="border border-[#626665] rounded-[23px] flex items-center gap-1.5 px-[15px] py-[7px]">
-                                <div className="w-[7px] h-[7px] rounded-full bg-[#F49B31]" />
-                                <span className="font-['Poppins',sans-serif] font-medium text-[11px] text-black">
-                                    Top 3
+            <div
+                className="bg-[#FEFEFE] rounded-[10px] px-5 py-[15px] flex flex-col gap-[15px] cursor-pointer hover:shadow-sm transition-shadow w-full"
+                onClick={handleCardClick}
+                role="article"
+            >
+                {/* ─── Header ─────────────────────────────── */}
+                <div className="flex flex-col gap-2.5">
+                    {/* Author row */}
+                    <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-4">
+                            {/* Avatar */}
+                            <div className="w-7 h-7 md:w-[53px] md:h-[53px] rounded-full bg-[#FFC37B] flex items-center justify-center shrink-0 overflow-hidden">
+                                <span className="font-['Poppins',sans-serif] font-bold text-[10px] md:text-[18px] text-white">
+                                    {authorInitials}
                                 </span>
                             </div>
-                        )}
-                        {/* Delete — own pings only */}
-                        {isOwner && (
-                            <button
-                                onClick={handleDelete}
-                                aria-label="Delete ping"
-                                className="w-[31px] h-8 rounded-full bg-[#FEF5EA] flex items-center justify-center hover:bg-red-100 transition-colors cursor-pointer"
-                            >
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                                    <path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6" stroke="#EF4444" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-                                </svg>
-                            </button>
-                        )}
+                            {/* Name + timestamp */}
+                            <div className="flex flex-col">
+                                <span className="font-['Poppins',sans-serif] font-semibold text-[13px] md:text-[15px] text-black leading-normal">
+                                    {authorName}
+                                </span>
+                                <span className="font-['Poppins',sans-serif] font-medium text-[11px] md:text-[13px] text-[#8B8E8D] leading-normal">
+                                    {timestamp}
+                                </span>
+                            </div>
+                        </div>
+
+                        {/* Badges: Top 3 + delete */}
+                        <div className="flex items-center gap-5">
+                            {/* "Top 3" badge — shown if ping is in top */}
+                            {(ping as Ping & { isTop3?: boolean }).isTop3 && (
+                                <div className="border border-[#626665] rounded-[23px] flex items-center gap-1.5 px-[15px] py-[7px]">
+                                    <div className="w-[7px] h-[7px] rounded-full bg-[#F49B31]" />
+                                    <span className="font-['Poppins',sans-serif] font-medium text-[11px] text-black">
+                                        Top 3
+                                    </span>
+                                </div>
+                            )}
+                            {/* Delete — own pings only */}
+                            {isOwner && (
+                                <button
+                                    onClick={handleDelete}
+                                    aria-label="Delete ping"
+                                    className="w-[31px] h-8 rounded-full bg-[#FEF5EA] flex items-center justify-center hover:bg-red-100 transition-colors cursor-pointer"
+                                >
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                                        <path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6" stroke="#EF4444" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                                    </svg>
+                                </button>
+                            )}
+                        </div>
                     </div>
+
+                    {/* Category label */}
+                    {categoryName && (
+                        <div className="flex items-center gap-[9px]">
+                            {categoryIcon && (
+                                <img src={categoryIcon} alt={categoryName} className="w-[13px] h-[13px] md:w-5 md:h-5 object-contain" />
+                            )}
+                            <span className="font-['Poppins',sans-serif] font-medium text-[13px] md:text-[15px] text-[#171717]">
+                                {categoryName}
+                            </span>
+                        </div>
+                    )}
                 </div>
 
-                {/* Category label */}
-                {categoryName && (
-                    <div className="flex items-center gap-[9px]">
-                        {categoryIcon && (
-                            <img src={categoryIcon} alt={categoryName} className="w-[13px] h-[13px] md:w-5 md:h-5 object-contain" />
-                        )}
-                        <span className="font-['Poppins',sans-serif] font-medium text-[13px] md:text-[15px] text-[#171717]">
-                            {categoryName}
-                        </span>
-                    </div>
-                )}
-            </div>
+                {/* ─── Body ────────────────────────────────── */}
+                <div className="flex flex-col gap-[13px]">
+                    <h3 className="font-['Poppins',sans-serif] font-semibold text-[14px] md:text-[16px] text-black leading-normal">
+                        {ping.title}
+                    </h3>
+                    {ping.content && (
+                        <p className="font-['Poppins',sans-serif] font-medium text-[12px] md:text-[14px] text-black/70 leading-relaxed line-clamp-3">
+                            {ping.content}
+                        </p>
+                    )}
+                    {/* Image placeholder — real image URL from ping would go here */}
+                </div>
 
-            {/* ─── Body ────────────────────────────────── */}
-            <div className="flex flex-col gap-[13px]">
-                <h3 className="font-['Poppins',sans-serif] font-semibold text-[14px] md:text-[16px] text-black leading-normal">
-                    {ping.title}
-                </h3>
-                {ping.content && (
-                    <p className="font-['Poppins',sans-serif] font-medium text-[12px] md:text-[14px] text-black/70 leading-relaxed line-clamp-3">
-                        {ping.content}
-                    </p>
-                )}
-                {/* Image placeholder — real image URL from ping would go here */}
-            </div>
-
-            {/* ─── Footer: Surge + wave & comment counts ─ */}
-            <div className="flex items-center justify-between">
-                {/* Surge button */}
-                <button
-                    onClick={handleSurge}
-                    disabled={isToggling}
-                    aria-label={hasSurged ? "Remove surge" : "Surge"}
-                    className={`flex items-center gap-[5px] px-2.5 py-[5px] rounded-[15px] border border-black cursor-pointer transition-colors disabled:opacity-50 ${hasSurged ? "bg-[#F49B31] text-white border-[#F49B31]" : "bg-[#FEF5EA] text-[#4A504E]"}`}
-                >
-                    <svg width="12" height="16" viewBox="0 0 12 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                        <path d="M6.5 1L1 9h5l-0.5 6 6-8H7l0.5-6z" fill={hasSurged ? "white" : "#4A504E"} />
-                    </svg>
-                    <span className="font-['Poppins',sans-serif] font-semibold text-[12px] md:text-[14px] leading-normal">
-                        {surgeCount}
-                    </span>
-                </button>
-
-                {/* Wave + comment counts */}
-                <div className="flex items-center gap-3.5">
-                    {/* Wave count */}
-                    <div className="flex items-center gap-0" onClick={handleCommentandWaveClick}>
-                        <img
-                            src={waveIcon}
-                            className=" h-[27px] w-[25px]"
-                            alt="waveIcon"
-                        />
-                        <span className="font-['Inter',sans-serif] font-medium text-[12px] md:text-[14px] text-[#63637B] leading-5">
-                            {waveCount} Waves Proposed
-                        </span>
-                    </div>
-
-                    {/* Comment count */}
+                {/* ─── Footer: Surge + wave & comment counts ─ */}
+                <div className="flex items-center justify-between">
+                    {/* Surge button */}
                     <button
-                        onClick={handleCommentandWaveClick}
-                        className="flex items-center gap-1 hover:text-[#F49B31] transition-colors cursor-pointer"
+                        onClick={handleSurge}
+                        disabled={isToggling}
+                        aria-label={hasSurged ? "Remove surge" : "Surge"}
+                        className={`flex items-center gap-[5px] px-2.5 py-[5px] rounded-[15px] border border-black cursor-pointer transition-colors disabled:opacity-50 ${hasSurged ? "bg-[#F49B31] text-white border-[#F49B31]" : "bg-[#FEF5EA] text-[#4A504E]"}`}
                     >
-                        <img
-                            src={commentIcon}
-                            className=" h-[27px] w-[25px]"
-                            alt="commentIcon"
-                        />
-                        <span className="font-['Inter',sans-serif] font-medium text-[12px] md:text-[14px] text-[#63637B] leading-5">
-                            {commentCount} Comments
+                        <svg width="12" height="16" viewBox="0 0 12 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                            <path d="M6.5 1L1 9h5l-0.5 6 6-8H7l0.5-6z" fill={hasSurged ? "white" : "#4A504E"} />
+                        </svg>
+                        <span className="font-['Poppins',sans-serif] font-semibold text-[12px] md:text-[14px] leading-normal">
+                            {surgeCount}
                         </span>
                     </button>
+
+                    {/* Wave + comment counts */}
+                    <div className="flex items-center gap-3.5">
+                        {/* Wave count */}
+                        <div className="flex items-center gap-0" onClick={handleCommentandWaveClick}>
+                            <img
+                                src={waveIcon}
+                                className=" h-[27px] w-[25px]"
+                                alt="waveIcon"
+                            />
+                            <span className="font-['Inter',sans-serif] font-medium text-[12px] md:text-[14px] text-[#63637B] leading-5">
+                                {waveCount} Waves Proposed
+                            </span>
+                        </div>
+
+                        {/* Comment count */}
+                        <button
+                            onClick={handleCommentandWaveClick}
+                            className="flex items-center gap-1 hover:text-[#F49B31] transition-colors cursor-pointer"
+                        >
+                            <img
+                                src={commentIcon}
+                                className=" h-[27px] w-[25px]"
+                                alt="commentIcon"
+                            />
+                            <span className="font-['Inter',sans-serif] font-medium text-[12px] md:text-[14px] text-[#63637B] leading-5">
+                                {commentCount} Comments
+                            </span>
+                        </button>
+                    </div>
                 </div>
+
+                {/* ─── Separator ───────────────────────────── */}
+                <div className="h-px w-full bg-black/10" />
+
+                {/* ─── Inline Wave Preview ─────────────────── */}
+                <InlineWavePreview pingId={ping.id} />
             </div>
 
-            {/* ─── Separator ───────────────────────────── */}
-            <div className="h-px w-full bg-black/10" />
-
-            {/* ─── Inline Wave Preview ─────────────────── */}
-            <InlineWavePreview pingId={ping.id} />
-        </div>
-
-        {showDeleteModal && (
-            <DeleteConfirmationModal
-                onConfirm={handleDeleteConfirm}
-                onCancel={() => setShowDeleteModal(false)}
-                isLoading={isDeleting}
-            />
-        )}
+            {showDeleteModal && (
+                <DeleteConfirmationModal
+                    onConfirm={handleDeleteConfirm}
+                    onCancel={() => setShowDeleteModal(false)}
+                    isLoading={isDeleting}
+                />
+            )}
         </>
     );
 };

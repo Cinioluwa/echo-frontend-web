@@ -8,15 +8,31 @@
  * each with: avatar, name, timestamp, solution text, surge count.
  */
 
+import { useState, useEffect } from "react";
+import { waveService } from "../../api/services";
 import type { Wave } from "../../api/types";
 
 interface InlineWavePreviewProps {
-    waves: Wave[];
+    pingId: number;
 }
 
-// TODO: API — waves come embedded in ping response or fetched per-ping
+const InlineWavePreview = ({ pingId }: InlineWavePreviewProps) => {
+    const [waves, setWaves] = useState<Wave[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
 
-const InlineWavePreview = ({ waves }: InlineWavePreviewProps) => {
+    useEffect(() => {
+        setIsLoading(true);
+        setError(null);
+        waveService
+            .getWavesForPing(String(pingId), { limit: 2 })
+            .then((res) => setWaves(res.data))
+            .catch(() => setError("Failed to load waves"))
+            .finally(() => setIsLoading(false));
+    }, [pingId]);
+
+    if (isLoading) return null;
+    if (error) return <p className="text-red-500 text-xs">{error}</p>;
     if (!waves || waves.length === 0) return null;
 
     const displayedWaves = waves.slice(0, 2);

@@ -20,8 +20,7 @@ import ClaimSpaceModal from "../components/ClaimSpaceModal";
 import InviteLeaderModal from "../components/InviteLeaderModal";
 import InlinePingCreator from "../components/InlinePingCreator";
 import UnifiedPingCard from "../components/UnifiedFeed/UnifiedPingCard";
-import { usePingsStore, useWavesStore, useSearchStore } from "../stores";
-import type { Wave } from "../api/types";
+import { usePingsStore, useSearchStore } from "../stores";
 
 const UnifiedFeed = () => {
     // ── Pings store ────────────────────────────────────────────────────────────
@@ -36,14 +35,6 @@ const UnifiedFeed = () => {
                 hasNextPage: state.hasNextPage,
             }))
         );
-
-    // ── Waves store ─────────────────────────────────────────────────────────────
-    const { waves, fetchWaves } = useWavesStore(
-        useShallow((state) => ({
-            waves: state.waves,
-            fetchWaves: state.fetchWaves,
-        }))
-    );
 
     // ── Search / filter store ───────────────────────────────────────────────────
     const { debouncedQuery, selectedCategoryId } = useSearchStore(
@@ -62,24 +53,9 @@ const UnifiedFeed = () => {
         fetchPings({
             q: debouncedQuery || undefined,
             category: selectedCategoryId || undefined,
-            sort: "new",
+            sort: "trending",
         });
     }, [debouncedQuery, selectedCategoryId, fetchPings]);
-
-    useEffect(() => {
-        // TODO: API — fetch waves with pagination; currently fetches all (limit 50)
-        fetchWaves({ limit: 50 });
-    }, [fetchWaves]);
-
-    // ── Group waves by ping id ──────────────────────────────────────────────────
-    const wavesByPingId = waves.reduce<Record<number, Wave[]>>((acc, wave) => {
-        const pingId = wave.ping?.id;
-        if (pingId !== undefined) {
-            if (!acc[pingId]) acc[pingId] = [];
-            acc[pingId].push(wave);
-        }
-        return acc;
-    }, {});
 
     // ── Infinite scroll handler ─────────────────────────────────────────────────
     const handleLoadMore = useCallback(() => {
@@ -119,7 +95,6 @@ const UnifiedFeed = () => {
                         <UnifiedPingCard
                             key={ping.id}
                             ping={ping}
-                            waves={wavesByPingId[ping.id] ?? []}
                         />
                     ))}
 
