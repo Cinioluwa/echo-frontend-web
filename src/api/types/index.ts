@@ -117,6 +117,7 @@ export interface Ping {
   hasSurged?: boolean; // Whether the current user has surged this ping
   createdAt: string;
   updatedAt?: string;
+  waves?: Wave[];
   _count?: {
     waves: number;
     comments: number;

@@ -11,107 +11,17 @@
  * - MarkAsResolvedBar (ping author or admin only, when waves exist)
  * - CommentsPanel inline on mobile (desktop version lives in Layout right-aside)
  */
+import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useAuthStore, useSurgeStore } from "../stores";
+import { pingService, waveService } from "../api/services";
 import ProposeWaveBar from "../components/ProposeWaveBar";
 import MarkAsResolvedBar from "../components/MarkAsResolvedBar";
 import CommentsPanel from "../components/CommentsPanel";
 import { categoryImages } from "../components/CategoryImages";
 import type { Ping, Wave } from "../api/types";
 
-// TODO: API — GET /api/pings/:pingId
-const MOCK_PING: Ping = {
-    id: 1,
-    title: "Poor Wi-Fi Coverage in Engineering Block D",
-    content:
-        "The Wi-Fi signal in Engineering Block D has been extremely weak for the past two weeks. Students are unable to access online resources or submit assignments on time. This affects both lectures and independent study sessions. Please look into extending the router coverage or installing additional access points.",
-    category: { id: 2, name: "Academics" },
-    hashtag: "#wifi #engineering",
-    author: {
-        id: 42,
-        firstName: "Kofi",
-        lastName: "Mensah",
-        email: "kofi@uni.edu",
-        role: "USER",
-        organizationId: 1,
-        status: "ACTIVE",
-        createdAt: "2025-01-10T09:00:00Z",
-    },
-    status: "POSTED",
-    surgeCount: 27,
-    hasSurged: false,
-    createdAt: "2025-06-01T10:30:00Z",
-    _count: { waves: 3, comments: 12, surges: 27 },
-};
 
-// TODO: API — GET /api/pings/:pingId/waves
-const MOCK_WAVES: Wave[] = [
-    {
-        id: 101,
-        solution:
-            "Install additional Wi-Fi access points in every lecture room and study hall in Block D. The IT department should conduct a signal audit first.",
-        author: {
-            id: 55,
-            firstName: "Ama",
-            lastName: "Owusu",
-            email: "ama@uni.edu",
-            role: "USER",
-            organizationId: 1,
-            status: "ACTIVE",
-            createdAt: "2025-01-15T00:00:00Z",
-        },
-        surgeCount: 18,
-        viewCount: 0,
-        hasSurged: false,
-        rank: 1,
-        status: "POSTED",
-        createdAt: "2025-06-02T08:15:00Z",
-        _count: { surges: 18, comments: 5 },
-    },
-    {
-        id: 102,
-        solution:
-            "Negotiate with the ISP to increase bandwidth allocation to the Engineering Block. The current pipeline is shared among over 400 students simultaneously.",
-        author: {
-            id: 60,
-            firstName: "Kwame",
-            lastName: "Asante",
-            email: "kwame@uni.edu",
-            role: "USER",
-            organizationId: 1,
-            status: "ACTIVE",
-            createdAt: "2025-02-01T00:00:00Z",
-        },
-        surgeCount: 12,
-        viewCount: 0,
-        hasSurged: false,
-        rank: 2,
-        status: "UNDER_REVIEW",
-        createdAt: "2025-06-02T11:00:00Z",
-        _count: { surges: 12, comments: 2 },
-    },
-    {
-        id: 103,
-        solution:
-            "Provide offline access to key learning materials via a local server so students can work even with poor connectivity.",
-        author: {
-            id: 73,
-            firstName: "Abena",
-            lastName: "Frimpong",
-            email: "abena@uni.edu",
-            role: "USER",
-            organizationId: 1,
-            status: "ACTIVE",
-            createdAt: "2025-03-20T00:00:00Z",
-        },
-        surgeCount: 7,
-        viewCount: 0,
-        hasSurged: false,
-        status: "UNDER_REVIEW",
-        createdAt: "2025-06-03T14:30:00Z",
-        _count: { surges: 7, comments: 1 },
-    },
-];
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
 
@@ -177,7 +87,6 @@ const WaveCard = ({ wave, isOwner, onDelete }: WaveCardProps) => {
 
     const handleDelete = (e: React.MouseEvent) => {
         e.stopPropagation();
-        // TODO: API — DELETE /api/waves/:waveId
         onDelete?.(wave.id);
     };
 
@@ -298,15 +207,57 @@ const PingDetail = () => {
     const currentUser = useAuthStore((state) => state.user);
     const toggleSurge = useSurgeStore((state) => state.toggleSurge);
     const hasSurged = useSurgeStore((state) =>
-        state.hasSurged("ping", String(MOCK_PING.id)),
+        state.hasSurged("ping", pingId ?? ""),
     );
     const isToggling = useSurgeStore(
-        (state) => state.isToggling[`ping-${MOCK_PING.id}`] || false,
+        (state) => state.isToggling[`ping-${pingId}`] || false,
     );
 
-    // TODO: API — replace with pingService.getPing(pingId) + wavesService.getWaves(pingId)
-    const ping = MOCK_PING;
-    const waves = MOCK_WAVES;
+    const [ping, setPing] = useState<Ping | null>(null);
+    const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+    const [waves, setWaves] = useState<Wave[]>([]);
+    const [wavesPage, setWavesPage] = useState(1);
+
+    useEffect(() => {
+        if (!pingId) return;
+        setIsLoading(true);
+        pingService
+            .getPingById(pingId)
+            .then((data) => {
+                setPing(data);
+                setWaves(data.waves ?? []);
+                if (data.hasSurged) {
+                    useSurgeStore.getState().addSurge("ping", pingId);
+                }
+            })
+            .catch(() => setError("Failed to load ping"))
+            .finally(() => setIsLoading(false));
+    }, [pingId]);
+
+    const loadMoreWaves = async () => {
+        if (!pingId) return;
+        const nextPage = wavesPage + 1;
+        const res = await waveService.getWavesForPing(pingId, {
+            page: nextPage,
+            limit: 10,
+        });
+        setWaves((prev) => [...prev, ...res.data]);
+        setWavesPage(nextPage);
+    };
+
+    const handleDeleteWave = async (waveId: number) => {
+        try {
+            await waveService.deleteWave(String(waveId));
+            setWaves((prev) => prev.filter((w) => w.id !== waveId));
+        } catch (err) {
+            console.error("Failed to delete wave:", err);
+        }
+    };
+
+    if (isLoading) return <p className="text-center py-10">Loading...</p>;
+    if (error) return <p className="text-red-500 text-center py-10">{error}</p>;
+    if (!ping) return null;
 
     const pingAuthorId =
         typeof ping.author === "object" ? ping.author?.id : undefined;
@@ -369,6 +320,16 @@ const PingDetail = () => {
                 pingId={pingId ?? String(ping.id)}
                 pingTitle={ping.title}
                 pingCreatedAt={ping.createdAt}
+                onWaveProposed={() => {
+                    if (!pingId) return;
+                    waveService
+                        .getWavesForPing(pingId, { page: 1, limit: 10 })
+                        .then((res) => {
+                            setWaves(res.data);
+                            setWavesPage(1);
+                        })
+                        .catch((err) => console.error("Failed to refresh waves:", err));
+                }}
             />
 
             {/* ── Ping Card ─────────────────────────────── */}
@@ -471,8 +432,22 @@ const PingDetail = () => {
                                 currentUser?.id ===
                                 (typeof wave.author === "object" ? wave.author?.id : undefined)
                             }
+                            onDelete={handleDeleteWave}
                         />
                     ))}
+                </div>
+            )}
+
+            {/* ── Load more waves ───────────────────────── */}
+            {ping._count && waves.length < ping._count.waves && (
+                <div className="flex justify-center">
+                    <button
+                        type="button"
+                        onClick={loadMoreWaves}
+                        className="bg-[#fef5ea] border border-black rounded-[20px] px-5 py-2 font-['Poppins:Medium',sans-serif] text-[12px] text-black cursor-pointer"
+                    >
+                        Load more waves
+                    </button>
                 </div>
             )}
 
