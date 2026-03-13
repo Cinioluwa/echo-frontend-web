@@ -9,7 +9,7 @@
  * State 3 — Expanded with images: same as State 2 + photo thumbnails
  */
 
-import { useState, useRef } from "react";
+import { useState, useRef, forwardRef, useImperativeHandle } from "react";
 import { useAuthStore, useCategoriesStore, usePingsStore } from "../stores";
 import { pingService, uploadService } from "../api/services";
 
@@ -18,7 +18,11 @@ type ExpansionState = "collapsed" | "expanded" | "with-photos";
 const CATEGORIES = ["General", "Academics", "Chapel", "Finance", "Hall", "Sport", "Welfare"] as const;
 type Category = typeof CATEGORIES[number];
 
-const InlinePingCreator = () => {
+export interface InlinePingCreatorHandle {
+    expand: () => void;
+}
+
+const InlinePingCreator = forwardRef<InlinePingCreatorHandle>((_, ref) => {
     const user = useAuthStore((state) => state.user);
     const [state, setState] = useState<ExpansionState>("collapsed");
     const [title, setTitle] = useState("");
@@ -30,6 +34,11 @@ const InlinePingCreator = () => {
     const [error, setError] = useState<string | null>(null);
 
     const fileInputRef = useRef<HTMLInputElement>(null);
+
+    // Expose expand method to parent components
+    useImperativeHandle(ref, () => ({
+        expand: () => setState("expanded"),
+    }));
 
     const userInitials = user
         ? `${user.firstName[0]}${user.lastName[0]}`.toUpperCase()
@@ -252,16 +261,16 @@ const InlinePingCreator = () => {
             </button>
         </form>
     );
-};
 
-function Avatar({ initials }: { initials: string }) {
-    return (
-        <div className="w-[50px] h-[50px] rounded-full bg-[#FFC37B] flex items-center justify-center shrink-0 overflow-hidden">
-            <span className="font-['Poppins',sans-serif] font-bold text-[18px] text-white">
-                {initials}
-            </span>
-        </div>
-    );
-}
+    function Avatar({ initials }: { initials: string }) {
+        return (
+            <div className="w-[50px] h-[50px] rounded-full bg-[#FFC37B] flex items-center justify-center shrink-0 overflow-hidden">
+                <span className="font-['Poppins',sans-serif] font-bold text-[18px] text-white">
+                    {initials}
+                </span>
+            </div>
+        );
+    }
+});
 
 export default InlinePingCreator;

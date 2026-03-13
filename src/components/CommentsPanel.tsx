@@ -24,10 +24,10 @@ const CommentsPanel = ({ pingId, className = "" }: Props) => {
 
     return (
         <div
-            className={`bg-white rounded-[10px] flex flex-col gap-[15px] p-[15px] w-full ${className}`}
+            className={`bg-[#FFC37B] rounded-[10px] flex flex-col gap-[15px] p-[15px] w-full ${className}`}
         >
             {/* Header */}
-            <h2 className="font-['Poppins:SemiBold',sans-serif] text-[14px] text-black">
+            <h2 className="font-[Poppins,sans-serif] font-semibold text-[20px] text-black">
                 Comments
             </h2>
 

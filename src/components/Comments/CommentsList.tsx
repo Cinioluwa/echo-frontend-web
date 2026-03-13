@@ -16,7 +16,6 @@ const CommentsList = forwardRef<CommentsListHandle, Props>(({ targetType, target
     const [comments, setComments] = useState<Comment[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
-    const [totalComments, setTotalComments] = useState(0);
 
     const fetchComments = async () => {
         setIsLoading(true);
@@ -31,7 +30,6 @@ const CommentsList = forwardRef<CommentsListHandle, Props>(({ targetType, target
 
             setComments(response.data);
             // Use totalItems as defined in PaginatedResponse type
-            setTotalComments(response.pagination.totalItems);
         } catch (err) {
             console.error("Failed to fetch comments:", err);
             setError("Failed to load comments");
@@ -82,14 +80,6 @@ const CommentsList = forwardRef<CommentsListHandle, Props>(({ targetType, target
 
     return (
         <div className="flex flex-col gap-[15px]">
-            {/* Comments count divider */}
-            <div className="flex items-center gap-2">
-                <p className="text-xs text-[#9191A8] whitespace-nowrap">
-                    {totalComments} {totalComments === 1 ? "comment" : "comments"}
-                </p>
-                <div className="flex-1 h-px bg-[#E7E7EF]"></div>
-            </div>
-
             {/* Comments list - scrollable */}
             <div className="flex flex-col gap-[15px] max-h-[300px] overflow-y-auto pr-2">
                 {comments.map((comment) => (

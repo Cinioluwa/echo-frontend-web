@@ -18,9 +18,9 @@ import { useShallow } from "zustand/react/shallow";
 import ClaimSpaceBanner from "../components/ClaimSpaceBanner";
 import ClaimSpaceModal from "../components/ClaimSpaceModal";
 import InviteLeaderModal from "../components/InviteLeaderModal";
-import InlinePingCreator from "../components/InlinePingCreator";
 import UnifiedPingCard from "../components/UnifiedFeed/UnifiedPingCard";
 import { usePingsStore, useSearchStore, useAuthStore } from "../stores";
+import { getSocket } from "../api/socket";
 
 const UnifiedFeed = () => {
     // ── Pings store ────────────────────────────────────────────────────────────
@@ -60,6 +60,27 @@ const UnifiedFeed = () => {
         });
     }, [debouncedQuery, selectedCategoryId, fetchPings]);
 
+    // ── WebSocket event wiring (Phase 11) ───────────────────────────────────────
+    useEffect(() => {
+        const socket = getSocket();
+        if (!socket) return;
+
+        // Listen for new pings in the feed
+        socket.on("ping:created", (newPing) => {
+            usePingsStore.getState().addPing(newPing);
+        });
+
+        // Listen for deleted pings
+        socket.on("ping:deleted", ({ pingId }) => {
+            usePingsStore.getState().removePing(String(pingId));
+        });
+
+        return () => {
+            socket.off("ping:created");
+            socket.off("ping:deleted");
+        };
+    }, []);
+
     // ── Infinite scroll handler ─────────────────────────────────────────────────
     const handleLoadMore = useCallback(() => {
         if (hasNextPage && !isLoading) {
@@ -75,9 +96,6 @@ const UnifiedFeed = () => {
                 onClaimSpace={() => setClaimModalOpen(true)}
                 onInviteLeader={() => setInviteModalOpen(true)}
             />
-
-            {/* Inline ping creator */}
-            <InlinePingCreator />
 
             {/* ── Feed list ── */}
             {isLoading && pings.length === 0 ? (

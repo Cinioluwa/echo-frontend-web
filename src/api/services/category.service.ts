@@ -18,7 +18,11 @@ const categoryService = {
     const response = await api.get<CategoryData[]>("/categories", {
       params,
     });
-    return response.data;
+    // Handle both direct array response and wrapped { data: [...] } response
+    const data = Array.isArray(response.data)
+      ? response.data
+      : (response.data as any)?.data || [];
+    return data;
   },
 };
 

@@ -1,6 +1,6 @@
 # Echo Backend API Documentation
 
-## Table of Contents
+L## Table of Contents
 
 - [Overview](#overview)
 - [Authentication](#authentication)
@@ -3718,6 +3718,456 @@ On successful connection the server automatically joins the client to:
 #### `notification:new`
 
 Emitted to `user:{userId}` when a new notification is created for that user.
+
+```json
+{
+  "id": 1,
+  "type": "WAVE_APPROVED",
+  "title": "Your wave was approved!",
+  "body": "Your solution for 'Library Hours Too Short' has been approved.",
+  "createdAt": "2026-03-11T10:30:00.000Z",
+  "pingId": 5,
+  "waveId": 12,
+  "announcementId": null
+}
+```
+
+---
+
+#### `ping:surgeUpdate`
+
+Emitted to `org:{organizationId}` and `ping:{pingId}` when a ping is surged or unsurged.
+
+```json
+{
+  "pingId": 5,
+  "surgeCount": 43,
+  "surged": true
+}
+```
+
+---
+
+#### `wave:surgeUpdate`
+
+Emitted to `org:{organizationId}` and `wave:{waveId}` when a wave is surged or unsurged.
+
+```json
+{
+  "waveId": 12,
+  "surgeCount": 18,
+  "surged": true
+}
+```
+
+---
+
+#### `comment:surgeUpdate`
+
+Emitted to `org:{organizationId}` when a comment is surged or unsurged.
+
+```json
+{
+  "commentId": 7,
+  "surgeCount": 5,
+  "surged": true
+}
+```
+
+---
+
+#### `ping:created`
+
+Emitted to `org:{organizationId}` when a new ping is posted.
+
+```json
+{
+  "id": 25,
+  "title": "New Issue Title",
+  "content": "Issue description...",
+  "categoryId": 3,
+  "surgeCount": 0,
+  "isAnonymous": false,
+  "createdAt": "2026-03-11T10:35:00.000Z"
+}
+```
+
+---
+
+#### `ping:deleted`
+
+Emitted to `org:{organizationId}` when a ping is deleted.
+
+```json
+{
+  "pingId": 25
+}
+```
+
+---
+
+#### `wave:created`
+
+Emitted to `org:{organizationId}` and `ping:{pingId}` when a new wave is posted.
+
+```json
+{
+  "id": 30,
+  "pingId": 5,
+  "solution": "New solution text...",
+  "surgeCount": 0,
+  "isAnonymous": false,
+  "createdAt": "2026-03-11T10:40:00.000Z"
+}
+```
+
+---
+
+#### `wave:deleted`
+
+Emitted to `org:{organizationId}` and `ping:{pingId}` when a wave is deleted.
+
+```json
+{
+  "waveId": 30,
+  "pingId": 5
+}
+```
+
+---
+
+#### `comment:created`
+
+Emitted to `org:{organizationId}` and the relevant `ping:{pingId}` or `wave:{waveId}` room when a comment is posted.
+
+```json
+{
+  "id": 50,
+  "content": "Great point!",
+  "pingId": 5,
+  "waveId": null,
+  "isAnonymous": false,
+  "surgeCount": 0,
+  "createdAt": "2026-03-11T10:45:00.000Z",
+  "author": {
+    "id": 1,
+    "firstName": "John",
+    "lastName": "Doe"
+  }
+}
+```
+
+---
+
+#### `announcement:new`
+
+Emitted to `org:{organizationId}` when an admin creates a new announcement.
+
+```json
+{
+  "id": 10,
+  "title": "Campus Maintenance Notice",
+  "content": "The library will be closed for maintenance on Nov 15.",
+  "createdAt": "2026-03-11T09:00:00.000Z",
+  "author": {
+    "firstName": "Admin",
+    "lastName": "User"
+  }
+}
+```
+
+---
+
+## Healthcheck
+
+### GET /health
+
+Deep health check with database connectivity verification.
+
+**Auth Required:** No
+
+**Description:** Performs a comprehensive health check including database connectivity. Use this endpoint for monitoring systems and deployment health checks.
+
+**Success Response (200):**
+
+```json
+{
+  "status": "OK",
+  "timestamp": "2026-03-09T12:00:00.000Z",
+  "services": {
+    "database": "healthy"
+  }
+}
+```
+
+**Error Response (503):**
+
+```json
+{
+  "status": "Error",
+  "timestamp": "2026-03-09T12:00:00.000Z",
+  "services": {
+    "database": "unhealthy"
+  }
+}
+```
+
+---
+
+### GET /healthz
+
+Shallow health check (no database dependency).
+
+**Auth Required:** No
+
+**Description:** Quick health check that only verifies the application is running. Does not check database or external services. Useful for basic uptime monitoring.
+
+**Success Response (200):**
+
+```json
+{
+  "status": "ok"
+}
+```
+
+---
+
+## Need Help?
+
+For issues or questions about the API:
+
+- Check error messages - they include helpful codes
+- Verify JWT token is valid and not expired
+- Ensure correct role permissions for admin/representative routes
+- Check rate limit headers if requests are failing
+
+Happy coding! 🚀
+rId}` when a new notification is created for that user.
+
+```json
+{
+  "id": 1,
+  "type": "WAVE_APPROVED",
+  "title": "Your wave was approved!",
+  "body": "Your solution for 'Library Hours Too Short' has been approved.",
+  "createdAt": "2026-03-11T10:30:00.000Z",
+  "pingId": 5,
+  "waveId": 12,
+  "announcementId": null
+}
+```
+
+---
+
+#### `ping:surgeUpdate`
+
+Emitted to `org:{organizationId}` and `ping:{pingId}` when a ping is surged or unsurged.
+
+```json
+{
+  "pingId": 5,
+  "surgeCount": 43,
+  "surged": true
+}
+```
+
+---
+
+#### `wave:surgeUpdate`
+
+Emitted to `org:{organizationId}` and `wave:{waveId}` when a wave is surged or unsurged.
+
+```json
+{
+  "waveId": 12,
+  "surgeCount": 18,
+  "surged": true
+}
+```
+
+---
+
+#### `comment:surgeUpdate`
+
+Emitted to `org:{organizationId}` when a comment is surged or unsurged.
+
+```json
+{
+  "commentId": 7,
+  "surgeCount": 5,
+  "surged": true
+}
+```
+
+---
+
+#### `ping:created`
+
+Emitted to `org:{organizationId}` when a new ping is posted.
+
+```json
+{
+  "id": 25,
+  "title": "New Issue Title",
+  "content": "Issue description...",
+  "categoryId": 3,
+  "surgeCount": 0,
+  "isAnonymous": false,
+  "createdAt": "2026-03-11T10:35:00.000Z"
+}
+```
+
+---
+
+#### `ping:deleted`
+
+Emitted to `org:{organizationId}` when a ping is deleted.
+
+```json
+{
+  "pingId": 25
+}
+```
+
+---
+
+#### `wave:created`
+
+Emitted to `org:{organizationId}` and `ping:{pingId}` when a new wave is posted.
+
+```json
+{
+  "id": 30,
+  "pingId": 5,
+  "solution": "New solution text...",
+  "surgeCount": 0,
+  "isAnonymous": false,
+  "createdAt": "2026-03-11T10:40:00.000Z"
+}
+```
+
+---
+
+#### `wave:deleted`
+
+Emitted to `org:{organizationId}` and `ping:{pingId}` when a wave is deleted.
+
+```json
+{
+  "waveId": 30,
+  "pingId": 5
+}
+```
+
+---
+
+#### `comment:created`
+
+Emitted to `org:{organizationId}` and the relevant `ping:{pingId}` or `wave:{waveId}` room when a comment is posted.
+
+```json
+{
+  "id": 50,
+  "content": "Great point!",
+  "pingId": 5,
+  "waveId": null,
+  "isAnonymous": false,
+  "surgeCount": 0,
+  "createdAt": "2026-03-11T10:45:00.000Z",
+  "author": {
+    "id": 1,
+    "firstName": "John",
+    "lastName": "Doe"
+  }
+}
+```
+
+---
+
+#### `announcement:new`
+
+Emitted to `org:{organizationId}` when an admin creates a new announcement.
+
+```json
+{
+  "id": 10,
+  "title": "Campus Maintenance Notice",
+  "content": "The library will be closed for maintenance on Nov 15.",
+  "createdAt": "2026-03-11T09:00:00.000Z",
+  "author": {
+    "firstName": "Admin",
+    "lastName": "User"
+  }
+}
+```
+
+---
+
+## Healthcheck
+
+### GET /health
+
+Deep health check with database connectivity verification.
+
+**Auth Required:** No
+
+**Description:** Performs a comprehensive health check including database connectivity. Use this endpoint for monitoring systems and deployment health checks.
+
+**Success Response (200):**
+
+```json
+{
+  "status": "OK",
+  "timestamp": "2026-03-09T12:00:00.000Z",
+  "services": {
+    "database": "healthy"
+  }
+}
+```
+
+**Error Response (503):**
+
+```json
+{
+  "status": "Error",
+  "timestamp": "2026-03-09T12:00:00.000Z",
+  "services": {
+    "database": "unhealthy"
+  }
+}
+```
+
+---
+
+### GET /healthz
+
+Shallow health check (no database dependency).
+
+**Auth Required:** No
+
+**Description:** Quick health check that only verifies the application is running. Does not check database or external services. Useful for basic uptime monitoring.
+
+**Success Response (200):**
+
+```json
+{
+  "status": "ok"
+}
+```
+
+---
+
+## Need Help?
+
+For issues or questions about the API:
+
+- Check error messages - they include helpful codes
+- Verify JWT token is valid and not expired
+- Ensure correct role permissions for admin/representative routes
+- Check rate limit headers if requests are failing
+
+Happy coding! 🚀
+erId}` when a new notification is created for that user.
 
 ```json
 {

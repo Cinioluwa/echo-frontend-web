@@ -3,6 +3,7 @@ import { devtools, persist } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
 import { authService, userService } from "../../api/services";
 import { useSurgeStore } from "../interactions/useSurgeStore";
+import { connectSocket, disconnectSocket } from "../../api/socket";
 import type { User, LoginRequest, SignupRequest } from "../../api/types/index";
 
 interface AuthState {
@@ -62,6 +63,9 @@ export const useAuthStore = create<AuthState>()(
               state.token = response.token;
               state.isAuthenticated = true;
             });
+
+            // Connect WebSocket (Phase 11)
+            connectSocket(response.token);
 
             // Fetch user profile after login to populate user data
             // Use getCurrentUser directly instead of fetchUserProfile to avoid isLoading guard
@@ -263,6 +267,7 @@ export const useAuthStore = create<AuthState>()(
             state.error = null;
           });
           authService.logout();
+          disconnectSocket();
         },
 
         clearError: () => {

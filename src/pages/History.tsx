@@ -11,7 +11,7 @@
  *   Row 3: HistoryTabs (picker)
  *   Row 4: Tab content
  */
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useOutletContext, useParams } from "react-router-dom";
 import {
     HistoryBanner,
     HistoryTabs,
@@ -29,6 +29,10 @@ const VALID_TABS: HistoryTab[] = ["pings", "waves", "comments", "surged"];
 const History = () => {
     const { tab } = useParams<{ tab: string }>();
     const navigate = useNavigate();
+    const { setShowPingFormModal } = useOutletContext<{
+        showPingFormModal: boolean;
+        setShowPingFormModal: (value: boolean) => void;
+    }>();
 
     const activeTab: HistoryTab =
         tab && VALID_TABS.includes(tab as HistoryTab)
@@ -46,7 +50,7 @@ const History = () => {
                     ← Go back to feed
                 </button>
                 <button
-                    onClick={() => navigate("/feed")}
+                    onClick={() => setShowPingFormModal(true)}
                     className="flex items-center gap-2 bg-[#F49B31] hover:bg-[#d88429] transition-colors rounded-[18px] px-5 py-[5px] cursor-pointer"
                 >
                     <FaPlus className="w-3 h-3 text-white" />

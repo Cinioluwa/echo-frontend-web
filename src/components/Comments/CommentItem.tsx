@@ -50,17 +50,16 @@ const CommentItem = ({ comment, onRefresh: _onRefresh }: Props) => {
                 </div>
 
                 {/* User details */}
-                <div className="flex items-center gap-2">
-                    <p className="text-sm font-semibold text-[#63637B]">{authorName}</p>
-                    <span className="text-[#9191A8]">•</span>
-                    <p className="text-xs text-[#9191A8]">
+                <div className="flex items-center gap-2 justify-between w-full">
+                    <p className="text-sm font-semibold ">{authorName}</p>
+                    <p className="text-xs ">
                         {formatTimestamp(comment.createdAt)}
                     </p>
                 </div>
             </div>
 
             {/* Comment content */}
-            <p className="text-base text-[#292936] leading-6 whitespace-pre-wrap">
+            <p className="text-base leading-6 whitespace-pre-wrap">
                 {comment.content}
             </p>
 

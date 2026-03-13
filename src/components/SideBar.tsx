@@ -9,7 +9,6 @@ import { FaPlus } from "react-icons/fa6";
 
 const historyIcon = "/assets/images/History Logo.svg";
 
-// Kept for backward compatibility — Phase 8 will clean up old consumers
 export interface Pages {
   streamActive: boolean;
   historyActive: boolean;
@@ -23,6 +22,10 @@ interface Props {
 }
 
 const SideBar = ({ onCreatePing }: Props) => {
+  const handleCreateClick = () => {
+    onCreatePing?.();
+  };
+
   return (
     <div className="flex flex-col gap-5">
       {/* Category Card */}
@@ -32,10 +35,7 @@ const SideBar = ({ onCreatePing }: Props) => {
 
       {/* Create a Ping Button */}
       <button
-        onClick={() => {
-          // TODO: API — Open ping creation (Phase 2: InlinePingCreator replaces this)
-          onCreatePing?.();
-        }}
+        onClick={handleCreateClick}
         className="flex items-center gap-[26px] h-12 bg-[#F49B31] hover:bg-[#d88429] transition-colors cursor-pointer rounded-[15px] pl-[26px] w-[244px] text-white"
       >
         <FaPlus className="w-[18px] h-[18px]" />

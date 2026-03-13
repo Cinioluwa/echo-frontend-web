@@ -19,6 +19,7 @@ import ProposeWaveBar from "../components/ProposeWaveBar";
 import MarkAsResolvedBar from "../components/MarkAsResolvedBar";
 import CommentsPanel from "../components/CommentsPanel";
 import { categoryImages } from "../components/CategoryImages";
+import { getSocket } from "../api/socket";
 import type { Ping, Wave } from "../api/types";
 
 
@@ -245,6 +246,41 @@ const PingDetail = () => {
         setWaves((prev) => [...prev, ...res.data]);
         setWavesPage(nextPage);
     };
+
+    // ── WebSocket event wiring (Phase 11) ───────────────────────────────────────
+    useEffect(() => {
+        if (!pingId) return;
+
+        const socket = getSocket();
+        if (!socket) return;
+
+        // Subscribe to ping room
+        socket.emit("join:ping", { pingId: Number(pingId) });
+
+        // Listen for surge updates on this ping
+        socket.on("ping:surgeUpdate", ({ pingId: id, surgeCount }) => {
+            setPing((prev) => (prev && prev.id === Number(id)
+                ? { ...prev, surgeCount }
+                : prev));
+        });
+
+        // Listen for surge updates on waves
+        socket.on("wave:surgeUpdate", ({ waveId, surgeCount }) => {
+            setWaves((prev) =>
+                prev.map((wave) =>
+                    wave.id === Number(waveId)
+                        ? { ...wave, surgeCount }
+                        : wave
+                )
+            );
+        });
+
+        return () => {
+            socket.off("ping:surgeUpdate");
+            socket.off("wave:surgeUpdate");
+            socket.emit("leave:ping", { pingId: Number(pingId) });
+        };
+    }, [pingId]);
 
     const handleDeleteWave = async (waveId: number) => {
         try {

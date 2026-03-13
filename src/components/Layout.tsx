@@ -20,6 +20,8 @@ import MobileHeader from "./MobileHeader";
 import AnnouncementWidget from "./UnifiedFeed/AnnouncementWidget";
 import Top3Widget from "./UnifiedFeed/Top3Widget";
 import CommentsPanel from "./CommentsPanel";
+import PingFormModal from "./PingFormModal";
+import { PingCreatorProvider } from "../contexts/PingCreatorContext";
 import { announcementService, publicService } from "../api/services";
 import type { Announcement, Ping } from "../api/types";
 
@@ -31,6 +33,7 @@ const Layout = () => {
 
   const [announcement, setAnnouncement] = useState<Announcement | null>(null);
   const [top3, setTop3] = useState<Ping[]>([]);
+  const [showPingFormModal, setShowPingFormModal] = useState(false);
 
   useEffect(() => {
     if (!isFeedPage) return;
@@ -54,7 +57,7 @@ const Layout = () => {
       <div className="md:mt-[70px] flex ">
         {/* Desktop Sidebar — fixed, narrower (280px with padding) */}
         <aside className="hidden md:block fixed left-0 top-[70px] bottom-0 w-[280px] overflow-y-auto [scrollbar-width:none] px-[18px] pt-[15px] ">
-          <SideBar />
+          <SideBar onCreatePing={() => setShowPingFormModal(true)} />
         </aside>
 
         {/* Main content area */}
@@ -64,9 +67,11 @@ const Layout = () => {
             <MobileHeader />
           </div>
 
-          <main className={`mx-[15px] mt-[15px] md:mx-5 md:mt-5 md:w-[calc(100vw-45vw)] ${isFeedPage || pingDetailId ? 'lg:max-w-[calc(100vw-680px)]' : 'lg:max-w-[calc(100vw-30vw)]'} lg:mx-auto `}>
-            <Outlet />
-          </main>
+          <PingCreatorProvider expandPingCreator={() => { }}>
+            <main className={`mx-[15px] mt-[15px] md:mx-5 md:mt-5 md:w-[calc(100vw-45vw)] ${isFeedPage || pingDetailId ? 'lg:max-w-[calc(100vw-680px)]' : 'lg:max-w-[calc(100vw-30vw)]'} lg:mx-auto `}>
+              <Outlet context={{ showPingFormModal, setShowPingFormModal }} />
+            </main>
+          </PingCreatorProvider>
         </div>
 
         {/* Right aside — desktop only */}
@@ -86,6 +91,16 @@ const Layout = () => {
           </aside>
         )}
       </div>
+
+      {showPingFormModal && (
+        <PingFormModal
+          setPingForm={() => setShowPingFormModal(false)}
+          setFormSegment={() => { }}
+          formSegment="ping"
+          onPingCreated={() => setShowPingFormModal(false)}
+          onWaveCreated={() => setShowPingFormModal(false)}
+        />
+      )}
     </div>
   );
 };

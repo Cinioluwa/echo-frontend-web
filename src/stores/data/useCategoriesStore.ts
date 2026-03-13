@@ -67,7 +67,12 @@ export const useCategoriesStore = create<CategoriesState>()(
         });
 
         try {
-          const data = await categoryService.getAll();
+          const response = await categoryService.getAll();
+
+          // Handle both direct array response and wrapped { data: [...] } response
+          const data = Array.isArray(response)
+            ? response
+            : (response as any)?.data || [];
 
           set((state) => {
             // Map API data to local category format with optional icons

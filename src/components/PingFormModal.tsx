@@ -47,7 +47,6 @@ export interface PingFormDetails {
 interface PingData {
   title: string;
   description: string;
-  hashtag: string;
   categoryId: number;
   categoryName: string;
   anonymous: boolean;
@@ -83,7 +82,6 @@ const PingFormModal = ({
   const [pingData, setPingData] = useState<PingData>({
     title: "",
     description: "",
-    hashtag: "",
     categoryId: 0,
     categoryName: "",
     anonymous: false,
@@ -219,7 +217,6 @@ const PingFormModal = ({
     setPingData({
       title: "",
       description: "",
-      hashtag: "",
       categoryId: 0,
       categoryName: "",
       anonymous: false,
@@ -323,10 +320,6 @@ const PingFormModal = ({
       newErrors.description = "Description is required";
     }
 
-    if (!pingData.hashtag.trim()) {
-      newErrors.hashtag = "Hashtag is required";
-    }
-
     if (!pingData.categoryId || pingData.categoryId === 0) {
       newErrors.category = "Please select a category";
     }
@@ -363,7 +356,6 @@ const PingFormModal = ({
         title: pingData.title.trim(),
         content: pingData.description.trim(),
         categoryId: pingData.categoryId,
-        hashtag: pingData.hashtag.trim() || undefined,
         isAnonymous: pingData.anonymous,
       });
 
@@ -379,7 +371,7 @@ const PingFormModal = ({
         formSegment: "ping",
         anonymous: pingData.anonymous,
         pingTitle: pingData.title.trim(),
-        hashtag: pingData.hashtag.trim(),
+        hashtag: "",
         pingDesc: pingData.description.trim(),
         id: uuidv4(),
         createdAt: new Date()
@@ -511,27 +503,7 @@ const PingFormModal = ({
             <p className="text-red-500 text-xs -mt-3">{errors.description}</p>
           )}
 
-          {/* Hashtag */}
-          <div className="flex px-[15px] py-[11px] border border-black rounded-[10px] focus-within:border-[#F49B31] focus-within:border-2 transition-all duration-200">
-            <label htmlFor="hashtag" className="font-medium">
-              Hashtag:
-            </label>
-            <input
-              type="text"
-              id="hashtag"
-              name="hashtag"
-              placeholder="What's the current movement?"
-              autoComplete="off"
-              onChange={(e) =>
-                setPingData((prev) => ({ ...prev, hashtag: e.target.value }))
-              }
-              value={pingData.hashtag}
-              className="pl-[11px] text-[12px] text-[#454545] outline-0 flex-1 bg-transparent"
-            />
-          </div>
-          {errors.hashtag && (
-            <p className="text-red-500 text-xs -mt-3">{errors.hashtag}</p>
-          )}
+
         </div>
 
         {/* Category Selector */}
@@ -598,14 +570,23 @@ const PingFormModal = ({
           >
             <FaLink fontSize={30} color="#F49B31" />
           </button>
-          <button
-            type="button"
-            onClick={handlePingSubmit}
-            disabled={isSubmitting}
-            className="px-[30px] py-[5px] text-white rounded-xl bg-[#F49B31] hover:bg-[#d88429] transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {isSubmitting ? "Posting..." : "Post"}
-          </button>
+          <div className="flex gap-3 items-center">
+            <button
+              type="button"
+              onClick={setPingForm}
+              className="px-[30px] py-[5px] text-[#F49B31] border border-[#F49B31] rounded-xl bg-transparent hover:bg-[#FEF5EA] transition-all duration-300"
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              onClick={handlePingSubmit}
+              disabled={isSubmitting}
+              className="px-[30px] py-[5px] text-white rounded-xl bg-[#F49B31] hover:bg-[#d88429] transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {isSubmitting ? "Posting..." : "Post"}
+            </button>
+          </div>
         </div>
       </motion.div>
     );
@@ -739,17 +720,26 @@ const PingFormModal = ({
           >
             <FaLink fontSize={30} color="#F49B31" />
           </button>
-          <button
-            type="button"
-            onClick={handleWaveSubmit}
-            disabled={isSubmitting || waveFlowState !== "ready-to-submit"}
-            className={`px-[30px] py-[5px] text-white rounded-xl bg-[#F49B31] transition-all duration-300 disabled:cursor-not-allowed ${waveFlowState === "ready-to-submit"
-              ? "opacity-100 hover:bg-[#d88429]"
-              : "opacity-50"
-              }`}
-          >
-            {isSubmitting ? "Posting..." : "Post"}
-          </button>
+          <div className="flex gap-3 items-center">
+            <button
+              type="button"
+              onClick={setPingForm}
+              className="px-[30px] py-[5px] text-[#F49B31] border border-[#F49B31] rounded-xl bg-transparent hover:bg-[#FEF5EA] transition-all duration-300"
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              onClick={handleWaveSubmit}
+              disabled={isSubmitting || waveFlowState !== "ready-to-submit"}
+              className={`px-[30px] py-[5px] text-white rounded-xl bg-[#F49B31] transition-all duration-300 disabled:cursor-not-allowed ${waveFlowState === "ready-to-submit"
+                ? "opacity-100 hover:bg-[#d88429]"
+                : "opacity-50"
+                }`}
+            >
+              {isSubmitting ? "Posting..." : "Post"}
+            </button>
+          </div>
         </div>
       </motion.div>
     );

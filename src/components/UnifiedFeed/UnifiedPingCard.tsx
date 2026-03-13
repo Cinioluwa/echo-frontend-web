@@ -32,14 +32,18 @@ const UnifiedPingCard = ({ ping }: UnifiedPingCardProps) => {
         (state) => state.isToggling[`ping-${ping.id}`] || false,
     );
 
+    // Get the latest ping data from store to reflect surge count updates
+    const pingFromStore = usePingsStore((state) => state.pingsById[String(ping.id)]);
+    const currentPing = pingFromStore || ping;
+
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
 
-    const isOwner = currentUser?.id === (typeof ping.author === "object" ? ping.author?.id : undefined);
+    const isOwner = currentUser?.id === (typeof currentPing.author === "object" ? currentPing.author?.id : undefined);
 
     const authorName =
-        typeof ping.author === "object" && ping.author
-            ? `${ping.author.firstName} ${ping.author.lastName}`
+        typeof currentPing.author === "object" && currentPing.author
+            ? `${currentPing.author.firstName} ${currentPing.author.lastName}`
             : "Anonymous";
 
     const authorInitials = authorName
@@ -49,8 +53,8 @@ const UnifiedPingCard = ({ ping }: UnifiedPingCardProps) => {
         .toUpperCase()
         .slice(0, 2);
 
-    const timestamp = ping.createdAt
-        ? new Date(ping.createdAt).toLocaleDateString("en-US", {
+    const timestamp = currentPing.createdAt
+        ? new Date(currentPing.createdAt).toLocaleDateString("en-US", {
             month: "short",
             day: "numeric",
             year: undefined,
@@ -59,22 +63,22 @@ const UnifiedPingCard = ({ ping }: UnifiedPingCardProps) => {
         })
         : "";
 
-    const categoryName = ping.category?.name || "";
+    const categoryName = currentPing.category?.name || "";
     const categoryIcon = categoryImages[categoryName];
 
-    const surgeCount = ping.surgeCount || ping._count?.surges || 0;
-    const waveCount = ping._count?.waves || 0;
-    const commentCount = ping._count?.comments || 0;
+    const surgeCount = currentPing.surgeCount || currentPing._count?.surges || 0;
+    const waveCount = currentPing._count?.waves || 0;
+    const commentCount = currentPing._count?.comments || 0;
 
     const handleCardClick = () => {
-        navigate(`/feed/${ping.id}`);
+        navigate(`/feed/${currentPing.id}`);
     };
 
     const handleSurge = async (e: React.MouseEvent) => {
         e.stopPropagation();
         if (isToggling) return;
         try {
-            await toggleSurge("ping", String(ping.id));
+            await toggleSurge("ping", String(currentPing.id));
         } catch (error) {
             console.error("Surge failed:", error);
         }
@@ -82,7 +86,7 @@ const UnifiedPingCard = ({ ping }: UnifiedPingCardProps) => {
 
     const handleCommentandWaveClick = (e: React.MouseEvent) => {
         e.stopPropagation();
-        navigate(`/feed/${ping.id}`);
+        navigate(`/feed/${currentPing.id}`);
     };
 
     const handleDelete = (e: React.MouseEvent) => {
@@ -93,8 +97,8 @@ const UnifiedPingCard = ({ ping }: UnifiedPingCardProps) => {
     const handleDeleteConfirm = async () => {
         setIsDeleting(true);
         try {
-            await pingService.deletePing(String(ping.id));
-            usePingsStore.getState().removePing(String(ping.id));
+            await pingService.deletePing(String(currentPing.id));
+            usePingsStore.getState().removePing(String(currentPing.id));
         } catch (err) {
             console.error("Failed to delete ping:", err);
         } finally {
@@ -174,11 +178,11 @@ const UnifiedPingCard = ({ ping }: UnifiedPingCardProps) => {
                 {/* ─── Body ────────────────────────────────── */}
                 <div className="flex flex-col gap-[13px]">
                     <h3 className="font-['Poppins',sans-serif] font-semibold text-[14px] md:text-[16px] text-black leading-normal">
-                        {ping.title}
+                        {currentPing.title}
                     </h3>
-                    {ping.content && (
+                    {currentPing.content && (
                         <p className="font-['Poppins',sans-serif] font-medium text-[12px] md:text-[14px] text-black/70 leading-relaxed line-clamp-3">
-                            {ping.content}
+                            {currentPing.content}
                         </p>
                     )}
                     {/* Image placeholder — real image URL from ping would go here */}
@@ -236,7 +240,7 @@ const UnifiedPingCard = ({ ping }: UnifiedPingCardProps) => {
                 <div className="h-px w-full bg-black/10" />
 
                 {/* ─── Inline Wave Preview ─────────────────── */}
-                <InlineWavePreview pingId={ping.id} />
+                <InlineWavePreview pingId={currentPing.id} />
             </div>
 
             {showDeleteModal && (
