@@ -18,6 +18,7 @@ import { useShallow } from "zustand/react/shallow";
 import ClaimSpaceBanner from "../components/ClaimSpaceBanner";
 import ClaimSpaceModal from "../components/ClaimSpaceModal";
 import InviteLeaderModal from "../components/InviteLeaderModal";
+import InlinePingCreator from "../components/InlinePingCreator";
 import UnifiedPingCard from "../components/UnifiedFeed/UnifiedPingCard";
 import { usePingsStore, useSearchStore, useAuthStore } from "../stores";
 import { getSocket } from "../api/socket";
@@ -96,6 +97,9 @@ const UnifiedFeed = () => {
                 onClaimSpace={() => setClaimModalOpen(true)}
                 onInviteLeader={() => setInviteModalOpen(true)}
             />
+
+            {/* Inline ping creator */}
+            <InlinePingCreator />
 
             {/* ── Feed list ── */}
             {isLoading && pings.length === 0 ? (
