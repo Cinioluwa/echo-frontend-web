@@ -30,8 +30,10 @@ const Top3Widget = ({ pings = [] }: Top3WidgetProps) => {
                 {top3.map((ping, index) => {
                     const authorName =
                         typeof ping.author === "object" && ping.author
-                            ? `${ping.author.firstName} ${ping.author.lastName}`
-                            : "Anonymous";
+                            ? `${ping.author.firstName ?? ""} ${ping.author.lastName ?? ""}`.trim() || "Anonymous"
+                            : typeof ping.author === "string"
+                                ? ping.author
+                                : "Anonymous";
                     const initials = authorName
                         .split(" ")
                         .map((n) => n[0])

@@ -7,6 +7,7 @@ import Categories from "./Categories";
 import { Link } from "react-router-dom";
 import { FaPlus } from "react-icons/fa6";
 
+
 const historyIcon = "/assets/images/History Logo.svg";
 
 export interface Pages {
@@ -25,6 +26,7 @@ const SideBar = ({ onCreatePing }: Props) => {
   const handleCreateClick = () => {
     onCreatePing?.();
   };
+  const isHistoryRoute = window.location.pathname === "/history";
 
   return (
     <div className="flex flex-col gap-5">
@@ -47,10 +49,10 @@ const SideBar = ({ onCreatePing }: Props) => {
       {/* History Button */}
       <Link
         to="/history"
-        className="flex items-center gap-3 h-12 bg-[#FEF5EA] border border-[#F49B31] rounded-[15px] pl-6 w-[244px] cursor-pointer hover:bg-[#fae9d4] transition-colors"
+        className={`flex items-center gap-3 h-12 ${isHistoryRoute ? 'bg-[#F49B31] text-white' : 'bg-[#FEF5EA] text-black hover:bg-[#fae9d4]'} border border-[#F49B31] rounded-[15px] pl-6 w-[244px] cursor-pointer transition-colors`}
       >
-        <img src={historyIcon} alt="History" className="w-5 h-5" />
-        <span className="font-semibold text-[15px] text-black font-['Poppins',sans-serif]">
+        <img src={historyIcon} alt="History" className={`w-5 h-5 ${isHistoryRoute ? 'filter brightness-0 invert' : ''}`} />
+        <span className="font-semibold text-[15px] font-['Poppins',sans-serif]">
           History
         </span>
       </Link>

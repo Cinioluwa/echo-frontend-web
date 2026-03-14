@@ -46,8 +46,10 @@ const InlineWavePreview = ({ pingId }: InlineWavePreviewProps) => {
                 {displayedWaves.map((wave) => {
                     const authorName =
                         typeof wave.author === "object" && wave.author
-                            ? `${wave.author.firstName} ${wave.author.lastName}`
-                            : "Anonymous";
+                            ? `${wave.author.firstName ?? ""} ${wave.author.lastName ?? ""}`.trim() || "Anonymous"
+                            : typeof wave.author === "string"
+                                ? wave.author
+                                : "Anonymous";
 
                     const timestamp = wave.createdAt
                         ? new Date(wave.createdAt).toLocaleDateString("en-US", {

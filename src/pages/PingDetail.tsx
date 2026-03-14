@@ -14,15 +14,17 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useAuthStore, useSurgeStore } from "../stores";
-import { pingService, waveService } from "../api/services";
+import { pingService, waveService, categoryService } from "../api/services";
 import ProposeWaveBar from "../components/ProposeWaveBar";
 import MarkAsResolvedBar from "../components/MarkAsResolvedBar";
 import CommentsPanel from "../components/CommentsPanel";
 import { categoryImages } from "../components/CategoryImages";
 import { getSocket } from "../api/socket";
-import type { Ping, Wave } from "../api/types";
+import type { Ping, Wave, CategoryData } from "../api/types";
 
 
+const waveIcon = "/assets/icon/wave.svg";
+const commentIcon = "/assets/icon/comment.svg";
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
 
@@ -46,7 +48,11 @@ const formatTimestamp = (dateString: string) => {
 const getAuthorName = (author: Wave["author"]) => {
     if (!author) return "Anonymous";
     if (typeof author === "string") return author;
-    return `${author.firstName} ${author.lastName}`;
+    // Handle author object - use firstName and lastName if available
+    if (author.firstName || author.lastName) {
+        return `${author.firstName ?? ""} ${author.lastName ?? ""}`.trim() || "Anonymous";
+    }
+    return "Anonymous";
 };
 
 const getAuthorInitials = (name: string) =>
@@ -75,6 +81,13 @@ const WaveCard = ({ wave, isOwner, onDelete }: WaveCardProps) => {
     const authorName = getAuthorName(wave.author);
     const initials = getAuthorInitials(authorName);
     const surgeCount = wave.surgeCount || wave._count?.surges || 0;
+
+    // Debug log
+    console.log(`🌊 WaveCard [ID: ${wave.id}]`, {
+        authorRaw: wave.author,
+        authorName,
+        solution: wave.solution?.substring(0, 50),
+    });
 
     const handleSurge = async (e: React.MouseEvent) => {
         e.stopPropagation();
@@ -110,10 +123,10 @@ const WaveCard = ({ wave, isOwner, onDelete }: WaveCardProps) => {
                         <span className="font-semibold text-[13px] text-white">{initials}</span>
                     </div>
                     <div className="flex flex-col">
-                        <span className="font-['Poppins:SemiBold',sans-serif] text-[13px] text-black">
+                        <span className="font-['Poppins',sans-serif] font-semibold text-[14px] text-black">
                             {authorName}
                         </span>
-                        <span className="font-['Poppins:Medium',sans-serif] text-[8px] text-[#8b8e8d]">
+                        <span className="font-['Poppins',sans-serif] font-medium  text-[10px] text-black">
                             {formatTimestamp(wave.createdAt)}
                         </span>
                     </div>
@@ -125,7 +138,7 @@ const WaveCard = ({ wave, isOwner, onDelete }: WaveCardProps) => {
                             className="w-[5px] h-[5px] rounded-full shrink-0"
                             style={{ backgroundColor: badge.color }}
                         />
-                        <span className="font-['Poppins:Medium',sans-serif] text-[13px] text-black">
+                        <span className="font-['Poppins',sans-serif] font-medium  text-[14px] text-black">
                             {badge.label}
                         </span>
                     </div>
@@ -134,7 +147,7 @@ const WaveCard = ({ wave, isOwner, onDelete }: WaveCardProps) => {
 
             {/* Body: solution text + surge + optional delete */}
             <div className="flex items-start justify-between gap-2.5">
-                <p className="flex-1 font-['Poppins:Medium',sans-serif] text-[12px] text-black leading-relaxed">
+                <p className="flex-1 font-['Poppins',sans-serif] font-medium  text-[12px] text-black leading-relaxed">
                     {wave.solution}
                 </p>
 
@@ -163,7 +176,7 @@ const WaveCard = ({ wave, isOwner, onDelete }: WaveCardProps) => {
                                 fill={hasSurged ? "white" : "#4A504E"}
                             />
                         </svg>
-                        <span className="font-['Poppins:SemiBold',sans-serif] text-[11px]">
+                        <span className="font-['Poppins',sans-serif] font-semibold text-[11px]">
                             {surgeCount}
                         </span>
                     </button>
@@ -219,6 +232,7 @@ const PingDetail = () => {
     const [error, setError] = useState<string | null>(null);
     const [waves, setWaves] = useState<Wave[]>([]);
     const [wavesPage, setWavesPage] = useState(1);
+    const [categories, setCategories] = useState<Record<number, CategoryData>>({});
 
     useEffect(() => {
         if (!pingId) return;
@@ -226,6 +240,9 @@ const PingDetail = () => {
         pingService
             .getPingById(pingId)
             .then((data) => {
+                console.log("🔍 Ping fetched:", data);
+                console.log("📂 Category:", data.category);
+                console.log("🌊 Waves:", data.waves);
                 setPing(data);
                 setWaves(data.waves ?? []);
                 if (data.hasSurged) {
@@ -236,6 +253,20 @@ const PingDetail = () => {
             .finally(() => setIsLoading(false));
     }, [pingId]);
 
+    // Fetch categories for category name lookup
+    useEffect(() => {
+        categoryService.getAll().then((cats) => {
+            const catMap = cats.reduce(
+                (acc, cat) => {
+                    acc[cat.id] = cat;
+                    return acc;
+                },
+                {} as Record<number, CategoryData>
+            );
+            setCategories(catMap);
+        });
+    }, []);
+
     const loadMoreWaves = async () => {
         if (!pingId) return;
         const nextPage = wavesPage + 1;
@@ -243,6 +274,8 @@ const PingDetail = () => {
             page: nextPage,
             limit: 10,
         });
+        console.log("🌊 More waves loaded:", res.data);
+        console.log("📍 First wave author:", res.data[0]?.author);
         setWaves((prev) => [...prev, ...res.data]);
         setWavesPage(nextPage);
     };
@@ -304,11 +337,23 @@ const PingDetail = () => {
 
     const authorName = getAuthorName(ping.author);
     const authorInitials = getAuthorInitials(authorName);
-    const categoryName = ping.category?.name || "";
+    // Use fetched categories map, fallback to ping.category if available
+    const categoryName = ping.categoryId && categories[ping.categoryId]
+        ? categories[ping.categoryId].name
+        : ping.category?.name || "";
     const categoryIcon = categoryImages[categoryName];
     const surgeCount = ping.surgeCount || ping._count?.surges || 0;
     const commentCount = ping._count?.comments || 0;
     const waveCount = ping._count?.waves || waves.length || 0;
+
+    // Debug logs
+    console.log("📌 PingDetail render:", {
+        pingId: ping.id,
+        categoryId: ping.categoryId,
+        categoryName,
+        categoryIcon: !!categoryIcon,
+        waveCount: waves.length,
+    });
 
     const handleSurge = async (e: React.MouseEvent) => {
         e.stopPropagation();
@@ -345,7 +390,7 @@ const PingDetail = () => {
                             strokeLinejoin="round"
                         />
                     </svg>
-                    <span className="font-['Poppins:Medium',sans-serif] text-[10px] text-black">
+                    <span className="font-['Poppins',sans-serif] font-medium  text-[10px] text-black">
                         Back
                     </span>
                 </button>
@@ -371,7 +416,7 @@ const PingDetail = () => {
             {/* ── Ping Card ─────────────────────────────── */}
             <div className="bg-[#fefefe] rounded-[10px] px-5 py-[15px] flex flex-col gap-[15px] w-full">
                 {/* Author row */}
-                <div className="flex items-center justify-between">
+                <div className="flex items-center">
                     <div className="flex items-center gap-2.5">
                         <div className="w-10 h-10 rounded-full bg-[#ffc37b] flex items-center justify-center shrink-0 overflow-hidden">
                             <span className="font-semibold text-[13px] text-white">
@@ -379,46 +424,46 @@ const PingDetail = () => {
                             </span>
                         </div>
                         <div className="flex flex-col">
-                            <span className="font-['Poppins:SemiBold',sans-serif] text-[13px] text-black">
+                            <span className="font-['Poppins',sans-serif] font-semibold text-[14px] text-black">
                                 {authorName}
                             </span>
-                            <span className="font-['Poppins:Medium',sans-serif] text-[8px] text-[#8b8e8d]">
+                            <span className="font-['Poppins',sans-serif] font-medium text-[8px] text-black">
                                 {formatTimestamp(ping.createdAt)}
                             </span>
                         </div>
                     </div>
 
-                    {/* Category badge */}
-                    {categoryName && (
-                        <div className="flex items-center gap-[5px]">
-                            {categoryIcon && (
-                                <img
-                                    src={categoryIcon}
-                                    alt={categoryName}
-                                    className="w-3 h-3 object-contain"
-                                />
-                            )}
-                            <span className="font-['Poppins:Medium',sans-serif] text-[13px] text-[#171717]">
-                                {categoryName}
-                            </span>
-                        </div>
-                    )}
                 </div>
+                {/* Category badge */}
+                {categoryName && (
+                    <div className="flex items-center gap-[5px]">
+                        {categoryIcon && (
+                            <img
+                                src={categoryIcon}
+                                alt={categoryName}
+                                className="w-3 h-3 object-contain"
+                            />
+                        )}
+                        <span className="font-['Poppins',sans-serif] font-medium  text-[13px] text-black">
+                            {categoryName}
+                        </span>
+                    </div>
+                )}
 
                 {/* Title */}
-                <h1 className="font-['Poppins:SemiBold',sans-serif] text-[12px] text-black">
+                <h1 className="font-['Poppins',sans-serif] font-semibold text-[14px] text-black">
                     {ping.title}
                 </h1>
 
                 {/* Description */}
                 {ping.content && (
-                    <p className="font-['Poppins:Medium',sans-serif] text-[12px] text-[#626665] text-justify leading-relaxed">
+                    <p className="font-['Poppins',sans-serif] font-medium  text-[14px] text-[#626665] text-justify leading-relaxed">
                         {ping.content}
                     </p>
                 )}
 
                 {/* Stats: surge + comments + waves */}
-                <div className="flex items-center gap-[15px]">
+                <div className="flex items-center justify-between gap-[15px]">
                     {/* Surge button */}
                     <button
                         type="button"
@@ -443,17 +488,38 @@ const PingDetail = () => {
                                 fill={hasSurged ? "white" : "#4A504E"}
                             />
                         </svg>
-                        <span className="font-['Poppins:SemiBold',sans-serif] text-[11px]">
+                        <span className="font-['Poppins',sans-serif] font-semibold text-[11px]">
                             {surgeCount}
                         </span>
                     </button>
 
-                    <span className="font-['Inter:Medium',sans-serif] text-[11px] text-[#63637b]">
-                        {commentCount} Comments
-                    </span>
-                    <span className="font-['Inter:Medium',sans-serif] text-[11px] text-[#63637b]">
-                        {waveCount} Waves Proposed
-                    </span>
+                    <div className="flex items-center gap-3.5">
+                        {/* Wave count */}
+                        <div className="flex items-center gap-0">
+                            <img
+                                src={waveIcon}
+                                className=" h-[27px] w-[25px]"
+                                alt="waveIcon"
+                            />
+                            <span className="font-['Inter',sans-serif] font-medium text-[12px] md:text-[14px] text-[#63637B] leading-5">
+                                {waveCount} Waves Proposed
+                            </span>
+                        </div>
+
+                        {/* Comment count */}
+                        <button
+                            className="flex items-center gap-1 hover:text-[#F49B31] transition-colors cursor-pointer"
+                        >
+                            <img
+                                src={commentIcon}
+                                className=" h-[18px] w-[18px]"
+                                alt="commentIcon"
+                            />
+                            <span className="font-['Inter',sans-serif] font-medium text-[12px] md:text-[14px] text-[#63637B] leading-5">
+                                {commentCount} Comments
+                            </span>
+                        </button>
+                    </div>
                 </div>
             </div>
 
@@ -480,7 +546,7 @@ const PingDetail = () => {
                     <button
                         type="button"
                         onClick={loadMoreWaves}
-                        className="bg-[#fef5ea] border border-black rounded-[20px] px-5 py-2 font-['Poppins:Medium',sans-serif] text-[12px] text-black cursor-pointer"
+                        className="bg-[#fef5ea] border border-black rounded-[20px] px-5 py-2 font-['Poppins',sans-serif] font-medium  text-[12px] text-black cursor-pointer"
                     >
                         Load more waves
                     </button>

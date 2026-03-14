@@ -32,7 +32,7 @@ const AnnouncementWidget = ({ announcement = null }: AnnouncementWidgetProps) =>
                         GENERAL ANNOUNCEMENT
                     </p>
                     {/* Title */}
-                    <p className="font-['Poppins',sans-serif] font-medium text-[18px] leading-normal">
+                    <p className="font-['Poppins',sans-serif] font-medium text-[18px] leading-normal text-wrap">
                         {announcement.title}
                     </p>
                 </div>

@@ -109,8 +109,10 @@ export interface Ping {
     id: number;
     name: string;
   };
+  categoryId?: number; // Backend sends this for category lookup (name fetched separately)
   hashtag?: string;
   author?: User;
+  authorId?: number; // For consistency with Wave type
   status: "POSTED" | "UNDER_REVIEW" | "ARCHIVED";
   surgeCount: number;
   viewCount?: number;
@@ -173,7 +175,7 @@ export interface Wave {
       surges?: number;
     };
   };
-  author?: User | string; // Can be populated or just ID
+  author?: User | string; // Backend should send full author object like Ping does
   surgeCount: number;
   commentCount?: number;
   viewCount: number;
@@ -228,15 +230,21 @@ export interface CreateSurgeRequest {
 // ==================== Comment Types ====================
 
 export interface Comment {
-  id: string;
+  id: string | number;
   content: string;
   author: User | string;
-  targetType: "ping" | "wave";
-  targetId: string;
+  authorId?: number;
+  organizationId?: number;
+  pingId?: number;
+  waveId?: number | null;
+  targetType?: "ping" | "wave";
+  targetId?: string;
   parentComment?: string; // For nested comments/replies
-  replyCount: number;
+  replyCount?: number;
   createdAt: string;
-  updatedAt: string;
+  updatedAt?: string;
+  surgeCount?: number;
+  isAnonymous?: boolean;
 }
 
 export interface CreateCommentRequest {

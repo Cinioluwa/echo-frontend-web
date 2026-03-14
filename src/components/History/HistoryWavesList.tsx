@@ -11,7 +11,7 @@
  * - Surge count + delete option
  */
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import WaveStatusIndicator from "../WaveStatusIndicator";
 import type { Wave } from "../../api/types";
 import { categoryImages } from "../CategoryImages";
@@ -26,21 +26,25 @@ interface HistoryWavesListProps {
 const HistoryWavesList = ({ isLoading: parentIsLoading = false }: HistoryWavesListProps) => {
     const [waves, setWaves] = useState<Wave[]>([]);
     // isLoading starts false because the fetch below is waiting on a new backend endpoint
-    const [isLoading] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    // Pagination state (future use)
+    // const [hasNextPage, setHasNextPage] = useState(false);
+    // const [page, setPage] = useState(1);
+    const limit = 20;
 
-    // TODO: waiting on backend — GET /api/waves/me is a new endpoint not yet implemented
-    // useEffect(() => {
-    //     setIsLoading(true);
-    //     waveService
-    //         .getMyWaves({ page: 1, limit: 20 })
-    //         .then((res) => {
-    //             setWaves(res.data);
-    //             setHasNextPage(res.pagination.hasNextPage);
-    //         })
-    //         .catch(() => setError("Failed to load your waves"))
-    //         .finally(() => setIsLoading(false));
-    // }, []);
+    // Fetch waves for the authenticated user
+    useEffect(() => {
+        setIsLoading(true);
+        waveService
+            .getMyWaves({ page: 1, limit })
+            .then((res) => {
+                setWaves(res.data);
+                // setHasNextPage(res.pagination?.hasNextPage ?? false); // For future pagination
+            })
+            .catch(() => setError("Failed to load your waves"))
+            .finally(() => setIsLoading(false));
+    }, []);
 
     const handleDeleteWave = async (waveId: number) => {
         try {
@@ -92,8 +96,10 @@ interface WaveHistoryCardProps {
 const WaveHistoryCard = ({ wave, onDelete }: WaveHistoryCardProps) => {
     const authorName =
         typeof wave.author === "object" && wave.author
-            ? `${wave.author.firstName} ${wave.author.lastName}`
-            : "Anonymous";
+            ? `${wave.author.firstName ?? ""} ${wave.author.lastName ?? ""}`.trim() || "Anonymous"
+            : typeof wave.author === "string"
+                ? wave.author
+                : "Anonymous";
 
     const authorInitials = authorName
         .split(" ")

@@ -19,7 +19,7 @@ const waveService = {
    * @returns Paginated list of waves
    */
   getWaves: async (
-    params?: WaveQueryParams
+    params?: WaveQueryParams,
   ): Promise<PaginatedResponse<Wave>> => {
     const response = await api.get<PaginatedResponse<Wave>>("/waves", {
       params,
@@ -84,7 +84,7 @@ const waveService = {
    */
   getWavesByCategory: async (
     category: string,
-    params?: WaveQueryParams
+    params?: WaveQueryParams,
   ): Promise<PaginatedResponse<Wave>> => {
     const response = await api.get<PaginatedResponse<Wave>>("/waves", {
       params: { ...params, category },
@@ -110,7 +110,7 @@ const waveService = {
    * @returns Paginated list of user's waves
    */
   getMyWaves: async (
-    params?: WaveQueryParams
+    params?: WaveQueryParams,
   ): Promise<PaginatedResponse<Wave>> => {
     const response = await api.get<PaginatedResponse<Wave>>("/waves/me", {
       params,
@@ -126,7 +126,7 @@ const waveService = {
    */
   searchWaves: async (
     query: string,
-    params?: WaveQueryParams
+    params?: WaveQueryParams,
   ): Promise<PaginatedResponse<Wave>> => {
     const response = await api.get<PaginatedResponse<Wave>>("/waves/search", {
       params: { ...params, q: query },
@@ -142,12 +142,19 @@ const waveService = {
    */
   getWavesForPing: async (
     pingId: string,
-    params?: WaveQueryParams
+    params?: WaveQueryParams,
   ): Promise<PaginatedResponse<Wave>> => {
     const response = await api.get<PaginatedResponse<Wave>>(
       `/pings/${pingId}/waves`,
-      { params }
+      { params },
     );
+    console.log(
+      `🌊 Raw API response for waves of ping ${pingId}:`,
+      response.data,
+    );
+    if (response.data.data && response.data.data.length > 0) {
+      console.log(`📍 First wave author field:`, response.data.data[0].author);
+    }
     return response.data;
   },
 
@@ -159,7 +166,7 @@ const waveService = {
    */
   createWaveForPing: async (
     pingId: string,
-    solution: string
+    solution: string,
   ): Promise<Wave> => {
     const response = await api.post<Wave>(`/pings/${pingId}/waves`, {
       solution,

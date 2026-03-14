@@ -18,7 +18,7 @@ const pingService = {
    * @returns Paginated list of pings
    */
   getPings: async (
-    params?: PingQueryParams
+    params?: PingQueryParams,
   ): Promise<PaginatedResponse<Ping>> => {
     const response = await api.get<PaginatedResponse<Ping>>("/pings", {
       params,
@@ -33,6 +33,7 @@ const pingService = {
    */
   getPingById: async (id: string): Promise<Ping> => {
     const response = await api.get<Ping>(`/pings/${id}`);
+    console.log(`🎯 Raw API response for ping ${id}:`, response.data);
     return response.data;
   },
 
@@ -73,7 +74,7 @@ const pingService = {
    */
   getPingsByCategory: async (
     category: string,
-    params?: PingQueryParams
+    params?: PingQueryParams,
   ): Promise<PaginatedResponse<Ping>> => {
     const response = await api.get<PaginatedResponse<Ping>>("/pings", {
       params: { ...params, category },
@@ -87,7 +88,7 @@ const pingService = {
    * @returns Paginated list of user's pings
    */
   getMyPings: async (
-    params?: PingQueryParams
+    params?: PingQueryParams,
   ): Promise<PaginatedResponse<Ping>> => {
     const response = await api.get<PaginatedResponse<Ping>>("/pings/me", {
       params,
@@ -103,7 +104,7 @@ const pingService = {
    */
   searchPings: async (
     query: string,
-    params?: PingQueryParams
+    params?: PingQueryParams,
   ): Promise<PaginatedResponse<Ping>> => {
     const response = await api.get<PaginatedResponse<Ping>>("/pings/search", {
       params: { ...params, q: query },
@@ -129,7 +130,7 @@ const pingService = {
    * @returns Paginated list of pings with waves
    */
   getPingsWithWaves: async (
-    params?: PingQueryParams
+    params?: PingQueryParams,
   ): Promise<PaginatedResponse<Ping>> => {
     const response = await api.get<PaginatedResponse<Ping>>("/pings", {
       params: { ...params, hasWave: true },
