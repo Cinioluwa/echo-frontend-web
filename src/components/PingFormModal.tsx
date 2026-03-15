@@ -570,14 +570,7 @@ const PingFormModal = ({
           >
             <FaLink fontSize={30} color="#F49B31" />
           </button>
-          <div className="flex gap-3 items-center">
-            <button
-              type="button"
-              onClick={setPingForm}
-              className="px-[30px] py-[5px] text-[#F49B31] border border-[#F49B31] rounded-xl bg-transparent hover:bg-[#FEF5EA] transition-all duration-300"
-            >
-              Cancel
-            </button>
+          <div className="flex items-center">
             <button
               type="button"
               onClick={handlePingSubmit}
@@ -588,6 +581,13 @@ const PingFormModal = ({
             </button>
           </div>
         </div>
+        <button
+          type="button"
+          onClick={setPingForm}
+          className="px-[30px] py-[5px] text-[#F49B31] border border-[#F49B31] rounded-xl bg-transparent hover:bg-[#FEF5EA] transition-all duration-300"
+        >
+          Cancel
+        </button>
       </motion.div>
     );
   };
@@ -723,13 +723,6 @@ const PingFormModal = ({
           <div className="flex gap-3 items-center">
             <button
               type="button"
-              onClick={setPingForm}
-              className="px-[30px] py-[5px] text-[#F49B31] border border-[#F49B31] rounded-xl bg-transparent hover:bg-[#FEF5EA] transition-all duration-300"
-            >
-              Cancel
-            </button>
-            <button
-              type="button"
               onClick={handleWaveSubmit}
               disabled={isSubmitting || waveFlowState !== "ready-to-submit"}
               className={`px-[30px] py-[5px] text-white rounded-xl bg-[#F49B31] transition-all duration-300 disabled:cursor-not-allowed ${waveFlowState === "ready-to-submit"
@@ -741,6 +734,13 @@ const PingFormModal = ({
             </button>
           </div>
         </div>
+        <button
+          type="button"
+          onClick={setPingForm}
+          className="px-[30px] py-[5px] text-[#F49B31] border border-[#F49B31] rounded-xl bg-transparent hover:bg-[#FEF5EA] transition-all duration-300"
+        >
+          Cancel
+        </button>
       </motion.div>
     );
   };

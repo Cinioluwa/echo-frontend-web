@@ -13,7 +13,7 @@
 
 import { useEffect, type SetStateAction } from "react";
 import { categoryImages } from "./CategoryImages";
-import { useCategoriesStore } from "../stores";
+import { useCategoriesStore, useSearchStore } from "../stores";
 
 interface Props {
     setSelectedMobileCat: React.Dispatch<SetStateAction<string>>;
@@ -28,6 +28,8 @@ const MobileCategoryDropdown = ({
 }: Props) => {
     const categories = useCategoriesStore((state) => state.categories);
     const fetchCategories = useCategoriesStore((state) => state.fetchCategories);
+    const setCategory = useSearchStore((state) => state.setCategory);
+    const clearCategory = useSearchStore((state) => state.clearCategory);
 
     useEffect(() => {
         fetchCategories(
@@ -39,11 +41,13 @@ const MobileCategoryDropdown = ({
 
     function handleAllClick() {
         setSelectedMobileCat("");
+        clearCategory();
         setOpenCat(false);
     }
 
     function handleCategoryClick(category: { label: string; labelIcon?: string; id: number }) {
         setSelectedMobileCat(category.label);
+        setCategory(category.id, category.label);
         setOpenCat(false);
     }
 
