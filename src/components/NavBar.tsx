@@ -10,7 +10,7 @@ const echoBrand = "/assets/images/Echo brand.svg";
 
 const NavBar = () => {
   return (
-    <div className="bg-[#FFC37B] flex items-center justify-between px-5 md:px-[45px] py-2.5">
+    <div className="bg-[#FFC37B] flex items-center justify-between px-5 md:px-[45px] py-1.5 md:py-2.5">
       {/* Desktop: Logo icon + "Echo" text */}
       <div className="hidden md:flex items-center gap-[5px]">
         <img
@@ -27,7 +27,7 @@ const NavBar = () => {
       <div className="block md:hidden">
         <img
           src={echoBrand}
-          className="brightness-0 contrast-200 h-5 w-[19px]"
+          className="brightness-0 contrast-200 h-12 w-12"
           alt="Echo logo"
         />
       </div>

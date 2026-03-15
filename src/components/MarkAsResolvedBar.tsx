@@ -9,13 +9,16 @@
 
 interface Props {
     pingId: string;
-    onResolved?: () => void;
+    onResolved?: () => Promise<void> | void;
 }
 
 const MarkAsResolvedBar = ({ pingId: _pingId, onResolved }: Props) => {
-    const handleResolve = () => {
-        // TODO: API — PATCH /api/pings/:pingId/resolve
-        onResolved?.();
+    const handleResolve = async () => {
+        try {
+            await onResolved?.();
+        } catch (err) {
+            console.error("Failed to mark ping as resolved:", err);
+        }
     };
 
     return (

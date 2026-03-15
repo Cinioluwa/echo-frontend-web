@@ -91,7 +91,7 @@ const UnifiedFeed = () => {
 
     // ── Render ──────────────────────────────────────────────────────────────────
     return (
-        <div className="flex flex-col gap-[15px] pb-10">
+        <div className="flex flex-col gap-[15px] pb-10 max-w-[93vw]">
             {/* Claim space banner — TODO: API — hide when org.leaderId != null */}
             <ClaimSpaceBanner
                 onClaimSpace={() => setClaimModalOpen(true)}

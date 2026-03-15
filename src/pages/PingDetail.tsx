@@ -12,15 +12,15 @@
  * - CommentsPanel inline on mobile (desktop version lives in Layout right-aside)
  */
 import { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useOutletContext } from "react-router-dom";
 import { useAuthStore, useSurgeStore } from "../stores";
 import { pingService, waveService, categoryService } from "../api/services";
 import ProposeWaveBar from "../components/ProposeWaveBar";
-import MarkAsResolvedBar from "../components/MarkAsResolvedBar";
 import CommentsPanel from "../components/CommentsPanel";
 import { categoryImages } from "../components/CategoryImages";
 import { getSocket } from "../api/socket";
 import type { Ping, Wave, CategoryData } from "../api/types";
+import { FaPlus } from "react-icons/fa6";
 
 
 const waveIcon = "/assets/icon/wave.svg";
@@ -115,7 +115,7 @@ const WaveCard = ({ wave, isOwner, onDelete }: WaveCardProps) => {
                     : null;
 
     return (
-        <div className="bg-white rounded-[10px] px-[27.5px] py-[23px] flex flex-col gap-[17px] w-full">
+        <div className="bg-white rounded-[10px] px-[27.5px] py-[23px] flex flex-col gap-[17px] w-full min-w-full">
             {/* Header: avatar + name/time + badge */}
             <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2.5">
@@ -132,17 +132,46 @@ const WaveCard = ({ wave, isOwner, onDelete }: WaveCardProps) => {
                     </div>
                 </div>
 
-                {badge && (
-                    <div className="border border-[#626665] rounded-[23px] flex items-center gap-1.5 px-[11px] py-1">
-                        <div
-                            className="w-[5px] h-[5px] rounded-full shrink-0"
-                            style={{ backgroundColor: badge.color }}
-                        />
-                        <span className="font-['Poppins',sans-serif] font-medium  text-[14px] text-black">
-                            {badge.label}
-                        </span>
-                    </div>
-                )}
+                <div className="flex gap-5">
+
+                    {badge && (
+                        <div className="border border-[#626665] rounded-[23px] flex items-center gap-1.5 px-[11px] py-1">
+                            <div
+                                className="w-[5px] h-[5px] rounded-full shrink-0"
+                                style={{ backgroundColor: badge.color }}
+                            />
+                            <span className="font-['Poppins',sans-serif] font-medium  text-[14px] text-black">
+                                {badge.label}
+                            </span>
+                        </div>
+                    )}
+                    {/* Delete — own waves only */}
+                    {isOwner && (
+                        <button
+                            type="button"
+                            onClick={handleDelete}
+                            aria-label="Delete wave"
+                            className="w-7 h-7 rounded-full bg-[#fef5ea] flex items-center justify-center hover:bg-red-100 transition-colors cursor-pointer"
+                        >
+                            <svg
+                                width="14"
+                                height="14"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                xmlns="http://www.w3.org/2000/svg"
+                                aria-hidden="true"
+                            >
+                                <path
+                                    d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"
+                                    stroke="#EF4444"
+                                    strokeWidth="1.8"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                />
+                            </svg>
+                        </button>
+                    )}
+                </div>
             </div>
 
             {/* Body: solution text + surge + optional delete */}
@@ -181,32 +210,6 @@ const WaveCard = ({ wave, isOwner, onDelete }: WaveCardProps) => {
                         </span>
                     </button>
 
-                    {/* Delete — own waves only */}
-                    {isOwner && (
-                        <button
-                            type="button"
-                            onClick={handleDelete}
-                            aria-label="Delete wave"
-                            className="w-7 h-7 rounded-full bg-[#fef5ea] flex items-center justify-center hover:bg-red-100 transition-colors cursor-pointer"
-                        >
-                            <svg
-                                width="14"
-                                height="14"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                xmlns="http://www.w3.org/2000/svg"
-                                aria-hidden="true"
-                            >
-                                <path
-                                    d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"
-                                    stroke="#EF4444"
-                                    strokeWidth="1.8"
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                />
-                            </svg>
-                        </button>
-                    )}
                 </div>
             </div>
         </div>
@@ -328,12 +331,6 @@ const PingDetail = () => {
     if (error) return <p className="text-red-500 text-center py-10">{error}</p>;
     if (!ping) return null;
 
-    const pingAuthorId =
-        typeof ping.author === "object" ? ping.author?.id : undefined;
-    const isAuthor = currentUser?.id === pingAuthorId;
-    const isAdmin =
-        currentUser?.role === "ADMIN" || currentUser?.role === "SUPER_ADMIN";
-    const canResolve = isAuthor || isAdmin;
 
     const authorName = getAuthorName(ping.author);
     const authorInitials = getAuthorInitials(authorName);
@@ -365,33 +362,30 @@ const PingDetail = () => {
         }
     };
 
+    const { setShowPingFormModal } = useOutletContext<{
+        showPingFormModal: boolean;
+        setShowPingFormModal: (value: boolean) => void;
+    }>();
+
+
     return (
         <div className="flex flex-col gap-[15px] pb-[30px]">
             {/* ── Back button ───────────────────────────── */}
-            <div>
+            <div className="flex items-center justify-between">
                 <button
-                    type="button"
                     onClick={() => navigate("/feed")}
-                    className="bg-[#fefefe] rounded-[18px] w-[59px] h-[25px] px-2 flex items-center gap-1 cursor-pointer border border-[#e0e0e0]"
+                    className="flex items-center gap-2 bg-[#fefefe] rounded-[18px] px-5 py-[5px] font-['Poppins',sans-serif] font-medium text-[15px] text-black hover:bg-[#FFC37B] transition-colors cursor-pointer"
                 >
-                    <svg
-                        width="14"
-                        height="14"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                        aria-hidden="true"
-                    >
-                        <path
-                            d="M15 18l-6-6 6-6"
-                            stroke="#171717"
-                            strokeWidth="2"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                        />
-                    </svg>
-                    <span className="font-['Poppins',sans-serif] font-medium  text-[10px] text-black">
-                        Back
+                    ← Go back to feed
+                </button>
+
+                <button
+                    onClick={() => setShowPingFormModal(true)}
+                    className="flex items-center gap-2 bg-[#F49B31] hover:bg-[#d88429] transition-colors rounded-[18px] px-5 py-[5px] cursor-pointer"
+                >
+                    <FaPlus className="w-3 h-3 text-white" />
+                    <span className="font-['Poppins',sans-serif] font-medium text-[15px] text-white">
+                        Create a Ping
                     </span>
                 </button>
             </div>
@@ -551,11 +545,6 @@ const PingDetail = () => {
                         Load more waves
                     </button>
                 </div>
-            )}
-
-            {/* ── Mark as Resolved bar ─────────────────── */}
-            {waves.length > 0 && canResolve && (
-                <MarkAsResolvedBar pingId={pingId ?? String(ping.id)} />
             )}
 
             {/* ── CommentsPanel (mobile only — desktop uses Layout right-aside) ── */}

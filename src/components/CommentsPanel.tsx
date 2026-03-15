@@ -24,7 +24,7 @@ const CommentsPanel = ({ pingId, className = "" }: Props) => {
 
     return (
         <div
-            className={`bg-[#FFC37B] rounded-[10px] flex flex-col gap-[15px] p-[15px] w-full ${className}`}
+            className={`bg-[#FFC37B] rounded-[10px] flex flex-col gap-[15px] p-[15px] w-full ${className} `}
         >
             {/* Header */}
             <h2 className="font-[Poppins,sans-serif] font-semibold text-[20px] text-black">
@@ -32,7 +32,7 @@ const CommentsPanel = ({ pingId, className = "" }: Props) => {
             </h2>
 
             {/* Scrollable comments list */}
-            <div className="flex-1 overflow-y-auto [scrollbar-width:none] max-h-[400px] lg:max-h-[calc(100vh-300px)]">
+            <div className="flex-1 overflow-y-auto [scrollbar-width:none] max-h-[400px] lg:max-h-[calc(100vh-400px)] h-fit">
                 <CommentsList
                     ref={commentsListRef}
                     targetType="ping"

@@ -70,7 +70,7 @@ const MobileHeader = ({ onCreatePing }: MobileHeaderProps) => {
                         /* Category pill — shown on main feed page only */
                         <button
                             onClick={() => setOpenCat(!openCat)}
-                            className="flex items-center justify-center px-[13px] py-[3px] h-5 w-[90px] border border-[#7D7D7D] rounded-[25px] cursor-pointer"
+                            className="flex items-center justify-center px-[13px] py-[3px] h-5 w-[90px] border border-[#7D7D7D] rounded-[25px] cursor-pointer min-w-max"
                         >
                             <span className="text-[9px] font-medium font-['Poppins',sans-serif] text-black leading-normal">
                                 Category :{" "}

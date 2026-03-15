@@ -86,7 +86,7 @@ const MobileCategoryDropdown = ({
                             className="absolute inset-0 w-full h-full object-contain pointer-events-none"
                         />
                     </div>
-                    <span className="font-['Poppins',sans-serif] font-semibold text-[10px] text-[rgba(0,0,0,0.64)] text-center whitespace-nowrap leading-normal">
+                    <span className="font-['Poppins',sans-serif] font-semibold text-[10px] text-black text-center whitespace-nowrap leading-normal">
                         {category.label}
                     </span>
                 </button>

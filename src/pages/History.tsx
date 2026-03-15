@@ -45,7 +45,7 @@ const History = () => {
             <div className="hidden md:flex items-center justify-between mb-[22px]">
                 <button
                     onClick={() => navigate("/feed")}
-                    className="flex items-center gap-2 border border-[#626665] rounded-[18px] px-5 py-[5px] font-['Poppins',sans-serif] font-medium text-[15px] text-[#171717] hover:bg-[#F5F5F5] transition-colors cursor-pointer"
+                    className="flex items-center gap-2 bg-[#fefefe] rounded-[18px] px-5 py-[5px] font-['Poppins',sans-serif] font-medium text-[15px] text-black hover:bg-[#FFC37B] transition-colors cursor-pointer"
                 >
                     ← Go back to feed
                 </button>

@@ -110,7 +110,7 @@ const UnifiedPingCard = ({ ping }: UnifiedPingCardProps) => {
     return (
         <>
             <div
-                className="bg-[#FEFEFE] rounded-[10px] px-5 py-[15px] flex flex-col gap-[15px] cursor-pointer hover:shadow-sm transition-shadow w-full"
+                className="bg-[#FEFEFE] rounded-[10px] px-5 py-[15px] flex flex-col gap-[15px] cursor-pointer hover:shadow-sm transition-shadow w-full text-wrap"
                 onClick={handleCardClick}
                 role="article"
             >

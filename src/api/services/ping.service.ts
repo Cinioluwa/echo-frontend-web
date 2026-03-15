@@ -145,6 +145,16 @@ const pingService = {
   incrementViewCount: async (id: string): Promise<void> => {
     await api.post(`/pings/${id}/view`);
   },
+
+  /**
+   * Mark a ping as resolved
+   * @param id Ping ID
+   * @returns Updated ping with resolved status
+   */
+  resolvePing: async (id: string): Promise<Ping> => {
+    const response = await api.patch<Ping>(`/pings/${id}/resolve`);
+    return response.data;
+  },
 };
 
 export default pingService;

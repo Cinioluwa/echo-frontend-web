@@ -55,8 +55,8 @@ const ProposeWaveBar = ({ pingId, onWaveProposed }: Props) => {
 
     return (
         <form onSubmit={handleSubmit} className="bg-white rounded-[15px] p-2.5 flex flex-col gap-[13px] w-full">
-            {/* Row 1: Avatar + Textarea */}
-            <div className="flex items-start gap-2.5">
+            {/*  Avatar + Textarea + Button */}
+            <div className="flex items-center gap-2.5">
                 {/* Author avatar */}
                 <div className="size-[35px] shrink-0 rounded-full bg-[#ffc37b] flex items-center justify-center overflow-hidden mt-2.5">
                     <span className="text-white text-[12px] font-semibold">{initials}</span>
@@ -68,16 +68,11 @@ const ProposeWaveBar = ({ pingId, onWaveProposed }: Props) => {
                     onChange={(e) => setSolution(e.target.value)}
                     placeholder="What's your Solution?"
                     className="flex-1 bg-[#fefefe] border-[1.5px] border-[#ffc37b] rounded-[15px] px-[15px] py-2.5 text-[12px] text-[#454545] outline-none focus:border-[#F49B31] focus:border-2 transition-all resize-none font-['Poppins:Medium',sans-serif]"
-                    rows={3}
+                    rows={1}
                     disabled={isSubmitting}
                 />
-            </div>
 
-            {/* Error message */}
-            {error && <p className="text-red-500 text-xs ml-[47px]">{error}</p>}
-
-            {/* Row 2: PROPOSE A WAVE button — full-width on mobile, right-aligned on desktop */}
-            <div className="flex justify-end ml-[47px]">
+                {/* PROPOSE A WAVE button — full-width on mobile, right-aligned on desktop */}
                 <button
                     type="submit"
                     disabled={isSubmitting || !solution.trim()}
@@ -90,6 +85,11 @@ const ProposeWaveBar = ({ pingId, onWaveProposed }: Props) => {
                     </span>
                 </button>
             </div>
+
+            {/* Error message */}
+            {error && <p className="text-red-500 text-xs ml-[47px]">{error}</p>}
+
+
         </form>
     );
 };

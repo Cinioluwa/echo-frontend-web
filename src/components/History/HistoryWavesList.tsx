@@ -152,7 +152,7 @@ const WaveHistoryCard = ({ wave, onDelete }: WaveHistoryCardProps) => {
                 <div className="flex items-center gap-3">
                     {/* Status badge */}
                     {(wave.status || wave.rank) && (
-                        <div className="border border-[#626665] rounded-[23px] flex items-center gap-1.5 px-[15px] py-[7px]">
+                        <div className=" rounded-[23px] flex items-center gap-1.5 px-[15px] py-[7px]">
                             <WaveStatusIndicator status={wave.status} rank={wave.rank} />
                         </div>
                     )}
