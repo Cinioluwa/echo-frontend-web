@@ -29,7 +29,7 @@ const AnnouncementModal = ({
   const [error, setError] = useState<string | null>(null);
 
   // Helper function to map UI selections to category IDs
-  const mapToCategories = (college: string, group: string): number[] => {
+  const mapToCategories = (_college: string, _group: string): number[] => {
     // Implement mapping logic based on your categories
     // This is a placeholder - you'll need to adjust based on your actual category structure
     const categories: number[] = [];

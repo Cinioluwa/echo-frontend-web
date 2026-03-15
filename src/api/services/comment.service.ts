@@ -104,8 +104,8 @@ const commentService = {
 
     const replyData: CreateCommentRequest = {
       content,
-      targetType: parentComment.targetType,
-      targetId: parentComment.targetId,
+      targetType: parentComment.targetType || "ping",
+      targetId: parentComment.targetId || "",
       parentCommentId: commentId,
     };
 

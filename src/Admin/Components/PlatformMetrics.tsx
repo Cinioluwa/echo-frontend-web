@@ -6,7 +6,7 @@ const arrowRise = "/assets/images/ArrowRise.svg";
 const arrowDrop = "/assets/images/arrowdrop.svg";
 
 const PlatformMetrics = () => {
-  const [stats, setStats] = useState<PlatformStats | null>(null);
+  const [_stats, setStats] = useState<PlatformStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [metrics, setMetrics] = useState({
@@ -83,7 +83,7 @@ const PlatformMetrics = () => {
     }
   };
 
-  const calculatePercentageChange = (current: number, trendingData: any[]) => {
+  const calculatePercentageChange = (_current: number, _trendingData: any[]) => {
     // Implement logic to calculate percentage change
     // This is a placeholder - adjust based on your needs
     return 0;

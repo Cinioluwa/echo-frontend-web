@@ -195,7 +195,7 @@ const CommentedPingCard = ({ comment }: CommentedPingCardProps) => {
                 <p className="font-['Poppins',sans-serif] font-normal text-[13px] md:text-[14px] text-[#171717] leading-normal">
                     {comment.content}
                 </p>
-                {comment.replyCount > 0 && (
+                {(comment.replyCount ?? 0) > 0 && (
                     <span className="font-['Poppins',sans-serif] text-[11px] text-[#8B8E8D]">
                         {comment.replyCount}{" "}
                         {comment.replyCount === 1 ? "reply" : "replies"}

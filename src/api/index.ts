@@ -20,7 +20,6 @@ export { default as healthService } from "./services/health.service";
 
 // Types
 export * from "./types/index";
-export * from "./types/admin.types";
 
 // Axios config
 export { default as api } from "./axios.config";
