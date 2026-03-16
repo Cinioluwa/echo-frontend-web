@@ -14,7 +14,7 @@ const proposedWaveDetails = {
   createdAt: "Feb 29, 09:30 pm",
   id: "string",
   // BACK-END ATTRIBUTE
-  status: "rejected",
+  status: "underReview",
 };
 
 // STATIC PING DATA USING PINGSTORE- SIMULATING PINGS FROM SERVER.
@@ -34,10 +34,11 @@ const FollowUp = () => {
     underReview: true,
     approved: false,
     rejected: false,
+    resolved: false,
   });
 
   return (
-    <div>
+    <div className="overflow-hidden">
       <AdminLayout
         heading="Follow Up"
         setFormSegment={setFormSegment}
@@ -47,14 +48,14 @@ const FollowUp = () => {
       />
 
       <main className=" mr-2.5 ml-2.5 mt-5 md:mr-[46px] h-[calc(100vh-155px)] md:ml-[350px] md:mt-[155px]">
-        <div className=" h-full overflow-auto [scrollbar-width:none]">
-          <div className="flex whitespace-nowrap gap-[15px] mb-4">
+          <div className="flex whitespace-nowrap gap-[15px] mb-4 fixed top-[155px]">
             <div
               onClick={() =>
                 setActivePosts({
                   underReview: true,
                   approved: false,
                   rejected: false,
+                  resolved: false,
                 })
               }
               className={`${activePosts.underReview ? "text-white bg-[#F49B31]" : "bg-[#FFC37B]"} p-4 rounded-[18px] w-full max-w-[200px] flex items-center cursor-pointer justify-center border border-[#7B7B79] font-semibold h-10`}
@@ -67,6 +68,7 @@ const FollowUp = () => {
                   underReview: false,
                   approved: true,
                   rejected: false,
+                  resolved: false,
                 })
               }
               className={` ${activePosts.approved ? "bg-[#F49B31] text-white" : "bg-[#FFC37B]"} p-4 rounded-[18px] w-full max-w-[200px] cursor-pointer flex items-center justify-center border border-[#7B7B79] font-semibold h-10`}
@@ -79,14 +81,35 @@ const FollowUp = () => {
                   underReview: false,
                   approved: false,
                   rejected: true,
+                  resolved: false,
                 })
               }
               className={` ${activePosts.rejected ? "bg-[#F49B31] text-white" : "bg-[#FFC37B]"} p-4 rounded-[18px] font-semibold w-full max-w-[200px] flex cursor-pointer items-center justify-center border border-[#7B7B79] h-10`}
             >
               Rejected
             </div>
+            <div
+              onClick={() =>
+                setActivePosts({
+                  underReview: false,
+                  approved: false,
+                  rejected: false,
+                  resolved: true,
+                })
+              }
+              className={` ${activePosts.resolved ? "bg-[#F49B31] text-white" : "bg-[#FFC37B]"} p-4 rounded-[18px] font-semibold w-full max-w-[200px] flex cursor-pointer items-center justify-center border border-[#7B7B79] h-10`}
+            >
+              Resolved
+            </div>
           </div>
-          <div className="flex md:block flex-col items-center">
+        <div className="h-full mt-[220px]  overflow-auto [scrollbar-width:none]">
+          <div className="flex md:block pb-18 flex-col items-center">
+            <div className="mb-[22px]">
+              <AdminWaveCard waves={proposedWaveDetails} />
+            </div>
+            <div className="mb-[22px]">
+              <AdminWaveCard waves={proposedWaveDetails} />
+            </div>
             <div className="mb-[22px]">
               <AdminWaveCard waves={proposedWaveDetails} />
             </div>

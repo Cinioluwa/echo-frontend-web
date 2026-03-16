@@ -15,6 +15,7 @@ const proposedWaveDetails = {
     "The power off policy affects students badly. It disrupts study time.",
   createdAt: "Feb 29, 09:30 pm",
   id: "string",
+  status: "rejected",
   // BACK-END ATTRIBUTE
 };
 
@@ -30,6 +31,7 @@ const pingFormDetails = {
   hashtag: "string",
   formSegment: "ping",
   id: "string",
+  status: "approved",
 };
 
 const Feed = () => {
@@ -59,48 +61,49 @@ const Feed = () => {
         setActivePage={setActivePage}
       />
 
-      <main className=" mr-2.5 ml-2.5 mt-5 md:mr-[46px] h-[calc(100vh-155px)]   md:ml-[350px] md:mt-[155px]">
-        <div className="h-full overflow-auto [scrollbar-width:none]">
-          <div className="flex gap-[15px] mb-4">
-            <div
-              onClick={() =>
-                setActivePosts({ all: true, waves: false, pings: false })
-              }
-              className={`${activePosts.all ? "text-white bg-[#F49B31]" : "bg-[#FFC37B]"} p-4 rounded-[18px] w-[100px] flex items-center cursor-pointer justify-center border border-[#7B7B79] h-10`}
-            >
-              All
-            </div>
-            <div
-              onClick={() =>
-                setActivePosts({ all: false, waves: true, pings: false })
-              }
-              className={` ${activePosts.waves ? "bg-[#F49B31] text-white" : "bg-[#FFC37B]"} p-4 rounded-[18px] w-[100px] cursor-pointer flex items-center justify-center border border-[#7B7B79] h-10`}
-            >
-              Waves
-            </div>
-            <div
-              onClick={() =>
-                setActivePosts({ all: false, waves: false, pings: true })
-              }
-              className={` ${activePosts.pings ? "bg-[#F49B31] text-white" : "bg-[#FFC37B]"} p-4 rounded-[18px] w-[100px] flex cursor-pointer items-center justify-center border border-[#7B7B79] h-10`}
-            >
-              Pings
-            </div>
+      <main className=" mr-2.5 ml-2.5 mt-5 md:mr-[46px] h-[calc(100vh-155px)] md:ml-[350px] md:mt-[155px]">
+        <div className="flex gap-[15px] mb-4 fixed top-[155px]">
+          <div
+            onClick={() =>
+              setActivePosts({ all: true, waves: false, pings: false })
+            }
+            className={`${activePosts.all ? "text-white bg-[#F49B31]" : "bg-[#FFC37B]"} p-4 rounded-[18px] w-[100px] flex items-center cursor-pointer justify-center border border-[#7B7B79] h-10`}
+          >
+            All
           </div>
-
+          <div
+            onClick={() =>
+              setActivePosts({ all: false, waves: true, pings: false })
+            }
+            className={` ${activePosts.waves ? "bg-[#F49B31] text-white" : "bg-[#FFC37B]"} p-4 rounded-[18px] w-[100px] cursor-pointer flex items-center justify-center border border-[#7B7B79] h-10`}
+          >
+            Waves
+          </div>
+          <div
+            onClick={() =>
+              setActivePosts({ all: false, waves: false, pings: true })
+            }
+            className={` ${activePosts.pings ? "bg-[#F49B31] text-white" : "bg-[#FFC37B]"} p-4 rounded-[18px] w-[100px] flex cursor-pointer items-center justify-center border border-[#7B7B79] h-10`}
+          >
+            Pings
+          </div>
+        </div>
+        <div className="h-full mt-20 md:mt-[220px] overflow-auto">
           {/* MAPPING WAVE AND PING DETAILS INTO ADMIN WAVE CARD */}
-          <div className="flex md:block flex-col items-center">
-            <div className="mb-[22px]">
-              <AdminWaveCard waves={proposedWaveDetails} />
-            </div>
-            <div className="mb-[22px]">
-              <AdminPingCard pings={pingFormDetails} />
-            </div>
-            <div className="mb-[22px]">
-              <AdminWaveCard waves={proposedWaveDetails} />
-            </div>
-            <div className="mb-[22px]">
-              <AdminPingCard pings={pingFormDetails} />
+          <div className="pb-18">
+            <div className="flex md:block flex-col items-center">
+              <div className="mb-[22px]">
+                <AdminWaveCard waves={proposedWaveDetails} />
+              </div>
+              <div className="mb-[22px]">
+                <AdminPingCard pings={pingFormDetails} />
+              </div>
+              <div className="mb-[22px]">
+                <AdminWaveCard waves={proposedWaveDetails} />
+              </div>
+              <div className="mb-[22px]">
+                <AdminPingCard pings={pingFormDetails} />
+              </div>
             </div>
           </div>
         </div>

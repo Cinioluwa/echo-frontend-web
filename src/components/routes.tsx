@@ -7,6 +7,7 @@ import SoundBoard from "../pages/SoundBoard";
 import Feed from "../Admin/Pages/Feed";
 import FollowUp from "../Admin/Pages/FollowUp";
 import Overview from "../Admin/Pages/Overview";
+import PostDetails from "../Admin/Components/PostDetails";
 
 const router = createBrowserRouter([
   {
@@ -41,6 +42,10 @@ const router = createBrowserRouter([
       {
         path: "feed",
         element: <Feed />,
+      },
+      {
+        path: "feed/details",
+        element: <PostDetails />,
       },
       {
         path: "overview",

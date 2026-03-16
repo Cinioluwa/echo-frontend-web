@@ -9,6 +9,7 @@ import type { proposedWaveDetails } from "../../components/ProposeWaveModal";
 import { categoryImages } from "../../components/CategoryImages";
 import PostActionMenu from "./PostActionMenu";
 import { useState } from "react";
+import FollowUpLabel from "./FollowUpLabel";
 
 interface AdminWaveCardProps {
   waves: proposedWaveDetails;
@@ -21,8 +22,8 @@ const AdminWaveCard = ({ waves }: AdminWaveCardProps) => {
   return (
     <div className="relative">
       <div className="m-[15px] md:m-0 px-[25px] py-2.5 bg-[#FEFEFE]  rounded-[10px] ">
-        <div className="flex mb-6 mt-2 justify-between items-center">
-          <div className="flex  items-center gap-3">
+        <div className="flex mb-6 mt-2 justify-between gap-8 items-center">
+          <div className="flex items-center gap-3">
             <span className="cursor-pointer">
               <img src={dropdown} alt="" />
             </span>
@@ -30,19 +31,28 @@ const AdminWaveCard = ({ waves }: AdminWaveCardProps) => {
           </div>
 
           {waves.status && waves.status === "underReview" && (
-            <div className="border border-[#ABEFC6] bg-[#ECFDF3] text-[12px] px-2 py-0.5 rounded-4xl">
-              Under Review
-            </div>
+            <FollowUpLabel
+              label="Under Review"
+              color="#067647"
+              borderColor={"#ABEFC6"}
+              backgroundColor={"#ECFDF3"}
+            />
           )}
           {waves.status && waves.status === "approved" && (
-            <div className="border border-[#ABEFC6] bg-[#ECFDF3] text-[12px] px-2 py-0.5 rounded-4xl">
-              Approved
-            </div>
+            <FollowUpLabel
+              label="Approved"
+              color="#ffffff"
+              borderColor={"#ABEFC6"}
+              backgroundColor={"#4CAF50"}
+            />
           )}
           {waves.status && waves.status === "rejected" && (
-            <div className="border text-[#B01212] border-[#B01212] bg-[#FFF7E8] text-[12px] px-2 py-0.5 rounded-4xl">
-              Rejected
-            </div>
+            <FollowUpLabel
+              label="Rejected"
+              color="#B01212"
+              borderColor={"#B01212"}
+              backgroundColor={"#FFF7E8"}
+            />
           )}
 
           <span onClick={() => setOpenMenu(true)} className="cursor-pointer">

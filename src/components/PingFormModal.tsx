@@ -22,6 +22,7 @@ export interface PingFormDetails {
   pingTitle: string;
   createdAt: string;
   id: string;
+  status?: string;
 }
 
 const PingFormModal = ({

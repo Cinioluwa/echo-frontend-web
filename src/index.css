@@ -19,4 +19,10 @@ body {
 
 * {
   outline: none;
+  scrollbar-width: none;
+
+}
+
+html {
+  overflow:hidden
 }

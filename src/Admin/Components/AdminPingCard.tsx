@@ -9,6 +9,7 @@ import type { PingFormDetails } from "../../components/PingFormModal";
 import { useState } from "react";
 import PostActionMenu from "./PostActionMenu";
 import PostEngagementMenu from "./PostEngagementMenu";
+import FollowUpLabel from "./FollowUpLabel";
 
 interface AdminPingCardProps {
   pings: PingFormDetails;
@@ -22,13 +23,38 @@ const AdminPingCard = ({ pings }: AdminPingCardProps) => {
   return (
     <div className="relative">
       <div className="m-[15px] md:m-0 px-[25px] py-2.5 bg-[#FEFEFE]  rounded-[10px] ">
-        <div className="flex justify-between items-center">
+        <div className="flex justify-between gap-8 items-center">
           <div className="flex mb-6 mt-2 items-center gap-3">
             <span className="cursor-pointer">
               <img src={dropdown} alt="" />
             </span>
             <p className="text-[14px] font-semibold">{pings.pingTitle}</p>
           </div>
+
+          {pings.status && pings.status === "underReview" && (
+            <FollowUpLabel
+              label="Under Review"
+              color="#067647"
+              borderColor={"#ABEFC6"}
+              backgroundColor={"#ECFDF3"}
+            />
+          )}
+          {pings.status && pings.status === "approved" && (
+            <FollowUpLabel
+              label="Approved"
+              color="#ffffff"
+              borderColor={"#ABEFC6"}
+              backgroundColor={"#4CAF50"}
+            />
+          )}
+          {pings.status && pings.status === "rejected" && (
+            <FollowUpLabel
+              label="Rejected"
+              color="#B01212"
+              borderColor={"#B01212"}
+              backgroundColor={"#FFF7E8"}
+            />
+          )}
 
           <span onClick={() => setOpenMenu(true)} className="cursor-pointer">
             <img src={waveMenu} alt="" />
@@ -93,11 +119,16 @@ const AdminPingCard = ({ pings }: AdminPingCardProps) => {
               </button>
 
               <button className="bg-[#EF6E0B]  rounded-[20px] py-1.5 lg:py-2 pl-2 pr-4">
-                <span onClick={() => setOpenEngagementMenu(true)} className="cursor-pointer">
+                <span
+                  onClick={() => setOpenEngagementMenu(true)}
+                  className="cursor-pointer"
+                >
                   <img src={dropdown_menu} alt="" />
                 </span>
               </button>
-              {openEngagementMenu && <PostEngagementMenu setEngagementMenu={setOpenEngagementMenu}/>}
+              {openEngagementMenu && (
+                <PostEngagementMenu setEngagementMenu={setOpenEngagementMenu} />
+              )}
             </div>
 
             <div className="text-[#454545] text-[14px]">128 Surges</div>
