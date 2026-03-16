@@ -8,6 +8,13 @@ import Feed from "../Admin/Pages/Feed";
 import FollowUp from "../Admin/Pages/FollowUp";
 import Overview from "../Admin/Pages/Overview";
 import PostDetails from "../Admin/Components/PostDetails";
+import UserProfile from "../pages/UserProfile";
+import UserPrivacy from "../pages/UserPrivacy";
+import UserAccount from "../pages/UserAccount";
+import UserNotification from "../pages/UserNotification";
+import AdminProfile from "../Admin/Pages/AdminProfile";
+import AdminAccount from "../Admin/Pages/AdminAccount";
+import AdminNotification from "../Admin/Pages/AdminNotification";
 
 const router = createBrowserRouter([
   {
@@ -34,11 +41,45 @@ const router = createBrowserRouter([
     element: <SoundBoard />,
   },
 
+  {
+    path: "/user",
+    children: [
+      {
+        path: 'profile',
+        element: <UserProfile />,
+      },
+      {
+        path: "privacy",
+        element: <UserPrivacy />,
+      },
+      {
+        path: "account",
+        element: <UserAccount />,
+      },
+      {
+        path: "notification",
+        element: <UserNotification />,
+      },
+    ],
+  },
+
   // Admin routes
 
   {
     path: "/admin",
     children: [
+      {
+        path: 'profile',
+        element: <AdminProfile />
+      },
+      {
+        path: 'account',
+        element: <AdminAccount />
+      },
+      {
+        path: 'notification',
+        element: <AdminNotification />
+      },
       {
         path: "feed",
         element: <Feed />,
