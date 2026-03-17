@@ -20,6 +20,7 @@ const FollowUp = () => {
     underReview: true,
     approved: false,
     rejected: false,
+    resolved: false,
   });
 
   const [waves, setWaves] = useState<AdminWave[]>([]);
@@ -63,17 +64,18 @@ const FollowUp = () => {
     }
   };
 
-  const handleStatusChange = (status: 'underReview' | 'approved' | 'rejected') => {
+  const handleStatusChange = (status: 'underReview' | 'approved' | 'rejected' | 'resolved') => {
     setActivePosts({
       underReview: status === 'underReview',
       approved: status === 'approved',
       rejected: status === 'rejected',
+      resolved: status === 'resolved',
     });
     setCurrentPage(1);
   };
 
   return (
-    <div>
+    <div className="overflow-hidden">
       <AdminLayout
         heading="Follow Up"
         setFormSegment={setFormSegment}
@@ -100,6 +102,11 @@ const FollowUp = () => {
               label="Rejected"
               active={activePosts.rejected}
               onClick={() => handleStatusChange('rejected')}
+            />
+            <StatusButton
+              label="Resolved"
+              active={activePosts.resolved}
+              onClick={() => handleStatusChange('resolved')}
             />
           </div>
 

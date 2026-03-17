@@ -41,6 +41,7 @@ export interface PingFormDetails {
   pingTitle: string;
   createdAt: string;
   id: string;
+  status?: string;
 }
 
 // Internal state types

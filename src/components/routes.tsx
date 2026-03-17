@@ -42,6 +42,20 @@ const Feed = lazy(() => import("../Admin/Pages/Feed"));
 const FollowUp = lazy(() => import("../Admin/Pages/FollowUp"));
 const Overview = lazy(() => import("../Admin/Pages/Overview"));
 
+// Lazy load admin components
+const PostDetails = lazy(() => import("../Admin/Components/PostDetails"));
+
+// Lazy load user pages
+const UserProfile = lazy(() => import("../pages/UserProfile"));
+const UserPrivacy = lazy(() => import("../pages/UserPrivacy"));
+const UserAccount = lazy(() => import("../pages/UserAccount"));
+const UserNotification = lazy(() => import("../pages/UserNotification"));
+
+// Lazy load admin profile pages
+const AdminProfile = lazy(() => import("../Admin/Pages/AdminProfile"));
+const AdminAccount = lazy(() => import("../Admin/Pages/AdminAccount"));
+const AdminNotification = lazy(() => import("../Admin/Pages/AdminNotification"));
+
 // Helper to wrap lazy-loaded components with Suspense
 const withSuspense = (Component: React.LazyExoticComponent<React.ComponentType<any>>) => (
   <Suspense fallback={<LoadingFallback />}>
@@ -147,10 +161,44 @@ const router = createBrowserRouter([
     element: <Navigate to="/history" replace />,
   },
 
+  {
+    path: "/user",
+    children: [
+      {
+        path: 'profile',
+        element: withSuspense(UserProfile),
+      },
+      {
+        path: "privacy",
+        element: withSuspense(UserPrivacy),
+      },
+      {
+        path: "account",
+        element: withSuspense(UserAccount),
+      },
+      {
+        path: "notification",
+        element: withSuspense(UserNotification),
+      },
+    ],
+  },
+
   // Admin routes
   {
     path: "/admin",
     children: [
+      {
+        path: 'profile',
+        element: withSuspense(AdminProfile),
+      },
+      {
+        path: 'account',
+        element: withSuspense(AdminAccount),
+      },
+      {
+        path: 'notification',
+        element: withSuspense(AdminNotification),
+      },
       {
         path: "feed",
         element: (
@@ -158,6 +206,10 @@ const router = createBrowserRouter([
             {withSuspense(Feed)}
           </AdminRoute>
         ),
+      },
+      {
+        path: "feed/details",
+        element: withSuspense(PostDetails),
       },
       {
         path: "overview",

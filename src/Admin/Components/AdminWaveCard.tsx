@@ -10,6 +10,7 @@ import { categoryImages } from "../../components/CategoryImages";
 import PostActionMenu from "./PostActionMenu";
 import { useState } from "react";
 import { adminService } from "../../api";
+import FollowUpLabel from "./FollowUpLabel";
 
 interface AdminWaveCardProps {
   waves: AdminWave;
@@ -71,8 +72,8 @@ const AdminWaveCard = ({ waves, onUpdate }: AdminWaveCardProps) => {
   return (
     <div className="relative">
       <div className="m-[15px] md:m-0 px-[25px] py-2.5 bg-[#FEFEFE]  rounded-[10px] ">
-        <div className="flex mb-6 mt-2 justify-between items-center">
-          <div className="flex  items-center gap-3">
+        <div className="flex mb-6 mt-2 justify-between gap-8 items-center">
+          <div className="flex items-center gap-3">
             <span className="cursor-pointer">
               <img src={dropdown} alt="" />
             </span>
@@ -80,19 +81,28 @@ const AdminWaveCard = ({ waves, onUpdate }: AdminWaveCardProps) => {
           </div>
 
           {waves.status && waves.status === "UNDER_REVIEW" && (
-            <div className="border border-[#ABEFC6] bg-[#ECFDF3] text-[12px] px-2 py-0.5 rounded-4xl">
-              Under Review
-            </div>
+            <FollowUpLabel
+              label="Under Review"
+              color="#067647"
+              borderColor={"#ABEFC6"}
+              backgroundColor={"#ECFDF3"}
+            />
           )}
           {waves.status && waves.status === "APPROVED" && (
-            <div className="border border-[#ABEFC6] bg-[#ECFDF3] text-[12px] px-2 py-0.5 rounded-4xl">
-              Approved
-            </div>
+            <FollowUpLabel
+              label="Approved"
+              color="#ffffff"
+              borderColor={"#ABEFC6"}
+              backgroundColor={"#4CAF50"}
+            />
           )}
           {waves.status && waves.status === "REJECTED" && (
-            <div className="border text-[#B01212] border-[#B01212] bg-[#FFF7E8] text-[12px] px-2 py-0.5 rounded-4xl">
-              Rejected
-            </div>
+            <FollowUpLabel
+              label="Rejected"
+              color="#B01212"
+              borderColor={"#B01212"}
+              backgroundColor={"#FFF7E8"}
+            />
           )}
 
           <span onClick={() => setOpenMenu(true)} className="cursor-pointer">
@@ -165,8 +175,8 @@ const AdminWaveCard = ({ waves, onUpdate }: AdminWaveCardProps) => {
               onClick={handleApprove}
               disabled={loading || approved || rejected}
               className={`flex ${approved
-                  ? "bg-green-500"
-                  : "bg-[#F49B31] hover:bg-[#d88429]"
+                ? "bg-green-500"
+                : "bg-[#F49B31] hover:bg-[#d88429]"
                 } ${loading ? "opacity-50 cursor-not-allowed" : "cursor-pointer"
                 } transition-all duration-200 ease-in-out text-white items-center justify-center px-4 py-2 rounded-[15px] gap-2.5`}
             >
@@ -180,8 +190,8 @@ const AdminWaveCard = ({ waves, onUpdate }: AdminWaveCardProps) => {
               onClick={handleReject}
               disabled={loading || approved || rejected}
               className={`flex ${rejected
-                  ? "bg-gray-500"
-                  : "bg-[#B01212] hover:bg-[#900f0f]"
+                ? "bg-gray-500"
+                : "bg-[#B01212] hover:bg-[#900f0f]"
                 } ${loading ? "opacity-50 cursor-not-allowed" : "cursor-pointer"
                 } text-white items-center justify-center pr-7 pl-4 py-2 rounded-[15px] gap-2.5`}
             >
