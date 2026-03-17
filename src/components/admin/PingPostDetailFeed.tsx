@@ -1,5 +1,5 @@
 import { useState } from "react";
-import type { PingFormDetails } from "../../components/PingFormModal";
+import type { PingFormDetails } from "../PingFormModal";
 import AdminComment from "./AdminComment";
 import AdminCommentBox from "./AdminCommentBox";
 import AdminPingCard from "./AdminPingCard";

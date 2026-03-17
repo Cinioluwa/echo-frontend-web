@@ -2,7 +2,7 @@ import { useState, type ReactNode } from "react";
 const filters = "/assets/images/filters.svg";
 const menuBar = "/assets/images/menu-hotdog.svg";
 import type { AdminPages } from "./AdminSideBar";
-import MobileCategories from "../../components/MobileCategories";
+import MobileCategories from "../MobileCategories";
 import AdminMobileMenu from "./AdminMobileMenu";
 
 interface pageHeaderProps {

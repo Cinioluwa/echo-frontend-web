@@ -1,7 +1,7 @@
 import { useState } from "react";
 import ProfileLayout from "../../components/ProfileLayout";
 import Toggle from "../../components/Toggle";
-import AdminProfileSidePanel from "../Components/AdminProfileSidePanel";
+import AdminProfileSidePanel from "../../components/admin/AdminProfileSidePanel";
 
 const pages = {
   profile: false,

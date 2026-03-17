@@ -1,7 +1,7 @@
 import React from "react";
 import { FaPlus } from "react-icons/fa6";
 import { motion } from "framer-motion";
-import NavBar from "../../components/NavBar";
+import NavBar from "../NavBar";
 import type { AdminPages } from "./AdminSideBar";
 import AdminPageTitleBar from "./AdminPageTitleBar";
 import AdminOverviewSideBar from "./AdminOverviewSideBar";
@@ -10,16 +10,18 @@ interface LayoutProps {
   setFormSegment: React.Dispatch<React.SetStateAction<string>>;
   setForm: React.Dispatch<React.SetStateAction<boolean>>;
   setActivePage: React.Dispatch<React.SetStateAction<AdminPages>>;
+  setAnnouncementModal: React.Dispatch<React.SetStateAction<boolean>>;
   activePage: AdminPages;
   heading: string;
 }
 
-const AdminPostDetailsLayout = ({
+const AdminOverviewLayout = ({
   setFormSegment,
   setForm,
   setActivePage,
   activePage,
   heading,
+  setAnnouncementModal
 }: LayoutProps) => {
   return (
     <div>
@@ -32,6 +34,9 @@ const AdminPostDetailsLayout = ({
           setActivePage={setActivePage}
           heading={heading}
         >
+          <button onClick={() => setAnnouncementModal(true)} className="bg-[#FEF5EA] hidden sm:block text-[13px] rounded-[20px] px-4 border border-[#F49B31] py-2.5">
+            Publish Announcement
+          </button>
           <motion.button
             onClick={() => {
               setForm(true);
@@ -55,4 +60,4 @@ const AdminPostDetailsLayout = ({
   );
 };
 
-export default AdminPostDetailsLayout;
+export default AdminOverviewLayout;

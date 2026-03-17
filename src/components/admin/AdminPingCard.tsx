@@ -4,7 +4,7 @@ const reaction = "/assets/images/reaction.svg";
 const waveMenu = "/assets/images/waveMenu.svg";
 const dropdown = "/assets/images/customDropdown.svg";
 const dropdown_menu = "/assets/images/dropdown_menu.svg";
-import { categoryImages } from "../../components/CategoryImages";
+import { categoryImages } from "../CategoryImages";
 import type { AdminPing } from "../../api/types/admin.types";
 import { useState } from "react";
 import PostActionMenu from "./PostActionMenu";

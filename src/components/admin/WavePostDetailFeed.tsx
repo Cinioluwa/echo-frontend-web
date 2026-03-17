@@ -1,4 +1,4 @@
-import type { proposedWaveDetails } from "../../components/ProposeWaveModal";
+import type { proposedWaveDetails } from "../ProposeWaveModal";
 import AdminSurgeView from "./AdminSurgeView";
 import AdminWaveCard from "./AdminWaveCard";
 

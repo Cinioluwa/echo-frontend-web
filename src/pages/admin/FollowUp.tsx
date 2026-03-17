@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
-import AdminLayout from "../Components/AdminLayout";
+import AdminLayout from "../../components/admin/AdminLayout";
 import PingFormModal from "../../components/PingFormModal";
 import WaveFormModal from "../../components/WaveFormModal";
-import AdminWaveCard from "../Components/AdminWaveCard";
+import AdminWaveCard from "../../components/admin/AdminWaveCard";
 import { adminService } from "../../api";
 import type { AdminWave } from "../../api/types/admin.types";
 

@@ -2,7 +2,7 @@ import React from "react";
 import { FaPlus } from "react-icons/fa6";
 
 import { motion } from "framer-motion";
-import NavBar from "../../components/NavBar";
+import NavBar from "../NavBar";
 import type { AdminPages } from "./AdminSideBar";
 import AdminSideBar from "./AdminSideBar";
 import AdminPageTitleBar from "./AdminPageTitleBar";

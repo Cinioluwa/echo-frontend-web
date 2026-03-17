@@ -1,10 +1,10 @@
 import { useState } from "react";
 import AdminPostDetailsLayout from "./AdminPostDetailsLayout";
-import PingFormModal from "../../components/PingFormModal";
+import PingFormModal from "../PingFormModal";
 // import WavePostDetailFeed from "./WavePostDetailFeed";
 import PingPostDetailFeed from "./PingPostDetailFeed";
 import PostChartAnalysis from "./PostChartAnalysis";
-import WaveFormModal from "../../components/WaveFormModal";
+import WaveFormModal from "../WaveFormModal";
 
 const legendData = [
   { level: "100L", college: "CST", color: "#8A0FBF" },

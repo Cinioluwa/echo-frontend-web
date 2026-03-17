@@ -1,10 +1,10 @@
 import { useState } from "react";
 import PingFormModal from "../../components/PingFormModal";
 import WaveFormModal from "../../components/WaveFormModal";
-import AdminOverviewLayout from "../Components/AdminOverviewLayout";
-import PlatformMetrics from "../Components/PlatformMetrics";
-import AdminChart from "../Components/AdminChart";
-import AnnouncementModal from "../Components/AnnouncementModal";
+import AdminOverviewLayout from "../../components/admin/AdminOverviewLayout";
+import PlatformMetrics from "../../components/admin/PlatformMetrics";
+import AdminChart from "../../components/admin/AdminChart";
+import AnnouncementModal from "../../components/admin/AnnouncementModal";
 
 const Overview = () => {
   const [waveForm, setWaveForm] = useState(false);
@@ -22,7 +22,7 @@ const Overview = () => {
   return (
     <>
       <AdminOverviewLayout
-      setAnnouncementModal={setAnnouncement}
+        setAnnouncementModal={setAnnouncement}
         heading="Overview"
         setFormSegment={setFormSegment}
         setForm={setWaveForm}
@@ -54,7 +54,7 @@ const Overview = () => {
         </div>
       </main>
 
-      {announcement && <AnnouncementModal setAnnouncementModal={setAnnouncement}/>}
+      {announcement && <AnnouncementModal setAnnouncementModal={setAnnouncement} />}
 
 
       {formSegment === "ping" && (

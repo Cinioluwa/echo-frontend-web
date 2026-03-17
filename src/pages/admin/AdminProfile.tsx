@@ -1,5 +1,5 @@
 import ProfileLayout from "../../components/ProfileLayout";
-import AdminProfileSidePanel from "../Components/AdminProfileSidePanel";
+import AdminProfileSidePanel from "../../components/admin/AdminProfileSidePanel";
 import profileImage from "../../assets/images/profileImage.jpeg";
 import ProfileBadge from "../../components/ProfileBadge";
 import ProfileDataField from "../../components/ProfileDataField";

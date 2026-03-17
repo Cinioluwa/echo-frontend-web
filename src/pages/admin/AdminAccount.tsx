@@ -3,7 +3,7 @@ import { HiOutlineExclamationTriangle, HiOutlineTrash } from "react-icons/hi2";
 import ProfileLayout from "../../components/ProfileLayout";
 import ProfilePasswordForm from "../../components/ProfilePasswordForm";
 import Toggle from "../../components/Toggle";
-import AdminProfileSidePanel from "../Components/AdminProfileSidePanel";
+import AdminProfileSidePanel from "../../components/admin/AdminProfileSidePanel";
 import { useState } from "react";
 
 const pages = {

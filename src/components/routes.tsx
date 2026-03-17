@@ -38,12 +38,12 @@ const History = lazy(() => import("../pages/History"));
 const Profile = lazy(() => import("../pages/Profile"));
 
 // Lazy load admin pages
-const Feed = lazy(() => import("../Admin/Pages/Feed"));
-const FollowUp = lazy(() => import("../Admin/Pages/FollowUp"));
-const Overview = lazy(() => import("../Admin/Pages/Overview"));
+const Feed = lazy(() => import("../pages/admin/AdminFeed"));
+const FollowUp = lazy(() => import("../pages/admin/FollowUp"));
+const Overview = lazy(() => import("../pages/admin/Overview"));
 
 // Lazy load admin components
-const PostDetails = lazy(() => import("../Admin/Components/PostDetails"));
+const PostDetails = lazy(() => import("./admin/PostDetails"));
 
 // Lazy load user pages
 const UserProfile = lazy(() => import("../pages/UserProfile"));
@@ -52,9 +52,9 @@ const UserAccount = lazy(() => import("../pages/UserAccount"));
 const UserNotification = lazy(() => import("../pages/UserNotification"));
 
 // Lazy load admin profile pages
-const AdminProfile = lazy(() => import("../Admin/Pages/AdminProfile"));
-const AdminAccount = lazy(() => import("../Admin/Pages/AdminAccount"));
-const AdminNotification = lazy(() => import("../Admin/Pages/AdminNotification"));
+const AdminProfile = lazy(() => import("../pages/admin/AdminProfile"));
+const AdminAccount = lazy(() => import("../pages/admin/AdminAccount"));
+const AdminNotification = lazy(() => import("../pages/admin/AdminNotification"));
 
 // Helper to wrap lazy-loaded components with Suspense
 const withSuspense = (Component: React.LazyExoticComponent<React.ComponentType<any>>) => (
