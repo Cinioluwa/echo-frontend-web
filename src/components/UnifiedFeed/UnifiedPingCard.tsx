@@ -21,9 +21,10 @@ const waveIcon = "/assets/icon/wave.svg";
 const commentIcon = "/assets/icon/comment.svg";
 interface UnifiedPingCardProps {
     ping: Ping;
+    isHistoryContext?: boolean;
 }
 
-const UnifiedPingCard = ({ ping }: UnifiedPingCardProps) => {
+const UnifiedPingCard = ({ ping, isHistoryContext = false }: UnifiedPingCardProps) => {
     const navigate = useNavigate();
     const currentUser = useAuthStore((state) => state.user);
     const toggleSurge = useSurgeStore((state) => state.toggleSurge);
@@ -118,15 +119,19 @@ const UnifiedPingCard = ({ ping }: UnifiedPingCardProps) => {
     return (
         <>
             <div
-                className="bg-[#FEFEFE] rounded-[10px] px-5 py-[15px] flex flex-col gap-[15px] cursor-pointer hover:shadow-sm transition-shadow w-full text-wrap"
+                className={[
+                    "bg-[#FEFEFE] rounded-[10px] px-5 py-[15px] flex flex-col gap-[15px] cursor-pointer hover:shadow-sm transition-shadow w-full",
+                    isHistoryContext ? "max-w-full min-w-0" : "",
+                    "text-wrap"
+                ].join(" ")}
                 onClick={handleCardClick}
                 role="article"
             >
                 {/* ─── Header ─────────────────────────────── */}
-                <div className="flex flex-col gap-2.5">
+                <div className={["flex flex-col gap-2.5", isHistoryContext ? "min-w-0" : ""].join(" ")}>
                     {/* Author row */}
-                    <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-4">
+                    <div className={["flex items-center justify-between", isHistoryContext ? "min-w-0" : ""].join(" ")}>
+                        <div className={["flex items-center gap-4", isHistoryContext ? "min-w-0" : ""].join(" ")}>
                             {/* Avatar */}
                             <div className="w-7 h-7 md:w-[53px] md:h-[53px] rounded-full bg-[#FFC37B] flex items-center justify-center shrink-0 overflow-hidden">
                                 <span className="font-['Poppins',sans-serif] font-bold text-[10px] md:text-[18px] text-white">
@@ -134,7 +139,7 @@ const UnifiedPingCard = ({ ping }: UnifiedPingCardProps) => {
                                 </span>
                             </div>
                             {/* Name + timestamp */}
-                            <div className="flex flex-col">
+                            <div className={["flex flex-col", isHistoryContext ? "min-w-0" : ""].join(" ")}>
                                 <span className="font-['Poppins',sans-serif] font-semibold text-[13px] md:text-[15px] text-black leading-normal">
                                     {authorName}
                                 </span>
@@ -145,7 +150,7 @@ const UnifiedPingCard = ({ ping }: UnifiedPingCardProps) => {
                         </div>
 
                         {/* Badges: Top 3 + delete */}
-                        <div className="flex items-center gap-5">
+                        <div className={["flex items-center gap-5", isHistoryContext ? "min-w-0" : ""].join(" ")}>
                             {/* "Top 3" badge — shown if ping is in top */}
                             {(ping as Ping & { isTop3?: boolean }).isTop3 && (
                                 <div className="border border-[#626665] rounded-[23px] flex items-center gap-1.5 px-[15px] py-[7px]">
@@ -172,7 +177,7 @@ const UnifiedPingCard = ({ ping }: UnifiedPingCardProps) => {
 
                     {/* Category label */}
                     {categoryName && (
-                        <div className="flex items-center gap-[9px]">
+                        <div className={["flex items-center gap-[9px]", isHistoryContext ? "min-w-0" : ""].join(" ")}>
                             {categoryIcon && (
                                 <img src={categoryIcon} alt={categoryName} className="w-[13px] h-[13px] md:w-5 md:h-5 object-contain" />
                             )}
@@ -184,12 +189,12 @@ const UnifiedPingCard = ({ ping }: UnifiedPingCardProps) => {
                 </div>
 
                 {/* ─── Body ────────────────────────────────── */}
-                <div className="flex flex-col gap-[13px]">
+                <div className={["flex flex-col gap-[13px]", isHistoryContext ? "min-w-0" : ""].join(" ")}>
                     <h3 className="font-['Poppins',sans-serif] font-semibold text-[14px] md:text-[16px] text-black leading-normal">
                         {currentPing.title}
                     </h3>
                     {currentPing.content && (
-                        <p className="font-['Poppins',sans-serif] font-medium text-[12px] md:text-[14px] text-black/70 leading-relaxed line-clamp-3">
+                        <p className={["font-['Poppins',sans-serif] font-medium text-[12px] md:text-[14px] text-black/70 leading-relaxed text-wrap line-clamp-3", isHistoryContext ? "break-all truncate" : ""].join(" ")}>
                             {currentPing.content}
                         </p>
                     )}
@@ -197,7 +202,7 @@ const UnifiedPingCard = ({ ping }: UnifiedPingCardProps) => {
                 </div>
 
                 {/* ─── Footer: Surge + wave & comment counts ─ */}
-                <div className="flex items-center justify-between">
+                <div className={["flex items-center justify-between", isHistoryContext ? "min-w-0" : ""].join(" ")}>
                     {/* Surge button */}
                     <button
                         onClick={handleSurge}

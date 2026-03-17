@@ -110,7 +110,7 @@ const Layout = () => {
           </div>
 
           <PingCreatorProvider expandPingCreator={() => { }}>
-            <main className={`mx-[15px] mt-[15px] md:mx-5 md:mt-5 md:w-[calc(100vw-45vw)] ${isFeedPage ? 'lg:max-w-[calc(100vw-680px)]' : (pingDetailId ? 'lg:max-w-11/12 lg:w-full' : 'lg:max-w-5/6 lg:w-5/6 lg:mx-10')}  `}>
+            <main className={` mx-[15px] mt-[15px] md:mx-5 md:mt-5 md:w-[calc(100vw-45vw)] ${isFeedPage ? 'lg:max-w-[calc(100vw-680px)]' : (pingDetailId ? 'lg:max-w-11/12 lg:w-full' : 'lg:max-w-5/6 lg:w-5/6 lg:mx-10')}  `}>
               <Outlet context={{ showPingFormModal, setShowPingFormModal }} />
             </main>
           </PingCreatorProvider>

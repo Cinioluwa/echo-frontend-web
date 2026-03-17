@@ -38,7 +38,7 @@ const InlineWavePreview = ({ pingId }: InlineWavePreviewProps) => {
     const displayedWaves = waves.slice(0, 2);
 
     return (
-        <div className="flex flex-col gap-[13px] w-full">
+        <div className="flex flex-col gap-[13px] w-full max-w-full">
             <p className="font-['Poppins',sans-serif] font-medium text-[15px] md:text-[13px] text-[#171717] w-[63px]">
                 Waves
             </p>
@@ -91,7 +91,7 @@ const InlineWavePreview = ({ pingId }: InlineWavePreviewProps) => {
 
                             {/* Solution text */}
                             <div className="flex-1 text-center px-2 min-w-0">
-                                <p className="font-['Poppins',sans-serif] font-medium md:font-semibold text-[10px] md:text-[10px] text-black truncate leading-normal">
+                                <p className="font-['Poppins',sans-serif] font-medium md:font-semibold text-wrap text-[10px] md:text-[10px] text-black truncate leading-normal">
                                     {wave.solution}
                                 </p>
                             </div>

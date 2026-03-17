@@ -22,7 +22,7 @@ const HistoryBanner = () => {
 
     return (
         <div
-            className="relative w-full overflow-hidden md:rounded-none rounded-lg"
+            className="relative w-full overflow-hidden md:rounded-none rounded-lg max-w-full"
             style={{ height: "unset" }}
         >
             {/* Desktop size */}

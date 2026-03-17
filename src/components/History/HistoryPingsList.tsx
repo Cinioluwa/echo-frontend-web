@@ -85,6 +85,7 @@ const HistoryPingsList = ({ isLoading: parentIsLoading = false }: HistoryPingsLi
                 <UnifiedPingCard
                     key={ping.id}
                     ping={ping}
+                    isHistoryContext
                 />
             ))}
             {pagination.hasNextPage && (

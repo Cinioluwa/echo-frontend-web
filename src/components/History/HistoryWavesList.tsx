@@ -127,7 +127,7 @@ const WaveHistoryCard = ({ wave, onDelete }: WaveHistoryCardProps) => {
     };
 
     return (
-        <div className="bg-[#FEFEFE] rounded-[10px] px-5 py-[15px] flex flex-col gap-[15px] w-full">
+        <div className="bg-[#FEFEFE] rounded-[10px] px-5 py-[15px] flex flex-col gap-[15px] w-full max-w-full">
             {/* ─── Header ───────────────────────────── */}
             <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4">

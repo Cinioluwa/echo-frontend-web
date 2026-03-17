@@ -40,7 +40,7 @@ const History = () => {
             : "pings";
 
     return (
-        <div className="flex flex-col w-full">
+        <div className="min-h-screen flex flex-col w-full max-w-full">
             {/* ─── Desktop action buttons row ─────────────────────────────── */}
             <div className="hidden md:flex items-center justify-between mb-[22px]">
                 <button
@@ -76,7 +76,7 @@ const History = () => {
             </div>
 
             {/* ─── Tab content ────────────────────────────────────────────── */}
-            <div className="mt-[15px]">
+            <div className="mt-[15px] flex-1 overflow-y-auto">
                 {activeTab === "pings" && <HistoryPingsList />}
                 {activeTab === "waves" && <HistoryWavesList />}
                 {activeTab === "comments" && <HistoryCommentsList />}
