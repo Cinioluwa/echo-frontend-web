@@ -3,12 +3,14 @@ import AdminLayout from "../../components/admin/AdminLayout";
 import PingFormModal from "../../components/PingFormModal";
 import WaveFormModal from "../../components/WaveFormModal";
 import AdminWaveCard from "../../components/admin/AdminWaveCard";
+import AnnouncementModal from "../../components/admin/AnnouncementModal";
 import { adminService } from "../../api";
 import type { AdminWave } from "../../api/types/admin.types";
 
 const FollowUp = () => {
   const [waveForm, setWaveForm] = useState(false);
   const [formSegment, setFormSegment] = useState("ping");
+  const [announcement, setAnnouncement] = useState(false);
 
   const [activePage, setActivePage] = useState({
     feedActive: false,
@@ -82,6 +84,7 @@ const FollowUp = () => {
         setForm={setWaveForm}
         activePage={activePage}
         setActivePage={setActivePage}
+        setAnnouncementModal={setAnnouncement}
       />
 
       <main className=" mr-2.5 ml-2.5 mt-5 md:mr-[46px] h-[calc(100vh-155px)] md:ml-[350px] md:mt-[155px]">
@@ -198,6 +201,8 @@ const FollowUp = () => {
           </WaveFormModal>
         </div>
       )}
+
+      {announcement && <AnnouncementModal setAnnouncementModal={setAnnouncement} />}
     </div>
   );
 };

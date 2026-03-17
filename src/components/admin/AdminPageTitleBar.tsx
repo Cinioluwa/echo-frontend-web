@@ -1,5 +1,4 @@
 import { useState, type ReactNode } from "react";
-const filters = "/assets/images/filters.svg";
 const menuBar = "/assets/images/menu-hotdog.svg";
 import type { AdminPages } from "./AdminSideBar";
 import MobileCategories from "../MobileCategories";
@@ -60,10 +59,6 @@ const AdminPageTitleBar = ({
       </div>
 
       <div className="flex items-center gap-[19px]">
-        <span className="hidden md:flex items-center gap-1">
-          <img src={filters} alt="" className="inline" />
-          <p className=" text-[#B29494] text-[15px] inline ">Filters</p>
-        </span>
         {children}
       </div>
 

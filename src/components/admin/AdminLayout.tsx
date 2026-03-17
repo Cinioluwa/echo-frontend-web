@@ -11,6 +11,7 @@ interface LayoutProps {
   setFormSegment: React.Dispatch<React.SetStateAction<string>>;
   setForm: React.Dispatch<React.SetStateAction<boolean>>;
   setActivePage: React.Dispatch<React.SetStateAction<AdminPages>>;
+  setAnnouncementModal: React.Dispatch<React.SetStateAction<boolean>>;
   activePage: AdminPages;
   heading: string;
 }
@@ -21,6 +22,7 @@ const AdminLayout = ({
   setActivePage,
   activePage,
   heading,
+  setAnnouncementModal,
 }: LayoutProps) => {
   return (
     <div>
@@ -33,6 +35,9 @@ const AdminLayout = ({
           setActivePage={setActivePage}
           heading={heading}
         >
+          <button onClick={() => setAnnouncementModal(true)} className="bg-[#FEF5EA] hidden sm:block text-[13px] rounded-[20px] px-4 border border-[#F49B31] py-2.5">
+            Publish Announcement
+          </button>
           <motion.button
             onClick={() => {
               setForm(true);
