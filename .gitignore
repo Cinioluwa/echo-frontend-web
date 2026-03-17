@@ -33,3 +33,7 @@ docs/
 .env.development
 .env.production
 .env.test
+
+# Agents
+.agents
+skills-lock.json

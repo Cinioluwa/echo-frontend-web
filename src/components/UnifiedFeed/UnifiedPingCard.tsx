@@ -74,11 +74,19 @@ const UnifiedPingCard = ({ ping }: UnifiedPingCardProps) => {
         navigate(`/feed/${currentPing.id}`);
     };
 
+    const updatePingStore = usePingsStore((state) => state.updatePing);
     const handleSurge = async (e: React.MouseEvent) => {
         e.stopPropagation();
         if (isToggling) return;
         try {
+            // Call backend and get latest surge state/count
             await toggleSurge("ping", String(currentPing.id));
+            // Optionally, refetch ping from backend for full consistency
+            const latest = await pingService.getPingById(String(currentPing.id));
+            updatePingStore(String(currentPing.id), {
+                surgeCount: latest.surgeCount,
+                hasSurged: latest.hasSurged,
+            });
         } catch (error) {
             console.error("Surge failed:", error);
         }

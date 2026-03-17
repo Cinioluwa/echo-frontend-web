@@ -245,6 +245,7 @@ export interface Comment {
   updatedAt?: string;
   surgeCount?: number;
   isAnonymous?: boolean;
+  hasSurged?: boolean; // Whether the current user has surged this comment
 }
 
 export interface CreateCommentRequest {

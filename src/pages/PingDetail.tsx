@@ -13,10 +13,11 @@
  */
 import { useState, useEffect } from "react";
 import { useParams, useNavigate, useOutletContext } from "react-router-dom";
-import { useAuthStore, useSurgeStore } from "../stores";
+import { useAuthStore, useSurgeStore, usePingsStore } from "../stores";
 import { pingService, waveService, categoryService } from "../api/services";
 import ProposeWaveBar from "../components/ProposeWaveBar";
 import CommentsPanel from "../components/CommentsPanel";
+import WaveCard from "../components/WaveCard";
 import { categoryImages } from "../components/CategoryImages";
 import { getSocket } from "../api/socket";
 import type { Ping, Wave, CategoryData } from "../api/types";
@@ -63,158 +64,7 @@ const getAuthorInitials = (name: string) =>
         .toUpperCase()
         .slice(0, 2);
 
-// ─── WaveCard ────────────────────────────────────────────────────────────────
 
-interface WaveCardProps {
-    wave: Wave;
-    isOwner: boolean;
-    onDelete?: (id: number) => void;
-}
-
-const WaveCard = ({ wave, isOwner, onDelete }: WaveCardProps) => {
-    const toggleSurge = useSurgeStore((state) => state.toggleSurge);
-    const hasSurged = useSurgeStore((state) => state.hasSurged("wave", String(wave.id)));
-    const isToggling = useSurgeStore(
-        (state) => state.isToggling[`wave-${wave.id}`] || false,
-    );
-
-    const authorName = getAuthorName(wave.author);
-    const initials = getAuthorInitials(authorName);
-    const surgeCount = wave.surgeCount || wave._count?.surges || 0;
-
-    // Debug log
-    console.log(`🌊 WaveCard [ID: ${wave.id}]`, {
-        authorRaw: wave.author,
-        authorName,
-        solution: wave.solution?.substring(0, 50),
-    });
-
-    const handleSurge = async (e: React.MouseEvent) => {
-        e.stopPropagation();
-        if (isToggling) return;
-        try {
-            await toggleSurge("wave", String(wave.id));
-        } catch (err) {
-            console.error("Wave surge failed:", err);
-        }
-    };
-
-    const handleDelete = (e: React.MouseEvent) => {
-        e.stopPropagation();
-        onDelete?.(wave.id);
-    };
-
-    // Badge logic: rank 1-3 = Top 3, UNDER_REVIEW = Under Review, POSTED = Posted
-    const badge =
-        wave.rank && wave.rank <= 3
-            ? { label: "Top 3", color: "#f49b31" }
-            : wave.status === "UNDER_REVIEW"
-                ? { label: "Under Review", color: "#f5c518" }
-                : wave.status === "POSTED"
-                    ? { label: "Posted", color: "#22c55e" }
-                    : null;
-
-    return (
-        <div className="bg-white rounded-[10px] px-[27.5px] py-[23px] flex flex-col gap-[17px] w-full min-w-full">
-            {/* Header: avatar + name/time + badge */}
-            <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2.5">
-                    <div className="w-10 h-10 rounded-full bg-[#ffc37b] flex items-center justify-center shrink-0 overflow-hidden">
-                        <span className="font-semibold text-[13px] text-white">{initials}</span>
-                    </div>
-                    <div className="flex flex-col">
-                        <span className="font-['Poppins',sans-serif] font-semibold text-[14px] text-black">
-                            {authorName}
-                        </span>
-                        <span className="font-['Poppins',sans-serif] font-medium  text-[10px] text-black">
-                            {formatTimestamp(wave.createdAt)}
-                        </span>
-                    </div>
-                </div>
-
-                <div className="flex gap-5">
-
-                    {badge && (
-                        <div className="border border-[#626665] rounded-[23px] flex items-center gap-1.5 px-[11px] py-1">
-                            <div
-                                className="w-[5px] h-[5px] rounded-full shrink-0"
-                                style={{ backgroundColor: badge.color }}
-                            />
-                            <span className="font-['Poppins',sans-serif] font-medium  text-[14px] text-black">
-                                {badge.label}
-                            </span>
-                        </div>
-                    )}
-                    {/* Delete — own waves only */}
-                    {isOwner && (
-                        <button
-                            type="button"
-                            onClick={handleDelete}
-                            aria-label="Delete wave"
-                            className="w-7 h-7 rounded-full bg-[#fef5ea] flex items-center justify-center hover:bg-red-100 transition-colors cursor-pointer"
-                        >
-                            <svg
-                                width="14"
-                                height="14"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                xmlns="http://www.w3.org/2000/svg"
-                                aria-hidden="true"
-                            >
-                                <path
-                                    d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"
-                                    stroke="#EF4444"
-                                    strokeWidth="1.8"
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                />
-                            </svg>
-                        </button>
-                    )}
-                </div>
-            </div>
-
-            {/* Body: solution text + surge + optional delete */}
-            <div className="flex items-start justify-between gap-2.5">
-                <p className="flex-1 font-['Poppins',sans-serif] font-medium  text-[12px] text-black leading-relaxed">
-                    {wave.solution}
-                </p>
-
-                <div className="flex flex-col items-center gap-2 shrink-0">
-                    {/* Surge button */}
-                    <button
-                        type="button"
-                        onClick={handleSurge}
-                        disabled={isToggling}
-                        aria-label={hasSurged ? "Remove surge" : "Surge"}
-                        className={`flex items-center gap-[5px] px-2 py-[5px] rounded-[15px] border border-black cursor-pointer transition-colors disabled:opacity-50 ${hasSurged
-                            ? "bg-[#f49b31] text-white border-[#f49b31]"
-                            : "bg-[#fef5ea] text-[#4a504e]"
-                            }`}
-                    >
-                        <svg
-                            width="10"
-                            height="14"
-                            viewBox="0 0 12 16"
-                            fill="none"
-                            xmlns="http://www.w3.org/2000/svg"
-                            aria-hidden="true"
-                        >
-                            <path
-                                d="M6.5 1L1 9h5l-0.5 6 6-8H7l0.5-6z"
-                                fill={hasSurged ? "white" : "#4A504E"}
-                            />
-                        </svg>
-                        <span className="font-['Poppins',sans-serif] font-semibold text-[11px]">
-                            {surgeCount}
-                        </span>
-                    </button>
-
-                </div>
-            </div>
-        </div>
-    );
-};
 
 // ─── PingDetail Page ─────────────────────────────────────────────────────────
 
@@ -223,12 +73,10 @@ const PingDetail = () => {
     const navigate = useNavigate();
     const currentUser = useAuthStore((state) => state.user);
     const toggleSurge = useSurgeStore((state) => state.toggleSurge);
-    const hasSurged = useSurgeStore((state) =>
-        state.hasSurged("ping", pingId ?? ""),
-    );
-    const isToggling = useSurgeStore(
-        (state) => state.isToggling[`ping-${pingId}`] || false,
-    );
+    const updatePingStore = usePingsStore((state) => state.updatePing);
+    const pingFromStore = usePingsStore((state) => pingId ? state.pingsById[String(pingId)] : null);
+    const hasSurged = useSurgeStore((state) => state.hasSurged("ping", pingId ?? ""));
+    const isToggling = useSurgeStore((state) => state.isToggling[`ping-${pingId}`] || false);
 
     const [ping, setPing] = useState<Ping | null>(null);
     const [isLoading, setIsLoading] = useState(true);
@@ -329,24 +177,25 @@ const PingDetail = () => {
 
     if (isLoading) return <p className="text-center py-10">Loading...</p>;
     if (error) return <p className="text-red-500 text-center py-10">{error}</p>;
-    if (!ping) return null;
 
+    const displayPing = pingFromStore || ping;
+    if (!displayPing) return null;
 
-    const authorName = getAuthorName(ping.author);
+    const authorName = getAuthorName(displayPing.author);
     const authorInitials = getAuthorInitials(authorName);
     // Use fetched categories map, fallback to ping.category if available
-    const categoryName = ping.categoryId && categories[ping.categoryId]
-        ? categories[ping.categoryId].name
-        : ping.category?.name || "";
+    const categoryName = displayPing.categoryId && categories[displayPing.categoryId]
+        ? categories[displayPing.categoryId].name
+        : displayPing.category?.name || "";
     const categoryIcon = categoryImages[categoryName];
-    const surgeCount = ping.surgeCount || ping._count?.surges || 0;
-    const commentCount = ping._count?.comments || 0;
-    const waveCount = ping._count?.waves || waves.length || 0;
+    const surgeCount = displayPing.surgeCount || displayPing._count?.surges || 0;
+    const commentCount = displayPing._count?.comments || 0;
+    const waveCount = displayPing._count?.waves || waves.length || 0;
 
     // Debug logs
     console.log("📌 PingDetail render:", {
-        pingId: ping.id,
-        categoryId: ping.categoryId,
+        pingId: displayPing.id,
+        categoryId: displayPing.categoryId,
         categoryName,
         categoryIcon: !!categoryIcon,
         waveCount: waves.length,
@@ -356,7 +205,15 @@ const PingDetail = () => {
         e.stopPropagation();
         if (isToggling) return;
         try {
-            await toggleSurge("ping", String(ping.id));
+            await toggleSurge("ping", String(displayPing?.id));
+            // Refetch ping from backend for consistency
+            if (displayPing?.id) {
+                const latest = await pingService.getPingById(String(displayPing.id));
+                updatePingStore(String(displayPing.id), {
+                    surgeCount: latest.surgeCount,
+                    hasSurged: latest.hasSurged,
+                });
+            }
         } catch (err) {
             console.error("Surge failed:", err);
         }
@@ -392,9 +249,9 @@ const PingDetail = () => {
 
             {/* ── ProposeWaveBar ────────────────────────── */}
             <ProposeWaveBar
-                pingId={pingId ?? String(ping.id)}
-                pingTitle={ping.title}
-                pingCreatedAt={ping.createdAt}
+                pingId={pingId ?? String(displayPing.id)}
+                pingTitle={displayPing.title}
+                pingCreatedAt={displayPing.createdAt}
                 onWaveProposed={() => {
                     if (!pingId) return;
                     waveService
@@ -422,7 +279,7 @@ const PingDetail = () => {
                                 {authorName}
                             </span>
                             <span className="font-['Poppins',sans-serif] font-medium text-[8px] text-black">
-                                {formatTimestamp(ping.createdAt)}
+                                {formatTimestamp(displayPing.createdAt)}
                             </span>
                         </div>
                     </div>
@@ -446,13 +303,13 @@ const PingDetail = () => {
 
                 {/* Title */}
                 <h1 className="font-['Poppins',sans-serif] font-semibold text-[14px] text-black">
-                    {ping.title}
+                    {displayPing.title}
                 </h1>
 
                 {/* Description */}
-                {ping.content && (
+                {displayPing.content && (
                     <p className="font-['Poppins',sans-serif] font-medium  text-[14px] text-[#626665] text-justify leading-relaxed">
-                        {ping.content}
+                        {displayPing.content}
                     </p>
                 )}
 
@@ -535,7 +392,7 @@ const PingDetail = () => {
             )}
 
             {/* ── Load more waves ───────────────────────── */}
-            {ping._count && waves.length < ping._count.waves && (
+            {displayPing._count && waves.length < displayPing._count.waves && (
                 <div className="flex justify-center">
                     <button
                         type="button"
@@ -549,7 +406,7 @@ const PingDetail = () => {
 
             {/* ── CommentsPanel (mobile only — desktop uses Layout right-aside) ── */}
             <div className="lg:hidden">
-                <CommentsPanel pingId={pingId ?? String(ping.id)} />
+                <CommentsPanel pingId={pingId ?? String(displayPing.id)} />
             </div>
         </div>
     );
