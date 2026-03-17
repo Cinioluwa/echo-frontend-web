@@ -10,6 +10,7 @@ export interface User {
   email: string;
   firstName: string;
   lastName: string;
+  profilePicture?: string;
   level?: number; // Student year/level
   role: "USER" | "ADMIN" | "REPRESENTATIVE" | "LEADER" | "SUPER_ADMIN";
   organizationId: number | null;

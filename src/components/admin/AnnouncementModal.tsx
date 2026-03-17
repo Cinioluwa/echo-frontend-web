@@ -1,13 +1,9 @@
 import { useState } from "react";
-import AnnouncementCollege from "./AnnouncementCollege";
-import AnnouncementGroup from "./AnnouncementGroup";
 import { adminService } from "../../api";
 
 interface AnnouncementDetails {
   title: string;
   description: string;
-  group: string;
-  college: string;
 }
 
 interface AnnouncementModalProps {
@@ -17,54 +13,21 @@ interface AnnouncementModalProps {
 const AnnouncementModal = ({
   setAnnouncementModal,
 }: AnnouncementModalProps) => {
-  const [announcementData, setAnnouncementData] = useState<AnnouncementDetails>(
-    {
-      title: "",
-      description: "",
-      group: "",
-      college: "",
-    },
-  );
+  const [announcementData, setAnnouncementData] = useState<AnnouncementDetails>({
+    title: "",
+    description: "",
+  });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Helper function to map UI selections to category IDs
-  const mapToCategories = (_college: string, _group: string): number[] => {
-    // Implement mapping logic based on your categories
-    // This is a placeholder - you'll need to adjust based on your actual category structure
-    const categories: number[] = [];
-
-    // Example: if you have a way to map college/group strings to category IDs
-    // You might need to fetch categories first or maintain a mapping
-    // For now, returning empty array as placeholder
-    return categories;
-  };
-
   async function submitForm() {
-    if (announcementData.college === "") {
-      alert("Select a college!");
-      return;
-    }
-    if (announcementData.group === "") {
-      alert("Select a group!");
-      return;
-    }
-
     try {
       setLoading(true);
       setError(null);
 
-      // Map college/group to categoryIds if needed
-      // This depends on your category structure
-      const categoryIds = mapToCategories(
-        announcementData.college,
-        announcementData.group
-      );
-
       await adminService.createAnnouncement({
         title: announcementData.title.trim(),
         content: announcementData.description.trim(),
-        categoryIds,
       });
 
       alert("Announcement published successfully!");
@@ -73,8 +36,6 @@ const AnnouncementModal = ({
       setAnnouncementData({
         title: "",
         description: "",
-        group: "",
-        college: "",
       });
 
       setAnnouncementModal(false);
@@ -148,27 +109,7 @@ const AnnouncementModal = ({
               />
             </div>
 
-            <div className="flex flex-col items-center my-4 gap-8">
-              <div className="overflow-y-scroll [scrollbar-width:none]">
-                <AnnouncementGroup
-                  group={announcementData.group}
-                  setGroup={(group) =>
-                    setAnnouncementData({ ...announcementData, group: group })
-                  }
-                />
-              </div>
-              <div className="overflow-y-scroll [scrollbar-width:none]">
-                <AnnouncementCollege
-                  college={announcementData.college}
-                  setCollege={(college) =>
-                    setAnnouncementData({
-                      ...announcementData,
-                      college: college,
-                    })
-                  }
-                />
-              </div>
-            </div>
+
           </fieldset>
 
           {error && (

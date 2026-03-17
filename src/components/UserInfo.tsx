@@ -40,7 +40,7 @@ const UserInfo = () => {
 
   const handleProfileSettings = () => {
     setIsDropdownOpen(false);
-    navigate("/profile");
+    navigate("/user/profile");
   };
 
   const toggleDropdown = () => {

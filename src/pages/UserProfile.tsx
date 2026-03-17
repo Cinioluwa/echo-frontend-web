@@ -1,8 +1,7 @@
 import ProfileBadge from "../components/ProfileBadge";
 import ProfileDataField from "../components/ProfileDataField";
-import ProfileSelectInput from "../components/ProfileSelectInput";
 import UserProfileSidePanel from "../components/UserProfileSidePanel";
-import profileImage from "../assets/images/profileImage.jpeg";
+import profileImage from "/assets/images/profileImage.jpeg";
 import ProfileLayout from "../components/ProfileLayout";
 
 const pages = {
@@ -60,24 +59,6 @@ const UserProfile = () => {
                 note="Your email address cannot be changed"
               />
 
-              {/* SELECT INPUTS */}
-              <div className="pt-6">
-                <h3 className="text-lg mb-5">Academic Identifiers</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-                  <ProfileSelectInput
-                    label="Department"
-                    placeholder="Select department"
-                  />
-                  <ProfileSelectInput
-                    label="Hall"
-                    placeholder="Hall of residence"
-                  />
-                  <ProfileSelectInput
-                    label="Level"
-                    placeholder="Academic Level"
-                  />
-                </div>
-              </div>
             </div>
           </div>
         </div>

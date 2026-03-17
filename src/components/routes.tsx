@@ -14,6 +14,7 @@ import { createBrowserRouter, Navigate } from "react-router-dom";
 import LoadingFallback from "./auth/LoadingFallback";
 import AdminRoute from "./auth/AdminRoute";
 import ProtectedRoute from "./auth/ProtectedRoute";
+import ProfileRedirect from "./auth/ProfileRedirect";
 import Layout from "./Layout";
 
 // Eager load critical auth pages for immediate user experience
@@ -35,7 +36,6 @@ const WaitingRoom = lazy(() => import("../pages/auth/WaitingRoom"));
 const UnifiedFeed = lazy(() => import("../pages/UnifiedFeed"));
 const PingDetail = lazy(() => import("../pages/PingDetail"));
 const History = lazy(() => import("../pages/History"));
-const Profile = lazy(() => import("../pages/Profile"));
 
 // Lazy load admin pages
 const Feed = lazy(() => import("../pages/admin/AdminFeed"));
@@ -140,10 +140,6 @@ const router = createBrowserRouter([
         path: "history/:tab",
         element: withSuspense(History),
       },
-      {
-        path: "profile",
-        element: withSuspense(Profile),
-      },
     ],
   },
 
@@ -159,6 +155,12 @@ const router = createBrowserRouter([
   {
     path: "waveHistory",
     element: <Navigate to="/history" replace />,
+  },
+
+  // Conditional profile redirect — admins to /admin/profile, users to /user/profile
+  {
+    path: "/profile",
+    element: <ProfileRedirect />,
   },
 
   {
