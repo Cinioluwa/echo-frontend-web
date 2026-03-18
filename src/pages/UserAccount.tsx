@@ -3,12 +3,78 @@ import ProfileLayout from "../components/ProfileLayout";
 import { HiOutlineLogout } from "react-icons/hi";
 import { HiOutlineExclamationTriangle, HiOutlineTrash } from "react-icons/hi2";
 import ProfilePasswordForm from "../components/ProfilePasswordForm";
+import { useState } from "react";
+import { useAuthStore } from "../stores/auth/useAuthStore";
+import userService from "../api/services/user.service";
 
 const pages = {
   profile: false,
   account: true,
   notification: false,
   privacy: false,
+};
+
+// Sign Out Button Component
+const SignOutButton = () => {
+  const logout = useAuthStore((s) => s.logout);
+  return (
+    <button
+      className="flex items-center gap-2 px-6 py-2 bg-white border border-orange-200 rounded-xl text-sm text-[#4A3728] hover:bg-orange-50 transition"
+      onClick={logout}
+    >
+      <HiOutlineLogout size={18} />
+      Sign out
+    </button>
+  );
+};
+
+// Delete Account Button Component
+const DeleteAccountButton = () => {
+  const logout = useAuthStore((s) => s.logout);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState(false);
+
+  const handleDelete = async () => {
+    if (
+      !window.confirm(
+        "Are you sure you want to permanently delete your account? This cannot be undone."
+      )
+    )
+      return;
+
+    setLoading(true);
+    setError(null);
+
+    try {
+      await userService.deleteMe();
+      setSuccess(true);
+      setTimeout(() => logout(), 1000);
+    } catch (err: any) {
+      setError(err?.response?.data?.error || err?.message || "Failed to delete account.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="flex flex-col items-end gap-2">
+      <button
+        className="flex items-center justify-center gap-2 px-6 py-3 bg-[#D96666] text-white rounded-xl text-sm font-bold hover:bg-red-700 transition shadow-sm disabled:opacity-60"
+        onClick={handleDelete}
+        disabled={loading || success}
+      >
+        <HiOutlineTrash size={18} />
+        {loading ? "Deleting..." : success ? "Deleted" : "Delete Account"}
+      </button>
+      {error && <div className="text-red-600 text-xs text-right">{error}</div>}
+      {success && (
+        <div className="text-green-600 text-xs text-right">
+          Account deleted. Redirecting...
+        </div>
+      )}
+    </div>
+  );
 };
 
 const UserAccount = () => {
@@ -35,10 +101,7 @@ const UserAccount = () => {
                     Sign out of your account on this device
                   </p>
                 </div>
-                <button className="flex items-center gap-2 px-6 py-2 bg-white border border-orange-200 rounded-xl text-sm text-[#4A3728] hover:bg-orange-50 transition">
-                  <HiOutlineLogout size={18} />
-                  Sign out
-                </button>
+                <SignOutButton />
               </div>
             </section>
 
@@ -72,10 +135,7 @@ const UserAccount = () => {
                     </p>
                   </div>
                 </div>
-                <button className="flex items-center justify-center gap-2 px-6 py-3 bg-[#D96666] text-white rounded-xl text-sm **font-bold** hover:bg-red-700 transition shadow-sm">
-                  <HiOutlineTrash size={18} />
-                  Delete Account
-                </button>
+                <DeleteAccountButton />
               </div>
             </section>
           </div>

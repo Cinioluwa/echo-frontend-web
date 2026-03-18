@@ -27,9 +27,17 @@ const notificationService = {
     prefs: NotificationPreferences,
   ): Promise<NotificationPreferences> => {
     // Only include allowed fields in the request
-    const allowedFields = ['waveStatusUpdated', 'officialResponse', 'announcement', 'commentSurge', 'pingCreated'] as const;
+    const allowedFields = [
+      "waveStatusUpdated",
+      "officialResponse",
+      "announcement",
+      "commentSurge",
+      "pingCreated",
+    ] as const;
     const sanitized = Object.fromEntries(
-      Object.entries(prefs).filter(([key]) => allowedFields.includes(key as any))
+      Object.entries(prefs).filter(([key]) =>
+        allowedFields.includes(key as any),
+      ),
     ) as NotificationPreferences;
 
     const response = await api.patch<NotificationPreferences>(

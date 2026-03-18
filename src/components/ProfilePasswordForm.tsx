@@ -1,43 +1,60 @@
-// import {z} from "zod";
-// import useForm from "react-hook-form";
+
+import { useState } from "react";
+import usePasswordChange from "../hooks/usePasswordChange";
+
 
 const ProfilePasswordForm = () => {
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const { loading, error, success, changePassword } = usePasswordChange();
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!currentPassword || !newPassword) return;
+    await changePassword(currentPassword, newPassword);
+    setCurrentPassword("");
+    setNewPassword("");
+  };
+
   return (
-    <form onSubmit={(e) => e.preventDefault()}>
+    <form onSubmit={handleSubmit}>
       <h2 className="text-xl text-[#4A3728] mb-1">Change Password</h2>
       <p className="text-sm text-gray-400 mb-6">Manage your account</p>
 
       <div className="space-y-4">
-        {/* Main Inputs */}
         <div className="flex flex-col md:flex-row gap-4">
           <input
             type="password"
             placeholder="Old Password"
+            value={currentPassword}
+            onChange={e => setCurrentPassword(e.target.value)}
             className="flex-1 p-4 bg-[#FFFBF5] border border-orange-100 rounded-xl text-sm italic focus:outline-none focus:ring-1 focus:ring-orange-200"
+            required
+            minLength={6}
           />
           <input
             type="password"
             placeholder="New Password"
+            value={newPassword}
+            onChange={e => setNewPassword(e.target.value)}
             className="flex-1 p-4 bg-[#FFFBF5] border border-orange-100 rounded-xl text-sm italic focus:outline-none focus:ring-1 focus:ring-orange-200"
+            required
+            minLength={8}
           />
-          <button className="px-6 py-4 bg-[#E8A355] text-white rounded-xl text-sm shadow-md hover:bg-[#d49246] transition md:w-auto">
-            Change Password
+          <button
+            type="submit"
+            className="px-6 py-4 bg-[#E8A355] text-white rounded-xl text-sm shadow-md hover:bg-[#d49246] transition md:w-auto disabled:opacity-60"
+            disabled={loading || !currentPassword || !newPassword}
+          >
+            {loading ? "Changing..." : "Change Password"}
           </button>
         </div>
-
-        {/* OTP Verification Section */}
-        <div className="flex flex-col md:flex-row items-center gap-4 pt-4">
-          <div className="relative w-full md:w-2/3">
-            <input
-              type="text"
-              placeholder="Enter OTP sent"
-              className="w-full p-4 bg-[#FFFBF5] border border-orange-100 rounded-xl text-sm italic focus:outline-none focus:ring-1 focus:ring-orange-200"
-            />
-          </div>
-          <button className="w-full md:w-auto px-10 py-4 bg-[#E8A355] text-white rounded-xl text-sm shadow-md hover:bg-[#d49246] transition">
-            Confirm
-          </button>
-        </div>
+        {error && (
+          <div className="text-red-600 text-sm mt-2">{error}</div>
+        )}
+        {success && (
+          <div className="text-green-600 text-sm mt-2">Password changed successfully!</div>
+        )}
       </div>
     </form>
   );

@@ -15,6 +15,7 @@ export { default as searchService } from "./search.service";
 export { default as announcementService } from "./announcement.service";
 export { default as organizationService } from "./organization.service";
 export { default as uploadService } from "./upload.service";
+export { default as passwordService } from "./password.service";
 
 export { default as notificationService } from "./notification.service";
 
