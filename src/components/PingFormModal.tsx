@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import Toggle from "./Toggle";
 import { v4 as uuidv4 } from "uuid";
 import PostSuccessModal from "./PostSuccessModal";
-import { pingService, waveService } from "../api/services";
+import { pingService, waveService, uploadService } from "../api/services";
 import { useDebounce } from "../hooks";
 import type { Ping } from "../api/types/index";
 import { usePingsStore, useWavesStore } from "../stores";
@@ -109,6 +109,8 @@ const PingFormModal = ({
   // UI state
   const [postSuccessModal, setPostSuccessModal] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState<number | null>(null);
+  const [uploadError, setUploadError] = useState<string | null>(null);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   // Refs for file inputs and dropdown container
@@ -351,6 +353,24 @@ const PingFormModal = ({
     }
 
     setIsSubmitting(true);
+    setUploadProgress(null);
+    setUploadError(null);
+
+    let mediaIds: number[] = [];
+    // Upload photos if any
+    if (pingData.photos.length > 0) {
+      try {
+        // Show progress UI (simulate for now, can be improved with axios onUploadProgress)
+        setUploadProgress(0);
+        const uploaded = await uploadService.uploadFiles(pingData.photos, "ping");
+        mediaIds = uploaded.map((m) => m.id);
+        setUploadProgress(100);
+      } catch (err: any) {
+        setUploadError("Photo upload failed. Please try again.");
+        setIsSubmitting(false);
+        return;
+      }
+    }
 
     try {
       const createdPing = await pingService.createPing({
@@ -358,14 +378,11 @@ const PingFormModal = ({
         content: pingData.description.trim(),
         categoryId: pingData.categoryId,
         isAnonymous: pingData.anonymous,
+        mediaIds,
       });
 
-      console.log("Ping created successfully:", createdPing);
-
-      // Add the new ping to the store immediately (appears at top)
       usePingsStore.getState().addPing(createdPing);
 
-      // Update legacy state for compatibility
       const newPingFormDetails: PingFormDetails = {
         cat: pingData.categoryName.trim(),
         catId: pingData.categoryId,
@@ -398,8 +415,7 @@ const PingFormModal = ({
       setPostSuccessModal(true);
       resetPingData();
     } catch (err: any) {
-      console.error("Error creating ping:", err);
-      alert(err.response?.data?.error || "Failed to create ping. Please try again.");
+      setUploadError(err.response?.data?.error || "Failed to create ping. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
@@ -411,16 +427,30 @@ const PingFormModal = ({
     }
 
     setIsSubmitting(true);
+    setUploadProgress(null);
+    setUploadError(null);
+
+    let mediaIds: number[] = [];
+    if (waveData.photos.length > 0) {
+      try {
+        setUploadProgress(0);
+        const uploaded = await uploadService.uploadFiles(waveData.photos, "wave");
+        mediaIds = uploaded.map((m) => m.id);
+        setUploadProgress(100);
+      } catch (err: any) {
+        setUploadError("Photo upload failed. Please try again.");
+        setIsSubmitting(false);
+        return;
+      }
+    }
 
     try {
       const createdWave = await waveService.proposeWave({
         solution: waveData.solution.trim(),
         pingId: String(waveData.selectedPing!.id),
+        mediaIds, // Backend must support this field for wave uploads
       });
 
-      console.log("Wave proposed successfully:", createdWave);
-
-      // Add the new wave to the store immediately (appears at top)
       useWavesStore.getState().addWave(createdWave);
 
       if (onWaveCreated) {
@@ -434,8 +464,7 @@ const PingFormModal = ({
       setPostSuccessModal(true);
       resetWaveData();
     } catch (err: any) {
-      console.error("Error proposing wave:", err);
-      alert(err.response?.data?.error || "Failed to propose wave. Please try again.");
+      setUploadError(err.response?.data?.error || "Failed to propose wave. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
@@ -562,6 +591,13 @@ const PingFormModal = ({
           </div>
         )}
 
+        {/* Upload Progress/Error */}
+        {uploadProgress !== null && (
+          <div className="w-full text-xs text-gray-500">Uploading photos... {uploadProgress}%</div>
+        )}
+        {uploadError && (
+          <div className="w-full text-xs text-red-500">{uploadError}</div>
+        )}
         {/* Action Buttons */}
         <div className="w-full flex justify-between items-center">
           <button
@@ -711,6 +747,13 @@ const PingFormModal = ({
           </>
         )}
 
+        {/* Upload Progress/Error */}
+        {uploadProgress !== null && (
+          <div className="w-full text-xs text-gray-500">Uploading photos... {uploadProgress}%</div>
+        )}
+        {uploadError && (
+          <div className="w-full text-xs text-red-500">{uploadError}</div>
+        )}
         {/* Action Buttons */}
         <div className="w-full flex justify-between items-center">
           <button

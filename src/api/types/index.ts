@@ -210,6 +210,10 @@ export interface UpdateWaveRequest {
 export interface ProposeWaveRequest {
   solution: string;
   pingId: string;
+  /**
+   * Optional media IDs for attached files/photos (for wave photo upload)
+   */
+  mediaIds?: number[];
   // Note: category is inherited from the parent ping on backend
 }
 
