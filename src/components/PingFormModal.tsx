@@ -37,7 +37,6 @@ export interface PingFormDetails {
   formSegment: string;
   anonymous: boolean;
   pingDesc: string;
-  hashtag: string;
   pingTitle: string;
   createdAt: string;
   id: string;
@@ -124,7 +123,6 @@ const PingFormModal = ({
     catId: 0,
     anonymous: false,
     pingDesc: "",
-    hashtag: "",
     pingTitle: "",
     formSegment: "ping",
     createdAt: "",
@@ -389,7 +387,6 @@ const PingFormModal = ({
         formSegment: "ping",
         anonymous: pingData.anonymous,
         pingTitle: pingData.title.trim(),
-        hashtag: "",
         pingDesc: pingData.description.trim(),
         id: uuidv4(),
         createdAt: new Date()
