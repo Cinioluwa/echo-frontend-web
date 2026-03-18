@@ -830,6 +830,87 @@ Get activity analytics for the current user.
 
 ---
 
+### GET /api/users/me/notification-preferences
+
+Get the authenticated user's notification preferences.
+
+**Auth Required:** Yes
+
+**Success Response (200):**
+
+```json
+{
+  "userId": 1,
+  "waveStatusUpdated": true,
+  "officialResponse": true,
+  "announcement": true,
+  "commentSurge": true,
+  "pingCreated": true,
+  "createdAt": "2025-11-07T10:30:00.000Z",
+  "updatedAt": "2025-11-07T10:30:00.000Z"
+}
+```
+
+**Notes:**
+
+- If preferences don't exist, default values (all `true`) are returned
+- These preferences control which notification types are sent to the user
+
+**Preference Fields:**
+
+- `waveStatusUpdated`: Receive notifications when a wave (solution) status is updated
+- `officialResponse`: Receive notifications when an official response is posted to your ping
+- `announcement`: Receive notifications when new announcements are posted
+- `commentSurge`: Receive notifications when someone surges (likes) your comment
+- `pingCreated`: Receive notifications when a new ping is created (controlled by subscription filters)
+
+---
+
+### PATCH /api/users/me/notification-preferences
+
+Update the authenticated user's notification preferences (partial update).
+
+**Auth Required:** Yes
+
+**Request Body:**
+
+```json
+{
+  "waveStatusUpdated": false,
+  "officialResponse": true,
+  "announcement": false,
+  "commentSurge": true,
+  "pingCreated": true
+}
+```
+
+**Notes:**
+
+- All fields are optional; only provided fields are updated
+- Omitted fields retain their current values
+
+**Success Response (200):**
+
+```json
+{
+  "userId": 1,
+  "waveStatusUpdated": false,
+  "officialResponse": true,
+  "announcement": false,
+  "commentSurge": true,
+  "pingCreated": true,
+  "createdAt": "2025-11-07T10:30:00.000Z",
+  "updatedAt": "2026-03-18T14:22:00.000Z"
+}
+```
+
+**Error Responses:**
+
+- `400` - Invalid request body or invalid field values
+- `401` - Unauthorized (missing or invalid token)
+
+---
+
 ## Pings (Posts/Issues)
 
 ### POST /api/pings

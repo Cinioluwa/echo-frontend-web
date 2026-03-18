@@ -3,12 +3,13 @@ interface toggleProps {
   onChange?: () => void;
 }
 
-const Toggle = ({ onChange }: toggleProps) => {
+const Toggle = ({ checked = false, onChange }: toggleProps) => {
   return (
     <label className="relative flex gap-2.5 items-center text-[12px] justify-center cursor-pointer">
       <div className="relative ">
         <input
           onChange={onChange}
+          checked={checked}
           name="anonymoucCheck"
           id="anonymousCheck"
           type="checkbox"

@@ -16,5 +16,7 @@ export { default as announcementService } from "./announcement.service";
 export { default as organizationService } from "./organization.service";
 export { default as uploadService } from "./upload.service";
 
+export { default as notificationService } from "./notification.service";
+
 // Re-export types for convenience
 export type * from "../types/index";
