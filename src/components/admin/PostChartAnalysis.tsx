@@ -67,7 +67,7 @@ const PostChartAnalysis = ({
                   innerRadius={80}
                   outerRadius={110}
                 >
-                  {levelCommentData.map((entry, index) => (
+                  {levelCommentData.map((_, index) => (
                     <Cell key={index} fill={COLORS[index]} />
                   ))}
                 </Pie>
@@ -103,7 +103,7 @@ const PostChartAnalysis = ({
                   innerRadius={80}
                   outerRadius={110}
                 >
-                  {levelSurgeData.map((entry, index) => (
+                  {levelSurgeData.map((_, index) => (
                     <Cell key={index} fill={COLORS[index]} />
                   ))}
                 </Pie>
@@ -134,80 +134,80 @@ const PostChartAnalysis = ({
 
       <div className="flex flex-col items-center">
         <p className="font-semibold">Analytics by College</p>
-          <div className="flex">
-            <div className="w-65 h-65 relative">
-              <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
+        <div className="flex">
+          <div className="w-65 h-65 relative">
+            <ResponsiveContainer width="100%" height="100%">
+              <PieChart>
                 <Tooltip />
-                  <Pie
-                    data={collegeCommentData}
-                    dataKey="Comment"
-                    innerRadius={80}
-                    outerRadius={110}
-                  >
-                    {collegeCommentData.map((entry, index) => (
-                      <Cell key={index} fill={COLORS[index]} />
-                    ))}
-                  </Pie>
-                </PieChart>
-              </ResponsiveContainer>
-              <div
-                style={{
-                  position: "absolute",
-                  top: "50%",
-                  left: "50%",
-                  transform: "translate(-50%, -50%)",
-                  textAlign: "center",
-                }}
-              >
-                <div className="flex flex-col items-center">
-                  <span style={{ fontSize: 22 }}>
-                    <FaCommentDots />
-                  </span>
-                  <div>
-                    <h2>{totalCollegeComments}</h2>
-                    <p className="text-[#515052]">Total comments</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="w-65 h-65 relative">
-              <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                <Tooltip />
-                  <Pie
-                    data={collegeSurgeData}
-                    dataKey="Surge"
-                    innerRadius={80}
-                    outerRadius={110}
-                  >
-                    {collegeSurgeData.map((entry, index) => (
-                      <Cell key={index} fill={COLORS[index]} />
-                    ))}
-                  </Pie>
-                </PieChart>
-              </ResponsiveContainer>
-              <div
-                style={{
-                  position: "absolute",
-                  top: "50%",
-                  left: "50%",
-                  transform: "translate(-50%, -50%)",
-                  textAlign: "center",
-                }}
-              >
-                <div className="flex flex-col items-center">
-                  <span style={{ fontSize: 22 }}>
-                    <IoFlash />
-                  </span>
-                  <div>
-                    <h2>{totalCollegeSurges}</h2>
-                    <p className="text-[#515052]">Total Surges</p>
-                  </div>
+                <Pie
+                  data={collegeCommentData}
+                  dataKey="Comment"
+                  innerRadius={80}
+                  outerRadius={110}
+                >
+                  {collegeCommentData.map((_, index) => (
+                    <Cell key={index} fill={COLORS[index]} />
+                  ))}
+                </Pie>
+              </PieChart>
+            </ResponsiveContainer>
+            <div
+              style={{
+                position: "absolute",
+                top: "50%",
+                left: "50%",
+                transform: "translate(-50%, -50%)",
+                textAlign: "center",
+              }}
+            >
+              <div className="flex flex-col items-center">
+                <span style={{ fontSize: 22 }}>
+                  <FaCommentDots />
+                </span>
+                <div>
+                  <h2>{totalCollegeComments}</h2>
+                  <p className="text-[#515052]">Total comments</p>
                 </div>
               </div>
             </div>
           </div>
+          <div className="w-65 h-65 relative">
+            <ResponsiveContainer width="100%" height="100%">
+              <PieChart>
+                <Tooltip />
+                <Pie
+                  data={collegeSurgeData}
+                  dataKey="Surge"
+                  innerRadius={80}
+                  outerRadius={110}
+                >
+                  {collegeSurgeData.map((_, index) => (
+                    <Cell key={index} fill={COLORS[index]} />
+                  ))}
+                </Pie>
+              </PieChart>
+            </ResponsiveContainer>
+            <div
+              style={{
+                position: "absolute",
+                top: "50%",
+                left: "50%",
+                transform: "translate(-50%, -50%)",
+                textAlign: "center",
+              }}
+            >
+              <div className="flex flex-col items-center">
+                <span style={{ fontSize: 22 }}>
+                  <IoFlash />
+                </span>
+                <div>
+                  <h2>{totalCollegeSurges}</h2>
+                  <p className="text-[#515052]">Total Surges</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );

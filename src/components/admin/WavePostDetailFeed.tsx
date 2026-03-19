@@ -1,9 +1,9 @@
-import type { proposedWaveDetails } from "../ProposeWaveModal";
+import type { AdminWave } from "../../api/types/admin.types";
 import AdminSurgeView from "./AdminSurgeView";
 import AdminWaveCard from "./AdminWaveCard";
 
 interface AdminWaveCardProps {
-  waves: proposedWaveDetails;
+  waves: AdminWave;
 }
 
 // SIMULATING BACKEND DATA

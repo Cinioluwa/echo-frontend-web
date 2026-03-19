@@ -1,12 +1,12 @@
 import { useState } from "react";
-import type { PingFormDetails } from "../PingFormModal";
+import type { AdminPing } from "../../api/types/admin.types";
 import AdminComment from "./AdminComment";
 import AdminCommentBox from "./AdminCommentBox";
 import AdminPingCard from "./AdminPingCard";
 import { FaCommentDots } from "react-icons/fa6";
 
 interface AdminPingCardProps {
-  pings: PingFormDetails;
+  pings: AdminPing;
 }
 
 const comments = [

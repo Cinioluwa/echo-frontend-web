@@ -30,17 +30,33 @@ const legendData = [
 
 // SELECTED PING AND WAVE DETAILS TO BE DISPLAYED ON POST DETAILS PAGE. THIS DATA IS SIMULATED TO BE FETCHED FROM THE SERVER.
 
-const pingFormDetails = {
-  cat: "Academics",
-  pingDesc:
+import type { AdminPing } from "../../api/types/admin.types";
+
+const pingFormDetails: AdminPing = {
+  id: 1,
+  title: "Enhance the Microphone System in EIE Large Classroom",
+  content:
     "Lorem, ipsum dolor sit amet consectetur adipisicing elit. Voluptatem delectus aut ut iure reprehenderit, deleniti ea, commodi a inventore facere aliquam. Vel magnam sapiente, accusamus maxime ullam esse molestiae beatae! Lorem, ipsum dolor sit amet consectetur adipisicing elit. Voluptatem delectus aut ut iure reprehenderit, deleniti ea, commodi a inventore facere aliquam. Vel magnam sapiente, accusamus maxime ullam esse molestiae beatae! Lorem, ipsum dolor sit amet consectetur adipisicing elit. Voluptatem delectus aut ut iure reprehenderit, deleniti ea, commodi a inventore facere aliquam. Vel magnam sapiente, accusamus maxime ullam esse molestiae beatae!",
-  pingTitle: "Enhance the Microphone System in EIE Large Classroom",
-  createdAt: "Oct 8, 11:00 am",
-  anonymous: true,
-  hashtag: "string",
-  formSegment: "ping",
-  id: "string",
-  status: "approved",
+  categoryId: 1,
+  status: "POSTED",
+  progressStatus: "PENDING",
+  isAnonymous: true,
+  surgeCount: 45,
+  viewCount: 230,
+  createdAt: "2026-03-08T11:00:00Z",
+  updatedAt: "2026-03-08T11:00:00Z",
+  acknowledgedAt: null,
+  resolvedAt: null,
+  category: {
+    id: 1,
+    name: "Academics",
+  },
+  author: null,
+  _count: {
+    waves: 12,
+    comments: 8,
+    surges: 45,
+  },
 };
 
 const PostDetails = () => {
