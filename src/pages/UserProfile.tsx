@@ -114,13 +114,6 @@ const UserProfile = () => {
                     value={user.email}
                     note="Your email address cannot be changed"
                   />
-                  {user.level && (
-                    <ProfileDataField
-                      label="Academic Level"
-                      value={user.level.toString()}
-                      note="Set during onboarding. Contact support to change."
-                    />
-                  )}
                 </div>
               </>
             ) : null}

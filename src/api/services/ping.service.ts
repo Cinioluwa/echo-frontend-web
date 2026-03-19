@@ -155,6 +155,17 @@ const pingService = {
     const response = await api.patch<Ping>(`/pings/${id}/resolve`);
     return response.data;
   },
+
+  /**
+   * Mark a ping as resolved
+   * Only ping owner or admin can resolve
+   * @param id Ping ID
+   * @returns Updated ping with resolved status
+   */
+  markAsResolved: async (id: string): Promise<Ping> => {
+    const response = await api.patch<Ping>(`/pings/${id}/resolve`);
+    return response.data;
+  },
 };
 
 export default pingService;

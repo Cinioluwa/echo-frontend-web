@@ -69,9 +69,9 @@ const AdminProfile = () => {
       setUser((prev) =>
         prev
           ? {
-              ...prev,
-              profilePicture: response.user?.profilePictureUrl || response.profilePictureUrl,
-            }
+            ...prev,
+            profilePicture: response.user?.profilePictureUrl || response.profilePictureUrl,
+          }
           : prev
       );
     } catch (err) {

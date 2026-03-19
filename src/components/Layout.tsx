@@ -12,7 +12,7 @@
  *     - /feed          → AnnouncementWidget + Top3Widget (Phase 2)
  *     - /feed/:pingId  → CommentsPanel (Phase 3)
  */
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Outlet, useLocation } from "react-router-dom";
 import NavBar from "./NavBar";
 import SideBar from "./SideBar";
@@ -25,7 +25,7 @@ import { PingCreatorProvider } from "../contexts/PingCreatorContext";
 import { announcementService, publicService, pingService } from "../api/services";
 import type { Announcement, Ping } from "../api/types";
 import MarkAsResolvedBar from "./MarkAsResolvedBar";
-import { useAuthStore } from "../stores";
+import { useAuthStore, usePingsStore } from "../stores";
 
 
 const Layout = () => {
@@ -35,12 +35,14 @@ const Layout = () => {
   const pingDetailId = pingDetailMatch?.[1] ?? null;
 
   const currentUser = useAuthStore((state) => state.user);
+  const updatePingStore = usePingsStore((state) => state.updatePing);
 
   const [announcement, setAnnouncement] = useState<Announcement | null>(null);
   const [top3, setTop3] = useState<Ping[]>([]);
   const [showPingFormModal, setShowPingFormModal] = useState(false);
   const [ping, setPing] = useState<Ping | null>(null);
   const [isResolvingPing, setIsResolvingPing] = useState(false);
+  const [resolveError, setResolveError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!isFeedPage) return;
@@ -69,20 +71,42 @@ const Layout = () => {
       });
   }, [pingDetailId]);
 
-  // Handle resolve action and refresh ping data
-  const handleResolvePing = async () => {
-    if (!pingDetailId || isResolvingPing) return;
+  // Handle resolve action with optimistic updates
+  // Best practice: update local state immediately, revert on error
+  const handleResolvePing = useCallback(async () => {
+    if (!pingDetailId || isResolvingPing || !ping) return;
+
+    // Optimistic update: store previous state in case we need to revert
+    const previousPing = ping;
+    const optimisticPing = { ...ping, resolvedAt: new Date().toISOString() };
+
     setIsResolvingPing(true);
+    setResolveError(null);
+
+    // Immediately update local state (optimistic)
+    setPing(optimisticPing);
+
     try {
-      // Mark ping as resolved via dedicated API endpoint
-      const resolvedPing = await pingService.resolvePing(pingDetailId);
+      // Mark ping as resolved via API
+      const resolvedPing = await pingService.markAsResolved(pingDetailId);
+
+      // Update both local state and store with confirmed response
       setPing(resolvedPing);
+      updatePingStore(pingDetailId, resolvedPing);
+
+      // Clear any previous errors
+      setResolveError(null);
     } catch (err) {
+      // Revert optimistic update on error
+      setPing(previousPing);
+
+      const errorMessage = err instanceof Error ? err.message : "Failed to resolve ping. Please try again.";
       console.error("Failed to resolve ping:", err);
+      setResolveError(errorMessage);
     } finally {
       setIsResolvingPing(false);
     }
-  };
+  }, [pingDetailId, ping, isResolvingPing, updatePingStore]);
 
   return (
     <div className="min-h-screen">
@@ -103,7 +127,7 @@ const Layout = () => {
         )}
 
         {/* Main content area */}
-        <div className={`flex-1 ${!pingDetailId ? 'md:ml-[280px]' : ''}`}>
+        <div className={`flex-1 overflow-auto ${!pingDetailId ? 'md:ml-[280px]' : ''}`}>
           {/* Mobile header — replaces PageTitleBar, mobile only */}
           <div className="md:hidden">
             <MobileHeader />
@@ -131,6 +155,13 @@ const Layout = () => {
           <aside className="hidden lg:flex w-[360px] shrink-0 pt-[15px] pr-5 flex-col gap-[15px] h-[75vh]">
             <CommentsPanel pingId={pingDetailId} className="flex-1" />
 
+            {/* ── Resolve error message ─────────────────── */}
+            {resolveError && (
+              <div className="bg-red-50 border border-red-200 rounded-[10px] p-3 text-red-700 text-sm">
+                {resolveError}
+              </div>
+            )}
+
             {/* ── Mark as Resolved bar ─────────────────── */}
             {ping && (() => {
               // Extract ping author ID, handling both string and object author types
@@ -143,6 +174,7 @@ const Layout = () => {
                 <MarkAsResolvedBar
                   pingId={pingDetailId}
                   onResolved={handleResolvePing}
+                  isLoading={isResolvingPing}
                 />
               ) : null;
             })()}
