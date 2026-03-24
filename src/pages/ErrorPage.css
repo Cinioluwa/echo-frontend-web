@@ -1,14 +1,14 @@
 @import url("https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;500;600;700&display=swap");
 
 :root {
-  --primary-color: #6366f1;
-  --accent-color: #ec4899;
-  --secondary-color: #8b5cf6;
-  --dark-bg: #0f172a;
-  --dark-card: #1e293b;
-  --text-primary: #f1f5f9;
-  --text-secondary: #cbd5e1;
-  --border-color: rgba(148, 163, 184, 0.12);
+  --primary-color: #f49b31;
+  --accent-color: #ffc37b;
+  --secondary-color: #e08a2a;
+  --dark-bg: #fef5ea;
+  --dark-card: #faf6f1;
+  --text-primary: #454545;
+  --text-secondary: #7d7d7d;
+  --border-color: rgba(244, 155, 49, 0.15);
 }
 
 * {
@@ -31,7 +31,7 @@ body {
   align-items: center;
   justify-content: center;
   position: relative;
-  background: linear-gradient(135deg, var(--dark-bg) 0%, #1a1f35 100%);
+  background: linear-gradient(135deg, #fef5ea 0%, #f5ebe0 100%);
   overflow: hidden;
 }
 
@@ -61,7 +61,7 @@ body {
   background: linear-gradient(
     120deg,
     var(--primary-color),
-    var(--secondary-color)
+    var(--accent-color)
   );
   top: -100px;
   left: -100px;
@@ -74,7 +74,7 @@ body {
   background: linear-gradient(
     220deg,
     var(--accent-color),
-    var(--primary-color)
+    var(--secondary-color)
   );
   bottom: -150px;
   right: -100px;
@@ -116,7 +116,7 @@ body {
   height: 200px;
   background: radial-gradient(
     circle,
-    rgba(99, 102, 241, 0.1) 0%,
+    rgba(244, 155, 49, 0.1) 0%,
     transparent 70%
   );
   border-radius: 50%;
@@ -177,7 +177,7 @@ body {
   background-clip: text;
   letter-spacing: -0.02em;
   font-style: italic;
-  text-shadow: 0 0 80px rgba(99, 102, 241, 0.3);
+  text-shadow: 0 0 80px rgba(244, 155, 49, 0.3);
   position: relative;
 }
 
@@ -283,27 +283,27 @@ body {
   background: linear-gradient(
     135deg,
     var(--primary-color),
-    var(--secondary-color)
+    var(--accent-color)
   );
   color: white;
-  box-shadow: 0 8px 32px rgba(99, 102, 241, 0.3);
+  box-shadow: 0 8px 32px rgba(244, 155, 49, 0.3);
 }
 
 .error-btn-primary:hover:not(:disabled) {
   transform: translateY(-3px);
-  box-shadow: 0 12px 48px rgba(99, 102, 241, 0.5);
+  box-shadow: 0 12px 48px rgba(244, 155, 49, 0.5);
 }
 
 .error-btn-secondary {
-  background: rgba(148, 163, 184, 0.1);
+  background: rgba(244, 155, 49, 0.1);
   color: var(--text-primary);
   border: 1px solid var(--border-color);
 }
 
 .error-btn-secondary:hover:not(:disabled) {
-  background: rgba(148, 163, 184, 0.15);
+  background: rgba(244, 155, 49, 0.15);
   border-color: var(--primary-color);
-  box-shadow: 0 8px 24px rgba(99, 102, 241, 0.15);
+  box-shadow: 0 8px 24px rgba(244, 155, 49, 0.15);
   transform: translateY(-3px);
 }
 
