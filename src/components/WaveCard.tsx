@@ -8,6 +8,7 @@
 import React from "react";
 import { useSurgeStore, useWavesStore } from "../stores";
 import { waveService } from "../api/services";
+import UserAvatar from "./UserAvatar";
 import type { Wave } from "../api/types";
 
 interface WaveCardProps {
@@ -44,14 +45,6 @@ const getAuthorName = (author: Wave["author"]) => {
     return "Anonymous";
 };
 
-const getAuthorInitials = (name: string) =>
-    name
-        .split(" ")
-        .map((n) => n[0])
-        .join("")
-        .toUpperCase()
-        .slice(0, 2);
-
 // ─── WaveCard Component ─────────────────────────────────────────────────────
 
 const WaveCard = React.memo(({ wave, isOwner, onDelete }: WaveCardProps) => {
@@ -63,7 +56,6 @@ const WaveCard = React.memo(({ wave, isOwner, onDelete }: WaveCardProps) => {
     const isToggling = useSurgeStore((state) => state.isToggling[`wave-${currentWave.id}`] || false);
 
     const authorName = getAuthorName(currentWave.author);
-    const initials = getAuthorInitials(authorName);
     const surgeCount = currentWave.surgeCount || currentWave._count?.surges || 0;
 
     console.log(`🌊 WaveCard [ID: ${wave.id}]`, {
@@ -106,9 +98,11 @@ const WaveCard = React.memo(({ wave, isOwner, onDelete }: WaveCardProps) => {
             {/* Header: avatar + name/time + badge */}
             <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2.5">
-                    <div className="w-10 h-10 rounded-full bg-[#ffc37b] flex items-center justify-center shrink-0 overflow-hidden">
-                        <span className="font-semibold text-[13px] text-white">{initials}</span>
-                    </div>
+                    <UserAvatar
+                        user={typeof currentWave.author === "object" ? currentWave.author : null}
+                        size="md"
+                        bgColor="bg-[#ffc37b]"
+                    />
                     <div className="flex flex-col">
                         <span className="font-['Poppins',sans-serif] font-semibold text-[14px] text-black">
                             {authorName}

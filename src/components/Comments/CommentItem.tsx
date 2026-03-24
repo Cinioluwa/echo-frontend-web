@@ -1,6 +1,7 @@
 import type { Comment } from "../../api/types";
 import { useState } from "react";
 import api from "../../api/axios.config";
+import UserAvatar from "../UserAvatar";
 // import { useSurgeStore } from "../../stores";
 
 interface Props {
@@ -81,11 +82,11 @@ const CommentItem = ({ comment, onRefresh: _onRefresh }: Props) => {
             {/* User info */}
             <div className="flex items-center gap-2">
                 {/* Avatar */}
-                <div className="w-6 h-6 rounded-full bg-[#f49b31] overflow-hidden flex items-center justify-center">
-                    <span className="text-xs text-white font-semibold">
-                        {authorName.charAt(0).toUpperCase()}
-                    </span>
-                </div>
+                <UserAvatar
+                    user={typeof comment.author === "object" ? comment.author : null}
+                    size="sm"
+                    bgColor="bg-[#f49b31]"
+                />
 
                 {/* User details */}
                 <div className="flex items-center gap-2 justify-between w-full">

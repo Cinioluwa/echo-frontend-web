@@ -13,6 +13,7 @@ const UserInfo = () => {
   console.log("UserInfo render:", { user: user ? `${user.email} (${user.role})` : "null", isLoading, error });
 
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [imageLoadError, setImageLoadError] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   // Close dropdown when clicking outside
@@ -45,6 +46,10 @@ const UserInfo = () => {
 
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
+  };
+
+  const handleImageLoadError = () => {
+    setImageLoadError(true);
   };
 
   // Loading state
@@ -87,8 +92,17 @@ const UserInfo = () => {
           <p className="text-[10px] md:text-[14px]">{fullName}</p>
         </div>
 
-        <span className="w-[50px] inline-flex items-center justify-center h-[50px] cursor-pointer rounded-full bg-gray-200 hover:bg-gray-300 transition-colors">
-          <User className="w-6 h-6 text-gray-500" />
+        <span className="w-[50px] inline-flex items-center justify-center h-[50px] cursor-pointer rounded-full bg-gray-200 hover:bg-gray-300 transition-colors overflow-hidden">
+          {user.profilePicture && !imageLoadError ? (
+            <img
+              src={user.profilePicture}
+              alt={fullName}
+              className="w-full h-full object-cover"
+              onError={handleImageLoadError}
+            />
+          ) : (
+            <User className="w-6 h-6 text-gray-500" />
+          )}
         </span>
       </div>
 
@@ -97,8 +111,17 @@ const UserInfo = () => {
         <div className="absolute top-[calc(100%+8px)] right-0 bg-white rounded-tl-lg rounded-tr-lg shadow-lg border border-[#CECECE] z-50 w-[274px] overflow-hidden">
           {/* User Profile Section */}
           <div className="border-b border-[#CECECE] p-4 flex items-center gap-3">
-            <div className="w-[42px] h-[42px] rounded-full bg-gray-200 flex items-center justify-center shrink-0">
-              <User className="w-5 h-5 text-gray-500" />
+            <div className="w-[42px] h-[42px] rounded-full bg-gray-200 flex items-center justify-center shrink-0 overflow-hidden">
+              {user.profilePicture && !imageLoadError ? (
+                <img
+                  src={user.profilePicture}
+                  alt={fullName}
+                  className="w-full h-full object-cover"
+                  onError={handleImageLoadError}
+                />
+              ) : (
+                <User className="w-5 h-5 text-gray-500" />
+              )}
             </div>
             <div className="flex flex-col gap-0.5 flex-1 min-w-0">
               <p className="font-medium text-[18px] text-black truncate tracking-[-0.18px]">

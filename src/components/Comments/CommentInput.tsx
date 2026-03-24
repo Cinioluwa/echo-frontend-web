@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useAuthStore } from "../../stores";
 import { commentService } from "../../api/services";
+import UserAvatar from "../UserAvatar";
 
 interface Props {
     targetType: "ping" | "wave";
@@ -57,10 +58,6 @@ const CommentInput = ({
         onCancel?.();
     };
 
-    const userName = user
-        ? `${user.firstName} ${user.lastName}`
-        : "Anonymous User";
-
     return (
         <div className="flex flex-col gap-3.5 rounded-[10px] w-full">
             <div className=" flex gap-2.5 items-start p-4 rounded-[10px]">
@@ -68,11 +65,7 @@ const CommentInput = ({
                 {/* User info */}
                 <div className="flex items-center">
                     {/* Avatar */}
-                    <div className="w-10 h-10 rounded-full bg-gray-300 overflow-hidden flex items-center justify-center">
-                        <span className="text-md text-gray-600 font-semibold">
-                            {userName.charAt(0).toUpperCase()}
-                        </span>
-                    </div>
+                    <UserAvatar user={user} size="md" bgColor="bg-gray-300" />
                 </div>
                 <div className="flex flex-col w-full gap-2">
 

@@ -13,6 +13,7 @@
 
 import { useState, useEffect } from "react";
 import WaveStatusIndicator from "../WaveStatusIndicator";
+import UserAvatar from "../UserAvatar";
 import type { Wave } from "../../api/types";
 import { categoryImages } from "../CategoryImages";
 import { LoadingSpinner } from "../shared/LoadingSpinner";
@@ -101,13 +102,6 @@ const WaveHistoryCard = ({ wave, onDelete }: WaveHistoryCardProps) => {
                 ? wave.author
                 : "Anonymous";
 
-    const authorInitials = authorName
-        .split(" ")
-        .map((n) => n[0])
-        .join("")
-        .toUpperCase()
-        .slice(0, 2);
-
     const timestamp = wave.createdAt
         ? new Date(wave.createdAt).toLocaleDateString("en-US", {
             month: "short",
@@ -132,11 +126,13 @@ const WaveHistoryCard = ({ wave, onDelete }: WaveHistoryCardProps) => {
             <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4">
                     {/* Avatar */}
-                    <div className="w-9 h-9 md:w-[53px] md:h-[53px] rounded-full bg-[#FFC37B] flex items-center justify-center shrink-0 overflow-hidden">
-                        <span className="font-['Poppins',sans-serif] font-bold text-[12px] md:text-[18px] text-white">
-                            {authorInitials}
-                        </span>
-                    </div>
+                    <UserAvatar
+                        user={typeof wave.author === "object" ? wave.author : null}
+                        size="lg"
+                        responsive
+                        bgColor="bg-[#FFC37B]"
+                        className="shrink-0"
+                    />
                     {/* Name + timestamp */}
                     <div className="flex flex-col">
                         <span className="font-['Poppins',sans-serif] font-semibold text-[13px] md:text-[15px] text-black leading-normal">

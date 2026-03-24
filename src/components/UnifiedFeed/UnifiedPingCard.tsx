@@ -14,6 +14,7 @@ import { useAuthStore, useSurgeStore, usePingsStore } from "../../stores";
 import { pingService } from "../../api/services";
 import InlineWavePreview from "./InlineWavePreview";
 import DeleteConfirmationModal from "../DeleteConfirmationModal";
+import UserAvatar from "../UserAvatar";
 import type { Ping } from "../../api/types";
 import { categoryImages } from "../CategoryImages";
 
@@ -46,13 +47,6 @@ const UnifiedPingCard = ({ ping, isHistoryContext = false }: UnifiedPingCardProp
         typeof currentPing.author === "object" && currentPing.author
             ? `${currentPing.author.firstName} ${currentPing.author.lastName}`
             : "Anonymous";
-
-    const authorInitials = authorName
-        .split(" ")
-        .map((n) => n[0])
-        .join("")
-        .toUpperCase()
-        .slice(0, 2);
 
     const timestamp = currentPing.createdAt
         ? new Date(currentPing.createdAt).toLocaleDateString("en-US", {
@@ -133,11 +127,13 @@ const UnifiedPingCard = ({ ping, isHistoryContext = false }: UnifiedPingCardProp
                     <div className={["flex items-center justify-between", isHistoryContext ? "min-w-0" : ""].join(" ")}>
                         <div className={["flex items-center gap-4", isHistoryContext ? "min-w-0" : ""].join(" ")}>
                             {/* Avatar */}
-                            <div className="w-7 h-7 md:w-[53px] md:h-[53px] rounded-full bg-[#FFC37B] flex items-center justify-center shrink-0 overflow-hidden">
-                                <span className="font-['Poppins',sans-serif] font-bold text-[10px] md:text-[18px] text-white">
-                                    {authorInitials}
-                                </span>
-                            </div>
+                            <UserAvatar
+                                user={typeof currentPing.author === "object" ? currentPing.author : null}
+                                size="lg"
+                                responsive
+                                bgColor="bg-[#FFC37B]"
+                                className="shrink-0"
+                            />
                             {/* Name + timestamp */}
                             <div className={["flex flex-col", isHistoryContext ? "min-w-0" : ""].join(" ")}>
                                 <span className="font-['Poppins',sans-serif] font-semibold text-[13px] md:text-[15px] text-black leading-normal">

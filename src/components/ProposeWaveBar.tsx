@@ -9,6 +9,7 @@
 import { useState } from "react";
 import { useAuthStore, useWavesStore } from "../stores";
 import { waveService } from "../api/services";
+import UserAvatar from "./UserAvatar";
 
 const waveIcon = "/assets/icon/wave.svg";
 interface Props {
@@ -24,10 +25,6 @@ const ProposeWaveBar = ({ pingId, onWaveProposed }: Props) => {
     const [error, setError] = useState<string | null>(null);
 
     const { user } = useAuthStore();
-
-    const initials = user
-        ? `${user.firstName.charAt(0)}${user.lastName.charAt(0)}`.toUpperCase()
-        : "?";
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -58,9 +55,7 @@ const ProposeWaveBar = ({ pingId, onWaveProposed }: Props) => {
             {/*  Avatar + Textarea + Button */}
             <div className="flex items-center gap-2.5">
                 {/* Author avatar */}
-                <div className="size-[35px] shrink-0 rounded-full bg-[#ffc37b] flex items-center justify-center overflow-hidden mt-2.5">
-                    <span className="text-white text-[12px] font-semibold">{initials}</span>
-                </div>
+                <UserAvatar user={user} size="md" bgColor="bg-[#ffc37b]" className="mt-2.5" />
 
                 {/* Solution textarea */}
                 <textarea

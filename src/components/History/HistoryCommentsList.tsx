@@ -14,6 +14,7 @@ import { categoryImages } from "../CategoryImages";
 import { LoadingSpinner } from "../shared/LoadingSpinner";
 import { EmptyState } from "../shared/EmptyState";
 import { userService } from "../../api/services";
+import UserAvatar from "../UserAvatar";
 
 // ---------------------------------------------------------------------------
 // Extended Comment type that includes embedded ping context from the API
@@ -116,13 +117,6 @@ const CommentedPingCard = ({ comment }: CommentedPingCardProps) => {
         ? `${ping.author.firstName} ${ping.author.lastName}`
         : "Anonymous";
 
-    const pingAuthorInitials = pingAuthorName
-        .split(" ")
-        .map((n) => n[0])
-        .join("")
-        .toUpperCase()
-        .slice(0, 2);
-
     const pingTimestamp = ping?.createdAt
         ? new Date(ping.createdAt).toLocaleDateString("en-US", {
             month: "short",
@@ -146,11 +140,13 @@ const CommentedPingCard = ({ comment }: CommentedPingCardProps) => {
         <div className="bg-[#FEFEFE] rounded-[10px] px-5 py-[15px] flex flex-col gap-[13px] w-full">
             {/* ─── Ping header ─────────────────────── */}
             <div className="flex items-center gap-4">
-                <div className="w-10 h-10 md:w-[53px] md:h-[53px] rounded-full bg-[#FFC37B] flex items-center justify-center shrink-0">
-                    <span className="font-['Poppins',sans-serif] font-bold text-[14px] md:text-[18px] text-white">
-                        {pingAuthorInitials}
-                    </span>
-                </div>
+                <UserAvatar
+                    user={ping?.author as any}
+                    size="lg"
+                    responsive
+                    bgColor="bg-[#FFC37B]"
+                    className="shrink-0"
+                />
                 <div className="flex flex-col">
                     <span className="font-['Poppins',sans-serif] font-semibold text-[13px] md:text-[15px] text-black leading-normal">
                         {pingAuthorName}

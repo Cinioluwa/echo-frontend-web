@@ -12,6 +12,7 @@
 import { useState, useRef, forwardRef, useImperativeHandle } from "react";
 import { useAuthStore, useCategoriesStore, usePingsStore } from "../stores";
 import { pingService, uploadService } from "../api/services";
+import UserAvatar from "./UserAvatar";
 
 type ExpansionState = "collapsed" | "expanded" | "with-photos";
 
@@ -39,10 +40,6 @@ const InlinePingCreator = forwardRef<InlinePingCreatorHandle>((_, ref) => {
     useImperativeHandle(ref, () => ({
         expand: () => setState("expanded"),
     }));
-
-    const userInitials = user
-        ? `${user.firstName[0]}${user.lastName[0]}`.toUpperCase()
-        : "?";
 
     const handleCollapsedClick = () => {
         setState("expanded");
@@ -111,7 +108,7 @@ const InlinePingCreator = forwardRef<InlinePingCreatorHandle>((_, ref) => {
     if (state === "collapsed") {
         return (
             <div className="bg-white rounded-[10px] px-5 py-[15px] flex items-center gap-[13px] cursor-pointer w-full" onClick={handleCollapsedClick} role="button" tabIndex={0} onKeyDown={(e) => { if (e.key === "Enter") handleCollapsedClick(); }}>
-                <Avatar initials={userInitials} />
+                <UserAvatar user={user} size="lg" bgColor="bg-[#FFC37B]" />
                 <div className="flex-1 h-[50px] border-2 border-[#FFC37B] rounded-[20px] flex items-center pl-[27px]">
                     <span className="font-['Poppins',sans-serif] font-semibold italic text-[14px] text-black/70 select-none">
                         What's the problem?
@@ -129,7 +126,7 @@ const InlinePingCreator = forwardRef<InlinePingCreatorHandle>((_, ref) => {
         >
             {/* Row 1: Avatar + Title */}
             <div className="flex items-center gap-[13px]">
-                <Avatar initials={userInitials} />
+                <UserAvatar user={user} size="lg" bgColor="bg-[#FFC37B]" />
                 <div className="flex-1 h-[50px] border-2 border-[#FFC37B] rounded-[20px] flex items-center pl-[27px] pr-5 bg-white">
                     <input
                         type="text"
@@ -261,16 +258,6 @@ const InlinePingCreator = forwardRef<InlinePingCreatorHandle>((_, ref) => {
             </button>
         </form>
     );
-
-    function Avatar({ initials }: { initials: string }) {
-        return (
-            <div className="w-[50px] h-[50px] rounded-full bg-[#FFC37B] flex items-center justify-center shrink-0 overflow-hidden">
-                <span className="font-['Poppins',sans-serif] font-bold text-[18px] text-white">
-                    {initials}
-                </span>
-            </div>
-        );
-    }
 });
 
 export default InlinePingCreator;

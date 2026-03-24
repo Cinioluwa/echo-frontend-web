@@ -6,7 +6,8 @@
 import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "../stores";
-import { User, LogOut, Settings, HelpCircle } from "lucide-react";
+import { LogOut, Settings, HelpCircle } from "lucide-react";
+import UserAvatar from "./UserAvatar";
 
 const ProfileDropdown = () => {
     const user = useAuthStore((state) => state.user);
@@ -87,9 +88,13 @@ const ProfileDropdown = () => {
                 </div>
 
                 {/* Avatar */}
-                <span className="w-[25px] h-[25px] md:w-[50px] md:h-[50px] inline-flex items-center justify-center rounded-full bg-gray-200 hover:bg-gray-300 transition-colors">
-                    <User className="w-3 h-3 md:w-6 md:h-6 text-gray-500" />
-                </span>
+                <UserAvatar
+                    user={user}
+                    size="md"
+                    responsive
+                    bgColor="bg-gray-200"
+                    className="hover:bg-gray-300 transition-colors"
+                />
             </button>
 
             {/* Dropdown Menu */}
@@ -97,9 +102,7 @@ const ProfileDropdown = () => {
                 <div className="absolute top-[calc(100%+8px)] right-0 bg-white rounded-lg shadow-lg border border-[#CECECE] z-50 w-[274px] overflow-hidden">
                     {/* User Profile Section */}
                     <div className="border-b border-[#CECECE] p-4 flex items-center gap-3">
-                        <div className="w-[42px] h-[42px] rounded-full bg-gray-200 flex items-center justify-center shrink-0">
-                            <User className="w-5 h-5 text-gray-500" />
-                        </div>
+                        <UserAvatar user={user} size="md" bgColor="bg-gray-200" />
                         <div className="flex flex-col gap-0.5 flex-1 min-w-0">
                             <p className="font-medium text-[18px] text-black truncate tracking-[-0.18px]">
                                 {fullName}

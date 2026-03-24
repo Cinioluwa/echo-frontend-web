@@ -10,6 +10,7 @@
 
 import { useState, useEffect } from "react";
 import { waveService } from "../../api/services";
+import UserAvatar from "../UserAvatar";
 import type { Wave } from "../../api/types";
 
 interface InlineWavePreviewProps {
@@ -60,13 +61,6 @@ const InlineWavePreview = ({ pingId }: InlineWavePreviewProps) => {
                         })
                         : "";
 
-                    const initials = authorName
-                        .split(" ")
-                        .map((n) => n[0])
-                        .join("")
-                        .toUpperCase()
-                        .slice(0, 2);
-
                     return (
                         <div
                             key={wave.id}
@@ -74,11 +68,12 @@ const InlineWavePreview = ({ pingId }: InlineWavePreviewProps) => {
                         >
                             {/* Author info */}
                             <div className="flex items-center gap-1.5 shrink-0">
-                                <div className="w-[19px] h-[19px] md:w-[27px] md:h-[27px] rounded-full bg-[#F49B31] flex items-center justify-center shrink-0 overflow-hidden">
-                                    <span className="font-['Poppins',sans-serif] font-bold text-[8px] md:text-[10px] text-white leading-none">
-                                        {initials}
-                                    </span>
-                                </div>
+                                <UserAvatar
+                                    user={typeof wave.author === "object" ? wave.author : null}
+                                    size="sm"
+                                    responsive
+                                    bgColor="bg-[#F49B31]"
+                                />
                                 <div className="flex flex-col gap-[3px] md:gap-[5px]">
                                     <span className="font-['Poppins',sans-serif] font-semibold text-[8px] md:text-[11px] text-black whitespace-nowrap leading-normal">
                                         {authorName}

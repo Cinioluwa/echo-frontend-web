@@ -8,6 +8,7 @@
  */
 
 import type { Ping } from "../../api/types";
+import UserAvatar from "../UserAvatar";
 
 interface Top3WidgetProps {
     pings?: Ping[];
@@ -28,26 +29,20 @@ const Top3Widget = ({ pings = [] }: Top3WidgetProps) => {
             {/* Rows */}
             <div className="flex flex-col gap-2.5 w-full">
                 {top3.map((ping, index) => {
-                    const authorName =
-                        typeof ping.author === "object" && ping.author
-                            ? `${ping.author.firstName ?? ""} ${ping.author.lastName ?? ""}`.trim() || "Anonymous"
-                            : typeof ping.author === "string"
-                                ? ping.author
-                                : "Anonymous";
-                    const initials = authorName
-                        .split(" ")
-                        .map((n) => n[0])
-                        .join("")
-                        .toUpperCase()
-                        .slice(0, 2);
-
                     return (
                         <div key={ping.id} className="flex items-center gap-2 w-full bg-[#fef0e0] rounded-lg px-3.5 py-2.5">
                             {/* Avatar */}
-                            <div className="w-[30px] h-[30px] rounded-full flex items-center justify-center shrink-0 overflow-hidden" style={{ backgroundColor: DOT_COLORS[index] }}>
-                                <span className="font-['Poppins',sans-serif] font-bold text-[10px] text-white leading-none">
-                                    {initials}
-                                </span>
+                            <div
+                                style={{ backgroundColor: DOT_COLORS[index] }}
+                                className="w-[30px] h-[30px] rounded-full flex items-center justify-center shrink-0 overflow-hidden"
+                            >
+                                <UserAvatar
+                                    user={typeof ping.author === "object" ? ping.author : null}
+                                    size="sm"
+                                    initialsOnly
+                                    bgColor="bg-transparent"
+                                    className="text-[10px]! font-bold text-white"
+                                />
                             </div>
                             {/* Title */}
                             <span className="flex-1 font-['Poppins',sans-serif] font-medium text-[13px] text-black truncate leading-normal min-w-0">
