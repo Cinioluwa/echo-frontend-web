@@ -56,6 +56,9 @@ const AdminProfile = lazy(() => import("../pages/admin/AdminProfile"));
 const AdminAccount = lazy(() => import("../pages/admin/AdminAccount"));
 const AdminNotification = lazy(() => import("../pages/admin/AdminNotification"));
 
+// Lazy load error page
+const ErrorPage = lazy(() => import("../pages/ErrorPage"));
+
 // Helper to wrap lazy-loaded components with Suspense
 const withSuspense = (Component: React.LazyExoticComponent<React.ComponentType<any>>) => (
   <Suspense fallback={<LoadingFallback />}>
@@ -230,6 +233,12 @@ const router = createBrowserRouter([
         ),
       },
     ],
+  },
+
+  // Catch-all route for 404 and unmatched paths
+  {
+    path: "*",
+    element: withSuspense(ErrorPage),
   },
 ]);
 
