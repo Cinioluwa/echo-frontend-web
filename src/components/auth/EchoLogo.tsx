@@ -24,7 +24,7 @@ const EchoLogo: React.FC<EchoLogoProps> = ({ className = "", size = "md" }) => {
             {/* Echo Icon - Using public SVG file */}
             <div className={`${currentSize.icon} relative`}>
                 <img
-                    src="/assets/images/Echo.svg"
+                    src="/echo.svg"
                     alt="Echo logo"
                     className="w-full h-full"
                 />
