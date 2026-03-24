@@ -21,55 +21,13 @@ const EchoLogo: React.FC<EchoLogoProps> = ({ className = "", size = "md" }) => {
 
     return (
         <div className={`flex items-center justify-center ${currentSize.container} ${className}`}>
-            {/* Echo Icon - Using SVG for vector quality */}
+            {/* Echo Icon - Using public SVG file */}
             <div className={`${currentSize.icon} relative`}>
-                <svg
-                    viewBox="0 0 30 31"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
+                <img
+                    src="/assets/images/Echo.svg"
+                    alt="Echo logo"
                     className="w-full h-full"
-                >
-                    {/* Top arc */}
-                    <path
-                        d="M13.5 15.5C13.5 12.5 15.5 10 18.5 8"
-                        stroke="#ffc37b"
-                        strokeWidth="2.5"
-                        strokeLinecap="round"
-                        fill="none"
-                    />
-                    {/* Bottom arc */}
-                    <path
-                        d="M4 27C4 21 8 17.5 13.5 17.5C19 17.5 23 21 23 27"
-                        stroke="#ffc37b"
-                        strokeWidth="2.5"
-                        strokeLinecap="round"
-                        fill="none"
-                    />
-                    {/* Top arc 2 */}
-                    <path
-                        d="M12 1.5C12 5 9.5 8 6 10"
-                        stroke="#ffc37b"
-                        strokeWidth="2.5"
-                        strokeLinecap="round"
-                        fill="none"
-                    />
-                    {/* Mid arc */}
-                    <path
-                        d="M5 7C7 7 9 8.5 10 11"
-                        stroke="#ffc37b"
-                        strokeWidth="2.5"
-                        strokeLinecap="round"
-                        fill="none"
-                    />
-                    {/* Small arc */}
-                    <path
-                        d="M8.5 10C9 10 10 11 10.5 12.5"
-                        stroke="#ffc37b"
-                        strokeWidth="2.5"
-                        strokeLinecap="round"
-                        fill="none"
-                    />
-                </svg>
+                />
             </div>
 
             {/* Echo Text */}
