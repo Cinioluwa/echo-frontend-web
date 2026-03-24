@@ -5,7 +5,7 @@ import AuthLayout from "../components/auth/AuthLayout";
 import AuthCard from "../components/auth/AuthCard";
 import AuthInput from "../components/auth/AuthInput";
 import AuthButton from "../components/auth/AuthButton";
-import GoogleButton from "../components/auth/GoogleButton";
+// import GoogleButton from "../components/auth/GoogleButton"; // COMMENTED OUT: Google auth not implemented yet
 import AuthFooter from "../components/auth/AuthFooter";
 import OfflineIndicator from "../components/auth/OfflineIndicator";
 import { useNetworkStatus } from "../hooks";
@@ -145,9 +145,10 @@ const SignUp: React.FC = () => {
     }
   }
 
-  function handleGoogleSignUp() {
-    setError("Google Sign-Up is not configured yet.");
-  }
+  // COMMENTED OUT: Google auth not implemented yet
+  // function handleGoogleSignUp() {
+  //   setError("Google Sign-Up is not configured yet.");
+  // }
 
   return (
     <>
@@ -179,10 +180,10 @@ const SignUp: React.FC = () => {
             </div>
           )}
 
-          {/* Google Sign Up Button */}
-          <div className="w-full">
+          {/* COMMENTED OUT: Google Sign Up Button - not implemented yet */}
+          {/* <div className="w-full">
             <GoogleButton onClick={handleGoogleSignUp} disabled={loading || isOffline} loading={loading} />
-          </div>
+          </div> */}
 
           {/* Divider */}
           <div className="w-full flex items-center gap-3 sm:gap-4">

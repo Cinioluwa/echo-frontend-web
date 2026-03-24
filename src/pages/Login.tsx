@@ -6,7 +6,7 @@ import {
   AuthCard,
   AuthButton,
   AuthInput,
-  GoogleButton,
+  // GoogleButton, // COMMENTED OUT: Google auth not implemented yet
   OfflineIndicator,
 } from "../components/auth";
 import { useNetworkStatus } from "../hooks";
@@ -206,10 +206,11 @@ const Login = () => {
     }
   };
 
-  const handleGoogleLogin = () => {
-    // TODO: Implement Google OAuth flow
-    setError("Google Sign-In is not configured yet.");
-  };
+  // COMMENTED OUT: Google auth not implemented yet
+  // const handleGoogleLogin = () => {
+  //   // TODO: Implement Google OAuth flow
+  //   setError("Google Sign-In is not configured yet.");
+  // };
 
   return (
     <>
@@ -243,12 +244,12 @@ const Login = () => {
           <div className="flex flex-col gap-5 sm:gap-6 md:gap-[30px] items-center w-full">
             {/* Input Fields */}
             <div className="flex flex-col gap-3.5 sm:gap-4 md:gap-5 items-start w-full">
-              {/* Google OAuth Button */}
-              <GoogleButton
+              {/* COMMENTED OUT: Google OAuth Button - not implemented yet */}
+              {/* <GoogleButton
                 onClick={handleGoogleLogin}
                 disabled={loading}
                 text="Continue with Google"
-              />
+              /> */}
 
               {/* Email Input */}
               <AuthInput
