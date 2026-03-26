@@ -279,6 +279,7 @@ const Login = () => {
                 autoComplete="current-password"
                 error={validationErrors.password}
                 className="w-full"
+                showPasswordToggle
               />
             </div>
 

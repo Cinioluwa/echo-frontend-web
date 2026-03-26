@@ -151,6 +151,7 @@ const MobileSignUp = () => {
                   value={formData.password}
                   onChange={handleInputChange}
                   disabled={loading}
+                  showPasswordToggle
                 />
               </div>
 

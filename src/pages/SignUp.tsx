@@ -77,6 +77,26 @@ const SignUp: React.FC = () => {
     }
   };
 
+  /**
+   * Check if email is from a consumer domain (gmail, yahoo, hotmail, etc.)
+   * Consumer email domains require manual organization selection
+   */
+  const isConsumerEmailDomain = (email: string): boolean => {
+    const consumerDomains = [
+      "gmail.com",
+      "yahoo.com",
+      "hotmail.com",
+      "outlook.com",
+      "aol.com",
+      "icloud.com",
+      "mail.com",
+      "protonmail.com",
+      "fastmail.com",
+    ];
+    const domain = email.split("@")[1]?.toLowerCase();
+    return domain ? consumerDomains.includes(domain) : false;
+  };
+
   const handleEmailBlur = () => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (formData.email && !emailRegex.test(formData.email)) {
@@ -102,6 +122,23 @@ const SignUp: React.FC = () => {
       return;
     }
 
+    // Check if user is using a consumer email domain
+    // These require manual organization selection before registration
+    if (isConsumerEmailDomain(formData.email)) {
+      setRegistrationFormData(formData);
+      navigate("/find-institution", {
+        state: {
+          email: formData.email,
+          userData: {
+            firstName: formData.firstName,
+            lastName: formData.lastName,
+            password: formData.password,
+          },
+        },
+      });
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -123,6 +160,18 @@ const SignUp: React.FC = () => {
         setError("An account with this email already exists. Try logging in instead.");
       } else if (status === 404 && code === "ORG_NOT_FOUND") {
         // No organization found - redirect to Find Institution
+        navigate("/find-institution", {
+          state: {
+            email: formData.email,
+            userData: {
+              firstName: formData.firstName,
+              lastName: formData.lastName,
+              password: formData.password,
+            },
+          },
+        });
+      } else if (status === 400 && code === "ORG_ID_REQUIRED_FOR_PERSONAL_EMAIL") {
+        // Consumer email without organization - redirect to find institution
         navigate("/find-institution", {
           state: {
             email: formData.email,
@@ -249,6 +298,7 @@ const SignUp: React.FC = () => {
               autoComplete="new-password"
               disabled={loading || isOffline}
               required
+              showPasswordToggle
             />
 
             {/* Password Requirements */}
