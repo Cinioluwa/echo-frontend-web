@@ -11,8 +11,9 @@
  * - MarkAsResolvedBar (ping author or admin only, when waves exist)
  * - CommentsPanel inline on mobile (desktop version lives in Layout right-aside)
  */
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate, useOutletContext } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion";
 import { useAuthStore, useSurgeStore, usePingsStore } from "../stores";
 import { pingService, waveService, categoryService } from "../api/services";
 import ProposeWaveBar from "../components/ProposeWaveBar";
@@ -84,6 +85,8 @@ const PingDetail = () => {
     const [waves, setWaves] = useState<Wave[]>([]);
     const [wavesPage, setWavesPage] = useState(1);
     const [categories, setCategories] = useState<Record<number, CategoryData>>({});
+    const [showCommentsModal, setShowCommentsModal] = useState(false);
+    const dragY = useRef(0);
 
     useEffect(() => {
         if (!pingId) return;
@@ -226,7 +229,7 @@ const PingDetail = () => {
 
 
     return (
-        <div className="flex flex-col gap-[15px] pb-[30px]">
+        <div className="flex flex-col gap-[15px] pb-[30px] relative z-0">
             {/* ── Back button ───────────────────────────── */}
             <div className="flex items-center justify-between">
                 <button
@@ -359,6 +362,7 @@ const PingDetail = () => {
 
                         {/* Comment count */}
                         <button
+                            onClick={() => setShowCommentsModal(true)}
                             className="flex items-center gap-1 hover:text-[#F49B31] transition-colors cursor-pointer"
                         >
                             <img
@@ -404,10 +408,51 @@ const PingDetail = () => {
                 </div>
             )}
 
-            {/* ── CommentsPanel (mobile only — desktop uses Layout right-aside) ── */}
-            <div className="lg:hidden">
-                <CommentsPanel pingId={pingId ?? String(displayPing.id)} />
-            </div>
+            {/* ── CommentsPanel Sheet (mobile only — desktop uses Layout right-aside) ── */}
+            <AnimatePresence>
+                {showCommentsModal && (
+                    <>
+                        {/* Overlay backdrop */}
+                        <motion.div
+                            className="fixed inset-0 lg:hidden z-40 bg-black"
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 0.4 }}
+                            exit={{ opacity: 0 }}
+                            onClick={() => setShowCommentsModal(false)}
+                            transition={{ duration: 0.2 }}
+                        />
+
+                        {/* Draggable sheet */}
+                        <motion.div
+                            className="fixed left-0 right-0 bottom-0 lg:hidden z-50 flex flex-col h-[65vh] bg-[#FFC37B] rounded-t-[30px]"
+                            initial={{ y: "100%", opacity: 0 }}
+                            animate={{ y: 0, opacity: 1 }}
+                            exit={{ y: "100%", opacity: 0 }}
+                            transition={{ type: "spring", damping: 30, stiffness: 300 }}
+                            drag="y"
+                            dragElastic={0.2}
+                            dragConstraints={{ top: 0, bottom: 0 }}
+                            onDragEnd={(event, info) => {
+                                // Close if dragged down more than 50px
+                                if (info.velocity.y > 20 || info.offset.y > 50) {
+                                    setShowCommentsModal(false);
+                                }
+                            }}
+                        >
+                            {/* Drag handle */}
+                            <div className="flex justify-center pt-3 pb-3 cursor-grab active:cursor-grabbing">
+                                <div className="w-12 h-1 bg-[#d0d0d0] rounded-full" />
+                            </div>
+
+                            {/* Comments content with scrollable list and fixed input */}
+                            <CommentsPanel
+                                pingId={pingId ?? String(displayPing.id)}
+                                isDrawer={true}
+                            />
+                        </motion.div>
+                    </>
+                )}
+            </AnimatePresence>
         </div>
     );
 };
