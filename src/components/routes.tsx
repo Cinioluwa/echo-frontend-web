@@ -31,6 +31,7 @@ const MakeRequest = lazy(() => import("../pages/auth/MakeRequest"));
 const RequestSubmitted = lazy(() => import("../pages/auth/RequestSubmitted"));
 const AllVerified = lazy(() => import("../pages/auth/AllVerified"));
 const WaitingRoom = lazy(() => import("../pages/auth/WaitingRoom"));
+const ResetPassword = lazy(() => import("../pages/auth/ResetPassword"));
 
 // Lazy load main app pages (new unified architecture)
 const UnifiedFeed = lazy(() => import("../pages/UnifiedFeed"));
@@ -117,6 +118,10 @@ const router = createBrowserRouter([
   {
     path: "/waiting-room",
     element: withSuspense(WaitingRoom),
+  },
+  {
+    path: "/reset-password",
+    element: withSuspense(ResetPassword),
   },
 
   // Main app routes — nested under Layout

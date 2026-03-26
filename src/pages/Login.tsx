@@ -9,6 +9,7 @@ import {
   // GoogleButton, // COMMENTED OUT: Google auth not implemented yet
   OfflineIndicator,
 } from "../components/auth";
+import ForgotPasswordModal from "../components/auth/ForgotPasswordModal";
 import { useNetworkStatus } from "../hooks";
 import { getErrorMessage } from "../utils/networkUtils";
 import { validateLoginForm } from "../utils/validationUtils";
@@ -83,6 +84,7 @@ const Login = () => {
     email?: string;
     password?: string;
   }>({});
+  const [forgotPasswordOpen, setForgotPasswordOpen] = useState(false);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -281,6 +283,17 @@ const Login = () => {
                 className="w-full"
                 showPasswordToggle
               />
+
+              {/* Forgot Password Link */}
+              <button
+                type="button"
+                onClick={() => setForgotPasswordOpen(true)}
+                className="text-xs sm:text-sm text-[#f49b31] hover:text-[#e08a2a] transition-colors font-medium self-end"
+                style={{ fontFamily: "Poppins, sans-serif" }}
+                disabled={loading || isOffline}
+              >
+                Forgot Password?
+              </button>
             </div>
 
             {/* Submit Button */}
@@ -331,6 +344,9 @@ const Login = () => {
           </div>
         </AuthCard>
       </AuthLayout>
+
+      {/* Forgot Password Modal */}
+      <ForgotPasswordModal isOpen={forgotPasswordOpen} onClose={() => setForgotPasswordOpen(false)} />
     </>
   );
 };
