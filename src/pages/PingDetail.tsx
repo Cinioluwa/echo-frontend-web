@@ -19,6 +19,7 @@ import { pingService, waveService, categoryService } from "../api/services";
 import ProposeWaveBar from "../components/ProposeWaveBar";
 import CommentsPanel from "../components/CommentsPanel";
 import WaveCard from "../components/WaveCard";
+import UserAvatar from "../components/UserAvatar";
 import { categoryImages } from "../components/CategoryImages";
 import { getSocket } from "../api/socket";
 import type { Ping, Wave, CategoryData } from "../api/types";
@@ -57,13 +58,7 @@ const getAuthorName = (author: Wave["author"]) => {
     return "Anonymous";
 };
 
-const getAuthorInitials = (name: string) =>
-    name
-        .split(" ")
-        .map((n) => n[0])
-        .join("")
-        .toUpperCase()
-        .slice(0, 2);
+
 
 
 
@@ -184,7 +179,6 @@ const PingDetail = () => {
     if (!displayPing) return null;
 
     const authorName = getAuthorName(displayPing.author);
-    const authorInitials = getAuthorInitials(authorName);
     // Use fetched categories map, fallback to ping.category if available
     const categoryName = displayPing.categoryId && categories[displayPing.categoryId]
         ? categories[displayPing.categoryId].name
@@ -271,11 +265,11 @@ const PingDetail = () => {
                 {/* Author row */}
                 <div className="flex items-center">
                     <div className="flex items-center gap-2.5">
-                        <div className="w-10 h-10 rounded-full bg-[#ffc37b] flex items-center justify-center shrink-0 overflow-hidden">
-                            <span className="font-semibold text-[13px] text-white">
-                                {authorInitials}
-                            </span>
-                        </div>
+                        <UserAvatar
+                            user={typeof displayPing.author === "object" ? displayPing.author : null}
+                            size="md"
+                            bgColor="bg-[#ffc37b]"
+                        />
                         <div className="flex flex-col">
                             <span className="font-['Poppins',sans-serif] font-semibold text-[14px] text-black">
                                 {authorName}
