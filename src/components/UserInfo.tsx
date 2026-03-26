@@ -92,7 +92,7 @@ const UserInfo = () => {
           <p className="text-[10px] md:text-[14px]">{fullName}</p>
         </div>
 
-        <span className="w-[50px] inline-flex items-center justify-center h-[50px] cursor-pointer rounded-full bg-gray-200 hover:bg-gray-300 transition-colors overflow-hidden">
+        <span className="w-[50px] inline-flex items-center justify-center h-[50px] cursor-pointer rounded-full bg-[#f49b31] hover:bg-[#f49b31]-300 transition-colors overflow-hidden">
           {user.profilePicture && !imageLoadError ? (
             <img
               src={user.profilePicture}
@@ -111,7 +111,7 @@ const UserInfo = () => {
         <div className="absolute top-[calc(100%+8px)] right-0 bg-white rounded-tl-lg rounded-tr-lg shadow-lg border border-[#CECECE] z-50 w-[274px] overflow-hidden">
           {/* User Profile Section */}
           <div className="border-b border-[#CECECE] p-4 flex items-center gap-3">
-            <div className="w-[42px] h-[42px] rounded-full bg-gray-200 flex items-center justify-center shrink-0 overflow-hidden">
+            <div className="w-[42px] h-[42px] rounded-full bg-[#f49b31] flex items-center justify-center shrink-0 overflow-hidden">
               {user.profilePicture && !imageLoadError ? (
                 <img
                   src={user.profilePicture}

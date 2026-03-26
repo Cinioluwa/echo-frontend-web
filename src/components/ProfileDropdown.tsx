@@ -92,8 +92,8 @@ const ProfileDropdown = () => {
                     user={user}
                     size="md"
                     responsive
-                    bgColor="bg-gray-200"
-                    className="hover:bg-gray-300 transition-colors"
+                    bgColor="bg-[#f49b31]"
+                    className="hover:bg-[#f49b31]-300 transition-colors"
                 />
             </button>
 
@@ -102,7 +102,7 @@ const ProfileDropdown = () => {
                 <div className="absolute top-[calc(100%+8px)] right-0 bg-white rounded-lg shadow-lg border border-[#CECECE] z-50 w-[274px] overflow-hidden">
                     {/* User Profile Section */}
                     <div className="border-b border-[#CECECE] p-4 flex items-center gap-3">
-                        <UserAvatar user={user} size="md" bgColor="bg-gray-200" />
+                        <UserAvatar user={user} size="md" bgColor="bg-[#f49b31]" />
                         <div className="flex flex-col gap-0.5 flex-1 min-w-0">
                             <p className="font-medium text-[18px] text-black truncate tracking-[-0.18px]">
                                 {fullName}

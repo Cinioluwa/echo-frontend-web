@@ -65,7 +65,7 @@ const CommentInput = ({
                 {/* User info */}
                 <div className="flex items-center">
                     {/* Avatar */}
-                    <UserAvatar user={user} size="md" bgColor="bg-gray-300" />
+                    <UserAvatar user={user} size="md" bgColor="bg-[#f49b31]" />
                 </div>
                 <div className="flex flex-col w-full gap-2">
 

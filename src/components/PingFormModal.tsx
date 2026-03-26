@@ -66,6 +66,26 @@ type WaveFlowState =
   | "ping-selected"
   | "ready-to-submit";
 
+const getErrorMessage = (err: any): string => {
+  // Check for detailed validation errors from backend
+  if (err.response?.data?.details && Array.isArray(err.response.data.details)) {
+    const messages = err.response.data.details
+      .map((detail: any) => detail.message)
+      .filter(Boolean);
+    if (messages.length > 0) {
+      return messages.join(". ");
+    }
+  }
+
+  // Fall back to top-level error message
+  if (err.response?.data?.error) {
+    return err.response.data.error;
+  }
+
+  // Default error message
+  return "Failed to submit. Please try again.";
+};
+
 const PingFormModal = ({
   children,
   setPingFormDetails,
@@ -412,7 +432,7 @@ const PingFormModal = ({
       setPostSuccessModal(true);
       resetPingData();
     } catch (err: any) {
-      setUploadError(err.response?.data?.error || "Failed to create ping. Please try again.");
+      setUploadError(getErrorMessage(err));
     } finally {
       setIsSubmitting(false);
     }
@@ -461,7 +481,7 @@ const PingFormModal = ({
       setPostSuccessModal(true);
       resetWaveData();
     } catch (err: any) {
-      setUploadError(err.response?.data?.error || "Failed to propose wave. Please try again.");
+      setUploadError(getErrorMessage(err));
     } finally {
       setIsSubmitting(false);
     }

@@ -2,6 +2,26 @@ import { useState } from "react";
 import ProposedPingCard from "./ProposedPingCard";
 import { waveService } from "../api/services";
 
+const getErrorMessage = (err: any): string => {
+  // Check for detailed validation errors from backend
+  if (err.response?.data?.details && Array.isArray(err.response.data.details)) {
+    const messages = err.response.data.details
+      .map((detail: any) => detail.message)
+      .filter(Boolean);
+    if (messages.length > 0) {
+      return messages.join(". ");
+    }
+  }
+
+  // Fall back to top-level error message
+  if (err.response?.data?.error) {
+    return err.response.data.error;
+  }
+
+  // Default error message
+  return "Failed to submit. Please try again.";
+};
+
 interface Props {
   onClose: () => void;
   pingTimeStamp: string | undefined;
@@ -76,7 +96,7 @@ const ProposeWaveModal = ({
       onClose();
     } catch (err: any) {
       console.error("Error creating wave:", err);
-      alert(err.response?.data?.error || "Failed to create wave. Please try again.");
+      alert(getErrorMessage(err));
     } finally {
       setIsSubmitting(false);
     }

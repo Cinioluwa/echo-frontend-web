@@ -3,6 +3,26 @@ import { FaLink } from "react-icons/fa6";
 import CategorySelector from "./CategorySelector";
 import PostSuccessModal from "./PostSuccessModal";
 
+const getErrorMessage = (err: any): string => {
+  // Check for detailed validation errors from backend
+  if (err.response?.data?.details && Array.isArray(err.response.data.details)) {
+    const messages = err.response.data.details
+      .map((detail: any) => detail.message)
+      .filter(Boolean);
+    if (messages.length > 0) {
+      return messages.join(". ");
+    }
+  }
+
+  // Fall back to top-level error message
+  if (err.response?.data?.error) {
+    return err.response.data.error;
+  }
+
+  // Default error message
+  return "Failed to submit. Please try again.";
+};
+
 interface Props {
   children: ReactNode;
   setWaveForm: () => void;
@@ -110,7 +130,7 @@ const WaveFormModal = ({
       // });
     } catch (err: any) {
       console.error("Error creating wave:", err);
-      setError(err.response?.data?.error || "Failed to create wave. Please try again.");
+      setError(getErrorMessage(err));
     } finally {
       setIsSubmitting(false);
     }
