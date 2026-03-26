@@ -1,18 +1,84 @@
 import { useState } from "react";
 
-// Eye icon (open/visible)
-const EyeOpenIcon = () => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M12 5C7 5 2.73 8.11 1 12.46c1.73 4.35 6 7.54 11 7.54s9.27-3.19 11-7.54C21.27 8.11 17 5 12 5zm0 12.5c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z" fill="currentColor" />
-  </svg>
-);
+// Animated Eye Icon Component
+const AnimatedEyeIcon = ({ isOpen }: { isOpen: boolean }) => {
+  return (
+    <svg
+      width="20"
+      height="20"
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      style={{
+        transition: 'all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1)',
+      }}
+    >
+      <style>{`
+                @keyframes eyeOpen {
+                    from {
+                        opacity: 0;
+                        stroke-width: 1.5;
+                    }
+                    to {
+                        opacity: 1;
+                        stroke-width: 1.5;
+                    }
+                }
+                @keyframes eyeClosed {
+                    from {
+                        opacity: 0;
+                        stroke-width: 1.5;
+                    }
+                    to {
+                        opacity: 1;
+                        stroke-width: 1.5;
+                    }
+                }
+                .eye-open-path {
+                    opacity: ${isOpen ? 1 : 0};
+                    transition: opacity 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+                }
+                .eye-closed-path {
+                    opacity: ${isOpen ? 0 : 1};
+                    transition: opacity 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+                }
+                .eye-pupil {
+                    opacity: ${isOpen ? 1 : 0};
+                    transition: opacity 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+                }
+            `}</style>
 
-// Eye icon (closed/hidden)
-const EyeClosedIcon = () => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M11.83 9L5.5 2.67A9.978 9.978 0 0112 2c5.52 0 10.74 3.1 13.35 7.6.43.8.43 1.76 0 2.56-1.04 1.93-2.78 3.61-4.88 4.86L12.17 15A3 3 0 0011.83 9zm9.61 8.87l-1.06-1.06a1 1 0 00-1.41 0l-1.41 1.41a1 1 0 000 1.41l1.06 1.06a9.978 9.978 0 01-4.73 1.31c-5.52 0-10.74-3.1-13.35-7.6-.43-.8-.43-1.76 0-2.56 1.04-1.93 2.78-3.61 4.88-4.86L2.44 5.5a1 1 0 000-1.41L3.5 2.44a1 1 0 011.41 0l17.07 17.07a1 1 0 000 1.41l-1.06 1.06a1 1 0 00-1.41 0z" fill="currentColor" />
-  </svg>
-);
+      {/* Open eye - outer shape and pupil */}
+      <path
+        className="eye-open-path"
+        d="M12 5C7 5 2.73 8.11 1 12.46c1.73 4.35 6 7.54 11 7.54s9.27-3.19 11-7.54C21.27 8.11 17 5 12 5z"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        fill="none"
+      />
+      <circle className="eye-pupil" cx="12" cy="12.46" r="2.5" fill="currentColor" />
+
+      {/* Closed eye - top eyelid */}
+      <path
+        className="eye-closed-path"
+        d="M2 12c1.73 4.35 6 7.54 11 7.54s9.27-3.19 11-7.54"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        fill="none"
+        strokeLinecap="round"
+      />
+      {/* Closed eye - bottom eyelid */}
+      <path
+        className="eye-closed-path"
+        d="M2 12c1.73-4.35 6-7.54 11-7.54s9.27 3.19 11 7.54"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        fill="none"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+};
 
 interface InputGroupProps {
   placeholder: string;
@@ -55,7 +121,7 @@ const InputGroup = ({
         required={required}
         disabled={disabled}
       />
-      
+
       {/* Password visibility toggle button */}
       {showPasswordToggle && (
         <button
@@ -63,9 +129,9 @@ const InputGroup = ({
           onClick={() => setIsPasswordVisible(!isPasswordVisible)}
           disabled={disabled}
           aria-label={isPasswordVisible ? "Hide password" : "Show password"}
-          className="pr-5 py-1 flex items-center justify-center text-[#CACACA] hover:text-[#f49b31] transition-colors duration-200 cursor-pointer disabled:cursor-not-allowed disabled:opacity-50"
+          className="pr-5 py-1 flex items-center justify-center text-[#f49b31] hover:text-[#f49b31] transition-all duration-300 ease-in-out cursor-pointer disabled:cursor-not-allowed disabled:opacity-50"
         >
-          {isPasswordVisible ? <EyeOpenIcon /> : <EyeClosedIcon />}
+          <AnimatedEyeIcon isOpen={isPasswordVisible} />
         </button>
       )}
     </div>
