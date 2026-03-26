@@ -11,7 +11,7 @@
  * - MarkAsResolvedBar (ping author or admin only, when waves exist)
  * - CommentsPanel inline on mobile (desktop version lives in Layout right-aside)
  */
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { useParams, useNavigate, useOutletContext } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuthStore, useSurgeStore, usePingsStore } from "../stores";
@@ -86,7 +86,6 @@ const PingDetail = () => {
     const [wavesPage, setWavesPage] = useState(1);
     const [categories, setCategories] = useState<Record<number, CategoryData>>({});
     const [showCommentsModal, setShowCommentsModal] = useState(false);
-    const dragY = useRef(0);
 
     useEffect(() => {
         if (!pingId) return;
@@ -432,7 +431,7 @@ const PingDetail = () => {
                             drag="y"
                             dragElastic={0.2}
                             dragConstraints={{ top: 0, bottom: 0 }}
-                            onDragEnd={(event, info) => {
+                            onDragEnd={(_, info) => {
                                 // Close if dragged down more than 50px
                                 if (info.velocity.y > 20 || info.offset.y > 50) {
                                     setShowCommentsModal(false);
