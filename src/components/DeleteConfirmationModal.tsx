@@ -8,12 +8,14 @@ interface DeleteConfirmationModalProps {
     onConfirm: () => void;
     onCancel: () => void;
     isLoading?: boolean;
+    itemType?: "Ping" | "Wave" | "Comment";
 }
 
 const DeleteConfirmationModal = ({
     onConfirm,
     onCancel,
     isLoading = false,
+    itemType = "Ping",
 }: DeleteConfirmationModalProps) => {
     return (
         <div className="flex font-poppins justify-center items-center z-50 inset-0 fixed bg-black/40">
@@ -64,7 +66,7 @@ const DeleteConfirmationModal = ({
                     <p className="font-poppins text-[#282828] text-center w-full
             text-[13px] leading-normal md:text-[16px] md:leading-[26px]">
                         {`The `}
-                        <span className="font-semibold text-[#f49b31]">Ping</span>
+                        <span className="font-semibold text-[#f49b31]">{itemType}</span>
                         {` would be deleted permanently. Action cannot be reverted`}
                     </p>
                 </div>

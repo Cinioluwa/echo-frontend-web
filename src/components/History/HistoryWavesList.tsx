@@ -14,6 +14,7 @@
 import { useState, useEffect } from "react";
 import WaveStatusIndicator from "../WaveStatusIndicator";
 import UserAvatar from "../UserAvatar";
+import DeleteConfirmationModal from "../DeleteConfirmationModal";
 import type { Wave } from "../../api/types";
 import { categoryImages } from "../CategoryImages";
 import { LoadingSpinner } from "../shared/LoadingSpinner";
@@ -95,6 +96,9 @@ interface WaveHistoryCardProps {
 }
 
 const WaveHistoryCard = ({ wave, onDelete }: WaveHistoryCardProps) => {
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [isDeleting, setIsDeleting] = useState(false);
+
     const authorName =
         typeof wave.author === "object" && wave.author
             ? `${wave.author.firstName ?? ""} ${wave.author.lastName ?? ""}`.trim() || "Anonymous"
@@ -116,130 +120,156 @@ const WaveHistoryCard = ({ wave, onDelete }: WaveHistoryCardProps) => {
 
     const surgeCount = wave.surgeCount || wave._count?.surges || 0;
 
-    const handleDelete = () => {
-        onDelete(wave.id);
+    const handleDeleteClick = () => {
+        setShowDeleteModal(true);
+    };
+
+    const handleConfirmDelete = async () => {
+        setIsDeleting(true);
+        try {
+            await new Promise(resolve => setTimeout(resolve, 300)); // Brief delay for UX
+            onDelete(wave.id);
+            setShowDeleteModal(false);
+        } catch {
+            setIsDeleting(false);
+        }
+    };
+
+    const handleCancelDelete = () => {
+        setShowDeleteModal(false);
     };
 
     return (
-        <div className="bg-[#FEFEFE] rounded-[10px] px-5 py-[15px] flex flex-col gap-[15px] w-full max-w-full">
-            {/* ─── Header ───────────────────────────── */}
-            <div className="flex items-center justify-between">
-                <div className="flex items-center gap-4">
-                    {/* Avatar */}
-                    <UserAvatar
-                        user={typeof wave.author === "object" ? wave.author : null}
-                        size="lg"
-                        responsive
-                        bgColor="bg-[#FFC37B]"
-                        className="shrink-0"
-                    />
-                    {/* Name + timestamp */}
-                    <div className="flex flex-col">
-                        <span className="font-['Poppins',sans-serif] font-semibold text-[13px] md:text-[15px] text-black leading-normal">
-                            {authorName}
-                        </span>
-                        <span className="font-['Poppins',sans-serif] font-medium text-[11px] md:text-[13px] text-[#8B8E8D] leading-normal">
-                            {timestamp}
-                        </span>
+        <>
+            <div className="bg-[#FEFEFE] rounded-[10px] px-5 py-[15px] flex flex-col gap-[15px] w-full max-w-full">
+                {/* ─── Header ───────────────────────────── */}
+                <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-4">
+                        {/* Avatar */}
+                        <UserAvatar
+                            user={typeof wave.author === "object" ? wave.author : null}
+                            size="lg"
+                            responsive
+                            bgColor="bg-[#FFC37B]"
+                            className="shrink-0"
+                        />
+                        {/* Name + timestamp */}
+                        <div className="flex flex-col">
+                            <span className="font-['Poppins',sans-serif] font-semibold text-[13px] md:text-[15px] text-black leading-normal">
+                                {authorName}
+                            </span>
+                            <span className="font-['Poppins',sans-serif] font-medium text-[11px] md:text-[13px] text-[#8B8E8D] leading-normal">
+                                {timestamp}
+                            </span>
+                        </div>
+                    </div>
+
+                    {/* Badges: status + delete */}
+                    <div className="flex items-center gap-3">
+                        {/* Status badge */}
+                        {wave.status && (
+                            <div className=" rounded-[23px] flex items-center gap-1.5 px-[15px] py-[7px]">
+                                <WaveStatusIndicator status={wave.status} />
+                            </div>
+                        )}
+                        {/* Delete button */}
+                        <button
+                            onClick={handleDeleteClick}
+                            aria-label="Delete wave"
+                            className="w-[31px] h-8 rounded-full bg-[#FEF5EA] flex items-center justify-center hover:bg-red-100 transition-colors cursor-pointer"
+                        >
+                            <svg
+                                width="16"
+                                height="16"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                xmlns="http://www.w3.org/2000/svg"
+                                aria-hidden="true"
+                            >
+                                <path
+                                    d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"
+                                    stroke="#EF4444"
+                                    strokeWidth="1.8"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                />
+                            </svg>
+                        </button>
                     </div>
                 </div>
 
-                {/* Badges: status + delete */}
-                <div className="flex items-center gap-3">
-                    {/* Status badge */}
-                    {wave.status && (
-                        <div className=" rounded-[23px] flex items-center gap-1.5 px-[15px] py-[7px]">
-                            <WaveStatusIndicator status={wave.status} />
-                        </div>
+                {/* ─── Category label ────────────────────── */}
+                {categoryName && (
+                    <div className="flex items-center gap-[9px]">
+                        {categoryIcon && (
+                            <img
+                                src={categoryIcon}
+                                alt={categoryName}
+                                className="w-5 h-5 object-contain"
+                            />
+                        )}
+                        <span className="font-['Poppins',sans-serif] font-medium text-[15px] text-[#171717]">
+                            {categoryName}
+                        </span>
+                    </div>
+                )}
+
+                {/* ─── Parent ping context ───────────────── */}
+                {wave.ping?.title && (
+                    <p className="font-['Poppins',sans-serif] text-[12px] text-[#8B8E8D] leading-normal">
+                        Wave on:{" "}
+                        <span className="text-[#F49B31] font-medium">{wave.ping.title}</span>
+                    </p>
+                )}
+
+                {/* ─── Body: title + solution/description ── */}
+                <div className="flex flex-col gap-2">
+                    {wave.title && (
+                        <h3 className="font-['Poppins',sans-serif] font-semibold text-[14px] md:text-[16px] text-black leading-normal">
+                            {wave.title}
+                        </h3>
                     )}
-                    {/* Delete button */}
-                    <button
-                        onClick={handleDelete}
-                        aria-label="Delete wave"
-                        className="w-[31px] h-8 rounded-full bg-[#FEF5EA] flex items-center justify-center hover:bg-red-100 transition-colors cursor-pointer"
-                    >
+                    <p className="font-['Poppins',sans-serif] font-normal text-[12px] md:text-[14px] text-[#171717] leading-normal">
+                        {wave.description || wave.solution}
+                    </p>
+                </div>
+
+                {/* ─── Footer: surge count ──────────────── */}
+                <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-1.5 border border-[#626665] rounded-[18px] px-[13px] py-[5px]">
+                        {/* Lightning bolt icon */}
                         <svg
-                            width="16"
-                            height="16"
-                            viewBox="0 0 24 24"
+                            width="10"
+                            height="14"
+                            viewBox="0 0 10 14"
                             fill="none"
                             xmlns="http://www.w3.org/2000/svg"
                             aria-hidden="true"
                         >
                             <path
-                                d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"
-                                stroke="#EF4444"
-                                strokeWidth="1.8"
-                                strokeLinecap="round"
+                                d="M5.5 1L1 7.5H5L4.5 13L9 6.5H5L5.5 1Z"
+                                fill="#F49B31"
+                                stroke="#F49B31"
+                                strokeWidth="0.8"
                                 strokeLinejoin="round"
                             />
                         </svg>
-                    </button>
+                        <span className="font-['Poppins',sans-serif] font-medium text-[13px] text-black">
+                            {surgeCount}
+                        </span>
+                    </div>
                 </div>
-            </div>
 
-            {/* ─── Category label ────────────────────── */}
-            {categoryName && (
-                <div className="flex items-center gap-[9px]">
-                    {categoryIcon && (
-                        <img
-                            src={categoryIcon}
-                            alt={categoryName}
-                            className="w-5 h-5 object-contain"
-                        />
-                    )}
-                    <span className="font-['Poppins',sans-serif] font-medium text-[15px] text-[#171717]">
-                        {categoryName}
-                    </span>
-                </div>
-            )}
-
-            {/* ─── Parent ping context ───────────────── */}
-            {wave.ping?.title && (
-                <p className="font-['Poppins',sans-serif] text-[12px] text-[#8B8E8D] leading-normal">
-                    Wave on:{" "}
-                    <span className="text-[#F49B31] font-medium">{wave.ping.title}</span>
-                </p>
-            )}
-
-            {/* ─── Body: title + solution/description ── */}
-            <div className="flex flex-col gap-2">
-                {wave.title && (
-                    <h3 className="font-['Poppins',sans-serif] font-semibold text-[14px] md:text-[16px] text-black leading-normal">
-                        {wave.title}
-                    </h3>
+                {showDeleteModal && (
+                    <DeleteConfirmationModal
+                        onConfirm={handleConfirmDelete}
+                        onCancel={handleCancelDelete}
+                        isLoading={isDeleting}
+                        itemType="Wave"
+                    />
                 )}
-                <p className="font-['Poppins',sans-serif] font-normal text-[12px] md:text-[14px] text-[#171717] leading-normal">
-                    {wave.description || wave.solution}
-                </p>
             </div>
-
-            {/* ─── Footer: surge count ──────────────── */}
-            <div className="flex items-center gap-2">
-                <div className="flex items-center gap-1.5 border border-[#626665] rounded-[18px] px-[13px] py-[5px]">
-                    {/* Lightning bolt icon */}
-                    <svg
-                        width="10"
-                        height="14"
-                        viewBox="0 0 10 14"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                        aria-hidden="true"
-                    >
-                        <path
-                            d="M5.5 1L1 7.5H5L4.5 13L9 6.5H5L5.5 1Z"
-                            fill="#F49B31"
-                            stroke="#F49B31"
-                            strokeWidth="0.8"
-                            strokeLinejoin="round"
-                        />
-                    </svg>
-                    <span className="font-['Poppins',sans-serif] font-medium text-[13px] text-black">
-                        {surgeCount}
-                    </span>
-                </div>
-            </div>
-        </div>
+        </>
     );
 };
 
