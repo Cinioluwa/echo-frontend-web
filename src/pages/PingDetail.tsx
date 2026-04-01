@@ -16,6 +16,7 @@ import { useParams, useNavigate, useOutletContext } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuthStore, useSurgeStore, usePingsStore } from "../stores";
 import { pingService, waveService, categoryService } from "../api/services";
+import { calculatePingBadge } from "../utils/badgeUtils";
 import ProposeWaveBar from "../components/ProposeWaveBar";
 import CommentsPanel from "../components/CommentsPanel";
 import WaveCard from "../components/WaveCard";
@@ -262,8 +263,8 @@ const PingDetail = () => {
 
             {/* ── Ping Card ─────────────────────────────── */}
             <div className="bg-[#fefefe] rounded-[10px] px-5 py-[15px] flex flex-col gap-[15px] w-full">
-                {/* Author row */}
-                <div className="flex items-center">
+                {/* Author row + badge */}
+                <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2.5">
                         <UserAvatar
                             user={typeof displayPing.author === "object" ? displayPing.author : null}
@@ -280,6 +281,23 @@ const PingDetail = () => {
                         </div>
                     </div>
 
+                    {/* Ping status badge (Top 3, Acknowledged, or Resolved) */}
+                    {(() => {
+                        const badgeConfig = calculatePingBadge(displayPing, []);
+                        if (!badgeConfig) return null;
+
+                        return (
+                            <div className="border border-[#626665] rounded-[23px] flex items-center gap-1.5 px-[15px] py-[7px]">
+                                <div
+                                    className="w-[5px] h-[5px] rounded-full shrink-0"
+                                    style={{ backgroundColor: badgeConfig.color }}
+                                />
+                                <span className="font-['Poppins',sans-serif] font-medium text-[11px] text-black whitespace-nowrap">
+                                    {badgeConfig.label}
+                                </span>
+                            </div>
+                        );
+                    })()}
                 </div>
                 {/* Category badge */}
                 {categoryName && (
@@ -383,6 +401,7 @@ const PingDetail = () => {
                                 (typeof wave.author === "object" ? wave.author?.id : undefined)
                             }
                             onDelete={handleDeleteWave}
+                            allWavesForPing={waves}
                         />
                     ))}
                 </div>

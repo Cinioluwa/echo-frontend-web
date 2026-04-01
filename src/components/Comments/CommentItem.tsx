@@ -99,7 +99,7 @@ const CommentItem = ({ comment, onRefresh: _onRefresh }: Props) => {
     return (
         <div className="flex flex-col gap-2.5 bg-white p-2 rounded-xl">
             {/* User info */}
-            <div className="flex items-center gap-2 justify-between">
+            <div className="flex flex-col gap-2 justify-between">
                 {/* Avatar and user details */}
                 <div className="flex items-center gap-2 min-w-0">
                     {/* Avatar */}
@@ -110,77 +110,65 @@ const CommentItem = ({ comment, onRefresh: _onRefresh }: Props) => {
                     />
 
                     {/* User details */}
-                    <div className="flex items-center gap-2 min-w-0">
+                    <div className="flex items-center gap-2 min-w-0 justify-between w-full">
                         <p className="text-sm font-semibold truncate">{authorName}</p>
                         <p className="text-xs whitespace-nowrap">{formatTimestamp(comment.createdAt)}</p>
                     </div>
                 </div>
 
-                {/* Delete button - only for owner */}
-                {isOwner && (
-                    <button
-                        type="button"
-                        onClick={handleDelete}
-                        disabled={isDeleting}
-                        aria-label="Delete comment"
-                        className="ml-2 shrink-0 p-1.5 rounded-lg text-red-600 hover:bg-red-50 transition-colors disabled:opacity-50"
-                        title="Delete comment"
-                    >
-                        <svg
-                            width="16"
-                            height="16"
-                            viewBox="0 0 16 16"
-                            fill="none"
-                            xmlns="http://www.w3.org/2000/svg"
-                            aria-hidden="true"
-                        >
-                            <path
-                                d="M2 4h12M6 7v4M10 7v4M3 4l1 10c0 .5.5 1 1 1h6c.5 0 1-.5 1-1l1-10M7 2h2"
-                                stroke="currentColor"
-                                strokeWidth="1.5"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                            />
-                        </svg>
-                    </button>
-                )}
-                <div className="flex justify-between items-end gap-1">
+                <div className="grid grid-cols-3">
                     {/* Comment content */}
-                    <p className="text-base leading-6 whitespace-pre-wrap">
+                    <p className="text-base leading-6 whitespace-pre-wrap col-span-2">
                         {comment.content}
                     </p>
+                    <div className="flex justify-end  gap-1 col-span-1">
 
-                    {/* Surge button */}
-                    <button
-                        type="button"
-                        onClick={handleSurge}
-                        disabled={isToggling}
-                        aria-label={localHasSurged ? "Remove surge" : "Surge"}
-                        className={`flex items-center w-12 h-10 gap-[3px] px-2.5 py-[7px] rounded-[15px] border border-black cursor-pointer transition-colors duration-300 disabled:opacity-50 ${localHasSurged || comment.hasSurged
-                            ? "bg-[#f49b31] text-white border-[#f49b31]"
-                            : "bg-[#fef5ea] text-[#4a504e]"
-                            }`}
-                        style={{ transition: 'background-color 0.3s, color 0.3s, border-color 0.3s' }}
-                    >
-                        <svg
-                            width="15"
-                            height="19"
-                            viewBox="0 0 12 16"
-                            fill="none"
-                            xmlns="http://www.w3.org/2000/svg"
-                            aria-hidden="true"
-                            style={{ transition: 'filter 0.3s' }}
+                        {/* Surge button */}
+                        <button
+                            type="button"
+                            onClick={handleSurge}
+                            disabled={isToggling}
+                            aria-label={localHasSurged ? "Remove surge" : "Surge"}
+                            className={`flex items-center w-12 h-10 gap-[3px] px-2.5 py-[7px] rounded-[15px] border border-black cursor-pointer transition-colors duration-300 disabled:opacity-50 ${localHasSurged || comment.hasSurged
+                                ? "bg-[#f49b31] text-white border-[#f49b31]"
+                                : "bg-[#fef5ea] text-[#4a504e]"
+                                }`}
+                            style={{ transition: 'background-color 0.3s, color 0.3s, border-color 0.3s' }}
                         >
-                            <path
-                                d="M6.5 1L1 9h5l-0.5 6 6-8H7l0.5-6z"
-                                fill={localHasSurged || comment.hasSurged ? "white" : "#4A504E"}
-                                style={{ transition: 'fill 0.3s' }}
-                            />
-                        </svg>
-                        <span className="font-['Poppins',sans-serif] font-semibold text-[11px]">
-                            {localSurgeCount}
-                        </span>
-                    </button>
+                            <svg
+                                width="15"
+                                height="19"
+                                viewBox="0 0 12 16"
+                                fill="none"
+                                xmlns="http://www.w3.org/2000/svg"
+                                aria-hidden="true"
+                                style={{ transition: 'filter 0.3s' }}
+                            >
+                                <path
+                                    d="M6.5 1L1 9h5l-0.5 6 6-8H7l0.5-6z"
+                                    fill={localHasSurged || comment.hasSurged ? "white" : "#4A504E"}
+                                    style={{ transition: 'fill 0.3s' }}
+                                />
+                            </svg>
+                            <span className="font-['Poppins',sans-serif] font-semibold text-[11px]">
+                                {localSurgeCount}
+                            </span>
+                        </button>
+
+                        {/* Delete button - only for owner */}
+                        {isOwner && (
+                            <button
+                                type="button"
+                                onClick={handleDelete}
+                                disabled={isDeleting}
+                                aria-label="Delete comment"
+                                className="ml-2 shrink-0 p-2 rounded-full text-red-600 bg-red-200 border-red-400 border hover:bg-red-50 transition-colors disabled:opacity-50"
+                                title="Delete comment"
+                            >
+                                <img src="/assets/icon/delete.svg" width="20" height="20" alt="Delete comment" />
+                            </button>
+                        )}
+                    </div>
                 </div>
             </div>
         </div>

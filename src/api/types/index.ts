@@ -114,7 +114,15 @@ export interface Ping {
   hashtag?: string;
   author?: User;
   authorId?: number; // For consistency with Wave type
-  status: "POSTED" | "UNDER_REVIEW" | "ARCHIVED";
+  status:
+    | "POSTED"
+    | "UNDER_REVIEW"
+    | "APPROVED"
+    | "REJECTED"
+    | "IN_PROGRESS"
+    | "COMPLETED"
+    | "ON_HOLD";
+  progressStatus?: "NONE" | "IN_PROGRESS" | "AKNOWLEDGED" | "RESOLVED";
   surgeCount: number;
   viewCount?: number;
   hasSurged?: boolean; // Whether the current user has surged this ping
@@ -183,7 +191,14 @@ export interface Wave {
   viewCount: number;
   hasSurged?: boolean; // Whether the current user has surged this wave
   rank?: number; // Top ranking (1-3 for top waves)
-  status?: "POSTED" | "UNDER_REVIEW" | "APPROVED" | "REJECTED";
+  status:
+    | "POSTED"
+    | "UNDER_REVIEW"
+    | "APPROVED"
+    | "REJECTED"
+    | "IN_PROGRESS"
+    | "COMPLETED"
+    | "ON_HOLD";
   createdAt: string;
   updatedAt?: string;
   _count?: {

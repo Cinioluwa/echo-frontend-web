@@ -12,6 +12,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuthStore, useSurgeStore, usePingsStore } from "../../stores";
 import { pingService } from "../../api/services";
+import { calculatePingBadge } from "../../utils/badgeUtils";
 import InlineWavePreview from "./InlineWavePreview";
 import DeleteConfirmationModal from "../DeleteConfirmationModal";
 import UserAvatar from "../UserAvatar";
@@ -145,17 +146,27 @@ const UnifiedPingCard = ({ ping, isHistoryContext = false }: UnifiedPingCardProp
                             </div>
                         </div>
 
-                        {/* Badges: Top 3 + delete */}
+                        {/* Badges: Ping status + delete */}
                         <div className={["flex items-center gap-5", isHistoryContext ? "min-w-0" : ""].join(" ")}>
-                            {/* "Top 3" badge — shown if ping is in top */}
-                            {(ping as Ping & { isTop3?: boolean }).isTop3 && (
-                                <div className="border border-[#626665] rounded-[23px] flex items-center gap-1.5 px-[15px] py-[7px]">
-                                    <div className="w-[7px] h-[7px] rounded-full bg-[#F49B31]" />
-                                    <span className="font-['Poppins',sans-serif] font-medium text-[11px] text-black">
-                                        Top 3
-                                    </span>
-                                </div>
-                            )}
+                            {/* Ping status badge (Top 3, Acknowledged, or Resolved) */}
+                            {(() => {
+                                // Calculate badge using hierarchy from TAG_AND_STATUS_HIERARCHY.md
+                                // Pass empty array for weeklyTop3Ids for now; can be enhanced later
+                                const badgeConfig = calculatePingBadge(currentPing, []);
+                                if (!badgeConfig) return null;
+
+                                return (
+                                    <div className="border border-[#626665] rounded-[23px] flex items-center gap-1.5 px-[15px] py-[7px]">
+                                        <div
+                                            className="w-[7px] h-[7px] rounded-full"
+                                            style={{ backgroundColor: badgeConfig.color }}
+                                        />
+                                        <span className="font-['Poppins',sans-serif] font-medium text-[11px] text-black">
+                                            {badgeConfig.label}
+                                        </span>
+                                    </div>
+                                );
+                            })()}
                             {/* Delete — own pings only */}
                             {isOwner && (
                                 <button

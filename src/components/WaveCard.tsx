@@ -3,18 +3,24 @@
  * Memoized wave solution card for PingDetail page
  * Displays author info, solution text, status badge, and surge button
  * 
+ * Implements accurate Wave badge hierarchy from TAG_AND_STATUS_HIERARCHY.md:
+ * 1. Community Pick (highest priority) - calculated as highest surge count for the Ping
+ * 2-7. Status badges (Posted, Under Review, Approved, In Progress, Rejected, Completed)
+ * 
  * Performance: Memoized to prevent unnecessary re-renders when wave data hasn't changed
  */
 import React from "react";
 import { useSurgeStore, useWavesStore } from "../stores";
 import { waveService } from "../api/services";
 import UserAvatar from "./UserAvatar";
+import { calculateWaveBadge } from "../utils/badgeUtils";
 import type { Wave } from "../api/types";
 
 interface WaveCardProps {
     wave: Wave;
     isOwner: boolean;
     onDelete?: (id: number) => void;
+    allWavesForPing?: Wave[]; // All waves for the parent Ping (needed for Community Pick calculation)
 }
 
 // ─── Helper Functions (Module-level for performance) ───────────────────────
@@ -47,7 +53,7 @@ const getAuthorName = (author: Wave["author"]) => {
 
 // ─── WaveCard Component ─────────────────────────────────────────────────────
 
-const WaveCard = React.memo(({ wave, isOwner, onDelete }: WaveCardProps) => {
+const WaveCard = React.memo(({ wave, isOwner, onDelete, allWavesForPing = [] }: WaveCardProps) => {
     const toggleSurge = useSurgeStore((state) => state.toggleSurge);
     const updateWaveStore = useWavesStore((state) => state.updateWave);
     const waveFromStore = useWavesStore((state) => state.wavesById[String(wave.id)]);
@@ -84,14 +90,8 @@ const WaveCard = React.memo(({ wave, isOwner, onDelete }: WaveCardProps) => {
         onDelete?.(wave.id);
     };
 
-    const badge =
-        wave.rank && wave.rank <= 3
-            ? { label: "Top 3", color: "#f49b31" }
-            : wave.status === "UNDER_REVIEW"
-                ? { label: "Under Review", color: "#f5c518" }
-                : wave.status === "POSTED"
-                    ? { label: "Posted", color: "#22c55e" }
-                    : null;
+    // Calculate badge using the hierarchy from TAG_AND_STATUS_HIERARCHY.md
+    const badgeConfig = calculateWaveBadge(currentWave, allWavesForPing);
 
     return (
         <div className="bg-white rounded-[10px] px-[27.5px] py-[23px] flex flex-col gap-[17px] w-full min-w-full">
@@ -114,14 +114,14 @@ const WaveCard = React.memo(({ wave, isOwner, onDelete }: WaveCardProps) => {
                 </div>
 
                 <div className="flex gap-5">
-                    {badge && (
+                    {badgeConfig && (
                         <div className="border border-[#626665] rounded-[23px] flex items-center gap-1.5 px-[11px] py-1">
                             <div
                                 className="w-[5px] h-[5px] rounded-full shrink-0"
-                                style={{ backgroundColor: badge.color }}
+                                style={{ backgroundColor: badgeConfig.color }}
                             />
                             <span className="font-['Poppins',sans-serif] font-medium text-[14px] text-black">
-                                {badge.label}
+                                {badgeConfig.label}
                             </span>
                         </div>
                     )}
