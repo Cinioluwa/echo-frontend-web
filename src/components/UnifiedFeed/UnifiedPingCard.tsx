@@ -24,9 +24,10 @@ const commentIcon = "/assets/icon/comment.svg";
 interface UnifiedPingCardProps {
     ping: Ping;
     isHistoryContext?: boolean;
+    weeklyTop3Ids?: number[];
 }
 
-const UnifiedPingCard = ({ ping, isHistoryContext = false }: UnifiedPingCardProps) => {
+const UnifiedPingCard = ({ ping, isHistoryContext = false, weeklyTop3Ids = [] }: UnifiedPingCardProps) => {
     const navigate = useNavigate();
     const currentUser = useAuthStore((state) => state.user);
     const toggleSurge = useSurgeStore((state) => state.toggleSurge);
@@ -151,8 +152,8 @@ const UnifiedPingCard = ({ ping, isHistoryContext = false }: UnifiedPingCardProp
                             {/* Ping status badge (Top 3, Acknowledged, or Resolved) */}
                             {(() => {
                                 // Calculate badge using hierarchy from TAG_AND_STATUS_HIERARCHY.md
-                                // Pass empty array for weeklyTop3Ids for now; can be enhanced later
-                                const badgeConfig = calculatePingBadge(currentPing, []);
+                                // Pass weeklyTop3Ids from parent to calculate Top 3 badge when applicable
+                                const badgeConfig = calculatePingBadge(currentPing, weeklyTop3Ids);
                                 if (!badgeConfig) return null;
 
                                 return (

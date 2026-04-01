@@ -15,7 +15,7 @@ import { useState, useEffect } from "react";
 import { useParams, useNavigate, useOutletContext } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuthStore, useSurgeStore, usePingsStore } from "../stores";
-import { pingService, waveService, categoryService } from "../api/services";
+import { pingService, waveService, categoryService, publicService } from "../api/services";
 import { calculatePingBadge } from "../utils/badgeUtils";
 import ProposeWaveBar from "../components/ProposeWaveBar";
 import CommentsPanel from "../components/CommentsPanel";
@@ -82,6 +82,7 @@ const PingDetail = () => {
     const [wavesPage, setWavesPage] = useState(1);
     const [categories, setCategories] = useState<Record<number, CategoryData>>({});
     const [showCommentsModal, setShowCommentsModal] = useState(false);
+    const [weeklyTop3Ids, setWeeklyTop3Ids] = useState<number[]>([]);
 
     useEffect(() => {
         if (!pingId) return;
@@ -113,6 +114,12 @@ const PingDetail = () => {
                 {} as Record<number, CategoryData>
             );
             setCategories(catMap);
+        });
+        // Fetch top 3 pings for badge calculation
+        publicService.getSoundboard({ sort: "trending", top: 3 }).then((res) => {
+            setWeeklyTop3Ids(res.data.map((ping) => ping.id));
+        }).catch((err) => {
+            console.error("Failed to fetch top 3 pings:", err);
         });
     }, []);
 
@@ -283,7 +290,7 @@ const PingDetail = () => {
 
                     {/* Ping status badge (Top 3, Acknowledged, or Resolved) */}
                     {(() => {
-                        const badgeConfig = calculatePingBadge(displayPing, []);
+                        const badgeConfig = calculatePingBadge(displayPing, weeklyTop3Ids);
                         if (!badgeConfig) return null;
 
                         return (

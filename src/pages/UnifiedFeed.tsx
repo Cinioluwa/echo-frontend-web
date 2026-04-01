@@ -22,6 +22,7 @@ import InlinePingCreator from "../components/InlinePingCreator";
 import UnifiedPingCard from "../components/UnifiedFeed/UnifiedPingCard";
 import { usePingsStore, useSearchStore, useAuthStore } from "../stores";
 import { getSocket } from "../api/socket";
+import { publicService } from "../api/services";
 
 const UnifiedFeed = () => {
     // ── Pings store ────────────────────────────────────────────────────────────
@@ -51,13 +52,19 @@ const UnifiedFeed = () => {
     // ── Modal state ─────────────────────────────────────────────────────────────
     const [isClaimModalOpen, setClaimModalOpen] = useState(false);
     const [isInviteModalOpen, setInviteModalOpen] = useState(false);
-
+    const [weeklyTop3Ids, setWeeklyTop3Ids] = useState<number[]>([]);
     // ── Fetch data on mount / search change ────────────────────────────────────
     useEffect(() => {
         fetchPings({
             q: debouncedQuery || undefined,
             category: selectedCategoryId || undefined,
             sort: "trending",
+        });
+        // Fetch top 3 pings to pass badge info to UnifiedPingCard components
+        publicService.getSoundboard({ sort: "trending", top: 3 }).then((res) => {
+            setWeeklyTop3Ids(res.data.map((ping) => ping.id));
+        }).catch((err) => {
+            console.error("Failed to fetch top 3 pings:", err);
         });
     }, [debouncedQuery, selectedCategoryId, fetchPings]);
 
@@ -120,6 +127,7 @@ const UnifiedFeed = () => {
                         <UnifiedPingCard
                             key={ping.id}
                             ping={ping}
+                            weeklyTop3Ids={weeklyTop3Ids}
                         />
                     ))}
 
