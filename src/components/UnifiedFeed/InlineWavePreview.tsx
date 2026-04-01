@@ -87,7 +87,7 @@ const InlineWavePreview = ({ pingId }: InlineWavePreviewProps) => {
                             {/* Solution text */}
                             <div className="flex-1 text-center px-2 min-w-0  text-ellipsis line-clamp-2 truncate overflow-y-scroll">
                                 <p className="font-['Poppins',sans-serif] font-medium md:font-semibold text-wrap text-[10px] md:text-[10px] text-black truncate leading-normal ">
-                                    {wave.solution}
+                                    {wave.solution.length > 30 ? wave.solution.substring(0, 30) + "..." : wave.solution}
                                 </p>
                             </div>
 

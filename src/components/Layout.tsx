@@ -170,7 +170,8 @@ const Layout = () => {
                 : null;
               console.log("Ping author ID:", pingAuthorId, "Current user ID:", currentUser?.id);
               const isOwner = currentUser?.id === pingAuthorId;
-              return isOwner ? (
+              const isResolved = !!ping.resolvedAt;
+              return isOwner && !isResolved ? (
                 <MarkAsResolvedBar
                   pingId={pingDetailId}
                   onResolved={handleResolvePing}

@@ -118,6 +118,7 @@ export interface Ping {
   surgeCount: number;
   viewCount?: number;
   hasSurged?: boolean; // Whether the current user has surged this ping
+  resolvedAt?: string; // Timestamp when ping was marked as resolved
   createdAt: string;
   updatedAt?: string;
   waves?: Wave[];

@@ -83,7 +83,7 @@ const MarkAsResolvedBar = ({ pingId: _pingId, onResolved, isLoading = false }: P
 
                         {/* Description */}
                         <p className="text-[14px] md:text-[16px] text-[#666] text-center w-full leading-normal">
-                            This will mark the ping as resolved. You can always change this later.
+                            This will mark the ping as resolved.
                         </p>
                     </div>
 
