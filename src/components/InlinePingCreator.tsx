@@ -163,7 +163,7 @@ const InlinePingCreator = forwardRef<InlinePingCreatorHandle>((_, ref) => {
             </label>
 
             {/* Row 3: Attach + Category selector + Post */}
-            <div className="flex items-center gap-[30px]">
+            <div className="flex items-center gap-2.5 md:gap-[30px]">
                 {/* Attach */}
                 <button
                     type="button"
@@ -194,7 +194,7 @@ const InlinePingCreator = forwardRef<InlinePingCreatorHandle>((_, ref) => {
                                 key={cat}
                                 type="button"
                                 onClick={() => setSelectedCategory(cat === selectedCategory ? null : cat)}
-                                className={`font-['Poppins',sans-serif] font-medium text-[14px] px-5 py-2.5 border-2 border-[#454545] cursor-pointer transition-colors ${selectedCategory === cat
+                                className={`font-['Poppins',sans-serif] font-medium text-[12px] md:text-[14px] px-2 md:px-5 py-1 md:py-2.5 border-2 border-[#454545] cursor-pointer transition-colors ${selectedCategory === cat
                                     ? "bg-[#F49B31] text-white border-[#F49B31]"
                                     : "bg-[#FEF5EA] text-black"
                                     } ${i === 0 ? "rounded-l-[25px] border-r" : i === CATEGORIES.length - 1 ? "rounded-r-[25px] border-l" : "border-l border-r"}`}

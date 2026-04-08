@@ -135,6 +135,7 @@ export interface Ping {
     comments: number;
     surges: number;
   };
+  media?: Media[];
 }
 
 export interface CreatePingRequest {
@@ -427,4 +428,12 @@ export interface ResolutionLog {
     comments?: number;
     surges?: number;
   };
+}
+
+export interface Media {
+  id: number;
+  url: string;
+  mimeType: string;
+  filename?: string;
+  createdAt?: string;
 }
