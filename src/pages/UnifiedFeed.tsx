@@ -46,8 +46,9 @@ const UnifiedFeed = () => {
         }))
     );
 
-    // ── Auth store — for organizationId passed to claim/invite modals ─────────
+    // ── Auth store — for organizationId and role ─────────
     const organizationId = useAuthStore((state) => state.user?.organizationId ?? null);
+    const userRole = useAuthStore((state) => state.user?.role ?? null);
 
     // ── Modal state ─────────────────────────────────────────────────────────────
     const [isClaimModalOpen, setClaimModalOpen] = useState(false);
@@ -105,8 +106,8 @@ const UnifiedFeed = () => {
                 onInviteLeader={() => setInviteModalOpen(true)}
             />
 
-            {/* Inline ping creator */}
-            <InlinePingCreator />
+            {/* Inline ping creator (hide on admin pages) */}
+            {userRole !== "ADMIN" && userRole !== "SUPER_ADMIN" && <InlinePingCreator />}
 
             {/* ── Feed list ── */}
             {isLoading && pings.length === 0 ? (
