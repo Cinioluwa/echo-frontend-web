@@ -1,21 +1,25 @@
 interface toggleProps {
   checked?: boolean;
-  onChange?: () => void;
+  onChange?: (value: boolean) => void;
+  disabled?: boolean;
 }
 
-const Toggle = ({ checked = false, onChange }: toggleProps) => {
+const Toggle = ({ checked = false, onChange, disabled = false }: toggleProps) => {
   return (
-    <label className="relative flex gap-2.5 items-center text-[12px] justify-center cursor-pointer">
+    <label className={`relative flex gap-2.5 items-center text-[12px] justify-center cursor-pointer ${disabled ? "opacity-50 cursor-not-allowed" : ""
+      }`}>
       <div className="relative ">
         <input
-          onChange={onChange}
+          onChange={(e) => onChange?.(e.target.checked)}
           checked={checked}
           name="anonymoucCheck"
           id="anonymousCheck"
           type="checkbox"
+          disabled={disabled}
           className="sr-only peer"
         />
-        <div className="w-10 h-6 bg-gray-300 rounded-full peer-checked:bg-[#F49B31] transition-colors"></div>
+        <div className={`w-10 h-6 bg-gray-300 rounded-full peer-checked:bg-[#F49B31] transition-colors ${disabled ? "bg-gray-200" : ""
+          }`}></div>
         <div className="absolute left-1 top-1 w-4 h-4 bg-white rounded-full shadow-md peer-checked:translate-x-4 duration-300 transition-transform"></div>
       </div>
     </label>

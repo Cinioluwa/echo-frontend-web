@@ -3,6 +3,7 @@ import type {
   User,
   Surge,
   Comment,
+  UserPreference,
   PaginatedResponse,
   PaginationParams,
 } from "../types/index";
@@ -10,6 +11,11 @@ import type {
 export interface UpdateUserRequest {
   firstName?: string;
   lastName?: string;
+}
+
+export interface UpdateUserPreferencesRequest {
+  commentAnonymously?: boolean;
+  pingAnonymously?: boolean;
 }
 
 /**
@@ -68,6 +74,28 @@ const userService = {
     const response = await api.get<PaginatedResponse<Comment>>(
       "/users/me/comments",
       { params },
+    );
+    return response.data;
+  },
+
+  /**
+   * Get current user's posting preferences
+   */
+  getMyPreferences: async (): Promise<UserPreference> => {
+    const response = await api.get<UserPreference>("/users/me/preferences");
+    return response.data;
+  },
+
+  /**
+   * Update current user's posting preferences
+   * @param data Updated preference fields
+   */
+  updateMyPreferences: async (
+    data: UpdateUserPreferencesRequest,
+  ): Promise<UserPreference> => {
+    const response = await api.patch<UserPreference>(
+      "/users/me/preferences",
+      data,
     );
     return response.data;
   },

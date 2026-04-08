@@ -30,6 +30,7 @@ export interface User {
     name: string;
     logoUrl?: string;
   };
+  userPreference?: UserPreference;
 }
 
 export interface LoginRequest {
@@ -439,4 +440,13 @@ export interface Media {
   createdAt?: string;
   width?: number;
   height?: number;
+}
+
+export interface UserPreference {
+  id?: number;
+  userId?: number;
+  commentAnonymously?: boolean;
+  pingAnonymously?: boolean;
+  createdAt?: string;
+  updatedAt?: string;
 }

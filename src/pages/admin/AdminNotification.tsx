@@ -48,10 +48,10 @@ const AdminNotification = () => {
               </div>
               <Toggle
                 checked={AdminNotification.emailUpdates}
-                onChange={() =>
+                onChange={(checked) =>
                   setAdminNotification({
                     ...AdminNotification,
-                    emailUpdates: !AdminNotification.emailUpdates,
+                    emailUpdates: checked,
                   })
                 }
               />
@@ -66,10 +66,10 @@ const AdminNotification = () => {
                 {/* Custom Tailwind Toggle Switch */}
                 <Toggle
                   checked={AdminNotification.newPingInSpace}
-                  onChange={() =>
+                  onChange={(checked) =>
                     setAdminNotification({
                       ...AdminNotification,
-                      newPingInSpace: !AdminNotification.newPingInSpace,
+                      newPingInSpace: checked,
                     })
                   }
                 />
@@ -81,10 +81,10 @@ const AdminNotification = () => {
                 {/* Custom Tailwind Toggle Switch */}
                 <Toggle
                   checked={AdminNotification.newWaveProposed}
-                  onChange={() =>
+                  onChange={(checked) =>
                     setAdminNotification({
                       ...AdminNotification,
-                      newWaveProposed: !AdminNotification.newWaveProposed,
+                      newWaveProposed: checked,
                     })
                   }
                 />
@@ -96,10 +96,10 @@ const AdminNotification = () => {
                 {/* Custom Tailwind Toggle Switch */}
                 <Toggle
                   checked={AdminNotification.pingSurgeMilestone}
-                  onChange={() =>
+                  onChange={(checked) =>
                     setAdminNotification({
                       ...AdminNotification,
-                      pingSurgeMilestone: !AdminNotification.pingSurgeMilestone,
+                      pingSurgeMilestone: checked,
                     })
                   }
                 />
@@ -111,10 +111,10 @@ const AdminNotification = () => {
                 {/* Custom Tailwind Toggle Switch */}
                 <Toggle
                   checked={AdminNotification.memberJoinRequest}
-                  onChange={() =>
+                  onChange={(checked) =>
                     setAdminNotification({
                       ...AdminNotification,
-                      memberJoinRequest: !AdminNotification.memberJoinRequest,
+                      memberJoinRequest: checked,
                     })
                   }
                 />

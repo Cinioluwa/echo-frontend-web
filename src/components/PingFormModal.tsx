@@ -501,8 +501,8 @@ const PingFormModal = ({
         {/* Anonymous Toggle */}
         <Toggle
           checked={pingData.anonymous}
-          onChange={() =>
-            setPingData((prev) => ({ ...prev, anonymous: !prev.anonymous }))
+          onChange={(checked) =>
+            setPingData((prev) => ({ ...prev, anonymous: checked }))
           }
         />
 

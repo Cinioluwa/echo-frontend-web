@@ -55,7 +55,7 @@ const AdminAccount = () => {
                 </div>
                 <Toggle
                   checked={enable2fa}
-                  onChange={() => setEnable2fa(!enable2fa)}
+                  onChange={(checked) => setEnable2fa(checked)}
                 />
               </div>
             </section>
