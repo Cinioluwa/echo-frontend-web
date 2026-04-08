@@ -277,6 +277,7 @@ export interface CreateCommentRequest {
   targetType: "ping" | "wave";
   targetId: string;
   parentCommentId?: string;
+  isAnonymous?: boolean;
 }
 
 export interface UpdateCommentRequest {

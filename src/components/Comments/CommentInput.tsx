@@ -1,6 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAuthStore } from "../../stores";
 import { commentService } from "../../api/services";
+import userService from "../../api/services/user.service";
+import type { UserPreference } from "../../api/types";
 import UserAvatar from "../UserAvatar";
 
 interface Props {
@@ -21,8 +23,23 @@ const CommentInput = ({
     const [content, setContent] = useState("");
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [userPreferences, setUserPreferences] = useState<UserPreference | null>(null);
 
     const { user } = useAuthStore();
+
+    // Fetch user preferences on mount
+    useEffect(() => {
+        const fetchPreferences = async () => {
+            try {
+                const preferences = await userService.getMyPreferences();
+                setUserPreferences(preferences);
+            } catch (err) {
+                console.error("Failed to fetch user preferences:", err);
+            }
+        };
+
+        fetchPreferences();
+    }, []);
 
     const handleSubmit = async () => {
         if (!content.trim()) {
@@ -34,11 +51,14 @@ const CommentInput = ({
         setError(null);
 
         try {
+            // Use the preference setting to determine if comment should be anonymous
+            const isAnonymous = userPreferences?.commentAnonymously ?? false;
+
             // Use the correct API endpoints that match the documentation
             if (targetType === "ping") {
-                await commentService.createCommentOnPing(targetId, content.trim());
+                await commentService.createCommentOnPing(targetId, content.trim(), isAnonymous);
             } else {
-                await commentService.createCommentOnWave(targetId, content.trim());
+                await commentService.createCommentOnWave(targetId, content.trim(), isAnonymous);
             }
 
             // Success - clear input and notify parent

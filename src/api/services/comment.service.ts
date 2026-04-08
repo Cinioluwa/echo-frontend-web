@@ -94,11 +94,13 @@ const commentService = {
    * Reply to a comment
    * @param commentId Parent comment ID
    * @param content Reply content
+   * @param isAnonymous Whether the reply should be anonymous
    * @returns Created reply comment
    */
   replyToComment: async (
     commentId: string,
-    content: string
+    content: string,
+    isAnonymous?: boolean
   ): Promise<Comment> => {
     const parentComment = await commentService.getCommentById(commentId);
 
@@ -107,6 +109,7 @@ const commentService = {
       targetType: parentComment.targetType || "ping",
       targetId: parentComment.targetId || "",
       parentCommentId: commentId,
+      ...(isAnonymous !== undefined && { isAnonymous }),
     };
 
     return commentService.createComment(replyData);
@@ -130,14 +133,17 @@ const commentService = {
    * Create a comment on a ping
    * @param pingId Ping ID
    * @param content Comment content
+   * @param isAnonymous Whether the comment should be anonymous
    * @returns Created comment
    */
   createCommentOnPing: async (
     pingId: string,
-    content: string
+    content: string,
+    isAnonymous?: boolean
   ): Promise<Comment> => {
     const response = await api.post<Comment>(`/pings/${pingId}/comments`, {
       content,
+      ...(isAnonymous !== undefined && { isAnonymous }),
     });
     return response.data;
   },
@@ -146,14 +152,17 @@ const commentService = {
    * Create a comment on a wave
    * @param waveId Wave ID
    * @param content Comment content
+   * @param isAnonymous Whether the comment should be anonymous
    * @returns Created comment
    */
   createCommentOnWave: async (
     waveId: string,
-    content: string
+    content: string,
+    isAnonymous?: boolean
   ): Promise<Comment> => {
     const response = await api.post<Comment>(`/waves/${waveId}/comments`, {
       content,
+      ...(isAnonymous !== undefined && { isAnonymous }),
     });
     return response.data;
   },
