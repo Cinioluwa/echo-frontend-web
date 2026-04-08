@@ -20,8 +20,15 @@ export interface AdminPing {
   title: string;
   content: string;
   categoryId: number;
-  status: "POSTED" | "UNDER_REVIEW" | "ARCHIVED";
-  progressStatus: "PENDING" | "IN_PROGRESS" | "RESOLVED" | "WONT_FIX";
+  status:
+    | "POSTED"
+    | "UNDER_REVIEW"
+    | "APPROVED"
+    | "REJECTED"
+    | "IN_PROGRESS"
+    | "COMPLETED"
+    | "ON_HOLD";
+  progressStatus?: "NONE" | "IN_PROGRESS" | "ACKNOWLEDGED" | "RESOLVED";
   isAnonymous: boolean;
   surgeCount: number;
   viewCount: number;

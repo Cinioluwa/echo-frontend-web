@@ -30,8 +30,11 @@ const userService = {
    * @param data Updated user information
    */
   updateMe: async (data: UpdateUserRequest): Promise<User> => {
-    const response = await api.patch<User>("/users/me", data);
-    return response.data;
+    const response = await api.patch<{ message: string; user: User }>(
+      "/users/me",
+      data,
+    );
+    return response.data.user;
   },
 
   /**
@@ -46,11 +49,11 @@ const userService = {
    * @param params Pagination parameters
    */
   getMySurges: async (
-    params?: PaginationParams
+    params?: PaginationParams,
   ): Promise<PaginatedResponse<Surge>> => {
     const response = await api.get<PaginatedResponse<Surge>>(
       "/users/me/surges",
-      { params }
+      { params },
     );
     return response.data;
   },
@@ -60,11 +63,11 @@ const userService = {
    * @param params Pagination parameters
    */
   getMyComments: async (
-    params?: PaginationParams
+    params?: PaginationParams,
   ): Promise<PaginatedResponse<Comment>> => {
     const response = await api.get<PaginatedResponse<Comment>>(
       "/users/me/comments",
-      { params }
+      { params },
     );
     return response.data;
   },

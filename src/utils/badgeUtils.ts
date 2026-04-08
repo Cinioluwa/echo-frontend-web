@@ -147,7 +147,7 @@ export function calculateWaveBadge(
  *
  * Hierarchy (highest to lowest priority):
  * 1. Top 3 (Yellow) - if ping is in the weekly top 3 by surge count
- * 2. Acknowledged (Green) - if progressStatus === "AKNOWLEDGED"
+ * 2. Acknowledged (Green) - if progressStatus === "ACKNOWLEDGED"
  * 3. Resolved (Amber) - if progressStatus === "RESOLVED"
  *
  * @param ping - The Ping to calculate badge for
@@ -168,7 +168,7 @@ export function calculatePingBadge(
   }
 
   // Priority 2: Acknowledged (Green)
-  if (ping.progressStatus === "AKNOWLEDGED") {
+  if (ping.progressStatus === "ACKNOWLEDGED") {
     return {
       type: "ACKNOWLEDGED",
       label: "Acknowledged",

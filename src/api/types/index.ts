@@ -17,6 +17,7 @@ export interface User {
   status: "PENDING" | "ACTIVE" | "SUSPENDED";
   createdAt: string;
   updatedAt?: string;
+  lastNameChangeAt?: string; // Timestamp of last name change
   pendingRequests?: Array<{
     id: number;
     organizationId: number;
@@ -122,7 +123,7 @@ export interface Ping {
     | "IN_PROGRESS"
     | "COMPLETED"
     | "ON_HOLD";
-  progressStatus?: "NONE" | "IN_PROGRESS" | "AKNOWLEDGED" | "RESOLVED";
+  progressStatus?: "NONE" | "IN_PROGRESS" | "ACKNOWLEDGED" | "RESOLVED";
   surgeCount: number;
   viewCount?: number;
   hasSurged?: boolean; // Whether the current user has surged this ping
@@ -436,4 +437,6 @@ export interface Media {
   mimeType: string;
   filename?: string;
   createdAt?: string;
+  width?: number;
+  height?: number;
 }
