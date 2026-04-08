@@ -62,6 +62,7 @@ const UnifiedPingCard = ({ ping, isHistoryContext = false, weeklyTop3Ids = [] }:
 
     const categoryName = currentPing.category?.name || "";
     const categoryIcon = categoryImages[categoryName];
+    const pingImage = currentPing.media?.find((media) => media.mimeType.startsWith("image/"));
 
     const surgeCount = currentPing.surgeCount || currentPing._count?.surges || 0;
     const waveCount = currentPing._count?.waves || 0;
@@ -206,7 +207,16 @@ const UnifiedPingCard = ({ ping, isHistoryContext = false, weeklyTop3Ids = [] }:
                             {currentPing.content}
                         </p>
                     )}
-                    {/* Image placeholder — real image URL from ping would go here */}
+                    {pingImage?.url && (
+                        <div className="overflow-hidden rounded-[14px] border border-black/10 bg-[#F8F7F3]">
+                            <img
+                                src={pingImage.url}
+                                alt={currentPing.title ? `Attached image for ${currentPing.title}` : "Attached ping image"}
+                                className="h-52 w-full object-cover md:h-60"
+                                loading="lazy"
+                            />
+                        </div>
+                    )}
                 </div>
 
                 {/* ─── Footer: Surge + wave & comment counts ─ */}
