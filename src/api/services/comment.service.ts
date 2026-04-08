@@ -22,11 +22,11 @@ const commentService = {
   getComments: async (
     targetType: "ping" | "wave",
     targetId: string,
-    params?: PaginationParams
+    params?: PaginationParams,
   ): Promise<PaginatedResponse<Comment>> => {
     const response = await api.get<PaginatedResponse<Comment>>(
       `/${targetType}s/${targetId}/comments`,
-      { params }
+      { params },
     );
     return response.data;
   },
@@ -59,7 +59,7 @@ const commentService = {
    */
   updateComment: async (
     id: string,
-    data: UpdateCommentRequest
+    data: UpdateCommentRequest,
   ): Promise<Comment> => {
     const response = await api.patch<Comment>(`/comments/${id}`, data);
     return response.data;
@@ -81,11 +81,11 @@ const commentService = {
    */
   getReplies: async (
     commentId: string,
-    params?: PaginationParams
+    params?: PaginationParams,
   ): Promise<PaginatedResponse<Comment>> => {
     const response = await api.get<PaginatedResponse<Comment>>(
       `/comments/${commentId}/replies`,
-      { params }
+      { params },
     );
     return response.data;
   },
@@ -100,7 +100,7 @@ const commentService = {
   replyToComment: async (
     commentId: string,
     content: string,
-    isAnonymous?: boolean
+    isAnonymous?: boolean,
   ): Promise<Comment> => {
     const parentComment = await commentService.getCommentById(commentId);
 
@@ -121,7 +121,7 @@ const commentService = {
    * @returns Paginated list of user's comments
    */
   getMyComments: async (
-    params?: PaginationParams
+    params?: PaginationParams,
   ): Promise<PaginatedResponse<Comment>> => {
     const response = await api.get<PaginatedResponse<Comment>>("/comments/me", {
       params,
@@ -139,7 +139,7 @@ const commentService = {
   createCommentOnPing: async (
     pingId: string,
     content: string,
-    isAnonymous?: boolean
+    isAnonymous?: boolean,
   ): Promise<Comment> => {
     const response = await api.post<Comment>(`/pings/${pingId}/comments`, {
       content,
@@ -158,7 +158,7 @@ const commentService = {
   createCommentOnWave: async (
     waveId: string,
     content: string,
-    isAnonymous?: boolean
+    isAnonymous?: boolean,
   ): Promise<Comment> => {
     const response = await api.post<Comment>(`/waves/${waveId}/comments`, {
       content,
