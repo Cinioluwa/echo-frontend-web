@@ -130,7 +130,7 @@ const CommentItem = ({ comment, onRefresh: _onRefresh }: Props) => {
 
                     <div className="grid grid-cols-3">
                         {/* Comment content */}
-                        <p className="text-base leading-6 whitespace-pre-wrap col-span-2">
+                        <p className="text-base leading-6 whitespace-pre-wrap col-span-2 wrap-break-word">
                             {comment.content}
                         </p>
                         <div className="flex justify-end  gap-1 col-span-1">
@@ -174,7 +174,7 @@ const CommentItem = ({ comment, onRefresh: _onRefresh }: Props) => {
                                     onClick={handleDeleteClick}
                                     disabled={isDeleting}
                                     aria-label="Delete comment"
-                                    className="ml-2 shrink-0 p-2 rounded-full text-red-600 bg-red-200 border-red-400 border hover:bg-red-50 transition-colors disabled:opacity-50"
+                                    className="ml-2 h-10 w-12 shrink-0 p-2 rounded-full text-red-600 bg-red-200 border-red-400 border hover:bg-red-50 transition-colors disabled:opacity-50"
                                     title="Delete comment"
                                 >
                                     <img src="/assets/icon/delete.svg" width="20" height="20" alt="Delete comment" />

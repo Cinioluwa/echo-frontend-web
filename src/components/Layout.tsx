@@ -142,7 +142,7 @@ const Layout = () => {
 
         {/* Right aside — desktop only */}
         {isFeedPage && (
-          <aside className="hidden lg:block w-[310px] shrink-0 pt-[15px] pr-5">
+          <aside className="hidden lg:block w-[310px] shrink-0 pt-[15px] pr-5 fixed right-0">
             <div className="flex flex-col gap-[15px]">
               <AnnouncementWidget announcement={announcement} />
               <Top3Widget pings={top3} />

@@ -208,11 +208,14 @@ const UnifiedPingCard = ({ ping, isHistoryContext = false, weeklyTop3Ids = [] }:
                         </p>
                     )}
                     {pingImage?.url && (
-                        <div className="overflow-hidden rounded-[14px] border border-black/10 bg-[#F8F7F3]">
+                        <div
+                            className="overflow-hidden rounded-[14px] border border-black/10 bg-[#F8F7F3] w-full"
+                            style={{ aspectRatio: `${pingImage.width} / ${pingImage.height}` }}
+                        >
                             <img
                                 src={pingImage.url}
                                 alt={currentPing.title ? `Attached image for ${currentPing.title}` : "Attached ping image"}
-                                className="h-52 w-full object-cover md:h-60"
+                                className="h-full w-full object-contain"
                                 loading="lazy"
                             />
                         </div>

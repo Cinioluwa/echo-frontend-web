@@ -334,6 +334,24 @@ const PingDetail = () => {
                     </p>
                 )}
 
+                {/* Ping image */}
+                {displayPing.media && displayPing.media.length > 0 && (() => {
+                    const pingImage = displayPing.media.find((media) => media.mimeType.startsWith("image/"));
+                    return pingImage?.url ? (
+                        <div
+                            className="overflow-hidden rounded-[14px] border border-black/10 bg-[#F8F7F3] w-full"
+                            style={{ aspectRatio: `${pingImage.width} / ${pingImage.height}` }}
+                        >
+                            <img
+                                src={pingImage.url}
+                                alt={displayPing.title ? `Attached image for ${displayPing.title}` : "Attached ping image"}
+                                className="h-full w-full object-contain"
+                                loading="lazy"
+                            />
+                        </div>
+                    ) : null;
+                })()}
+
                 {/* Stats: surge + comments + waves */}
                 <div className="flex items-center justify-between gap-[15px]">
                     {/* Surge button */}
