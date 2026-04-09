@@ -46,10 +46,12 @@ export interface AdminPing {
     firstName: string;
     lastName: string;
   } | null;
+  comments?: any[];
+  surges?: any[];
   _count: {
     waves: number;
-    comments: number;
-    surges: number;
+    comments?: number;
+    surges?: number;
   };
 }
 
@@ -58,7 +60,14 @@ export interface AdminPing {
 export interface AdminWave {
   id: number;
   solution: string;
-  status: "POSTED" | "UNDER_REVIEW" | "APPROVED" | "REJECTED";
+  status:
+    | "POSTED"
+    | "UNDER_REVIEW"
+    | "APPROVED"
+    | "REJECTED"
+    | "IN_PROGRESS"
+    | "COMPLETED"
+    | "ON_HOLD";
   surgeCount: number;
   viewCount: number;
   flaggedForReview: boolean;
@@ -160,13 +169,19 @@ export interface Announcement {
 export interface CreateAnnouncementDto {
   title: string;
   content: string;
-  categoryIds?: number[];
 }
 
 // ==================== Request/Response DTOs ====================
 
 export interface UpdateWaveStatusDto {
-  status: "POSTED" | "UNDER_REVIEW" | "APPROVED" | "REJECTED";
+  status:
+    | "POSTED"
+    | "UNDER_REVIEW"
+    | "APPROVED"
+    | "REJECTED"
+    | "IN_PROGRESS"
+    | "COMPLETED"
+    | "ON_HOLD";
 }
 
 export interface UpdatePingProgressDto {

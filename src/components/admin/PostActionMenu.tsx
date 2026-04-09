@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 interface PostActionMenuProps {
   setOpenMenu: React.Dispatch<React.SetStateAction<boolean>>;
   entityType: 'ping' | 'wave';
-  entityId: number;
+  entityId: number | string;
   onUpdate?: () => void;
 }
 
@@ -16,6 +16,12 @@ const PostActionMenu = ({
   entityId,
   onUpdate
 }: PostActionMenuProps) => {
+  // Debug: log if entityId is missing
+  if (!entityId) {
+    console.error('PostActionMenu: entityId is missing!', { entityType, entityId });
+  }
+
+  const idString = String(entityId);
   const [loading, setLoading] = useState(false);
 
 
@@ -26,7 +32,7 @@ const PostActionMenu = ({
 
     try {
       setLoading(true);
-      await adminService.updateWaveStatus(entityId, { status });
+      await adminService.updateWaveStatus(Number(entityId), { status });
 
       alert('Wave status updated successfully');
       setOpenMenu(false);
@@ -49,14 +55,16 @@ const PostActionMenu = ({
 
       {/* Action menu */}
       <div className="absolute right-4 top-14 px-3 py-2 z-50 w-56 rounded-xl bg-white shadow-md border border-gray-100 overflow-hidden">
-        <Link
-          to={"/admin/feed/details"}
-          onClick={() => setOpenMenu(false)}
-          className="w-full rounded border-b border-gray-300 flex items-center gap-2 px-4 py-3 mb-2 text-left text-sm text-gray-700 hover:bg-gray-100 transition"
-        >
-          <FiInfo />
-          More Details
-        </Link>
+        {entityType === 'ping' && (
+          <Link
+            to={`/admin/feed/details/${idString}`}
+            onClick={() => setOpenMenu(false)}
+            className="w-full rounded border-b border-gray-300 flex items-center gap-2 px-4 py-3 mb-2 text-left text-sm text-gray-700 hover:bg-gray-100 transition"
+          >
+            <FiInfo />
+            More Details
+          </Link>
+        )}
 
         {entityType === 'ping' && (
           <>

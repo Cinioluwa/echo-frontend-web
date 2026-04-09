@@ -132,10 +132,12 @@ export interface Ping {
   createdAt: string;
   updatedAt?: string;
   waves?: Wave[];
+  comments?: Comment[];
+  surges?: Surge[];
   _count?: {
     waves: number;
-    comments: number;
-    surges: number;
+    comments?: number;
+    surges?: number;
   };
   media?: Media[];
 }

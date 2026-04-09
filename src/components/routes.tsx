@@ -218,7 +218,7 @@ const router = createBrowserRouter([
         ),
       },
       {
-        path: "feed/details",
+        path: "feed/details/:pingId",
         element: withSuspense(PostDetails),
       },
       {

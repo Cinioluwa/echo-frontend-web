@@ -1,6 +1,4 @@
 import { useState, useEffect } from "react";
-import PingFormModal from "../../components/PingFormModal";
-import WaveFormModal from "../../components/WaveFormModal";
 import AdminLayout from "../../components/admin/AdminLayout";
 import AdminWaveCard from "../../components/admin/AdminWaveCard";
 import AdminPingCard from "../../components/admin/AdminPingCard";
@@ -9,8 +7,6 @@ import { adminService } from "../../api";
 import type { AdminPing, AdminWave } from "../../api/types/admin.types";
 
 const Feed = () => {
-  const [waveForm, setWaveForm] = useState(false);
-  const [formSegment, setFormSegment] = useState("ping");
   const [announcement, setAnnouncement] = useState(false);
 
   // Active page state
@@ -112,8 +108,6 @@ const Feed = () => {
     <div className="h-full">
       <AdminLayout
         heading="Admin Feed"
-        setFormSegment={setFormSegment}
-        setForm={setWaveForm}
         activePage={activePage}
         setActivePage={setActivePage}
         setAnnouncementModal={setAnnouncement}
@@ -212,39 +206,6 @@ const Feed = () => {
       </main>
 
       {/* Modals */}
-      {formSegment === "ping" && (
-        <div className={`${waveForm ? "" : "hidden"}`}>
-          <PingFormModal
-            formSegment={formSegment}
-            setFormSegment={() => setFormSegment("wave")}
-            setPingForm={() => setWaveForm(!waveForm)}
-          >
-            <button
-              onClick={() => setWaveForm(!waveForm)}
-              className="text-[13px] underline cursor-pointer"
-            >
-              cancel
-            </button>
-          </PingFormModal>
-        </div>
-      )}
-      {formSegment === "wave" && (
-        <div className={`${waveForm ? "" : "hidden"}`}>
-          <WaveFormModal
-            formSegment={formSegment}
-            setFormSegment={() => setFormSegment("ping")}
-            setWaveForm={() => setWaveForm(!waveForm)}
-          >
-            <button
-              onClick={() => setWaveForm(!waveForm)}
-              className="text-[13px] underline cursor-pointer"
-            >
-              cancel
-            </button>
-          </WaveFormModal>
-        </div>
-      )}
-
       {announcement && <AnnouncementModal setAnnouncementModal={setAnnouncement} />}
     </div>
   );

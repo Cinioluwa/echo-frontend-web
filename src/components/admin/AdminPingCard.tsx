@@ -103,7 +103,7 @@ const AdminPingCard = ({ pings, onUpdate }: AdminPingCardProps) => {
           <div className="flex gap-4 items-center">
             <div className=" items-center cursor-pointer gap-1 hidden lg:flex">
               <img src={reaction} alt="" />
-              <span>{pings._count.comments}</span> comments
+              <span>{pings._count?.comments || 0}</span> comments
             </div>
 
             <div className="flex bg-[#EF6E0B] rounded-[20px]">
@@ -136,12 +136,16 @@ const AdminPingCard = ({ pings, onUpdate }: AdminPingCardProps) => {
               {openEngagementMenu && (
                 <PostEngagementMenu
                   setEngagementMenu={setOpenEngagementMenu}
+                  pingId={String(pings.id)}
+                  onSurge={onUpdate}
+                  onWaveCreated={onUpdate}
+                  onCommentCreated={onUpdate}
                 />
               )}
             </div>
 
             <div className="text-[#454545] text-[14px]">
-              {pings.surgeCount || pings._count.surges} Surges
+              {pings.surgeCount || pings._count?.surges || 0} Surges
             </div>
           </div>
         </div>

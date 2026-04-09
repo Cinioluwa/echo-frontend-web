@@ -24,8 +24,6 @@ const Overview = () => {
       <AdminOverviewLayout
         setAnnouncementModal={setAnnouncement}
         heading="Overview"
-        setFormSegment={setFormSegment}
-        setForm={setWaveForm}
         activePage={activePage}
         setActivePage={setActivePage}
       />

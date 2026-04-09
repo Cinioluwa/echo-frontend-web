@@ -5,8 +5,6 @@ import AdminPageTitleBar from "./AdminPageTitleBar";
 import AdminOverviewSideBar from "./AdminOverviewSideBar";
 
 interface LayoutProps {
-  setFormSegment: React.Dispatch<React.SetStateAction<string>>;
-  setForm: React.Dispatch<React.SetStateAction<boolean>>;
   setActivePage: React.Dispatch<React.SetStateAction<AdminPages>>;
   setAnnouncementModal: React.Dispatch<React.SetStateAction<boolean>>;
   activePage: AdminPages;
@@ -14,8 +12,6 @@ interface LayoutProps {
 }
 
 const AdminOverviewLayout = ({
-  setFormSegment,
-  setForm,
   setActivePage,
   activePage,
   heading,

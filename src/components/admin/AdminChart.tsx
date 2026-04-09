@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import {
   CartesianGrid,
   Line,
@@ -7,8 +8,34 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
+import { adminService } from "../../api";
+import type { PlatformStats } from "../../api/types/admin.types";
 
 const AdminChart = () => {
+  const [stats, setStats] = useState<PlatformStats | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        setLoading(true);
+        const data = await adminService.getStats();
+        setStats(data);
+        setError(null);
+      } catch (err: any) {
+        console.error("Failed to fetch chart stats:", err);
+        setError(err.message || "Failed to load statistics");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchStats();
+  }, []);
+
+  // Use current stats for the latest data point (December)
+  // Keep other months hardcoded for now until time-series endpoint is available
   const data = [
     { month: "Jan", thisYear: 1050, lastYear: 980 },
     { month: "Feb", thisYear: 1320, lastYear: 1150 },
@@ -21,8 +48,24 @@ const AdminChart = () => {
     { month: "Sep", thisYear: 3800, lastYear: 3500 },
     { month: "Oct", thisYear: 4200, lastYear: 3900 },
     { month: "Nov", thisYear: 4600, lastYear: 4300 },
-    { month: "Dec", thisYear: 5200, lastYear: 4800 },
+    { month: "Dec", thisYear: stats?.totalUsers || 5200, lastYear: 4800 },
   ];
+
+  if (loading) {
+    return (
+      <div className="w-full h-[330px] flex items-center justify-center text-gray-500">
+        Loading chart data...
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="w-full h-[330px] flex items-center justify-center text-red-500">
+        Failed to load chart: {error}
+      </div>
+    );
+  }
 
   return (
     <ResponsiveContainer width={"100%"} height={330}>

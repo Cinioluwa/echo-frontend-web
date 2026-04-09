@@ -166,6 +166,48 @@ const pingService = {
     const response = await api.patch<Ping>(`/pings/${id}/resolve`);
     return response.data;
   },
+
+  /**
+   * Toggle surge (like/unlike) on a ping
+   * @param pingId Ping ID
+   * @returns Response with surge status
+   */
+  surgePing: async (
+    pingId: string,
+  ): Promise<{ surged: boolean; message: string }> => {
+    const response = await api.post<{ surged: boolean; message: string }>(
+      `/pings/${pingId}/surge`,
+    );
+    return response.data;
+  },
+
+  /**
+   * Create a wave (solution) for a ping
+   * @param pingId Ping ID
+   * @param data Wave creation data
+   * @returns Created wave
+   */
+  createWave: async (
+    pingId: string,
+    data: { solution: string; isAnonymous?: boolean; mediaIds?: number[] },
+  ): Promise<any> => {
+    const response = await api.post(`/pings/${pingId}/waves`, data);
+    return response.data;
+  },
+
+  /**
+   * Create a comment on a ping
+   * @param pingId Ping ID
+   * @param data Comment creation data
+   * @returns Created comment
+   */
+  createComment: async (
+    pingId: string,
+    data: { content: string; isAnonymous?: boolean },
+  ): Promise<any> => {
+    const response = await api.post(`/pings/${pingId}/comments`, data);
+    return response.data;
+  },
 };
 
 export default pingService;

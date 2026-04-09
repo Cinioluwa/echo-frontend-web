@@ -1,5 +1,6 @@
 import { useState } from "react";
 import type { AdminPing } from "../../api/types/admin.types";
+import type { Comment } from "../../api/types";
 import AdminComment from "./AdminComment";
 import AdminCommentBox from "./AdminCommentBox";
 import AdminPingCard from "./AdminPingCard";
@@ -9,56 +10,9 @@ interface AdminPingCardProps {
   pings: AdminPing;
 }
 
-const comments = [
-  {
-    id: "cmt_1",
-    author: "Osagunwenro",
-    content:
-      "I completely agree with the point raised in this article. Too often we see people focusing only on the immediate benefits of a decision without considering the long-term impact it may have on a project or a team. In my experience working with distributed teams, having a clear process and well-documented expectations can make a huge difference in how smoothly things run.",
-    timeAgo: "6 days ago",
-    repliesCount: 2,
-    createdAt: "2026-03-02T10:14:00Z",
-  },
-  {
-    id: "cmt_2",
-    author: "Amaka Okoye",
-    content:
-      "This was a really insightful read. I especially liked the part where you discussed how small process improvements can compound over time. In our company we introduced a simple weekly review system, and within a few months it significantly improved accountability and communication across departments.",
-    timeAgo: "5 days ago",
-    repliesCount: 1,
-    createdAt: "2026-03-03T08:42:00Z",
-  },
-  {
-    id: "cmt_3",
-    author: "Daniel Mensah",
-    content:
-      "One thing I would add is that adopting new workflows can sometimes create resistance among team members, especially if they feel those changes are imposed without proper explanation. Taking the time to explain the reasoning behind decisions and allowing space for feedback can help teams feel more involved in the process.",
-    timeAgo: "4 days ago",
-    repliesCount: 3,
-    createdAt: "2026-03-04T14:21:00Z",
-  },
-  {
-    id: "cmt_4",
-    author: "Sarah Johnson",
-    content:
-      "I've seen this play out in several startups I've worked with. Early on, everything feels informal and flexible, which is great for speed, but as the team grows it becomes harder to maintain clarity without introducing some structure. The key is finding the balance between maintaining agility and creating systems that support long-term scalability.",
-    timeAgo: "3 days ago",
-    repliesCount: 0,
-    createdAt: "2026-03-05T16:10:00Z",
-  },
-  {
-    id: "cmt_5",
-    author: "Tunde Adebayo",
-    content:
-      "Thank you for sharing this perspective. I think the most important takeaway here is that thoughtful planning does not necessarily slow a team down — in many cases it actually accelerates progress because fewer mistakes are made along the way. It would be interesting to see some real-world case studies included in a follow-up article.",
-    timeAgo: "2 days ago",
-    repliesCount: 4,
-    createdAt: "2026-03-06T11:05:00Z",
-  },
-];
-
 const PingPostDetailFeed = ({ pings }: AdminPingCardProps) => {
   const [openComment, setOpenComment] = useState(true);
+  const comments: Comment[] = (pings.comments || []) as Comment[];
 
   return (
     <div>
@@ -76,15 +30,39 @@ const PingPostDetailFeed = ({ pings }: AdminPingCardProps) => {
 
         {/* Comments */}
         <div>
-          {comments.map((comment) => (
-            <AdminComment
-              key={comment.id}
-              author={comment.author}
-              content={comment.content}
-              timeAgo={comment.timeAgo}
-              repliesCount={comment.repliesCount}
-            />
-          ))}
+          {comments.map((comment) => {
+            const getAuthorName = (author: any) => {
+              if (typeof author === "string") return author;
+              if (author?.firstName && author?.lastName) {
+                return `${author.firstName} ${author.lastName}`;
+              }
+              return author?.email || "Anonymous";
+            };
+
+            const getTimeAgo = (createdAt: string) => {
+              const date = new Date(createdAt);
+              const now = new Date();
+              const seconds = Math.floor((now.getTime() - date.getTime()) / 1000);
+              const minutes = Math.floor(seconds / 60);
+              const hours = Math.floor(minutes / 60);
+              const days = Math.floor(hours / 24);
+
+              if (days > 0) return `${days} day${days > 1 ? "s" : ""} ago`;
+              if (hours > 0) return `${hours} hour${hours > 1 ? "s" : ""} ago`;
+              if (minutes > 0) return `${minutes} minute${minutes > 1 ? "s" : ""} ago`;
+              return "just now";
+            };
+
+            return (
+              <AdminComment
+                key={comment.id}
+                author={getAuthorName(comment.author)}
+                content={comment.content}
+                timeAgo={getTimeAgo(comment.createdAt)}
+                repliesCount={comment.replyCount || 0}
+              />
+            );
+          })}
         </div>
       </div>
 

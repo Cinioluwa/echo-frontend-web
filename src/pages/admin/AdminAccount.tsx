@@ -20,7 +20,7 @@ const AdminAccount = () => {
 
   return (
     <div className="overflow-scroll h-screen">
-      <ProfileLayout />
+      <ProfileLayout feedPath="/admin/feed" />
       <main className="mt-3 mx-auto h-full p-4 md:p-10">
         <div className="flex md:border rounded-[15px] border-[#FFC37B] p-5 flex-col lg:flex-row gap-0 md:gap-12">
           {/* SIDE PANEL COMPONENT */}

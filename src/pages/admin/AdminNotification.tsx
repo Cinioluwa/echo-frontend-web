@@ -10,24 +10,53 @@ const pages = {
   privacy: false,
 };
 
-const AdminNotification = () => {
-  const [AdminNotification, setAdminNotification] = useState({
-    emailUpdates: false,
-    newPingInSpace: false,
-    newWaveProposed: false,
-    pingSurgeMilestone: false,
-    memberJoinRequest: false,
-  });
+interface NotificationPreferences {
+  waveStatusUpdated: boolean;
+  officialResponse: boolean;
+  announcement: boolean;
+  commentSurge: boolean;
+  pingCreated: boolean;
+  commentReply: boolean;
+}
 
-  console.log(AdminNotification);
+const AdminNotification = () => {
+  const [preferences, setPreferences] = useState<NotificationPreferences>({
+    waveStatusUpdated: true,
+    officialResponse: true,
+    announcement: true,
+    commentSurge: false,
+    pingCreated: true,
+    commentReply: true,
+  });
+  const [saving, setSaving] = useState<string | null>(null);
+
+  // Handle toggle changes
+  const handleToggle = async (field: keyof NotificationPreferences): Promise<void> => {
+    const updated = { ...preferences, [field]: !preferences[field] };
+    setPreferences(updated);
+
+    try {
+      setSaving(field);
+      // TODO: Replace with actual API call when backend endpoint is ready
+      // await userService.updateNotificationPreferences({ [field]: updated[field] });
+
+      // Simulate API call
+      await new Promise((resolve) => setTimeout(resolve, 500));
+      setSaving(null);
+    } catch (err: any) {
+      console.error(`Failed to save ${String(field)}:`, err);
+      // Revert on error
+      setPreferences(preferences);
+      setSaving(null);
+    }
+  };
 
   return (
     <div className="overflow-scroll h-screen">
-      <ProfileLayout />
+      <ProfileLayout feedPath="/admin/feed" />
       <main className="mt-3 mx-auto h-full p-4 md:p-10">
         <div className="flex md:border rounded-[15px] border-[#FFC37B] p-5 flex-col lg:flex-row gap-0 md:gap-12">
           {/* SIDE PANEL COMPONENT */}
-
           <AdminProfileSidePanel pages={pages} />
 
           {/* FORM CONTENT */}
@@ -38,85 +67,72 @@ const AdminNotification = () => {
                 Manage how communication is made with you
               </p>
             </div>
-            {/* Verified Status Banner */}
-            <div className="mb-4 p-6 border border-orange-200 justify-between rounded-2xl flex items-center gap-4">
-              <div>
-                <h3 className="text-base">Email Notification</h3>
-                <p className="text-sm mt-2 text-[#7D7D7D]">
-                  You will receieve email updates
-                </p>
-              </div>
-              <Toggle
-                checked={AdminNotification.emailUpdates}
-                onChange={(checked) =>
-                  setAdminNotification({
-                    ...AdminNotification,
-                    emailUpdates: checked,
-                  })
-                }
-              />
-            </div>
 
             {/* Toggle Options Section */}
             <div className="space-y-4">
               <div className="flex justify-between items-center p-5 bg-transparent border border-orange-200 rounded-2xl">
                 <span className="text-[#4A3728] text-base">
-                  Notify when a new Ping is posted in my institution's space
+                  Notify when a wave (solution) status is updated
                 </span>
-                {/* Custom Tailwind Toggle Switch */}
                 <Toggle
-                  checked={AdminNotification.newPingInSpace}
-                  onChange={(checked) =>
-                    setAdminNotification({
-                      ...AdminNotification,
-                      newPingInSpace: checked,
-                    })
-                  }
+                  checked={preferences.waveStatusUpdated}
+                  onChange={() => handleToggle("waveStatusUpdated")}
+                  disabled={saving === "waveStatusUpdated"}
                 />
               </div>
+
               <div className="flex justify-between items-center p-5 bg-transparent border border-orange-200 rounded-2xl">
                 <span className="text-[#4A3728] text-base">
-                  Notify when a new Wave is proposed on a Ping
+                  Notify when an official response is posted to my ping
                 </span>
-                {/* Custom Tailwind Toggle Switch */}
                 <Toggle
-                  checked={AdminNotification.newWaveProposed}
-                  onChange={(checked) =>
-                    setAdminNotification({
-                      ...AdminNotification,
-                      newWaveProposed: checked,
-                    })
-                  }
+                  checked={preferences.officialResponse}
+                  onChange={() => handleToggle("officialResponse")}
+                  disabled={saving === "officialResponse"}
                 />
               </div>
+
               <div className="flex justify-between items-center p-5 bg-transparent border border-orange-200 rounded-2xl">
                 <span className="text-[#4A3728] text-base">
-                  Notify when a Ping reaches a surge milestone
+                  Notify when announcements are posted
                 </span>
-                {/* Custom Tailwind Toggle Switch */}
                 <Toggle
-                  checked={AdminNotification.pingSurgeMilestone}
-                  onChange={(checked) =>
-                    setAdminNotification({
-                      ...AdminNotification,
-                      pingSurgeMilestone: checked,
-                    })
-                  }
+                  checked={preferences.announcement}
+                  onChange={() => handleToggle("announcement")}
+                  disabled={saving === "announcement"}
                 />
               </div>
+
               <div className="flex justify-between items-center p-5 bg-transparent border border-orange-200 rounded-2xl">
                 <span className="text-[#4A3728] text-base">
-                  Notify when a member requests to join my institution's space
+                  Notify when my comments receive surges (likes)
                 </span>
-                {/* Custom Tailwind Toggle Switch */}
                 <Toggle
-                  checked={AdminNotification.memberJoinRequest}
-                  onChange={(checked) =>
-                    setAdminNotification({
-                      ...AdminNotification,
-                      memberJoinRequest: checked,
-                    })
-                  }
+                  checked={preferences.commentSurge}
+                  onChange={() => handleToggle("commentSurge")}
+                  disabled={saving === "commentSurge"}
+                />
+              </div>
+
+              <div className="flex justify-between items-center p-5 bg-transparent border border-orange-200 rounded-2xl">
+                <span className="text-[#4A3728] text-base">
+                  Notify when new pings are created in my organization
+                </span>
+                <Toggle
+                  checked={preferences.pingCreated}
+                  onChange={() => handleToggle("pingCreated")}
+                  disabled={saving === "pingCreated"}
+                />
+              </div>
+
+              <div className="flex justify-between items-center p-5 bg-transparent border border-orange-200 rounded-2xl">
+                <span className="text-[#4A3728] text-base">
+                  Notify when someone replies to my comment
+                </span>
+                <Toggle
+                  checked={preferences.commentReply}
+                  onChange={() => handleToggle("commentReply")}
+                  disabled={saving === "commentReply"}
                 />
               </div>
             </div>
