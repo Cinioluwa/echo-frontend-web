@@ -1,9 +1,12 @@
 import { HiOutlineLogout } from "react-icons/hi";
 import { HiOutlineExclamationTriangle, HiOutlineTrash } from "react-icons/hi2";
+import { useNavigate } from "react-router-dom";
+import { useCallback } from "react";
 import ProfileLayout from "../../components/ProfileLayout";
 import ProfilePasswordForm from "../../components/ProfilePasswordForm";
 import Toggle from "../../components/Toggle";
 import AdminProfileSidePanel from "../../components/admin/AdminProfileSidePanel";
+import { useAuthStore } from "../../stores";
 import { useState } from "react";
 
 const pages = {
@@ -14,9 +17,17 @@ const pages = {
 };
 
 const AdminAccount = () => {
+  const navigate = useNavigate();
+  const logout = useAuthStore((state) => state.logout);
+
   // Update 2FA State in database and use that state to conditionally render 2FA status in the app.
   const [enable2fa, setEnable2fa] = useState(false);
   console.log(enable2fa);
+
+  const handleSignOut = useCallback(() => {
+    logout();
+    navigate("/");
+  }, [logout, navigate]);
 
   return (
     <div className="overflow-scroll h-screen">
@@ -41,7 +52,9 @@ const AdminAccount = () => {
                     Sign out of your account on this device
                   </p>
                 </div>
-                <button className="flex items-center gap-2 px-6 py-2 bg-white border border-orange-200 rounded-xl text-sm text-[#4A3728] hover:bg-orange-50 transition">
+                <button
+                  onClick={handleSignOut}
+                  className="flex items-center gap-2 px-6 py-2 bg-white border border-orange-200 rounded-xl text-sm text-[#4A3728] hover:bg-orange-50 transition">
                   <HiOutlineLogout size={18} />
                   Sign out
                 </button>
