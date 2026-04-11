@@ -243,7 +243,7 @@ const Login = () => {
           )}
 
           {/* Form Section */}
-          <div className="flex flex-col gap-5 sm:gap-6 md:gap-[30px] items-center w-full">
+          <form onSubmit={handleSubmitLogin} className="w-full flex flex-col gap-5 sm:gap-6 md:gap-[30px] items-center">
             {/* Input Fields */}
             <div className="flex flex-col gap-3.5 sm:gap-4 md:gap-5 items-start w-full">
               {/* COMMENTED OUT: Google OAuth Button - not implemented yet */}
@@ -274,6 +274,11 @@ const Login = () => {
                 name="password"
                 value={formData.password}
                 onChange={handleInputChange}
+                onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
+                  if (e.key === "Enter" && !loading && !isOffline) {
+                    handleSubmitLogin(e as any);
+                  }
+                }}
                 placeholder="Enter Password..."
                 required
                 disabled={loading || isOffline}
@@ -297,17 +302,15 @@ const Login = () => {
             </div>
 
             {/* Submit Button */}
-            <form onSubmit={handleSubmitLogin} className="w-full">
-              <AuthButton
-                type="submit"
-                disabled={loading || isOffline}
-                loading={loading}
-                fullWidth
-              >
-                {loading ? "Logging in..." : "Log in"}
-              </AuthButton>
-            </form>
-          </div>
+            <AuthButton
+              type="submit"
+              disabled={loading || isOffline}
+              loading={loading}
+              fullWidth
+            >
+              {loading ? "Logging in..." : "Log in"}
+            </AuthButton>
+          </form>
 
           {/* Footer Section */}
           <div className="flex flex-col gap-4 sm:gap-5 items-center px-3 sm:px-5 w-full">

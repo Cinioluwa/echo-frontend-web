@@ -87,6 +87,7 @@ interface InputGroupProps {
   name?: string;
   value?: string;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
   required?: boolean;
   disabled?: boolean;
   showPasswordToggle?: boolean;
@@ -99,6 +100,7 @@ const InputGroup = ({
   name,
   value,
   onChange,
+  onKeyDown,
   required = true,
   disabled = false,
   showPasswordToggle = false,
@@ -118,6 +120,7 @@ const InputGroup = ({
         placeholder={placeholder}
         value={value}
         onChange={onChange}
+        onKeyDown={onKeyDown}
         required={required}
         disabled={disabled}
       />

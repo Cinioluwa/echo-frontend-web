@@ -161,6 +161,11 @@ const ResetPassword = () => {
                                         name="confirmPassword"
                                         value={formData.confirmPassword}
                                         onChange={handleInputChange}
+                                        onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
+                                            if (e.key === "Enter" && !loading) {
+                                                handleSubmit(e as any);
+                                            }
+                                        }}
                                         placeholder="Confirm Password"
                                         disabled={loading}
                                         className="w-full px-4 py-3 border border-orange-200 rounded-xl text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#f49b31] transition"

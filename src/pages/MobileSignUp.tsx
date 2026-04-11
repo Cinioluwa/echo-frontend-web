@@ -150,6 +150,11 @@ const MobileSignUp = () => {
                   placeholder="Enter password..."
                   value={formData.password}
                   onChange={handleInputChange}
+                  onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
+                    if (e.key === "Enter" && !loading) {
+                      handleSubmitSignUp(e as any);
+                    }
+                  }}
                   disabled={loading}
                   showPasswordToggle
                 />

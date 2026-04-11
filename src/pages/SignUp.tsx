@@ -292,6 +292,11 @@ const SignUp: React.FC = () => {
               name="password"
               value={formData.password}
               onChange={handleInputChange}
+              onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
+                if (e.key === "Enter" && !loading && !isOffline && isPasswordValid) {
+                  handleSubmitSignUp(e as any);
+                }
+              }}
               placeholder="Password..."
               icon={<PasswordIcon />}
               error={validationErrors.password}

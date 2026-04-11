@@ -265,7 +265,8 @@ export interface Comment {
   waveId?: number | null;
   targetType?: "ping" | "wave";
   targetId?: string;
-  parentComment?: string; // For nested comments/replies
+  parentComment?: Comment; // For nested comments/replies
+  parentCommentId?: number;
   replyCount?: number;
   createdAt: string;
   updatedAt?: string;

@@ -6,6 +6,7 @@ interface AuthInputProps {
     value: string;
     onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
     onBlur?: (e: React.FocusEvent<HTMLInputElement>) => void;
+    onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
     placeholder?: string;
     error?: string;
     required?: boolean;
@@ -116,6 +117,7 @@ const AuthInput = forwardRef<HTMLInputElement, AuthInputProps>(
             value,
             onChange,
             onBlur,
+            onKeyDown,
             placeholder,
             error,
             required = false,
@@ -163,6 +165,7 @@ const AuthInput = forwardRef<HTMLInputElement, AuthInputProps>(
                         value={value}
                         onChange={onChange}
                         onBlur={onBlur}
+                        onKeyDown={onKeyDown}
                         placeholder={placeholder}
                         required={required}
                         disabled={disabled}
