@@ -15,7 +15,12 @@ import { useState, useEffect } from "react";
 import { useParams, useNavigate, useOutletContext } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuthStore, useSurgeStore, usePingsStore } from "../stores";
-import { pingService, waveService, categoryService, publicService } from "../api/services";
+import {
+  pingService,
+  waveService,
+  categoryService,
+  publicService,
+} from "../api/services";
 import { calculatePingBadge } from "../utils/badgeUtils";
 import ProposeWaveBar from "../components/ProposeWaveBar";
 import CommentsPanel from "../components/CommentsPanel";
@@ -25,7 +30,7 @@ import { categoryImages } from "../components/CategoryImages";
 import { getSocket } from "../api/socket";
 import type { Ping, Wave, CategoryData } from "../api/types";
 import { FaPlus } from "react-icons/fa6";
-
+import { Tooltip } from "../components/Tooltip";
 
 const waveIcon = "/assets/icon/wave.svg";
 const commentIcon = "/assets/icon/comment.svg";
@@ -33,465 +38,505 @@ const commentIcon = "/assets/icon/comment.svg";
 // ─── Helpers ────────────────────────────────────────────────────────────────
 
 const formatTimestamp = (dateString: string) => {
-    const now = new Date();
-    const date = new Date(dateString);
-    const diffMs = now.getTime() - date.getTime();
-    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-    if (diffDays === 0) {
-        const h = Math.floor(diffMs / (1000 * 60 * 60));
-        if (h === 0) {
-            const m = Math.floor(diffMs / (1000 * 60));
-            return m <= 1 ? "Just now" : `${m}m ago`;
-        }
-        return `${h}h ago`;
+  const now = new Date();
+  const date = new Date(dateString);
+  const diffMs = now.getTime() - date.getTime();
+  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+  if (diffDays === 0) {
+    const h = Math.floor(diffMs / (1000 * 60 * 60));
+    if (h === 0) {
+      const m = Math.floor(diffMs / (1000 * 60));
+      return m <= 1 ? "Just now" : `${m}m ago`;
     }
-    if (diffDays < 30) return `${diffDays}d ago`;
-    return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+    return `${h}h ago`;
+  }
+  if (diffDays < 30) return `${diffDays}d ago`;
+  return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
 };
 
 const getAuthorName = (author: Wave["author"]) => {
-    if (!author) return "Anonymous";
-    if (typeof author === "string") return author;
-    // Handle author object - use firstName and lastName if available
-    if (author.firstName || author.lastName) {
-        return `${author.firstName ?? ""} ${author.lastName ?? ""}`.trim() || "Anonymous";
-    }
-    return "Anonymous";
+  if (!author) return "Anonymous";
+  if (typeof author === "string") return author;
+  // Handle author object - use firstName and lastName if available
+  if (author.firstName || author.lastName) {
+    return (
+      `${author.firstName ?? ""} ${author.lastName ?? ""}`.trim() || "Anonymous"
+    );
+  }
+  return "Anonymous";
 };
-
-
-
-
 
 // ─── PingDetail Page ─────────────────────────────────────────────────────────
 
 const PingDetail = () => {
-    const { pingId } = useParams<{ pingId: string }>();
-    const navigate = useNavigate();
-    const currentUser = useAuthStore((state) => state.user);
-    const toggleSurge = useSurgeStore((state) => state.toggleSurge);
-    const updatePingStore = usePingsStore((state) => state.updatePing);
-    const pingFromStore = usePingsStore((state) => pingId ? state.pingsById[String(pingId)] : null);
-    const hasSurged = useSurgeStore((state) => state.hasSurged("ping", pingId ?? ""));
-    const isToggling = useSurgeStore((state) => state.isToggling[`ping-${pingId}`] || false);
+  const { pingId } = useParams<{ pingId: string }>();
+  const navigate = useNavigate();
+  const currentUser = useAuthStore((state) => state.user);
+  const toggleSurge = useSurgeStore((state) => state.toggleSurge);
+  const updatePingStore = usePingsStore((state) => state.updatePing);
+  const pingFromStore = usePingsStore((state) =>
+    pingId ? state.pingsById[String(pingId)] : null,
+  );
+  const hasSurged = useSurgeStore((state) =>
+    state.hasSurged("ping", pingId ?? ""),
+  );
+  const isToggling = useSurgeStore(
+    (state) => state.isToggling[`ping-${pingId}`] || false,
+  );
 
-    const [ping, setPing] = useState<Ping | null>(null);
-    const [isLoading, setIsLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
-    const [waves, setWaves] = useState<Wave[]>([]);
-    const [wavesPage, setWavesPage] = useState(1);
-    const [categories, setCategories] = useState<Record<number, CategoryData>>({});
-    const [showCommentsModal, setShowCommentsModal] = useState(false);
-    const [weeklyTop3Ids, setWeeklyTop3Ids] = useState<number[]>([]);
+  const [ping, setPing] = useState<Ping | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [waves, setWaves] = useState<Wave[]>([]);
+  const [wavesPage, setWavesPage] = useState(1);
+  const [categories, setCategories] = useState<Record<number, CategoryData>>(
+    {},
+  );
+  const [showCommentsModal, setShowCommentsModal] = useState(false);
+  const [weeklyTop3Ids, setWeeklyTop3Ids] = useState<number[]>([]);
 
-    useEffect(() => {
-        if (!pingId) return;
-        setIsLoading(true);
-        pingService
-            .getPingById(pingId)
-            .then((data) => {
-                console.log("🔍 Ping fetched:", data);
-                console.log("📂 Category:", data.category);
-                console.log("🌊 Waves:", data.waves);
-                setPing(data);
-                setWaves(data.waves ?? []);
-                if (data.hasSurged) {
-                    useSurgeStore.getState().addSurge("ping", pingId);
-                }
-            })
-            .catch(() => setError("Failed to load ping"))
-            .finally(() => setIsLoading(false));
-    }, [pingId]);
-
-    // Fetch categories for category name lookup
-    useEffect(() => {
-        categoryService.getAll().then((cats) => {
-            const catMap = cats.reduce(
-                (acc, cat) => {
-                    acc[cat.id] = cat;
-                    return acc;
-                },
-                {} as Record<number, CategoryData>
-            );
-            setCategories(catMap);
-        });
-        // Fetch top 3 pings for badge calculation
-        publicService.getSoundboard({ sort: "trending", top: 3 }).then((res) => {
-            setWeeklyTop3Ids(res.data.map((ping) => ping.id));
-        }).catch((err) => {
-            console.error("Failed to fetch top 3 pings:", err);
-        });
-    }, []);
-
-    const loadMoreWaves = async () => {
-        if (!pingId) return;
-        const nextPage = wavesPage + 1;
-        const res = await waveService.getWavesForPing(pingId, {
-            page: nextPage,
-            limit: 10,
-        });
-        console.log("🌊 More waves loaded:", res.data);
-        console.log("📍 First wave author:", res.data[0]?.author);
-        setWaves((prev) => [...prev, ...res.data]);
-        setWavesPage(nextPage);
-    };
-
-    // ── WebSocket event wiring (Phase 11) ───────────────────────────────────────
-    useEffect(() => {
-        if (!pingId) return;
-
-        const socket = getSocket();
-        if (!socket) return;
-
-        // Subscribe to ping room
-        socket.emit("join:ping", { pingId: Number(pingId) });
-
-        // Listen for surge updates on this ping
-        socket.on("ping:surgeUpdate", ({ pingId: id, surgeCount }) => {
-            setPing((prev) => (prev && prev.id === Number(id)
-                ? { ...prev, surgeCount }
-                : prev));
-        });
-
-        // Listen for surge updates on waves
-        socket.on("wave:surgeUpdate", ({ waveId, surgeCount }) => {
-            setWaves((prev) =>
-                prev.map((wave) =>
-                    wave.id === Number(waveId)
-                        ? { ...wave, surgeCount }
-                        : wave
-                )
-            );
-        });
-
-        return () => {
-            socket.off("ping:surgeUpdate");
-            socket.off("wave:surgeUpdate");
-            socket.emit("leave:ping", { pingId: Number(pingId) });
-        };
-    }, [pingId]);
-
-    const handleDeleteWave = async (waveId: number) => {
-        try {
-            await waveService.deleteWave(String(waveId));
-            setWaves((prev) => prev.filter((w) => w.id !== waveId));
-        } catch (err) {
-            console.error("Failed to delete wave:", err);
+  useEffect(() => {
+    if (!pingId) return;
+    setIsLoading(true);
+    pingService
+      .getPingById(pingId)
+      .then((data) => {
+        console.log("🔍 Ping fetched:", data);
+        console.log("📂 Category:", data.category);
+        console.log("🌊 Waves:", data.waves);
+        setPing(data);
+        setWaves(data.waves ?? []);
+        if (data.hasSurged) {
+          useSurgeStore.getState().addSurge("ping", pingId);
         }
-    };
+      })
+      .catch(() => setError("Failed to load ping"))
+      .finally(() => setIsLoading(false));
+  }, [pingId]);
 
-    if (isLoading) return <p className="text-center py-10">Loading...</p>;
-    if (error) return <p className="text-red-500 text-center py-10">{error}</p>;
+  // Fetch categories for category name lookup
+  useEffect(() => {
+    categoryService.getAll().then((cats) => {
+      const catMap = cats.reduce(
+        (acc, cat) => {
+          acc[cat.id] = cat;
+          return acc;
+        },
+        {} as Record<number, CategoryData>,
+      );
+      setCategories(catMap);
+    });
+    // Fetch top 3 pings for badge calculation
+    publicService
+      .getSoundboard({ sort: "trending", top: 3 })
+      .then((res) => {
+        setWeeklyTop3Ids(res.data.map((ping) => ping.id));
+      })
+      .catch((err) => {
+        console.error("Failed to fetch top 3 pings:", err);
+      });
+  }, []);
 
-    const displayPing = pingFromStore || ping;
-    if (!displayPing) return null;
+  const loadMoreWaves = async () => {
+    if (!pingId) return;
+    const nextPage = wavesPage + 1;
+    const res = await waveService.getWavesForPing(pingId, {
+      page: nextPage,
+      limit: 10,
+    });
+    console.log("🌊 More waves loaded:", res.data);
+    console.log("📍 First wave author:", res.data[0]?.author);
+    setWaves((prev) => [...prev, ...res.data]);
+    setWavesPage(nextPage);
+  };
 
-    const authorName = getAuthorName(displayPing.author);
-    // Use fetched categories map, fallback to ping.category if available
-    const categoryName = displayPing.categoryId && categories[displayPing.categoryId]
-        ? categories[displayPing.categoryId].name
-        : displayPing.category?.name || "";
-    const categoryIcon = categoryImages[categoryName];
-    const surgeCount = displayPing.surgeCount || displayPing._count?.surges || 0;
-    const commentCount = displayPing._count?.comments || 0;
-    const waveCount = displayPing._count?.waves || waves.length || 0;
+  // ── WebSocket event wiring (Phase 11) ───────────────────────────────────────
+  useEffect(() => {
+    if (!pingId) return;
 
-    // Debug logs
-    console.log("📌 PingDetail render:", {
-        pingId: displayPing.id,
-        categoryId: displayPing.categoryId,
-        categoryName,
-        categoryIcon: !!categoryIcon,
-        waveCount: waves.length,
+    const socket = getSocket();
+    if (!socket) return;
+
+    // Subscribe to ping room
+    socket.emit("join:ping", { pingId: Number(pingId) });
+
+    // Listen for surge updates on this ping
+    socket.on("ping:surgeUpdate", ({ pingId: id, surgeCount }) => {
+      setPing((prev) =>
+        prev && prev.id === Number(id) ? { ...prev, surgeCount } : prev,
+      );
     });
 
-    const handleSurge = async (e: React.MouseEvent) => {
-        e.stopPropagation();
-        if (isToggling) return;
-        try {
-            await toggleSurge("ping", String(displayPing?.id));
-            // Refetch ping from backend for consistency
-            if (displayPing?.id) {
-                const latest = await pingService.getPingById(String(displayPing.id));
-                updatePingStore(String(displayPing.id), {
-                    surgeCount: latest.surgeCount,
-                    hasSurged: latest.hasSurged,
-                });
-            }
-        } catch (err) {
-            console.error("Surge failed:", err);
-        }
+    // Listen for surge updates on waves
+    socket.on("wave:surgeUpdate", ({ waveId, surgeCount }) => {
+      setWaves((prev) =>
+        prev.map((wave) =>
+          wave.id === Number(waveId) ? { ...wave, surgeCount } : wave,
+        ),
+      );
+    });
+
+    return () => {
+      socket.off("ping:surgeUpdate");
+      socket.off("wave:surgeUpdate");
+      socket.emit("leave:ping", { pingId: Number(pingId) });
     };
+  }, [pingId]);
 
-    const { setShowPingFormModal } = useOutletContext<{
-        showPingFormModal: boolean;
-        setShowPingFormModal: (value: boolean) => void;
-    }>();
+  const handleDeleteWave = async (waveId: number) => {
+    try {
+      await waveService.deleteWave(String(waveId));
+      setWaves((prev) => prev.filter((w) => w.id !== waveId));
+    } catch (err) {
+      console.error("Failed to delete wave:", err);
+    }
+  };
 
+  if (isLoading) return <p className="text-center py-10">Loading...</p>;
+  if (error) return <p className="text-red-500 text-center py-10">{error}</p>;
 
-    return (
-        <div className="flex flex-col gap-[15px] pb-[30px] relative z-0">
-            {/* ── Back button ───────────────────────────── */}
-            <div className="flex items-center justify-between">
-                <button
-                    onClick={() => navigate("/feed")}
-                    className="flex items-center gap-2 bg-[#fefefe] rounded-[18px] px-5 py-[5px] font-['Poppins',sans-serif] font-medium text-[15px] text-black hover:bg-[#FFC37B] transition-colors cursor-pointer"
-                >
-                    ← Go back to feed
-                </button>
+  const displayPing = pingFromStore || ping;
+  if (!displayPing) return null;
 
-                <button
-                    onClick={() => setShowPingFormModal(true)}
-                    className="flex items-center gap-2 bg-[#F49B31] hover:bg-[#d88429] transition-colors rounded-[18px] px-5 py-[5px] cursor-pointer"
-                >
-                    <FaPlus className="w-3 h-3 text-white" />
-                    <span className="font-['Poppins',sans-serif] font-medium text-[15px] text-white">
-                        Create a Ping
-                    </span>
-                </button>
+  const authorName = getAuthorName(displayPing.author);
+  // Use fetched categories map, fallback to ping.category if available
+  const categoryName =
+    displayPing.categoryId && categories[displayPing.categoryId]
+      ? categories[displayPing.categoryId].name
+      : displayPing.category?.name || "";
+  const categoryIcon = categoryImages[categoryName];
+  const surgeCount = displayPing.surgeCount || displayPing._count?.surges || 0;
+  const commentCount = displayPing._count?.comments || 0;
+  const waveCount = displayPing._count?.waves || waves.length || 0;
+
+  // Debug logs
+  console.log("📌 PingDetail render:", {
+    pingId: displayPing.id,
+    categoryId: displayPing.categoryId,
+    categoryName,
+    categoryIcon: !!categoryIcon,
+    waveCount: waves.length,
+  });
+
+  const handleSurge = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (isToggling) return;
+    try {
+      await toggleSurge("ping", String(displayPing?.id));
+      // Refetch ping from backend for consistency
+      if (displayPing?.id) {
+        const latest = await pingService.getPingById(String(displayPing.id));
+        updatePingStore(String(displayPing.id), {
+          surgeCount: latest.surgeCount,
+          hasSurged: latest.hasSurged,
+        });
+      }
+    } catch (err) {
+      console.error("Surge failed:", err);
+    }
+  };
+
+  const { setShowPingFormModal } = useOutletContext<{
+    showPingFormModal: boolean;
+    setShowPingFormModal: (value: boolean) => void;
+  }>();
+
+  return (
+    <div className="flex flex-col gap-[15px] pb-[30px] relative z-0">
+      {/* ── Back button ───────────────────────────── */}
+      <div className="flex items-center justify-between">
+        <button
+          onClick={() => navigate("/feed")}
+          className="flex items-center gap-2 bg-[#fefefe] rounded-[18px] px-5 py-[5px] font-['Poppins',sans-serif] font-medium text-[15px] text-black hover:bg-[#FFC37B] transition-colors cursor-pointer"
+        >
+          ← Go back to feed
+        </button>
+
+        <Tooltip content="Make a problem known." position="left" delay={0.2}>
+          <button
+            onClick={() => setShowPingFormModal(true)}
+            className="flex items-center gap-2 bg-[#F49B31] hover:bg-[#d88429] transition-colors rounded-[18px] px-5 py-[5px] cursor-pointer"
+          >
+            <FaPlus className="w-3 h-3 text-white" />
+            <span className="font-['Poppins',sans-serif] font-medium text-[15px] text-white">
+              Create a Ping
+            </span>
+          </button>
+        </Tooltip>
+      </div>
+
+      {/* ── ProposeWaveBar ────────────────────────── */}
+      <ProposeWaveBar
+        pingId={pingId ?? String(displayPing.id)}
+        pingTitle={displayPing.title}
+        pingCreatedAt={displayPing.createdAt}
+        onWaveProposed={() => {
+          if (!pingId) return;
+          waveService
+            .getWavesForPing(pingId, { page: 1, limit: 10 })
+            .then((res) => {
+              setWaves(res.data);
+              setWavesPage(1);
+            })
+            .catch((err) => console.error("Failed to refresh waves:", err));
+        }}
+      />
+
+      {/* ── Ping Card ─────────────────────────────── */}
+      <div className="bg-[#fefefe] rounded-[10px] px-5 py-[15px] flex flex-col gap-[15px] w-full">
+        {/* Author row + badge */}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2.5">
+            <UserAvatar
+              user={
+                typeof displayPing.author === "object"
+                  ? displayPing.author
+                  : null
+              }
+              size="md"
+              bgColor="bg-[#ffc37b]"
+            />
+            <div className="flex flex-col">
+              <span className="font-['Poppins',sans-serif] font-semibold text-[14px] text-black">
+                {authorName}
+              </span>
+              <span className="font-['Poppins',sans-serif] font-medium text-[8px] text-black">
+                {formatTimestamp(displayPing.createdAt)}
+              </span>
+            </div>
+          </div>
+
+          {/* Ping status badge (Top 3, Acknowledged, or Resolved) */}
+          {(() => {
+            const badgeConfig = calculatePingBadge(displayPing, weeklyTop3Ids);
+            if (!badgeConfig) return null;
+
+            return (
+              <Tooltip
+                content="Current aknowledgement status of this post."
+                position="left"
+                delay={0.2}
+              >
+                <div className="border border-[#626665] rounded-[23px] flex items-center gap-1.5 px-[15px] py-[7px]">
+                  <div
+                    className="w-[5px] h-[5px] rounded-full shrink-0"
+                    style={{ backgroundColor: badgeConfig.color }}
+                  />
+                  <span className="font-['Poppins',sans-serif] font-medium text-[11px] text-black whitespace-nowrap">
+                    {badgeConfig.label}
+                  </span>
+                </div>
+              </Tooltip>
+            );
+          })()}
+        </div>
+        {/* Category badge */}
+        {categoryName && (
+          <div className="flex items-center gap-[5px]">
+            {categoryIcon && (
+              <img
+                src={categoryIcon}
+                alt={categoryName}
+                className="w-3 h-3 object-contain"
+              />
+            )}
+            <span className="font-['Poppins',sans-serif] font-medium  text-[13px] text-black">
+              {categoryName}
+            </span>
+          </div>
+        )}
+
+        {/* Title */}
+        <h1 className="font-['Poppins',sans-serif] font-semibold text-[14px] text-black">
+          {displayPing.title}
+        </h1>
+
+        {/* Description */}
+        {displayPing.content && (
+          <p className="font-['Poppins',sans-serif] font-medium  text-[14px] text-[#626665] text-justify leading-relaxed">
+            {displayPing.content}
+          </p>
+        )}
+
+        {/* Ping image */}
+        {displayPing.media &&
+          displayPing.media.length > 0 &&
+          (() => {
+            const pingImage = displayPing.media.find((media) =>
+              media.mimeType.startsWith("image/"),
+            );
+            return pingImage?.url ? (
+              <div
+                className="overflow-hidden rounded-[14px] border border-black/10 bg-[#F8F7F3] w-full"
+                style={{
+                  aspectRatio: `${pingImage.width} / ${pingImage.height}`,
+                }}
+              >
+                <img
+                  src={pingImage.url}
+                  alt={
+                    displayPing.title
+                      ? `Attached image for ${displayPing.title}`
+                      : "Attached ping image"
+                  }
+                  className="h-full w-full object-contain"
+                  loading="lazy"
+                />
+              </div>
+            ) : null;
+          })()}
+
+        {/* Stats: surge + comments + waves */}
+        <div className="flex items-center justify-between gap-[15px]">
+          {/* Surge button */}
+          <Tooltip
+            content={
+              hasSurged
+                ? "Remove your surge"
+                : "Surge this issue to show it's important!"
+            }
+            position="right"
+            delay={0.2}
+          >
+            <button
+              type="button"
+              onClick={handleSurge}
+              disabled={isToggling}
+              aria-label={hasSurged ? "Remove surge" : "Surge"}
+              className={`flex items-center gap-[5px] px-2 py-1 rounded-[15px] border border-black cursor-pointer transition-colors disabled:opacity-50 ${
+                hasSurged
+                  ? "bg-[#f49b31] text-white border-[#f49b31]"
+                  : "bg-[#fef5ea] text-[#4a504e]"
+              }`}
+            >
+              <svg
+                width="10"
+                height="14"
+                viewBox="0 0 12 16"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                aria-hidden="true"
+              >
+                <path
+                  d="M6.5 1L1 9h5l-0.5 6 6-8H7l0.5-6z"
+                  fill={hasSurged ? "white" : "#4A504E"}
+                />
+              </svg>
+              <span className="font-['Poppins',sans-serif] font-semibold text-[11px]">
+                {surgeCount}
+              </span>
+            </button>
+          </Tooltip>
+
+          <div className="flex items-center gap-3.5">
+            {/* Wave count */}
+            <div className="flex items-center gap-0">
+              <img
+                src={waveIcon}
+                className=" h-[27px] w-[25px]"
+                alt="waveIcon"
+              />
+              <span className="font-['Inter',sans-serif] font-medium text-[12px] md:text-[14px] text-[#63637B] leading-5">
+                {waveCount} Waves Proposed
+              </span>
             </div>
 
-            {/* ── ProposeWaveBar ────────────────────────── */}
-            <ProposeWaveBar
-                pingId={pingId ?? String(displayPing.id)}
-                pingTitle={displayPing.title}
-                pingCreatedAt={displayPing.createdAt}
-                onWaveProposed={() => {
-                    if (!pingId) return;
-                    waveService
-                        .getWavesForPing(pingId, { page: 1, limit: 10 })
-                        .then((res) => {
-                            setWaves(res.data);
-                            setWavesPage(1);
-                        })
-                        .catch((err) => console.error("Failed to refresh waves:", err));
-                }}
+            {/* Comment count */}
+            <button
+              onClick={() => setShowCommentsModal(true)}
+              className="flex items-center gap-1 hover:text-[#F49B31] transition-colors cursor-pointer"
+            >
+              <img
+                src={commentIcon}
+                className=" h-[18px] w-[18px]"
+                alt="commentIcon"
+              />
+              <span className="font-['Inter',sans-serif] font-medium text-[12px] md:text-[14px] text-[#63637B] leading-5">
+                {commentCount} Comments
+              </span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* ── Wave Cards ────────────────────────────── */}
+      {waves.length > 0 && (
+        <div className="flex flex-col gap-2.5">
+          {waves.map((wave) => (
+            <WaveCard
+              key={wave.id}
+              wave={wave}
+              isOwner={
+                currentUser?.id ===
+                (typeof wave.author === "object" ? wave.author?.id : undefined)
+              }
+              onDelete={handleDeleteWave}
+              allWavesForPing={waves}
+            />
+          ))}
+        </div>
+      )}
+
+      {/* ── Load more waves ───────────────────────── */}
+      {displayPing._count && waves.length < displayPing._count.waves && (
+        <div className="flex justify-center">
+          <button
+            type="button"
+            onClick={loadMoreWaves}
+            className="bg-[#fef5ea] border border-black rounded-[20px] px-5 py-2 font-['Poppins',sans-serif] font-medium  text-[12px] text-black cursor-pointer"
+          >
+            Load more waves
+          </button>
+        </div>
+      )}
+
+      {/* ── CommentsPanel Sheet (mobile only — desktop uses Layout right-aside) ── */}
+      <AnimatePresence>
+        {showCommentsModal && (
+          <>
+            {/* Overlay backdrop */}
+            <motion.div
+              className="fixed inset-0 lg:hidden z-40 bg-black"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 0.4 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setShowCommentsModal(false)}
+              transition={{ duration: 0.2 }}
             />
 
-            {/* ── Ping Card ─────────────────────────────── */}
-            <div className="bg-[#fefefe] rounded-[10px] px-5 py-[15px] flex flex-col gap-[15px] w-full">
-                {/* Author row + badge */}
-                <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2.5">
-                        <UserAvatar
-                            user={typeof displayPing.author === "object" ? displayPing.author : null}
-                            size="md"
-                            bgColor="bg-[#ffc37b]"
-                        />
-                        <div className="flex flex-col">
-                            <span className="font-['Poppins',sans-serif] font-semibold text-[14px] text-black">
-                                {authorName}
-                            </span>
-                            <span className="font-['Poppins',sans-serif] font-medium text-[8px] text-black">
-                                {formatTimestamp(displayPing.createdAt)}
-                            </span>
-                        </div>
-                    </div>
+            {/* Draggable sheet */}
+            <motion.div
+              className="fixed left-0 right-0 bottom-0 lg:hidden z-50 flex flex-col h-[65vh] bg-[#FFC37B] rounded-t-[30px]"
+              initial={{ y: "100%", opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: "100%", opacity: 0 }}
+              transition={{ type: "spring", damping: 30, stiffness: 300 }}
+              drag="y"
+              dragElastic={0.2}
+              dragConstraints={{ top: 0, bottom: 0 }}
+              onDragEnd={(_, info) => {
+                // Close if dragged down more than 50px
+                if (info.velocity.y > 20 || info.offset.y > 50) {
+                  setShowCommentsModal(false);
+                }
+              }}
+            >
+              {/* Drag handle */}
+              <div className="flex justify-center pt-3 pb-3 cursor-grab active:cursor-grabbing">
+                <div className="w-12 h-1 bg-[#d0d0d0] rounded-full" />
+              </div>
 
-                    {/* Ping status badge (Top 3, Acknowledged, or Resolved) */}
-                    {(() => {
-                        const badgeConfig = calculatePingBadge(displayPing, weeklyTop3Ids);
-                        if (!badgeConfig) return null;
-
-                        return (
-                            <div className="border border-[#626665] rounded-[23px] flex items-center gap-1.5 px-[15px] py-[7px]">
-                                <div
-                                    className="w-[5px] h-[5px] rounded-full shrink-0"
-                                    style={{ backgroundColor: badgeConfig.color }}
-                                />
-                                <span className="font-['Poppins',sans-serif] font-medium text-[11px] text-black whitespace-nowrap">
-                                    {badgeConfig.label}
-                                </span>
-                            </div>
-                        );
-                    })()}
-                </div>
-                {/* Category badge */}
-                {categoryName && (
-                    <div className="flex items-center gap-[5px]">
-                        {categoryIcon && (
-                            <img
-                                src={categoryIcon}
-                                alt={categoryName}
-                                className="w-3 h-3 object-contain"
-                            />
-                        )}
-                        <span className="font-['Poppins',sans-serif] font-medium  text-[13px] text-black">
-                            {categoryName}
-                        </span>
-                    </div>
-                )}
-
-                {/* Title */}
-                <h1 className="font-['Poppins',sans-serif] font-semibold text-[14px] text-black">
-                    {displayPing.title}
-                </h1>
-
-                {/* Description */}
-                {displayPing.content && (
-                    <p className="font-['Poppins',sans-serif] font-medium  text-[14px] text-[#626665] text-justify leading-relaxed">
-                        {displayPing.content}
-                    </p>
-                )}
-
-                {/* Ping image */}
-                {displayPing.media && displayPing.media.length > 0 && (() => {
-                    const pingImage = displayPing.media.find((media) => media.mimeType.startsWith("image/"));
-                    return pingImage?.url ? (
-                        <div
-                            className="overflow-hidden rounded-[14px] border border-black/10 bg-[#F8F7F3] w-full"
-                            style={{ aspectRatio: `${pingImage.width} / ${pingImage.height}` }}
-                        >
-                            <img
-                                src={pingImage.url}
-                                alt={displayPing.title ? `Attached image for ${displayPing.title}` : "Attached ping image"}
-                                className="h-full w-full object-contain"
-                                loading="lazy"
-                            />
-                        </div>
-                    ) : null;
-                })()}
-
-                {/* Stats: surge + comments + waves */}
-                <div className="flex items-center justify-between gap-[15px]">
-                    {/* Surge button */}
-                    <button
-                        type="button"
-                        onClick={handleSurge}
-                        disabled={isToggling}
-                        aria-label={hasSurged ? "Remove surge" : "Surge"}
-                        className={`flex items-center gap-[5px] px-2 py-1 rounded-[15px] border border-black cursor-pointer transition-colors disabled:opacity-50 ${hasSurged
-                            ? "bg-[#f49b31] text-white border-[#f49b31]"
-                            : "bg-[#fef5ea] text-[#4a504e]"
-                            }`}
-                    >
-                        <svg
-                            width="10"
-                            height="14"
-                            viewBox="0 0 12 16"
-                            fill="none"
-                            xmlns="http://www.w3.org/2000/svg"
-                            aria-hidden="true"
-                        >
-                            <path
-                                d="M6.5 1L1 9h5l-0.5 6 6-8H7l0.5-6z"
-                                fill={hasSurged ? "white" : "#4A504E"}
-                            />
-                        </svg>
-                        <span className="font-['Poppins',sans-serif] font-semibold text-[11px]">
-                            {surgeCount}
-                        </span>
-                    </button>
-
-                    <div className="flex items-center gap-3.5">
-                        {/* Wave count */}
-                        <div className="flex items-center gap-0">
-                            <img
-                                src={waveIcon}
-                                className=" h-[27px] w-[25px]"
-                                alt="waveIcon"
-                            />
-                            <span className="font-['Inter',sans-serif] font-medium text-[12px] md:text-[14px] text-[#63637B] leading-5">
-                                {waveCount} Waves Proposed
-                            </span>
-                        </div>
-
-                        {/* Comment count */}
-                        <button
-                            onClick={() => setShowCommentsModal(true)}
-                            className="flex items-center gap-1 hover:text-[#F49B31] transition-colors cursor-pointer"
-                        >
-                            <img
-                                src={commentIcon}
-                                className=" h-[18px] w-[18px]"
-                                alt="commentIcon"
-                            />
-                            <span className="font-['Inter',sans-serif] font-medium text-[12px] md:text-[14px] text-[#63637B] leading-5">
-                                {commentCount} Comments
-                            </span>
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            {/* ── Wave Cards ────────────────────────────── */}
-            {waves.length > 0 && (
-                <div className="flex flex-col gap-2.5">
-                    {waves.map((wave) => (
-                        <WaveCard
-                            key={wave.id}
-                            wave={wave}
-                            isOwner={
-                                currentUser?.id ===
-                                (typeof wave.author === "object" ? wave.author?.id : undefined)
-                            }
-                            onDelete={handleDeleteWave}
-                            allWavesForPing={waves}
-                        />
-                    ))}
-                </div>
-            )}
-
-            {/* ── Load more waves ───────────────────────── */}
-            {displayPing._count && waves.length < displayPing._count.waves && (
-                <div className="flex justify-center">
-                    <button
-                        type="button"
-                        onClick={loadMoreWaves}
-                        className="bg-[#fef5ea] border border-black rounded-[20px] px-5 py-2 font-['Poppins',sans-serif] font-medium  text-[12px] text-black cursor-pointer"
-                    >
-                        Load more waves
-                    </button>
-                </div>
-            )}
-
-            {/* ── CommentsPanel Sheet (mobile only — desktop uses Layout right-aside) ── */}
-            <AnimatePresence>
-                {showCommentsModal && (
-                    <>
-                        {/* Overlay backdrop */}
-                        <motion.div
-                            className="fixed inset-0 lg:hidden z-40 bg-black"
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 0.4 }}
-                            exit={{ opacity: 0 }}
-                            onClick={() => setShowCommentsModal(false)}
-                            transition={{ duration: 0.2 }}
-                        />
-
-                        {/* Draggable sheet */}
-                        <motion.div
-                            className="fixed left-0 right-0 bottom-0 lg:hidden z-50 flex flex-col h-[65vh] bg-[#FFC37B] rounded-t-[30px]"
-                            initial={{ y: "100%", opacity: 0 }}
-                            animate={{ y: 0, opacity: 1 }}
-                            exit={{ y: "100%", opacity: 0 }}
-                            transition={{ type: "spring", damping: 30, stiffness: 300 }}
-                            drag="y"
-                            dragElastic={0.2}
-                            dragConstraints={{ top: 0, bottom: 0 }}
-                            onDragEnd={(_, info) => {
-                                // Close if dragged down more than 50px
-                                if (info.velocity.y > 20 || info.offset.y > 50) {
-                                    setShowCommentsModal(false);
-                                }
-                            }}
-                        >
-                            {/* Drag handle */}
-                            <div className="flex justify-center pt-3 pb-3 cursor-grab active:cursor-grabbing">
-                                <div className="w-12 h-1 bg-[#d0d0d0] rounded-full" />
-                            </div>
-
-                            {/* Comments content with scrollable list and fixed input */}
-                            <CommentsPanel
-                                pingId={pingId ?? String(displayPing.id)}
-                                isDrawer={true}
-                            />
-                        </motion.div>
-                    </>
-                )}
-            </AnimatePresence>
-        </div>
-    );
+              {/* Comments content with scrollable list and fixed input */}
+              <CommentsPanel
+                pingId={pingId ?? String(displayPing.id)}
+                isDrawer={true}
+              />
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
+    </div>
+  );
 };
 
 export default PingDetail;
