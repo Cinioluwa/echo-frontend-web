@@ -12,6 +12,7 @@
  */
 
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import WaveStatusIndicator from "../WaveStatusIndicator";
 import UserAvatar from "../UserAvatar";
 import DeleteConfirmationModal from "../DeleteConfirmationModal";
@@ -96,6 +97,7 @@ interface WaveHistoryCardProps {
 }
 
 const WaveHistoryCard = ({ wave, onDelete }: WaveHistoryCardProps) => {
+    const navigate = useNavigate();
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
 
@@ -218,7 +220,12 @@ const WaveHistoryCard = ({ wave, onDelete }: WaveHistoryCardProps) => {
                 {wave.ping?.title && (
                     <p className="font-['Poppins',sans-serif] text-[12px] text-[#8B8E8D] leading-normal">
                         Wave on:{" "}
-                        <span className="text-[#F49B31] font-medium">{wave.ping.title}</span>
+                        <span
+                            onClick={() => navigate(`/feed/${wave.ping?.id}`)}
+                            className="text-[#F49B31] font-medium cursor-pointer hover:underline transition-all"
+                        >
+                            {wave.ping.title}
+                        </span>
                     </p>
                 )}
 
