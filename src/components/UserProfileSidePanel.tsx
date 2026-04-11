@@ -5,13 +5,15 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 type Pages = {
-  pages:{  profile: boolean;
+  pages: {
+    profile: boolean;
     account: boolean;
     notification: boolean;
-    privacy: boolean;}
-}
+    privacy: boolean;
+  };
+};
 
-const UserProfileSidePanel = ({pages}: Pages) => {
+const UserProfileSidePanel = ({ pages }: Pages) => {
   const [activeItem, setActiveItem] = useState(pages);
 
   const navigate = useNavigate();
@@ -79,7 +81,7 @@ const UserProfileSidePanel = ({pages}: Pages) => {
               navigate("/user/account");
             }
           }}
-          className={`flex items-center md:my-1 gap-5 px-7 py-3 rounded-xl whitespace-nowrap transition-all shrink-0 ${
+          className={`flex items-center md:my-1 gap-5 cursor-pointer px-7 py-3 rounded-xl whitespace-nowrap transition-all shrink-0 ${
             item.active
               ? "bg-[#E8A355] text-white shadow-lg shadow-orange-200"
               : "bg-[#FEF5EA] hover:bg-orange-100"
