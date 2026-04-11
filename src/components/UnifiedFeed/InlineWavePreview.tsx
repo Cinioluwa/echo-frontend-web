@@ -43,7 +43,7 @@ const InlineWavePreview = ({ pingId }: InlineWavePreviewProps) => {
             <p className="font-['Poppins',sans-serif] font-medium text-[15px] md:text-[13px] text-[#171717] w-[63px]">
                 Waves
             </p>
-            <div className="flex flex-col md:flex-row gap-2.5 md:gap-5 w-full">
+            <div className="flex flex-col xl:flex-row gap-2.5 md:gap-5 w-full">
                 {displayedWaves.map((wave) => {
                     const authorName =
                         typeof wave.author === "object" && wave.author

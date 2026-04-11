@@ -265,23 +265,6 @@ const PingDetail = () => {
         </Tooltip>
       </div>
 
-      {/* ── ProposeWaveBar ────────────────────────── */}
-      <ProposeWaveBar
-        pingId={pingId ?? String(displayPing.id)}
-        pingTitle={displayPing.title}
-        pingCreatedAt={displayPing.createdAt}
-        onWaveProposed={() => {
-          if (!pingId) return;
-          waveService
-            .getWavesForPing(pingId, { page: 1, limit: 10 })
-            .then((res) => {
-              setWaves(res.data);
-              setWavesPage(1);
-            })
-            .catch((err) => console.error("Failed to refresh waves:", err));
-        }}
-      />
-
       {/* ── Ping Card ─────────────────────────────── */}
       <div className="bg-[#fefefe] rounded-[10px] px-5 py-[15px] flex flex-col gap-[15px] w-full">
         {/* Author row + badge */}
@@ -337,7 +320,7 @@ const PingDetail = () => {
               <img
                 src={categoryIcon}
                 alt={categoryName}
-                className="w-3 h-3 object-contain"
+              className="w-3 h-3 object-contain"
               />
             )}
             <span className="font-['Poppins',sans-serif] font-medium  text-[13px] text-black">
@@ -347,16 +330,9 @@ const PingDetail = () => {
         )}
 
         {/* Title */}
-        <h1 className="font-['Poppins',sans-serif] font-semibold text-[14px] text-black">
+        <h1 className="font-['Poppins',sans-serif] font-semibold text-[20px] text-black">
           {displayPing.title}
         </h1>
-
-        {/* Description */}
-        {displayPing.content && (
-          <p className="font-['Poppins',sans-serif] font-medium  text-[14px] text-[#626665] text-justify leading-relaxed">
-            {displayPing.content}
-          </p>
-        )}
 
         {/* Ping image */}
         {displayPing.media &&
@@ -385,6 +361,13 @@ const PingDetail = () => {
               </div>
             ) : null;
           })()}
+
+        {/* Description */}
+        {displayPing.content && (
+          <p className="font-['Poppins',sans-serif] font-medium  text-[14px] text-[#626665] text-justify leading-relaxed">
+            {displayPing.content}
+          </p>
+        )}
 
         {/* Stats: surge + comments + waves */}
         <div className="flex items-center justify-between gap-[15px]">
@@ -458,6 +441,27 @@ const PingDetail = () => {
           </div>
         </div>
       </div>
+
+      {/* ── ProposeWaveBar ────────────────────────── */}
+      <ProposeWaveBar
+        pingId={pingId ?? String(displayPing.id)}
+        pingTitle={displayPing.title}
+        pingCreatedAt={displayPing.createdAt}
+        onWaveProposed={() => {
+          if (!pingId) return;
+          waveService
+            .getWavesForPing(pingId, { page: 1, limit: 10 })
+            .then((res) => {
+              setWaves(res.data);
+              setWavesPage(1);
+            })
+            .catch((err) => console.error("Failed to refresh waves:", err));
+        }}
+      />
+
+      <p className="pb-3 border-b mb-5 border-black/30 font-['Poppins',sans-serif] text-[14px] text-black">
+        Waves
+      </p>
 
       {/* ── Wave Cards ────────────────────────────── */}
       {waves.length > 0 && (

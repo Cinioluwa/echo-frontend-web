@@ -131,7 +131,7 @@ const UnifiedFeed = () => {
           No pings yet. Be the first to raise an issue!
         </div>
       ) : (
-        <div className="flex flex-col gap-[15px]">
+        <div className="flex flex-col gap-[15px] w-full">
           {pings.map((ping) => (
             <div className="relative group" key={ping.id}>
               <UnifiedPingCard ping={ping} weeklyTop3Ids={weeklyTop3Ids} />
