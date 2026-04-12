@@ -22,11 +22,14 @@ import Top3Widget from "./UnifiedFeed/Top3Widget";
 import CommentsPanel from "./CommentsPanel";
 import PingFormModal from "./PingFormModal";
 import { PingCreatorProvider } from "../contexts/PingCreatorContext";
-import { announcementService, publicService, pingService } from "../api/services";
+import {
+  announcementService,
+  publicService,
+  pingService,
+} from "../api/services";
 import type { Announcement, Ping } from "../api/types";
 import MarkAsResolvedBar from "./MarkAsResolvedBar";
 import { useAuthStore, usePingsStore } from "../stores";
-
 
 const Layout = () => {
   const location = useLocation();
@@ -100,7 +103,10 @@ const Layout = () => {
       // Revert optimistic update on error
       setPing(previousPing);
 
-      const errorMessage = err instanceof Error ? err.message : "Failed to resolve ping. Please try again.";
+      const errorMessage =
+        err instanceof Error
+          ? err.message
+          : "Failed to resolve ping. Please try again.";
       console.error("Failed to resolve ping:", err);
       setResolveError(errorMessage);
     } finally {
@@ -118,7 +124,6 @@ const Layout = () => {
       </header>
 
       <div className="md:mt-[70px] flex ">
-
         {/* Desktop Sidebar — fixed, narrower (280px with padding) */}
         {!pingDetailId && (
           <aside className="hidden md:block fixed left-0 top-[70px] bottom-0 w-[280px] overflow-y-auto [scrollbar-width:none] px-[18px] pt-[15px] ">
@@ -127,14 +132,18 @@ const Layout = () => {
         )}
 
         {/* Main content area */}
-        <div className={`flex-1 overflow-auto ${!pingDetailId ? 'md:ml-[280px]' : ''}`}>
+        <div
+          className={`flex-1 overflow-auto ${!pingDetailId ? "md:ml-[280px]" : ""}`}
+        >
           {/* Mobile header — replaces PageTitleBar, mobile only */}
           <div className="md:hidden">
             <MobileHeader />
           </div>
 
           <PingCreatorProvider expandPingCreator={() => { }}>
-            <main className={` mx-[15px] mt-[15px] md:mx-5 md:mt-5 md:w-[calc(100vw-45vw)] ${isFeedPage ? 'lg:max-w-[calc(100vw-680px)]' : (pingDetailId ? 'lg:max-w-11/12 lg:w-full' : 'lg:max-w-5/6 lg:w-5/6 lg:mx-10')}  `}>
+            <main
+              className={` mx-[15px] mt-[15px] md:mx-5 lg:mt-5 md:w-a[calc(100vw-45vw)] ${isFeedPage ? "lg:max-w-[calc(100vw-680px)]" : pingDetailId ? "lg:max-w-11/12 lg:w-full" : "lg:max-w-5/6 lg:w-5/6 lg:mx-10"}  `}
+            >
               <Outlet context={{ showPingFormModal, setShowPingFormModal }} />
             </main>
           </PingCreatorProvider>
@@ -163,22 +172,29 @@ const Layout = () => {
             )}
 
             {/* ── Mark as Resolved bar ─────────────────── */}
-            {ping && (() => {
-              // Extract ping author ID, handling both string and object author types
-              const pingAuthorId = typeof ping.author === "object" && ping.author !== null
-                ? ping.author.id
-                : null;
-              console.log("Ping author ID:", pingAuthorId, "Current user ID:", currentUser?.id);
-              const isOwner = currentUser?.id === pingAuthorId;
-              const isResolved = !!ping.resolvedAt;
-              return isOwner && !isResolved ? (
-                <MarkAsResolvedBar
-                  pingId={pingDetailId}
-                  onResolved={handleResolvePing}
-                  isLoading={isResolvingPing}
-                />
-              ) : null;
-            })()}
+            {ping &&
+              (() => {
+                // Extract ping author ID, handling both string and object author types
+                const pingAuthorId =
+                  typeof ping.author === "object" && ping.author !== null
+                    ? ping.author.id
+                    : null;
+                console.log(
+                  "Ping author ID:",
+                  pingAuthorId,
+                  "Current user ID:",
+                  currentUser?.id,
+                );
+                const isOwner = currentUser?.id === pingAuthorId;
+                const isResolved = !!ping.resolvedAt;
+                return isOwner && !isResolved ? (
+                  <MarkAsResolvedBar
+                    pingId={pingDetailId}
+                    onResolved={handleResolvePing}
+                    isLoading={isResolvingPing}
+                  />
+                ) : null;
+              })()}
           </aside>
         )}
       </div>

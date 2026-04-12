@@ -31,6 +31,8 @@ import { getSocket } from "../api/socket";
 import type { Ping, Wave, CategoryData } from "../api/types";
 import { FaPlus } from "react-icons/fa6";
 import { Tooltip } from "../components/Tooltip";
+import PingDetailSkeleton from "../components/skeletons/PingDetailSkeleton";
+import WaveCardSkeleton from "../components/skeletons/WaveCardSkeleton";
 
 const waveIcon = "/assets/icon/wave.svg";
 const commentIcon = "/assets/icon/comment.svg";
@@ -192,7 +194,7 @@ const PingDetail = () => {
     }
   };
 
-  if (isLoading) return <p className="text-center py-10">Loading...</p>;
+  // if (isLoading) return <PingDetailSkeleton />;
   if (error) return <p className="text-red-500 text-center py-10">{error}</p>;
 
   const displayPing = pingFromStore || ping;
@@ -265,6 +267,190 @@ const PingDetail = () => {
         </Tooltip>
       </div>
 
+      {/* ── Ping Card ─────────────────────────────── */}
+
+      {isLoading && <PingDetailSkeleton />}
+
+      {!isLoading && (
+        <div className="bg-[#fefefe] rounded-[10px] px-5 py-[15px] flex flex-col gap-[15px] w-full">
+          {/* Author row + badge */}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2.5">
+              <UserAvatar
+                user={
+                  typeof displayPing.author === "object"
+                    ? displayPing.author
+                    : null
+                }
+                size="md"
+                bgColor="bg-[#ffc37b]"
+              />
+              <div className="flex flex-col">
+                <span className="font-['Poppins',sans-serif] font-semibold text-[14px] text-black">
+                  {authorName}
+                </span>
+                <span className="font-['Poppins',sans-serif] font-medium text-[8px] text-black">
+                  {formatTimestamp(displayPing.createdAt)}
+                </span>
+              </div>
+            </div>
+
+            {/* Ping status badge (Top 3, Acknowledged, or Resolved) */}
+            {(() => {
+              const badgeConfig = calculatePingBadge(
+                displayPing,
+                weeklyTop3Ids,
+              );
+              if (!badgeConfig) return null;
+
+              return (
+                <Tooltip
+                  content="Current aknowledgement status of this post."
+                  position="left"
+                  delay={0.2}
+                >
+                  <div className="border border-[#626665] rounded-[23px] flex items-center gap-1.5 px-[15px] py-[7px]">
+                    <div
+                      className="w-[5px] h-[5px] rounded-full shrink-0"
+                      style={{ backgroundColor: badgeConfig.color }}
+                    />
+                    <span className="font-['Poppins',sans-serif] font-medium text-[11px] text-black whitespace-nowrap">
+                      {badgeConfig.label}
+                    </span>
+                  </div>
+                </Tooltip>
+              );
+            })()}
+          </div>
+          {/* Category badge */}
+          {categoryName && (
+            <div className="flex items-center gap-[5px]">
+              {categoryIcon && (
+                <img
+                  src={categoryIcon}
+                  alt={categoryName}
+                  className="w-3 h-3 object-contain"
+                />
+              )}
+              <span className="font-['Poppins',sans-serif] font-medium  text-[13px] text-black">
+                {categoryName}
+              </span>
+            </div>
+          )}
+
+          {/* Title */}
+          <h1 className="font-['Poppins',sans-serif] font-semibold text-[20px] text-black">
+            {displayPing.title}
+          </h1>
+
+          {/* Ping image */}
+          {displayPing.media &&
+            displayPing.media.length > 0 &&
+            (() => {
+              const pingImage = displayPing.media.find((media) =>
+                media.mimeType.startsWith("image/"),
+              );
+              return pingImage?.url ? (
+                <div className="flex justify-center mt-3">
+                  <div
+                    className="overflow-hidden rounded-[14px] border border-black/10 bg-[#F8F7F3] max-h-[700px] w-full"
+                    style={{
+                      aspectRatio: `${pingImage.width} / ${pingImage.height}`,
+                    }}
+                  >
+                    <img
+                      src={pingImage.url}
+                      alt={displayPing.title || "User uploaded image"}
+                      width={pingImage.width}
+                      height={pingImage.height}
+                      className="h-full w-full object-fill"
+                      loading="lazy"
+                    />
+                  </div>
+                </div>
+              ) : null;
+            })()}
+
+          {/* Description */}
+          {displayPing.content && (
+            <p className="font-['Poppins',sans-serif] font-medium  text-[14px] text-[#626665] text-justify leading-relaxed">
+              {displayPing.content}
+            </p>
+          )}
+
+          {/* Stats: surge + comments + waves */}
+          <div className="flex items-center justify-between gap-[15px]">
+            {/* Surge button */}
+            <Tooltip
+              content={
+                hasSurged
+                  ? "Remove your surge"
+                  : "Surge this post to show it's important!"
+              }
+              position="right"
+              delay={0.2}
+            >
+              <button
+                type="button"
+                onClick={handleSurge}
+                disabled={isToggling}
+                aria-label={hasSurged ? "Remove surge" : "Surge"}
+                className={`flex items-center gap-[5px] px-2 py-1 rounded-[15px] border border-black cursor-pointer transition-colors disabled:opacity-50 ${hasSurged
+                    ? "bg-[#f49b31] text-white border-[#f49b31]"
+                    : "bg-[#fef5ea] text-[#4a504e]"
+                  }`}
+              >
+                <svg
+                  width="10"
+                  height="14"
+                  viewBox="0 0 12 16"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                  aria-hidden="true"
+                >
+                  <path
+                    d="M6.5 1L1 9h5l-0.5 6 6-8H7l0.5-6z"
+                    fill={hasSurged ? "white" : "#4A504E"}
+                  />
+                </svg>
+                <span className="font-['Poppins',sans-serif] font-semibold text-[11px]">
+                  {surgeCount}
+                </span>
+              </button>
+            </Tooltip>
+
+            <div className="flex items-center gap-3.5">
+              {/* Wave count */}
+              <div className="flex items-center gap-0">
+                <img
+                  src={waveIcon}
+                  className=" h-[27px] w-[25px]"
+                  alt="waveIcon"
+                />
+                <span className="font-['Inter',sans-serif] font-medium text-[12px] md:text-[14px] text-[#63637B] leading-5">
+                  {waveCount} Waves Proposed
+                </span>
+              </div>
+
+              {/* Comment count */}
+              <button
+                onClick={() => setShowCommentsModal(true)}
+                className="flex items-center gap-1 hover:text-[#F49B31] transition-colors cursor-pointer"
+              >
+                <img
+                  src={commentIcon}
+                  className=" h-[18px] w-[18px]"
+                  alt="commentIcon"
+                />
+                <span className="font-['Inter',sans-serif] font-medium text-[12px] md:text-[14px] text-[#63637B] leading-5">
+                  {commentCount} Comments
+                </span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* ── ProposeWaveBar ────────────────────────── */}
       <ProposeWaveBar
         pingId={pingId ?? String(displayPing.id)}
@@ -282,183 +468,18 @@ const PingDetail = () => {
         }}
       />
 
-      {/* ── Ping Card ─────────────────────────────── */}
-      <div className="bg-[#fefefe] rounded-[10px] px-5 py-[15px] flex flex-col gap-[15px] w-full">
-        {/* Author row + badge */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2.5">
-            <UserAvatar
-              user={
-                typeof displayPing.author === "object"
-                  ? displayPing.author
-                  : null
-              }
-              size="md"
-              bgColor="bg-[#ffc37b]"
-            />
-            <div className="flex flex-col">
-              <span className="font-['Poppins',sans-serif] font-semibold text-[14px] text-black">
-                {authorName}
-              </span>
-              <span className="font-['Poppins',sans-serif] font-medium text-[8px] text-black">
-                {formatTimestamp(displayPing.createdAt)}
-              </span>
-            </div>
-          </div>
-
-          {/* Ping status badge (Top 3, Acknowledged, or Resolved) */}
-          {(() => {
-            const badgeConfig = calculatePingBadge(displayPing, weeklyTop3Ids);
-            if (!badgeConfig) return null;
-
-            return (
-              <Tooltip
-                content="Current aknowledgement status of this post."
-                position="left"
-                delay={0.2}
-              >
-                <div className="border border-[#626665] rounded-[23px] flex items-center gap-1.5 px-[15px] py-[7px]">
-                  <div
-                    className="w-[5px] h-[5px] rounded-full shrink-0"
-                    style={{ backgroundColor: badgeConfig.color }}
-                  />
-                  <span className="font-['Poppins',sans-serif] font-medium text-[11px] text-black whitespace-nowrap">
-                    {badgeConfig.label}
-                  </span>
-                </div>
-              </Tooltip>
-            );
-          })()}
-        </div>
-        {/* Category badge */}
-        {categoryName && (
-          <div className="flex items-center gap-[5px]">
-            {categoryIcon && (
-              <img
-                src={categoryIcon}
-                alt={categoryName}
-                className="w-3 h-3 object-contain"
-              />
-            )}
-            <span className="font-['Poppins',sans-serif] font-medium  text-[13px] text-black">
-              {categoryName}
-            </span>
-          </div>
-        )}
-
-        {/* Title */}
-        <h1 className="font-['Poppins',sans-serif] font-semibold text-[14px] text-black">
-          {displayPing.title}
-        </h1>
-
-        {/* Description */}
-        {displayPing.content && (
-          <p className="font-['Poppins',sans-serif] font-medium  text-[14px] text-[#626665] text-justify leading-relaxed">
-            {displayPing.content}
-          </p>
-        )}
-
-        {/* Ping image */}
-        {displayPing.media &&
-          displayPing.media.length > 0 &&
-          (() => {
-            const pingImage = displayPing.media.find((media) =>
-              media.mimeType.startsWith("image/"),
-            );
-            return pingImage?.url ? (
-              <div
-                className="overflow-hidden rounded-[14px] border border-black/10 bg-[#F8F7F3] w-full"
-                style={{
-                  aspectRatio: `${pingImage.width} / ${pingImage.height}`,
-                }}
-              >
-                <img
-                  src={pingImage.url}
-                  alt={
-                    displayPing.title
-                      ? `Attached image for ${displayPing.title}`
-                      : "Attached ping image"
-                  }
-                  className="h-full w-full object-contain"
-                  loading="lazy"
-                />
-              </div>
-            ) : null;
-          })()}
-
-        {/* Stats: surge + comments + waves */}
-        <div className="flex items-center justify-between gap-[15px]">
-          {/* Surge button */}
-          <Tooltip
-            content={
-              hasSurged
-                ? "Remove your surge"
-                : "Surge this issue to show it's important!"
-            }
-            position="right"
-            delay={0.2}
-          >
-            <button
-              type="button"
-              onClick={handleSurge}
-              disabled={isToggling}
-              aria-label={hasSurged ? "Remove surge" : "Surge"}
-              className={`flex items-center gap-[5px] px-2 py-1 rounded-[15px] border border-black cursor-pointer transition-colors disabled:opacity-50 ${hasSurged
-                ? "bg-[#f49b31] text-white border-[#f49b31]"
-                : "bg-[#fef5ea] text-[#4a504e]"
-                }`}
-            >
-              <svg
-                width="10"
-                height="14"
-                viewBox="0 0 12 16"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-                aria-hidden="true"
-              >
-                <path
-                  d="M6.5 1L1 9h5l-0.5 6 6-8H7l0.5-6z"
-                  fill={hasSurged ? "white" : "#4A504E"}
-                />
-              </svg>
-              <span className="font-['Poppins',sans-serif] font-semibold text-[11px]">
-                {surgeCount}
-              </span>
-            </button>
-          </Tooltip>
-
-          <div className="flex items-center gap-3.5">
-            {/* Wave count */}
-            <div className="flex items-center gap-0">
-              <img
-                src={waveIcon}
-                className=" h-[27px] w-[25px]"
-                alt="waveIcon"
-              />
-              <span className="font-['Inter',sans-serif] font-medium text-[12px] md:text-[14px] text-[#63637B] leading-5">
-                {waveCount} Waves Proposed
-              </span>
-            </div>
-
-            {/* Comment count */}
-            <button
-              onClick={() => setShowCommentsModal(true)}
-              className="flex items-center gap-1 hover:text-[#F49B31] transition-colors cursor-pointer"
-            >
-              <img
-                src={commentIcon}
-                className=" h-[18px] w-[18px]"
-                alt="commentIcon"
-              />
-              <span className="font-['Inter',sans-serif] font-medium text-[12px] md:text-[14px] text-[#63637B] leading-5">
-                {commentCount} Comments
-              </span>
-            </button>
-          </div>
-        </div>
-      </div>
+      <p className="pb-3 border-b mb-5 border-black/30 font-['Poppins',sans-serif] text-[14px] text-black">
+        Waves
+      </p>
 
       {/* ── Wave Cards ────────────────────────────── */}
+      {isLoading && (
+        <div className="space-y-7">
+          <WaveCardSkeleton />
+          <WaveCardSkeleton />
+          <WaveCardSkeleton />
+        </div>
+      )}
       {waves.length > 0 && (
         <div className="flex flex-col gap-2.5">
           {waves.map((wave) => (
