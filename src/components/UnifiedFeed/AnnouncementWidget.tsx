@@ -43,10 +43,9 @@ const AnnouncementWidget = ({
         <div className="font-extrabold text-[0px] min-w-full w-min">
           <p className="text-[14px] font-['Poppins',sans-serif]">
             <span className="font-medium leading-[1.8]">
-              {isExpanded
+              {isExpanded || announcement.content.length <= 160
                 ? announcement.content
-                : announcement.content.slice(0, 160) +
-                  (announcement.content.length > 160 ? "..." : "")}
+                : announcement.content.slice(0, 160) + "..."}
             </span>
           </p>
         </div>

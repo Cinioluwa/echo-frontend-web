@@ -24,6 +24,7 @@ import InviteLeaderModal from "../components/InviteLeaderModal";
 import OnboardingOverlay from "../components/onboarding/OnboardingOverlay";
 import UnifiedPingCard from "../components/UnifiedFeed/UnifiedPingCard";
 import { useAuthStore, usePingsStore, useSearchStore } from "../stores";
+import UnifiedFeedSkeleton from "../components/skeletons/UnifiedFeedSkeleton";
 
 const UnifiedFeed = () => {
   // ── Pings store ────────────────────────────────────────────────────────────
@@ -119,9 +120,7 @@ const UnifiedFeed = () => {
 
       {/* ── Feed list ── */}
       {isLoading && pings.length === 0 ? (
-        <div className="flex justify-center items-center py-16">
-          <div className="w-8 h-8 border-4 border-[#F49B31] border-t-transparent rounded-full animate-spin" />
-        </div>
+        <UnifiedFeedSkeleton />
       ) : error ? (
         <div className="bg-red-50 border border-red-200 rounded-[10px] px-4 py-3 text-red-600 text-sm">
           {error}
