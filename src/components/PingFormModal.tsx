@@ -1,40 +1,25 @@
-import { useState, useEffect, useRef, type ReactNode } from "react";
+import { useState, useRef, type ReactNode, useEffect } from "react";
 import { FaLink } from "react-icons/fa6";
-import { motion, AnimatePresence } from "framer-motion";
-import Toggle from "./Toggle";
+import { ChevronDown, Trash2 } from "lucide-react";
 import { v4 as uuidv4 } from "uuid";
 import PostSuccessModal from "./PostSuccessModal";
-import { pingService, waveService, uploadService } from "../api/services";
-import { useDebounce } from "../hooks";
-import type { Ping } from "../api/types/index";
-import { usePingsStore, useWavesStore } from "../stores";
-
-// Wave Components
-import WaveWarningBanner from "./WaveComponents/WaveWarningBanner";
-import PingSearchInput from "./WaveComponents/PingSearchInput";
-import PingSearchDropdown from "./WaveComponents/PingSearchDropdown";
-import SelectedPingCard from "./WaveComponents/SelectedPingCard";
-
-// Shared Components
-import { HorizontalCategorySelector } from "./shared";
-
-// Animation variants
-import { tabVariants as importedTabVariants } from "./WaveComponents/animations";
+import { pingService, uploadService, categoryService } from "../api/services";
+import { usePingsStore } from "../stores";
+import UserAvatar from "./UserAvatar";
+import { useAuthStore } from "../stores";
+import type { CategoryData } from "../api/types/index";
 
 interface Props {
   children?: ReactNode;
   setPingFormDetails?: React.Dispatch<React.SetStateAction<PingFormDetails[]>>;
   setPingForm: () => void;
-  formSegment: "ping" | "wave";
-  setFormSegment: () => void;
   onPingCreated?: () => void;
-  onWaveCreated?: () => void;
 }
 
 export interface PingFormDetails {
   cat: string;
   catId: number;
-  formSegment: string;
+  formSegment: "ping";
   anonymous: boolean;
   pingDesc: string;
   pingTitle: string;
@@ -52,19 +37,6 @@ interface PingData {
   anonymous: boolean;
   photos: File[];
 }
-
-interface WaveData {
-  selectedPing: Ping | null;
-  solution: string;
-  searchQuery: string;
-  photos: File[];
-}
-
-type WaveFlowState =
-  | "initial-search"
-  | "searching"
-  | "ping-selected"
-  | "ready-to-submit";
 
 const getErrorMessage = (err: any): string => {
   // Check for detailed validation errors from backend
@@ -90,14 +62,8 @@ const PingFormModal = ({
   children,
   setPingFormDetails,
   setPingForm,
-  setFormSegment,
-  formSegment,
   onPingCreated,
-  onWaveCreated,
 }: Props) => {
-  // Active tab state
-  const [activeTab, setActiveTab] = useState<"ping" | "wave">(formSegment);
-
   // Ping form state
   const [pingData, setPingData] = useState<PingData>({
     title: "",
@@ -108,170 +74,65 @@ const PingFormModal = ({
     photos: [],
   });
 
-  // Wave form state
-  const [waveData, setWaveData] = useState<WaveData>({
-    selectedPing: null,
-    solution: "",
-    searchQuery: "",
-    photos: [],
-  });
-
-  // Wave flow state machine
-  const [waveFlowState, setWaveFlowState] = useState<WaveFlowState>("initial-search");
-
-  // Search functionality
-  const [searchResults, setSearchResults] = useState<Ping[]>([]);
-  const [isSearching, setIsSearching] = useState(false);
-  const [showSearchDropdown, setShowSearchDropdown] = useState(false);
-  const debouncedSearch = useDebounce(waveData.searchQuery, 300);
-
   // UI state
   const [postSuccessModal, setPostSuccessModal] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [uploadProgress, setUploadProgress] = useState<number | null>(null);
   const [uploadError, setUploadError] = useState<string | null>(null);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [showCategoryDropdown, setShowCategoryDropdown] = useState(false);
+  const [showPostMenu, setShowPostMenu] = useState(false);
+  const [categories, setCategories] = useState<CategoryData[]>([]);
 
-  // Refs for file inputs and dropdown container
+  // Refs for file inputs and dropdowns
   const pingPhotoInputRef = useRef<HTMLInputElement>(null);
-  const wavePhotoInputRef = useRef<HTMLInputElement>(null);
-  const searchContainerRef = useRef<HTMLDivElement>(null);
+  const categoryDropdownRef = useRef<HTMLDivElement>(null);
+  const postMenuRef = useRef<HTMLDivElement>(null);
 
-  // Legacy state for compatibility
-  const [pingFormData, setPingFormData] = useState<PingFormDetails>({
-    cat: "",
-    catId: 0,
-    anonymous: false,
-    pingDesc: "",
-    pingTitle: "",
-    formSegment: "ping",
-    createdAt: "",
-    id: "",
-  });
+  // Get current user for avatar
+  const user = useAuthStore((state) => state.user);
 
-  // Sync activeTab with formSegment prop
+  // Fetch categories on mount
   useEffect(() => {
-    setActiveTab(formSegment);
-  }, [formSegment]);
+    const fetchCategories = async () => {
+      try {
+        const data = await categoryService.getAll();
+        setCategories(data);
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+      }
+    };
+    fetchCategories();
+  }, []);
 
-  // Handle clicks outside search dropdown
+  // Close dropdowns when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
-        searchContainerRef.current &&
-        !searchContainerRef.current.contains(event.target as Node)
+        categoryDropdownRef.current &&
+        !categoryDropdownRef.current.contains(event.target as Node)
       ) {
-        setShowSearchDropdown(false);
+        setShowCategoryDropdown(false);
+      }
+      if (
+        postMenuRef.current &&
+        !postMenuRef.current.contains(event.target as Node)
+      ) {
+        setShowPostMenu(false);
       }
     };
 
-    if (showSearchDropdown) {
-      document.addEventListener("mousedown", handleClickOutside);
-    }
-
+    document.addEventListener("mousedown", handleClickOutside);
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [showSearchDropdown]);
+  }, []);
 
-  // Debounced ping search for Wave flow
-  useEffect(() => {
-    const fetchPings = async () => {
-      if (!debouncedSearch || debouncedSearch.length < 2) {
-        setSearchResults([]);
-        setIsSearching(false);
-        setWaveFlowState("initial-search");
-        return;
-      }
-
-      setIsSearching(true);
-      setWaveFlowState("searching");
-
-      try {
-        const response = await pingService.searchPings(
-          debouncedSearch,
-          { limit: 10 }
-        );
-
-        setSearchResults(response.data);
-        setShowSearchDropdown(true);
-      } catch (error) {
-        console.error("Error searching pings:", error);
-        setSearchResults([]);
-      } finally {
-        setIsSearching(false);
-      }
-    };
-
-    if (activeTab === "wave" && !waveData.selectedPing) {
-      fetchPings();
+  // Handle backdrop click to close modal
+  const handleBackdropClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (e.target === e.currentTarget) {
+      setPingForm();
     }
-  }, [debouncedSearch, activeTab, waveData.selectedPing]);
-
-  // Update wave flow state based on data
-  useEffect(() => {
-    if (waveData.selectedPing) {
-      if (waveData.solution.trim()) {
-        setWaveFlowState("ready-to-submit");
-      } else {
-        setWaveFlowState("ping-selected");
-      }
-    }
-  }, [waveData.selectedPing, waveData.solution]);
-
-  // Tab switching handler
-  const handleTabSwitch = (newTab: "ping" | "wave") => {
-    setActiveTab(newTab);
-    setFormSegment();
-    setErrors({});
-
-    // Reset appropriate form data
-    if (newTab === "ping") {
-      resetWaveData();
-    } else {
-      resetPingData();
-    }
-  };
-
-  // Reset functions
-  const resetPingData = () => {
-    setPingData({
-      title: "",
-      description: "",
-      categoryId: 0,
-      categoryName: "",
-      anonymous: false,
-      photos: [],
-    });
-  };
-
-  const resetWaveData = () => {
-    setWaveData({
-      selectedPing: null,
-      solution: "",
-      searchQuery: "",
-      photos: [],
-    });
-    setSearchResults([]);
-    setShowSearchDropdown(false);
-    setWaveFlowState("initial-search");
-  };
-
-  // Ping selection handlers
-  const handleSelectPing = (ping: Ping) => {
-    setWaveData((prev) => ({ ...prev, selectedPing: ping, searchQuery: "" }));
-    setShowSearchDropdown(false);
-    setWaveFlowState("ping-selected");
-  };
-
-  const handleDeselectPing = () => {
-    setWaveData((prev) => ({ ...prev, selectedPing: null }));
-    setWaveFlowState("initial-search");
-  };
-
-  const handleCreatePingFromWave = () => {
-    // Switch to Ping tab to create a new ping
-    handleTabSwitch("ping");
   };
 
   // Photo handling functions
@@ -282,8 +143,8 @@ const PingFormModal = ({
     const newFiles = Array.from(files);
     const totalFiles = pingData.photos.length + newFiles.length;
 
-    if (totalFiles > 5) {
-      alert("You can only upload up to 5 photos");
+    if (totalFiles > 3) {
+      setUploadError("You can only upload up to 3 photos");
       return;
     }
 
@@ -297,33 +158,6 @@ const PingFormModal = ({
 
   const handleRemovePingPhoto = (indexToRemove: number) => {
     setPingData((prev) => ({
-      ...prev,
-      photos: prev.photos.filter((_, index) => index !== indexToRemove),
-    }));
-  };
-
-  const handleWavePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    if (!files) return;
-
-    const newFiles = Array.from(files);
-    const totalFiles = waveData.photos.length + newFiles.length;
-
-    if (totalFiles > 5) {
-      alert("You can only upload up to 5 photos");
-      return;
-    }
-
-    setWaveData((prev) => ({ ...prev, photos: [...prev.photos, ...newFiles] }));
-
-    // Reset input
-    if (wavePhotoInputRef.current) {
-      wavePhotoInputRef.current.value = "";
-    }
-  };
-
-  const handleRemoveWavePhoto = (indexToRemove: number) => {
-    setWaveData((prev) => ({
       ...prev,
       photos: prev.photos.filter((_, index) => index !== indexToRemove),
     }));
@@ -349,22 +183,7 @@ const PingFormModal = ({
     return Object.keys(newErrors).length === 0;
   };
 
-  const validateWaveForm = (): boolean => {
-    const newErrors: Record<string, string> = {};
-
-    if (!waveData.selectedPing) {
-      newErrors.ping = "Please select a ping to link your wave to";
-    }
-
-    if (!waveData.solution.trim()) {
-      newErrors.solution = "Solution is required";
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  // Submit handlers
+  // Submit handler
   const handlePingSubmit = async () => {
     if (!validatePingForm()) {
       return;
@@ -428,7 +247,6 @@ const PingFormModal = ({
         onPingCreated();
       }
 
-      setPingFormData(newPingFormDetails);
       setPostSuccessModal(true);
       resetPingData();
     } catch (err: any) {
@@ -438,87 +256,81 @@ const PingFormModal = ({
     }
   };
 
-  const handleWaveSubmit = async () => {
-    if (!validateWaveForm()) {
-      return;
-    }
-
-    setIsSubmitting(true);
-    setUploadProgress(null);
-    setUploadError(null);
-
-    let mediaIds: number[] = [];
-    if (waveData.photos.length > 0) {
-      try {
-        setUploadProgress(0);
-        const uploaded = await uploadService.uploadFiles(waveData.photos, "wave");
-        mediaIds = uploaded.map((m) => m.id);
-        setUploadProgress(100);
-      } catch (err: any) {
-        setUploadError("Photo upload failed. Please try again.");
-        setIsSubmitting(false);
-        return;
-      }
-    }
-
-    try {
-      const createdWave = await waveService.proposeWave({
-        solution: waveData.solution.trim(),
-        pingId: String(waveData.selectedPing!.id),
-        mediaIds, // Backend must support this field for wave uploads
-      });
-
-      useWavesStore.getState().addWave(createdWave);
-
-      if (onWaveCreated) {
-        onWaveCreated();
-      }
-
-      setPingFormData({
-        ...pingFormData,
-        formSegment: "wave",
-      });
-      setPostSuccessModal(true);
-      resetWaveData();
-    } catch (err: any) {
-      setUploadError(getErrorMessage(err));
-    } finally {
-      setIsSubmitting(false);
-    }
+  // Reset function
+  const resetPingData = () => {
+    setPingData({
+      title: "",
+      description: "",
+      categoryId: 0,
+      categoryName: "",
+      anonymous: false,
+      photos: [],
+    });
   };
 
-  // Render functions for form sections
+  // Render ping form
   const renderPingForm = () => {
     return (
-      <motion.div
-        key="ping-form"
-        initial={{ opacity: 0, y: -10 }}
-        animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: -10 }}
-        transition={{ duration: 0.3, ease: "easeInOut" }}
-        className="w-full flex flex-col gap-5"
-      >
-        {/* Anonymous Toggle */}
-        <Toggle
-          checked={pingData.anonymous}
-          onChange={(checked) =>
-            setPingData((prev) => ({ ...prev, anonymous: checked }))
-          }
-        />
+      <div className="w-full flex gap-3">
+        {/* Left Column: Avatar */}
+        <div className="shrink-0">
+          <UserAvatar user={user} size="lg" responsive={false} />
+        </div>
 
-        {/* Form Fields */}
-        <div className="w-full flex flex-col gap-5">
-          {/* Title */}
-          <div className="flex px-[15px] py-[11px] border border-black rounded-[10px] focus-within:border-[#F49B31] focus-within:border-2 transition-all duration-200">
-            <label htmlFor="pingTitle" className="font-medium">
-              Title:
-            </label>
+        {/* Right Column: Form Content */}
+        <div className="flex flex-col gap-3 flex-1 overflow-visible">
+          {/* Category Dropdown */}
+          <div className="relative" ref={categoryDropdownRef}>
+            <button
+              onClick={() => setShowCategoryDropdown(!showCategoryDropdown)}
+              className="flex items-center gap-1 px-4 py-1.5 border-2 border-[#F49B31] rounded-full bg-white hover:bg-[#FEF5EA] transition-colors duration-200 text-[14px] font-medium text-[#454545]"
+            >
+              {pingData.categoryId
+                ? categories.find((c) => c.id === pingData.categoryId)?.name ||
+                "Select Category"
+                : "Select Category"}
+              <ChevronDown size={16} className="text-[#F49B31]" />
+            </button>
+
+            {/* Dropdown Menu - reduced height and scrollable */}
+            {showCategoryDropdown && (
+              <div className="absolute top-full left-0 mt-2 w-48 bg-white border-2 border-[#F49B31] rounded-lg shadow-lg z-50 max-h-40 overflow-y-auto scrollbar-subtle-rounded">
+                {categories.map((cat) => (
+                  <button
+                    key={cat.id}
+                    onClick={() => {
+                      setPingData((prev) => ({
+                        ...prev,
+                        categoryId: cat.id,
+                        categoryName: cat.name,
+                      }));
+                      setShowCategoryDropdown(false);
+                      setErrors((prev) => {
+                        const newErrors = { ...prev };
+                        delete newErrors.category;
+                        return newErrors;
+                      });
+                    }}
+                    className="w-full text-left px-4 py-2 hover:bg-[#FEF5EA] transition-colors text-sm text-[#454545]"
+                  >
+                    {cat.name}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {errors.category && (
+            <p className="text-red-500 text-xs">{errors.category}</p>
+          )}
+
+          {/* Title Input */}
+          <div className="flex px-[27px] py-3 border-2 border-[#FFC37B] rounded-[20px] focus-within:border-[#F49B31] focus-within:shadow-md transition-all duration-200 bg-white w-full h-[50px]">
             <input
               type="text"
               id="pingTitle"
-              name="pingTitle"
-              placeholder="name, header..."
-              className="pl-[11px] text-[12px] text-[#454545] outline-0 flex-1 bg-transparent"
+              placeholder="Title*"
+              className="text-[14px] text-[#454545] outline-0 flex-1 bg-transparent placeholder:text-[#9e9e9e]"
               onChange={(e) =>
                 setPingData((prev) => ({ ...prev, title: e.target.value }))
               }
@@ -526,283 +338,211 @@ const PingFormModal = ({
               autoComplete="off"
             />
           </div>
-          {errors.title && <p className="text-red-500 text-xs -mt-3">{errors.title}</p>}
+          {errors.title && <p className="text-red-500 text-xs">{errors.title}</p>}
 
-          {/* Description */}
-          <div className="flex px-[15px] py-[11px] border border-black rounded-[10px] focus-within:border-[#F49B31] focus-within:border-2 transition-all duration-200">
-            <label htmlFor="pingDescription" className="font-medium">
-              Description:
-            </label>
-            <input
-              type="text"
+          {/* Body/Description Input */}
+          <div className="flex px-[27px] py-3 border-2 border-[#FFC37B] rounded-[20px] focus-within:border-[#F49B31] focus-within:shadow-md transition-all duration-200 bg-white min-h-[100px] w-full">
+            <textarea
               name="pingDescription"
               id="pingDescription"
-              placeholder="What's the issue?"
-              autoComplete="off"
+              placeholder="Body (optional)"
               onChange={(e) =>
                 setPingData((prev) => ({ ...prev, description: e.target.value }))
               }
               value={pingData.description}
-              className="pl-[11px] text-[12px] text-[#454545] outline-0 flex-1 bg-transparent"
+              className="text-[14px] text-[#454545] outline-0 flex-1 bg-transparent resize-none placeholder:text-[#9e9e9e]"
             />
           </div>
           {errors.description && (
-            <p className="text-red-500 text-xs -mt-3">{errors.description}</p>
+            <p className="text-red-500 text-xs">{errors.description}</p>
           )}
 
-
-        </div>
-
-        {/* Category Selector */}
-        <div className="overflow-x-auto">
-          <HorizontalCategorySelector
-            selectedCategoryId={pingData.categoryId}
-            onSelectCategory={(catId, catName) =>
-              setPingData((prev) => ({
-                ...prev,
-                categoryId: catId,
-                categoryName: catName,
-              }))
-            }
-          />
-        </div>
-        {errors.category && <p className="text-red-500 text-xs -mt-3">{errors.category}</p>}
-
-        {/* Hidden Photo Input */}
-        <input
-          ref={pingPhotoInputRef}
-          type="file"
-          accept="image/*"
-          multiple
-          onChange={handlePingPhotoChange}
-          className="hidden"
-        />
-
-        {/* Photo Thumbnails Display */}
-        {pingData.photos.length > 0 && (
-          <div className="flex items-center gap-2">
-            {pingData.photos.slice(0, 3).map((photo, index) => (
-              <div
-                key={index}
-                className="relative group w-16 h-16 rounded-xs overflow-hidden border border-[#7D7D7D]"
-              >
-                <img
-                  src={URL.createObjectURL(photo)}
-                  alt={`Upload ${index + 1}`}
-                  className="w-full h-full object-cover"
-                />
-                <button
-                  type="button"
-                  onClick={() => handleRemovePingPhoto(index)}
-                  className="absolute top-0.5 right-0.5 bg-red-500 text-white rounded-full p-0.5 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
-                >
-                  <span className="text-xs font-bold">×</span>
-                </button>
-              </div>
-            ))}
-            {pingData.photos.length > 3 && (
-              <div className="flex items-center justify-center w-16 h-16 rounded-xs bg-[#F49B31] text-white font-semibold text-sm border border-[#F49B31]">
-                +{pingData.photos.length - 3}
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* Upload Progress/Error */}
-        {uploadProgress !== null && (
-          <div className="w-full text-xs text-gray-500">Uploading photos... {uploadProgress}%</div>
-        )}
-        {uploadError && (
-          <div className="w-full text-xs text-red-500">{uploadError}</div>
-        )}
-        {/* Action Buttons */}
-        <div className="w-full flex justify-between items-center">
-          <button
-            type="button"
-            onClick={() => pingPhotoInputRef.current?.click()}
-            className="cursor-pointer"
-          >
-            <FaLink fontSize={30} color="#F49B31" />
-          </button>
-          <div className="flex items-center">
-            <button
-              type="button"
-              onClick={handlePingSubmit}
-              disabled={isSubmitting}
-              className="px-[30px] py-[5px] text-white rounded-xl bg-[#F49B31] hover:bg-[#d88429] transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {isSubmitting ? "Posting..." : "Post"}
-            </button>
-          </div>
-        </div>
-        <button
-          type="button"
-          onClick={setPingForm}
-          className="px-[30px] py-[5px] text-[#F49B31] border border-[#F49B31] rounded-xl bg-transparent hover:bg-[#FEF5EA] transition-all duration-300"
-        >
-          Cancel
-        </button>
-      </motion.div>
-    );
-  };
-
-  const renderWaveForm = () => {
-    return (
-      <motion.div
-        key="wave-form"
-        initial={{ opacity: 0, y: -10 }}
-        animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: -10 }}
-        transition={{ duration: 0.3, ease: "easeInOut" }}
-        className="w-full flex flex-col gap-5"
-      >
-        {/* Warning Banner */}
-        <WaveWarningBanner />
-
-        {/* Ping Search or Selected Ping */}
-        {!waveData.selectedPing ? (
-          <div className="relative" ref={searchContainerRef}>
-            <PingSearchInput
-              value={waveData.searchQuery}
-              onChange={(value) => {
-                setWaveData((prev) => ({ ...prev, searchQuery: value }));
-                // Show dropdown when user has typed enough characters
-                setShowSearchDropdown(value.length >= 2);
-              }}
-              onFocus={() => {
-                // Show dropdown on focus if there's already a valid search query
-                if (waveData.searchQuery.length >= 2) {
-                  setShowSearchDropdown(true);
-                }
-              }}
-              placeholder="Search for the ping..."
-            />
-
-            {/* Search Dropdown */}
-            <PingSearchDropdown
-              searchQuery={waveData.searchQuery}
-              searchResults={searchResults}
-              isSearching={isSearching}
-              onSelectPing={handleSelectPing}
-              onCreatePing={handleCreatePingFromWave}
-              isVisible={showSearchDropdown}
-            />
-          </div>
-        ) : (
-          <SelectedPingCard
-            ping={waveData.selectedPing}
-            onDeselect={handleDeselectPing}
-          />
-        )}
-        {errors.ping && <p className="text-red-500 text-xs -mt-3">{errors.ping}</p>}
-
-        {/* Solution Input - Only enabled when ping is selected */}
-        <div
-          className={`flex flex-col px-[15px] py-[11px] border border-black rounded-[10px] focus-within:border-[#F49B31] focus-within:border-2 transition-all duration-200 ${!waveData.selectedPing ? "opacity-50 cursor-not-allowed bg-gray-50" : ""
-            }`}
-        >
-          <label htmlFor="solution" className="font-medium mb-2">
-            {waveData.selectedPing ? "Proposing a Wave" : "Solution:"}
-          </label>
-          <textarea
-            id="solution"
-            name="solution"
-            placeholder="Describe your solution..."
-            disabled={!waveData.selectedPing}
-            onChange={(e) =>
-              setWaveData((prev) => ({ ...prev, solution: e.target.value }))
-            }
-            value={waveData.solution}
-            className="text-[12px] text-[#454545] outline-0 bg-transparent resize-none min-h-[100px]"
-          />
-        </div>
-        {errors.solution && (
-          <p className="text-red-500 text-xs -mt-3">{errors.solution}</p>
-        )}
-
-        {/* Hidden Photo Input - Only when ping is selected */}
-        {waveData.selectedPing && (
-          <>
-            <input
-              ref={wavePhotoInputRef}
-              type="file"
-              accept="image/*"
-              multiple
-              onChange={handleWavePhotoChange}
-              className="hidden"
-            />
-
-            {/* Photo Thumbnails Display */}
-            {waveData.photos.length > 0 && (
-              <div className="flex items-center gap-2">
-                {waveData.photos.slice(0, 3).map((photo, index) => (
-                  <div
-                    key={index}
-                    className="relative group w-16 h-16 rounded-xs overflow-hidden border border-[#7D7D7D]"
+          {/* Photo Gallery - Constrained to max-height, no overflow */}
+          {pingData.photos.length > 0 && (
+            <div className="w-full max-h-[200px]">
+              {pingData.photos.length === 1 ? (
+                // Single photo - full width, constrained height
+                <div className="relative group w-full h-[200px] rounded-lg overflow-hidden border-2 border-[#F49B31] shadow-sm">
+                  <img
+                    src={URL.createObjectURL(pingData.photos[0])}
+                    alt="Upload 1"
+                    className="w-full h-full object-cover"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => handleRemovePingPhoto(0)}
+                    className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1.5 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
                   >
+                    <Trash2 size={14} />
+                  </button>
+                </div>
+              ) : pingData.photos.length === 2 ? (
+                // Two photos - side by side, constrained height
+                <div className="flex gap-2 h-[200px]">
+                  <div className="relative group flex-1 rounded-lg overflow-hidden border-2 border-[#F49B31] shadow-sm">
                     <img
-                      src={URL.createObjectURL(photo)}
-                      alt={`Upload ${index + 1}`}
+                      src={URL.createObjectURL(pingData.photos[0])}
+                      alt="Upload 1"
                       className="w-full h-full object-cover"
                     />
                     <button
                       type="button"
-                      onClick={() => handleRemoveWavePhoto(index)}
-                      className="absolute top-0.5 right-0.5 bg-red-500 text-white rounded-full p-0.5 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                      onClick={() => handleRemovePingPhoto(0)}
+                      className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1.5 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
                     >
-                      <span className="text-xs font-bold">×</span>
+                      <Trash2 size={14} />
                     </button>
                   </div>
-                ))}
-                {waveData.photos.length > 3 && (
-                  <div className="flex items-center justify-center w-16 h-16 rounded-xs bg-[#F49B31] text-white font-semibold text-sm border border-[#F49B31]">
-                    +{waveData.photos.length - 3}
+                  <div className="relative group flex-1 rounded-lg overflow-hidden border-2 border-[#F49B31] shadow-sm">
+                    <img
+                      src={URL.createObjectURL(pingData.photos[1])}
+                      alt="Upload 2"
+                      className="w-full h-full object-cover"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => handleRemovePingPhoto(1)}
+                      className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1.5 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                    >
+                      <Trash2 size={14} />
+                    </button>
                   </div>
-                )}
-              </div>
-            )}
-          </>
-        )}
+                </div>
+              ) : (
+                // Three photos - 1 large on left, 2 stacked on right, constrained height
+                <div className="flex gap-2 h-[200px]">
+                  {/* Large photo on left */}
+                  <div className="relative group flex-1 rounded-lg overflow-hidden border-2 border-[#F49B31] shadow-sm">
+                    <img
+                      src={URL.createObjectURL(pingData.photos[0])}
+                      alt="Upload 1"
+                      className="w-full h-full object-cover"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => handleRemovePingPhoto(0)}
+                      className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1.5 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                    >
+                      <Trash2 size={14} />
+                    </button>
+                  </div>
 
-        {/* Upload Progress/Error */}
-        {uploadProgress !== null && (
-          <div className="w-full text-xs text-gray-500">Uploading photos... {uploadProgress}%</div>
-        )}
-        {uploadError && (
-          <div className="w-full text-xs text-red-500">{uploadError}</div>
-        )}
-        {/* Action Buttons */}
-        <div className="w-full flex justify-between items-center">
-          <button
-            type="button"
-            onClick={() => waveData.selectedPing && wavePhotoInputRef.current?.click()}
-            disabled={!waveData.selectedPing}
-            className="cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            <FaLink fontSize={30} color="#F49B31" />
-          </button>
-          <div className="flex gap-3 items-center">
+                  {/* Two stacked photos on right */}
+                  <div className="flex flex-col gap-2 flex-1">
+                    <div className="relative group flex-1 rounded-lg overflow-hidden border-2 border-[#F49B31] shadow-sm">
+                      <img
+                        src={URL.createObjectURL(pingData.photos[1])}
+                        alt="Upload 2"
+                        className="w-full h-full object-cover"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => handleRemovePingPhoto(1)}
+                        className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1.5 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                      >
+                        <Trash2 size={14} />
+                      </button>
+                    </div>
+                    <div className="relative group flex-1 rounded-lg overflow-hidden border-2 border-[#F49B31] shadow-sm">
+                      <img
+                        src={URL.createObjectURL(pingData.photos[2])}
+                        alt="Upload 3"
+                        className="w-full h-full object-cover"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => handleRemovePingPhoto(2)}
+                        className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1.5 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                      >
+                        <Trash2 size={14} />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Upload Progress/Error */}
+          {uploadProgress !== null && (
+            <div className="w-full text-xs text-gray-500">
+              Uploading photos... {uploadProgress}%
+            </div>
+          )}
+          {uploadError && (
+            <div className="w-full text-xs text-red-500">{uploadError}</div>
+          )}
+
+          {/* Bottom Action Row: Link Icon + Post Button */}
+          <div className="w-full flex justify-between items-center\">
+            {/* Photo Upload Button */}
             <button
               type="button"
-              onClick={handleWaveSubmit}
-              disabled={isSubmitting || waveFlowState !== "ready-to-submit"}
-              className={`px-[30px] py-[5px] text-white rounded-xl bg-[#F49B31] transition-all duration-300 disabled:cursor-not-allowed ${waveFlowState === "ready-to-submit"
-                ? "opacity-100 hover:bg-[#d88429]"
-                : "opacity-50"
-                }`}
+              onClick={() =>
+                pingData.photos.length < 3 && pingPhotoInputRef.current?.click()
+              }
+              disabled={pingData.photos.length >= 3}
+              className="cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed transition-opacity"
             >
-              {isSubmitting ? "Posting..." : "Post"}
+              <FaLink fontSize={36} color="#F49B31" />
             </button>
+
+            {/* Post Button - Separate submit and dropdown toggle */}
+            <div className="relative" ref={postMenuRef}>
+              {/* Wrapper for proper z-stacking */}
+              <div className="flex items-center bg-[#FFC37B] rounded-[15px] border-2 border-[#FFC37B] overflow-hidden">
+                {/* Post Submit Button - Left side */}
+                <button
+                  type="button"
+                  onClick={handlePingSubmit}
+                  disabled={isSubmitting}
+                  className="flex items-center justify-center px-4 py-2 bg-[#F49B31] hover:bg-[#d88429] rounded-[13px] font-medium text-sm text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {isSubmitting ? "Posting..." : "Post"}
+                </button>
+
+                {/* Dropdown Arrow Button - Right side */}
+                <button
+                  type="button"
+                  onClick={() => setShowPostMenu(!showPostMenu)}
+                  className="flex items-center justify-center px-2 py-2 hover:bg-[#f2b866] transition-colors"
+                >
+                  <ChevronDown size={16} className="text-white" />
+                </button>
+              </div>
+
+              {/* Post Menu Dropdown - Fixed positioning to avoid clipping */}
+              {showPostMenu && (
+                <div className="absolute top-full right-0 mt-2 bg-white  rounded-lg shadow-lg p-3 z-50 w-max">
+                  {/* Anonymous Toggle */}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setPingData((prev) => ({
+                        ...prev,
+                        anonymous: !prev.anonymous,
+                      }));
+                    }}
+                    className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-[#FEF5EA] transition-colors w-full text-left text-sm text-black"
+                  >
+                    {/* Anonymous Toggle Switch */}
+                    <div
+                      className={`w-9 h-5 flex items-center rounded-full transition-colors ${pingData.anonymous ? "bg-[#F49B31]" : "bg-gray-300"
+                        }`}
+                    >
+                      <div
+                        className={`w-4 h-4 rounded-full bg-white transition-transform ${pingData.anonymous ? "translate-x-[18.5px]" : "translate-x-0"
+                          }`}
+                      />
+                    </div>
+                    <span>Post Anonymously</span>
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
         </div>
-        <button
-          type="button"
-          onClick={setPingForm}
-          className="px-[30px] py-[5px] text-[#F49B31] border border-[#F49B31] rounded-xl bg-transparent hover:bg-[#FEF5EA] transition-all duration-300"
-        >
-          Cancel
-        </button>
-      </motion.div>
+      </div>
     );
   };
 
@@ -810,7 +550,7 @@ const PingFormModal = ({
   if (postSuccessModal) {
     return (
       <PostSuccessModal
-        formSegment={activeTab}
+        formSegment="ping"
         setPostSuccessModal={() => {
           setPostSuccessModal(false);
           setPingForm();
@@ -819,44 +559,34 @@ const PingFormModal = ({
     );
   }
 
-  // Use imported animation variants for tabs
-  const tabVariants = importedTabVariants;
-
   return (
-    <div className="flex font-poppins justify-center items-center z-50 inset-0 fixed bg-black/40">
-      <div className="mx-5 shadow-2xl max-w-[480px] rounded-4xl px-[25px] py-2.5 md:p-[30px] bg-white gap-4 overflow-hidden text-[32px] font-poppins flex flex-col items-center">
-        {/* Modal Title */}
-        <h2 className="font-semibold text-center text-[20px] md:text-[32px]">
-          What Kind of Post?
-        </h2>
+    <div
+      className="flex font-poppins justify-center items-center z-50 inset-0 fixed bg-black/40"
+      onClick={handleBackdropClick}
+    >
+      {/* Hidden Photo Input */}
+      <input
+        ref={pingPhotoInputRef}
+        type="file"
+        accept="image/*"
+        multiple
+        onChange={handlePingPhotoChange}
+        className="hidden"
+      />
 
-        {/* Tab Selector */}
-        <div className="flex rounded-[25px] text-[16px] overflow-hidden border-2 border-black">
-          <motion.button
-            variants={tabVariants}
-            animate={activeTab === "ping" ? "active" : "inactive"}
-            onClick={() => handleTabSwitch("ping")}
-            className="inline-block rounded-l-[23px] border-r-2 border-black py-6 px-6 cursor-pointer sm:py-4 sm:px-8"
-            type="button"
-          >
-            Ping
-          </motion.button>
-          <motion.button
-            variants={tabVariants}
-            animate={activeTab === "wave" ? "active" : "inactive"}
-            onClick={() => handleTabSwitch("wave")}
-            className="inline-block rounded-r-[23px] cursor-pointer py-6 px-6 sm:py-4 sm:px-8"
-            type="button"
-          >
-            Wave
-          </motion.button>
-        </div>
+      {/* Modal Container - Responsive width */}
+      <div
+        className="w-full mx-4 md:mx-0 md:w-[770px] shadow-2xl rounded-[10px] px-4 py-6 md:px-6 md:py-6 bg-white gap-4 overflow-visible font-poppins flex flex-col items-center"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Modal Title */}
+        <h2 className="font-semibold text-center text-[30px] text-black w-full">
+          Create Ping
+        </h2>
 
         {/* Form Content */}
         <div className="w-full text-[14px]">
-          <AnimatePresence mode="wait">
-            {activeTab === "ping" ? renderPingForm() : renderWaveForm()}
-          </AnimatePresence>
+          {renderPingForm()}
         </div>
 
         {children}

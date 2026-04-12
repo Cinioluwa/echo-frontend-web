@@ -1,14 +1,12 @@
 import { useState } from "react";
 import PingFormModal from "../../components/PingFormModal";
-import WaveFormModal from "../../components/WaveFormModal";
 import AdminOverviewLayout from "../../components/admin/AdminOverviewLayout";
 import PlatformMetrics from "../../components/admin/PlatformMetrics";
 import AdminChart from "../../components/admin/AdminChart";
 import AnnouncementModal from "../../components/admin/AnnouncementModal";
 
 const Overview = () => {
-  const [waveForm, setWaveForm] = useState(false);
-  const [formSegment, setFormSegment] = useState("ping");
+  const [showPingForm, setShowPingForm] = useState(false);
   const [announcement, setAnnouncement] = useState(false);
 
 
@@ -54,38 +52,11 @@ const Overview = () => {
 
       {announcement && <AnnouncementModal setAnnouncementModal={setAnnouncement} />}
 
-
-      {formSegment === "ping" && (
-        <div className={`${waveForm ? "" : "hidden"}`}>
-          <PingFormModal
-            formSegment={formSegment}
-            setFormSegment={() => setFormSegment("wave")}
-            setPingForm={() => setWaveForm(!waveForm)}
-          >
-            <button
-              onClick={() => setWaveForm(!waveForm)}
-              className="text-[13px] underline cursor-pointer"
-            >
-              cancel
-            </button>
-          </PingFormModal>
-        </div>
-      )}
-      {formSegment === "wave" && (
-        <div className={`${waveForm ? "" : "hidden"}`}>
-          <WaveFormModal
-            formSegment={formSegment}
-            setFormSegment={() => setFormSegment("ping")}
-            setWaveForm={() => setWaveForm(!waveForm)}
-          >
-            <button
-              onClick={() => setWaveForm(!waveForm)}
-              className="text-[13px] underline cursor-pointer"
-            >
-              cancel
-            </button>
-          </WaveFormModal>
-        </div>
+      {showPingForm && (
+        <PingFormModal
+          setPingForm={() => setShowPingForm(false)}
+          onPingCreated={() => setShowPingForm(false)}
+        />
       )}
     </>
   );

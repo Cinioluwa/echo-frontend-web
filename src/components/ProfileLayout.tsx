@@ -8,14 +8,9 @@ import PingFormModal from "./PingFormModal";
 const ProfileLayout = ({ feedPath = "/feed" }: { feedPath?: string } = {}) => {
   const navigate = useNavigate();
   const [showPingModal, setShowPingModal] = useState(false);
-  const [formSegment, setFormSegment] = useState<"ping" | "wave">("ping");
 
   const handleCloseModal = () => {
     setShowPingModal(false);
-  };
-
-  const handleFormSegmentChange = () => {
-    setFormSegment((prev) => (prev === "ping" ? "wave" : "ping"));
   };
 
   return (
@@ -40,8 +35,6 @@ const ProfileLayout = ({ feedPath = "/feed" }: { feedPath?: string } = {}) => {
       </div>
       {showPingModal && (
         <PingFormModal
-          formSegment={formSegment}
-          setFormSegment={handleFormSegmentChange}
           setPingForm={handleCloseModal}
         />
       )}

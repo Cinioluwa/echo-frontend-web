@@ -244,7 +244,7 @@ const PingDetail = () => {
   return (
     <div className="flex flex-col gap-[15px] pb-[30px] relative z-0">
       {/* ── Back button ───────────────────────────── */}
-      <div className="flex items-center justify-between">
+      <div className="items-center justify-between hidden lg:flex">
         <button
           onClick={() => navigate("/feed")}
           className="flex items-center gap-2 bg-[#fefefe] rounded-[18px] px-5 py-[5px] font-['Poppins',sans-serif] font-medium text-[15px] text-black hover:bg-[#FFC37B] transition-colors cursor-pointer"
@@ -403,11 +403,10 @@ const PingDetail = () => {
               onClick={handleSurge}
               disabled={isToggling}
               aria-label={hasSurged ? "Remove surge" : "Surge"}
-              className={`flex items-center gap-[5px] px-2 py-1 rounded-[15px] border border-black cursor-pointer transition-colors disabled:opacity-50 ${
-                hasSurged
-                  ? "bg-[#f49b31] text-white border-[#f49b31]"
-                  : "bg-[#fef5ea] text-[#4a504e]"
-              }`}
+              className={`flex items-center gap-[5px] px-2 py-1 rounded-[15px] border border-black cursor-pointer transition-colors disabled:opacity-50 ${hasSurged
+                ? "bg-[#f49b31] text-white border-[#f49b31]"
+                : "bg-[#fef5ea] text-[#4a504e]"
+                }`}
             >
               <svg
                 width="10"

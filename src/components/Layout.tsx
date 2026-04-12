@@ -186,10 +186,7 @@ const Layout = () => {
       {showPingFormModal && (
         <PingFormModal
           setPingForm={() => setShowPingFormModal(false)}
-          setFormSegment={() => { }}
-          formSegment="ping"
           onPingCreated={() => setShowPingFormModal(false)}
-          onWaveCreated={() => setShowPingFormModal(false)}
         />
       )}
     </div>

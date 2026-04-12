@@ -62,3 +62,29 @@ body,
   outline: none;
   scrollbar-width: none;
 }
+
+/* Subtle rounded scrollbar for dropdowns - overrides global scrollbar-width: none */
+.scrollbar-subtle-rounded {
+  scrollbar-width: thin;
+  scrollbar-color: #f49b31 transparent;
+}
+
+.scrollbar-subtle-rounded::-webkit-scrollbar {
+  width: 8px;
+}
+
+.scrollbar-subtle-rounded::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.scrollbar-subtle-rounded::-webkit-scrollbar-thumb {
+  background-color: #f49b31;
+  border-radius: 10px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+
+.scrollbar-subtle-rounded::-webkit-scrollbar-thumb:hover {
+  background-color: #d88429;
+  background-clip: content-box;
+}
