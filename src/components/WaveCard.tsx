@@ -201,7 +201,11 @@ const WaveCard = React.memo(
 
             <div className="flex flex-col items-center gap-2 shrink-0">
               <Tooltip
-                content="Surge this solution to show it's relevance."
+                content={
+                  hasSurged
+                    ? "Remove your surge"
+                    : "Surge this post to show it's important!"
+                }
                 position="left"
               >
                 <button

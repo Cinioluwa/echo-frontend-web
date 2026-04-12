@@ -205,15 +205,21 @@ const UnifiedPingCard = ({
                 if (!badgeConfig) return null;
 
                 return (
-                  <div className="border border-[#626665] rounded-[23px] flex items-center gap-1.5 px-[15px] py-[7px]">
-                    <div
-                      className="w-[7px] h-[7px] rounded-full"
-                      style={{ backgroundColor: badgeConfig.color }}
-                    />
-                    <span className="font-['Poppins',sans-serif] font-medium text-[11px] text-black">
-                      {badgeConfig.label}
-                    </span>
-                  </div>
+                  <Tooltip
+                    content="Current aknowledgement status of this post."
+                    position="left"
+                    delay={0.2}
+                  >
+                    <div className="border border-[#626665] rounded-[23px] flex items-center gap-1.5 px-[15px] py-[7px]">
+                      <div
+                        className="w-[7px] h-[7px] rounded-full"
+                        style={{ backgroundColor: badgeConfig.color }}
+                      />
+                      <span className="font-['Poppins',sans-serif] font-medium text-[11px] text-black">
+                        {badgeConfig.label}
+                      </span>
+                    </div>
+                  </Tooltip>
                 );
               })()}
               {/* Delete — own pings only */}
@@ -287,22 +293,22 @@ const UnifiedPingCard = ({
             </p>
           )}
           {pingImage?.url && (
-            <div
-              className="overflow-hidden rounded-[14px] border border-black/10 bg-[#F8F7F3] w-full"
-              style={{
-                aspectRatio: `${pingImage.width} / ${pingImage.height}`,
-              }}
-            >
-              <img
-                src={pingImage.url}
-                alt={
-                  currentPing.title
-                    ? `Attached image for ${currentPing.title}`
-                    : "Attached ping image"
-                }
-                className="h-full w-full object-contain"
-                loading="lazy"
-              />
+            <div className="flex justify-center mt-3">
+              <div
+                className="overflow-hidden rounded-[14px] border border-black/10 bg-[#F8F7F3] max-h-[500px] w-full"
+                style={{
+                  aspectRatio: `${pingImage.width} / ${pingImage.height}`,
+                }}
+              >
+                <img
+                  src={pingImage.url}
+                  alt={currentPing.title || "User uploaded image"}
+                  width={pingImage.width}
+                  height={pingImage.height}
+                  className="h-full w-full object-fill"
+                  loading="lazy"
+                />
+              </div>
             </div>
           )}
         </div>

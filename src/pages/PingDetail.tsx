@@ -351,22 +351,22 @@ const PingDetail = () => {
                 media.mimeType.startsWith("image/"),
               );
               return pingImage?.url ? (
-                <div
-                  className="overflow-hidden rounded-[14px] border border-black/10 bg-[#F8F7F3] w-full"
-                  style={{
-                    aspectRatio: `${pingImage.width} / ${pingImage.height}`,
-                  }}
-                >
-                  <img
-                    src={pingImage.url}
-                    alt={
-                      displayPing.title
-                        ? `Attached image for ${displayPing.title}`
-                        : "Attached ping image"
-                    }
-                    className="max-h-[450px] w-full object-contain"
-                    loading="lazy"
-                  />
+                <div className="flex justify-center mt-3">
+                  <div
+                    className="overflow-hidden rounded-[14px] border border-black/10 bg-[#F8F7F3] max-h-[700px] w-full"
+                    style={{
+                      aspectRatio: `${pingImage.width} / ${pingImage.height}`,
+                    }}
+                  >
+                    <img
+                      src={pingImage.url}
+                      alt={displayPing.title || "User uploaded image"}
+                      width={pingImage.width}
+                      height={pingImage.height}
+                      className="h-full w-full object-fill"
+                      loading="lazy"
+                    />
+                  </div>
                 </div>
               ) : null;
             })()}
@@ -385,7 +385,7 @@ const PingDetail = () => {
               content={
                 hasSurged
                   ? "Remove your surge"
-                  : "Surge this issue to show it's important!"
+                  : "Surge this post to show it's important!"
               }
               position="right"
               delay={0.2}
