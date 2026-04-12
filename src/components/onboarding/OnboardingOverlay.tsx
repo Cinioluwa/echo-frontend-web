@@ -41,7 +41,7 @@ const OnboardingOverlay = ({ onFinish }: { onFinish?: () => void }) => {
       {/* Close Button */}
       <button
         onClick={onFinish}
-        className="absolute top-6 right-6 text-black text-2xl"
+        className="absolute top-6 cursor-pointer right-6 text-white text-2xl"
       >
         <FiX />
       </button>

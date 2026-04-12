@@ -34,8 +34,8 @@ const AnnouncementWidget = ({
             GENERAL ANNOUNCEMENT
           </p>
           {/* Title */}
-          <p className="font-['Poppins',sans-serif] font-medium text-[18px] leading-normal text-wrap">
-            {announcement.title}
+          <p className="font-['Poppins',sans-serif] my-2 text-[18px] leading-normal text-wrap">
+            {announcement.title.toUpperCase()}
           </p>
         </div>
 

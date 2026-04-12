@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { categoryImages } from "./CategoryImages";
 import { useSearchStore, useCategoriesStore } from "../stores";
+import CategoriesSkeleton from "./skeletons/CategoriesSkeleton";
 
 type category = {
   label: string;
@@ -14,7 +15,7 @@ const Categories = () => {
   const categoryCounts = useSearchStore((state) => state.categoryCounts);
   const totalCount = useSearchStore((state) => {
     console.log("Total count:", state);
-    return state.totalCount
+    return state.totalCount;
   });
   // Categories from global store
   const categories = useCategoriesStore((state) => state.categories);
@@ -27,7 +28,9 @@ const Categories = () => {
 
   useEffect(() => {
     // Fetch categories with icon mapper
-    fetchCategories((name: string) => categoryImages[name] || categoryImages.General);
+    fetchCategories(
+      (name: string) => categoryImages[name] || categoryImages.General,
+    );
   }, [fetchCategories]);
 
   function handleClick() {
@@ -44,14 +47,7 @@ const Categories = () => {
   }
 
   if (isLoading) {
-    return (
-      <div className="p-2">
-        <header className="my-2.5 pl-2.5 font-[18px]">Category</header>
-        <div className="text-center py-4 text-sm text-gray-500">
-          Loading categories...
-        </div>
-      </div>
-    );
+    return <CategoriesSkeleton />;
   }
 
   if (error) {
@@ -69,11 +65,12 @@ const Categories = () => {
 
       <button
         onClick={handleClick}
-        className={`flex justify-between items-center mb-px py-2.5 px-[15px] ${isActive ? "bg-[#FAE9D4] shadow" : "bg-transparent"
-          } w-full rounded-lg font-bold cursor-pointer`}
+        className={`flex justify-between items-center mb-px py-2.5 px-[15px] ${
+          isActive ? "bg-[#FAE9D4] shadow" : "bg-transparent"
+        } w-full rounded-lg font-bold cursor-pointer`}
       >
         All Categories
-        <span className="w-[26px] font-normal text-white h-[26px] flex justify-center items-center rounded-full bg-[#F49B31]">
+        <span className="w-[26px] font-normal text-white p-4 h-[26px] text-[13px] flex justify-center items-center rounded-full bg-[#F49B31]">
           {totalCount || 0}
         </span>
       </button>
@@ -83,12 +80,13 @@ const Categories = () => {
           <button
             key={category.id}
             onClick={() => handleCategoryClick(category)}
-            className={`flex justify-between gap-[13px] cursor-pointer font-semibold  ${isActive
-              ? "bg-transparent shadow-none"
-              : selectedCategory.id === category.id
-                ? "bg-[#FAE9D4] opacity-100 shadow"
-                : " opacity-64"
-              }  px-[15px] w-full rounded-lg py-[13px] items-center opacity-64 text-[15px] transition ease-in duration-200`}
+            className={`flex justify-between gap-[13px] cursor-pointer font-semibold  ${
+              isActive
+                ? "bg-transparent shadow-none"
+                : selectedCategory.id === category.id
+                  ? "bg-[#FAE9D4] opacity-100 shadow"
+                  : " opacity-64"
+            }  px-[15px] w-full rounded-lg py-[13px] items-center opacity-64 text-[15px] transition ease-in duration-200`}
           >
             <div className="flex gap-[13px] items-center">
               <span>

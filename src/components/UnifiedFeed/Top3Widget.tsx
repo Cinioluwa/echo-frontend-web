@@ -22,7 +22,7 @@ const Top3Widget = ({ pings = [] }: Top3WidgetProps) => {
   const navigate = useNavigate();
 
   return (
-    <div className="bg-[#FFC37B] border-2 border-[#FFC37B] rounded-[15px] flex flex-col gap-2.5 items-start px-[20px] p-7  w-[276px]">
+    <div className="bg-[#FFC37B] border-2 border-[#FFC37B] rounded-[15px] flex flex-col gap-2.5 items-start px-5 p-7  w-[276px]">
       {/* Header */}
       <h3 className="font-['Poppins',sans-serif] font-semibold text-[22px] text-black leading-normal">
         Top 3
@@ -33,7 +33,7 @@ const Top3Widget = ({ pings = [] }: Top3WidgetProps) => {
         {top3.map((ping, index) => {
           return (
             <div
-              onClick={() => navigate(`feed/details/${ping.id}`)}
+              onClick={() => navigate(`feed/${ping.id}`)}
               key={ping.id}
               className="flex items-center cursor-pointer gap-2 w-full bg-[#fef0e0] rounded-[15px] px-2.5 py-3.5"
             >
