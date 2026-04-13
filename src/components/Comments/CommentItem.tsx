@@ -1,5 +1,6 @@
 import type { Comment } from "../../api/types";
 import { useState } from "react";
+import { Send } from "lucide-react";
 import api from "../../api/axios.config";
 import UserAvatar from "../UserAvatar";
 import { useAuthStore } from "../../stores/auth/useAuthStore";
@@ -10,6 +11,7 @@ import CommentActionsDropdown from "./CommentActionsDropdown";
 interface Props {
     comment: Comment;
     onRefresh?: () => void;
+    pingId: string;
 }
 
 // ─── Helper Functions (Module-level for performance) ───────────────────────
@@ -46,7 +48,7 @@ const getAuthorName = (author: Comment["author"]) => {
 
 // ─── CommentItem Component ──────────────────────────────────────────────────
 
-const CommentItem = ({ comment, onRefresh: _onRefresh }: Props) => {
+const CommentItem = ({ comment, onRefresh: _onRefresh, pingId }: Props) => {
     const { user } = useAuthStore();
     const [localSurgeCount, setLocalSurgeCount] = useState<number>(
         comment.surgeCount ?? 0
@@ -57,6 +59,10 @@ const CommentItem = ({ comment, onRefresh: _onRefresh }: Props) => {
     const [isToggling, setIsToggling] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [isRepliesExpanded, setIsRepliesExpanded] = useState(false);
+    const [replies, setReplies] = useState<Comment[]>([]);
+    const [replyInput, setReplyInput] = useState("");
+    const [isPostingReply, setIsPostingReply] = useState(false);
 
     const isOwner = !!(user && (user.id === comment.authorId || (typeof comment.author === "object" && user.id === comment.author?.id)));
 
@@ -103,6 +109,38 @@ const CommentItem = ({ comment, onRefresh: _onRefresh }: Props) => {
 
     const handleCancelDelete = () => {
         setShowDeleteModal(false);
+    };
+
+    const handleToggleReplies = () => {
+        if (isRepliesExpanded) {
+            setIsRepliesExpanded(false);
+            return;
+        }
+
+        // Expand replies section - replies already loaded from initial comment fetch
+        setIsRepliesExpanded(true);
+        setReplies(comment.replies || []);
+    };
+
+    const handlePostReply = async () => {
+        if (!replyInput.trim()) return;
+
+        setIsPostingReply(true);
+        try {
+            const newReply = await commentService.replyToPingComment(
+                pingId,
+                String(comment.id),
+                replyInput,
+                false
+            );
+            setReplies([...replies, newReply]);
+            setReplyInput("");
+            _onRefresh?.();
+        } catch (err) {
+            console.error("Error posting reply:", err);
+        } finally {
+            setIsPostingReply(false);
+        }
     };
 
     const authorName = getAuthorName(comment.author);
@@ -178,9 +216,9 @@ const CommentItem = ({ comment, onRefresh: _onRefresh }: Props) => {
                                 {/* Comment button */}
                                 <button
                                     type="button"
-                                    disabled
-                                    aria-label="Comments count"
-                                    className="flex items-center gap-[2.5px] px-[7.5px] py-[5.25px] rounded-[13.5px] border-[0.75px] border-black bg-white text-black cursor-pointer text-[9px] font-['Baloo_Bhai_2',sans-serif] font-bold uppercase leading-none "
+                                    onClick={handleToggleReplies}
+                                    aria-label="View replies or write a reply"
+                                    className="flex items-center gap-[2.5px] px-[7.5px] py-[5.25px] rounded-[13.5px] border-[0.75px] border-black bg-white text-black cursor-pointer text-[9px] font-['Baloo_Bhai_2',sans-serif] font-bold uppercase leading-none transition-all duration-200"
                                     data-node-id="4923:13613"
                                 >
                                     <img src="/assets/icon/comment.svg" alt="Comment icon" className="w-[7.5px] h-3 shrink-0" style={{ filter: 'brightness(0)' }} />
@@ -188,6 +226,50 @@ const CommentItem = ({ comment, onRefresh: _onRefresh }: Props) => {
                                 </button>
                             </div>
                         </div>
+
+                        {/* Replies Section - Expanded below parent comment */}
+                        {isRepliesExpanded && (
+                            <div className="flex flex-col gap-[5px] items-start flex-1 w-full mt-[5px]">
+                                {/* Replies list */}
+                                {replies.length > 0 && (
+                                    <div className="w-full flex flex-col gap-[5px]">
+                                        {replies.map((reply) => (
+                                            <ReplyItem key={reply.id} reply={reply} />
+                                        ))}
+                                    </div>
+                                )}
+
+                                {/* Reply input */}
+                                <div className="self-stretch pl-1.5 inline-flex justify-center items-center gap-[5px] mt-[5px] w-full">
+                                    <div className="flex justify-start items-center gap-4">
+                                        <UserAvatar
+                                            user={user && typeof user === "object" ? user : null}
+                                            size="sm"
+                                            bgColor="bg-[#f49b31]"
+                                        />
+                                    </div>
+                                    <div className="flex-1 h-6 px-2.5 bg-white rounded-[30px] border-[0.75px] border-black flex justify-between items-center gap-2.5">
+                                        <input
+                                            type="text"
+                                            value={replyInput}
+                                            onChange={(e) => setReplyInput(e.target.value)}
+                                            disabled={isPostingReply}
+                                            placeholder="Reply"
+                                            className="flex-1 bg-transparent text-black text-[9px] font-normal font-['Poppins'] outline-none placeholder-neutral-500 disabled:opacity-50"
+                                        />
+                                        <button
+                                            type="button"
+                                            onClick={handlePostReply}
+                                            disabled={isPostingReply || !replyInput.trim()}
+                                            aria-label="Send reply"
+                                            className="flex items-center justify-center shrink-0 disabled:opacity-50 enabled:hover:text-[#f49b31] transition-colors"
+                                        >
+                                            <Send size={16} />
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>
@@ -205,3 +287,102 @@ const CommentItem = ({ comment, onRefresh: _onRefresh }: Props) => {
 };
 
 export default CommentItem;
+
+// ─── ReplyItem Component ────────────────────────────────────────────────────
+
+interface ReplyItemProps {
+    reply: Comment;
+}
+
+const ReplyItem = ({ reply }: ReplyItemProps) => {
+    const [replyLocalSurgeCount, setReplyLocalSurgeCount] = useState<number>(
+        reply.surgeCount ?? 0
+    );
+    const [replyLocalHasSurged, setReplyLocalHasSurged] = useState<boolean>(
+        reply.hasSurged ?? false
+    );
+    const [isReplyToggling, setIsReplyToggling] = useState(false);
+
+    const replyAuthorName = getAuthorName(reply.author);
+
+    const handleReplySurge = async () => {
+        if (isReplyToggling) return;
+        setIsReplyToggling(true);
+        try {
+            const response = await api.post<{
+                message: string;
+                surged: boolean;
+                surgeCount?: number;
+            }>(`/comments/${reply.id}/surge`);
+            const data = response.data;
+            setReplyLocalHasSurged(data.surged);
+            setReplyLocalSurgeCount(
+                typeof data.surgeCount === "number"
+                    ? data.surgeCount
+                    : data.surged
+                        ? replyLocalSurgeCount + 1
+                        : Math.max(0, replyLocalSurgeCount - 1)
+            );
+        } catch (err) {
+            console.error("Error toggling reply surge:", err);
+        } finally {
+            setIsReplyToggling(false);
+        }
+    };
+
+    return (
+        <div className="bg-white rounded-xl p-1.5 w-full flex gap-[5px] items-start">
+            {/* Reply Avatar */}
+            <div className="shrink-0 size-[23px]">
+                <UserAvatar
+                    user={typeof reply.author === "object" ? reply.author : null}
+                    size="sm"
+                    bgColor="bg-[#f49b31]"
+                />
+            </div>
+
+            {/* Reply Content */}
+            <div className="flex-1 flex flex-col gap-[5px] items-start min-w-0">
+                <div className="flex flex-col gap-0.5 w-full">
+                    <p className="text-[10px] font-['Poppins',sans-serif] font-semibold text-black leading-none">
+                        {replyAuthorName}
+                    </p>
+                    <p className="text-[8px] font-['Poppins',sans-serif] font-medium text-[#454545] leading-none">
+                        {formatTimestamp(reply.createdAt)}
+                    </p>
+                </div>
+
+                <p className="text-[9px] font-['Poppins',sans-serif] font-normal text-black leading-normal wrap-break-word w-full">
+                    {reply.content}
+                </p>
+
+                {/* Reply Surge button only (no reply button - one level deep) */}
+                <button
+                    type="button"
+                    onClick={handleReplySurge}
+                    disabled={isReplyToggling}
+                    aria-label={replyLocalHasSurged ? "Remove surge" : "Surge"}
+                    className={`flex items-center gap-[2.25px] px-[7.5px] py-[5.25px] rounded-[18px] border-[0.75px] border-black cursor-pointer transition-all duration-200 disabled:opacity-50 text-[9px] font-['Baloo_Bhai_2',sans-serif] font-bold uppercase leading-none ${replyLocalHasSurged
+                        ? "bg-[#f49b31] text-white border-[#f49b31]"
+                        : "bg-white text-black"
+                        }`}
+                >
+                    <svg
+                        width="7.5"
+                        height="12"
+                        viewBox="0 0 8 13"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="shrink-0"
+                    >
+                        <path
+                            d="M4 1L0.5 7.5H3.5V12L7.5 5.5H4.5L4 1Z"
+                            fill="currentColor"
+                        />
+                    </svg>
+                    <span>{replyLocalSurgeCount}</span>
+                </button>
+            </div>
+        </div>
+    );
+};

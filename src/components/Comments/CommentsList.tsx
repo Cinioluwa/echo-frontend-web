@@ -89,6 +89,7 @@ const CommentsList = forwardRef<CommentsListHandle, Props>(({ targetType, target
                         key={comment.id}
                         comment={comment}
                         onRefresh={fetchComments}
+                        pingId={targetId}
                     />
                 ))}
             </div>

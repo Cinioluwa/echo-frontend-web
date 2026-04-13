@@ -166,6 +166,32 @@ const commentService = {
     });
     return response.data;
   },
+
+  /**
+   * Reply to a top-level comment on a ping
+   * Note: Replies are one level deep only (cannot reply to replies)
+   * Wave comments do not support replies
+   * @param pingId Ping ID
+   * @param commentId Parent comment ID (must be a top-level comment)
+   * @param content Reply content (max 2000 characters)
+   * @param isAnonymous Whether the reply should be anonymous
+   * @returns Created reply comment
+   */
+  replyToPingComment: async (
+    pingId: string,
+    commentId: string,
+    content: string,
+    isAnonymous?: boolean,
+  ): Promise<Comment> => {
+    const response = await api.post<Comment>(
+      `/pings/${pingId}/comments/${commentId}/replies`,
+      {
+        content,
+        ...(isAnonymous !== undefined && { isAnonymous }),
+      },
+    );
+    return response.data;
+  },
 };
 
 export default commentService;
