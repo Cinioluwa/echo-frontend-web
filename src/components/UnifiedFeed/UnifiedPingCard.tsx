@@ -16,6 +16,7 @@ import { calculatePingBadge } from "../../utils/badgeUtils";
 import InlineWavePreview from "./InlineWavePreview";
 import DeleteConfirmationModal from "../DeleteConfirmationModal";
 import UserAvatar from "../UserAvatar";
+import PingActionsDropdown from "./PingActionsDropdown";
 import type { Ping } from "../../api/types";
 import { categoryImages } from "../CategoryImages";
 import { Tooltip } from "../Tooltip";
@@ -65,12 +66,12 @@ const UnifiedPingCard = ({
 
   const timestamp = currentPing.createdAt
     ? new Date(currentPing.createdAt).toLocaleDateString("en-US", {
-        month: "short",
-        day: "numeric",
-        year: undefined,
-        hour: "2-digit",
-        minute: "2-digit",
-      })
+      month: "short",
+      day: "numeric",
+      year: undefined,
+      hour: "2-digit",
+      minute: "2-digit",
+    })
     : "";
 
   const categoryName = currentPing.category?.name || "";
@@ -187,7 +188,7 @@ const UnifiedPingCard = ({
               </div>
             </div>
 
-            {/* Badges: Ping status + delete */}
+            {/* Badges: Ping status + actions dropdown */}
             <div
               className={[
                 "flex items-center gap-5",
@@ -222,31 +223,12 @@ const UnifiedPingCard = ({
                   </Tooltip>
                 );
               })()}
-              {/* Delete — own pings only */}
-              {isOwner && (
-                <button
-                  onClick={handleDelete}
-                  aria-label="Delete ping"
-                  className="w-[31px] h-8 rounded-full bg-[#FEF5EA] flex items-center justify-center hover:bg-red-100 transition-colors cursor-pointer"
-                >
-                  <svg
-                    width="16"
-                    height="16"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                    aria-hidden="true"
-                  >
-                    <path
-                      d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"
-                      stroke="#EF4444"
-                      strokeWidth="1.8"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
-                </button>
-              )}
+              {/* Actions dropdown */}
+              <PingActionsDropdown
+                pingId={currentPing.id}
+                isOwner={isOwner}
+                onDelete={handleDelete}
+              />
             </div>
           </div>
 

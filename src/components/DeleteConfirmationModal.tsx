@@ -4,6 +4,8 @@
  * Phase: 5
  */
 
+import { Trash2 } from "lucide-react";
+
 interface DeleteConfirmationModalProps {
     onConfirm: () => void;
     onCancel: () => void;
@@ -29,30 +31,7 @@ const DeleteConfirmationModal = ({
                     <div className="flex flex-col gap-[5px] items-center justify-center w-full">
                         {/* Trash icon */}
                         <div className="w-[31px] h-8 flex items-center justify-center">
-                            <svg
-                                className="w-[31px] h-8"
-                                viewBox="0 0 31 32"
-                                fill="none"
-                                xmlns="http://www.w3.org/2000/svg"
-                                aria-hidden="true"
-                            >
-                                <rect
-                                    x="0.5"
-                                    y="0.5"
-                                    width="30"
-                                    height="31"
-                                    rx="4.5"
-                                    stroke="#B01212"
-                                    strokeOpacity="0.4"
-                                />
-                                <path
-                                    d="M21 11H10M13 11V9.5C13 9.10218 13.158 8.72064 13.4393 8.43934C13.7206 8.15804 14.1022 8 14.5 8H16.5C16.8978 8 17.2794 8.15804 17.5607 8.43934C17.842 8.72064 18 9.10218 18 9.5V11M12 14L12.5 22M19 14L18.5 22M15.5 14V22M10 11L11 23.5C11 23.8978 11.158 24.2794 11.4393 24.5607C11.7206 24.842 12.1022 25 12.5 25H18.5C18.8978 25 19.2794 24.842 19.5607 24.5607C19.842 24.2794 20 23.8978 20 23.5L21 11"
-                                    stroke="#B01212"
-                                    strokeWidth="1.5"
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                />
-                            </svg>
+                            <Trash2 width={20} height={20} className="text-[#b01212]" />
                         </div>
 
                         {/* Title */}
