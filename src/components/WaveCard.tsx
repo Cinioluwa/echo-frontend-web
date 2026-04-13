@@ -198,11 +198,10 @@ const WaveCard = React.memo(
                   onClick={handleSurge}
                   disabled={isToggling}
                   aria-label={hasSurged ? "Remove surge" : "Surge"}
-                  className={`flex items-center gap-[5px] px-2 py-1 rounded-[15px] border border-black cursor-pointer transition-colors duration-300 disabled:opacity-50 ${
-                    hasSurged
+                  className={`flex items-center gap-[5px] px-2 py-1 rounded-[15px] border border-black cursor-pointer transition-colors duration-300 disabled:opacity-50 ${hasSurged
                       ? "bg-[#f49b31] text-white border-[#f49b31]"
                       : "bg-[#fef5ea] text-[#4a504e]"
-                  }`}
+                    }`}
                   style={{
                     transition:
                       "background-color 0.3s, color 0.3s, border-color 0.3s",
