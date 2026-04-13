@@ -1,11 +1,24 @@
 import api from "../axios.config";
 
+interface UploadedMedia {
+  id: number;
+  url: string;
+  filename: string;
+  mimeType: string;
+  size?: number;
+  width?: number;
+  height?: number;
+}
+
 const uploadService = {
-  uploadFiles: async (files: File[], entityType: "ping" | "wave") => {
+  uploadFiles: async (
+    files: File[],
+    entityType: "ping" | "wave",
+  ): Promise<UploadedMedia[]> => {
     const formData = new FormData();
     files.forEach((file) => formData.append("files", file));
     formData.append("entityType", entityType);
-    const res = await api.post<{ media: { id: number; url: string }[] }>(
+    const res = await api.post<{ media: UploadedMedia[] }>(
       "/uploads",
       formData,
       {

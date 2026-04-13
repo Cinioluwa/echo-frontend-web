@@ -14,6 +14,7 @@
  */
 import { useState, useEffect, useCallback } from "react";
 import { Outlet, useLocation } from "react-router-dom";
+import { usePageTitle } from "../hooks/usePageTitle";
 import NavBar from "./NavBar";
 import SideBar from "./SideBar";
 import MobileHeader from "./MobileHeader";
@@ -36,6 +37,9 @@ const Layout = () => {
   const isFeedPage = location.pathname === "/feed";
   const pingDetailMatch = location.pathname.match(/^\/feed\/([^/]+)$/);
   const pingDetailId = pingDetailMatch?.[1] ?? null;
+
+  // Set page title for static pages (ping detail title will be set in PingDetail component)
+  usePageTitle();
 
   const currentUser = useAuthStore((state) => state.user);
   const updatePingStore = usePingsStore((state) => state.updatePing);

@@ -14,6 +14,7 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate, useOutletContext } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
+import { usePageTitle } from "../hooks/usePageTitle";
 import { useAuthStore, useSurgeStore, usePingsStore } from "../stores";
 import {
   pingService,
@@ -96,6 +97,9 @@ const PingDetail = () => {
   );
   const [showCommentsModal, setShowCommentsModal] = useState(false);
   const [weeklyTop3Ids, setWeeklyTop3Ids] = useState<number[]>([]);
+
+  // Update page title with the ping title when ping is loaded
+  usePageTitle(ping?.title);
 
   useEffect(() => {
     if (!pingId) return;
@@ -396,8 +400,8 @@ const PingDetail = () => {
                 disabled={isToggling}
                 aria-label={hasSurged ? "Remove surge" : "Surge"}
                 className={`flex items-center gap-[5px] px-2 py-1 rounded-[15px] border border-black cursor-pointer transition-colors disabled:opacity-50 ${hasSurged
-                    ? "bg-[#f49b31] text-white border-[#f49b31]"
-                    : "bg-[#fef5ea] text-[#4a504e]"
+                  ? "bg-[#f49b31] text-white border-[#f49b31]"
+                  : "bg-[#fef5ea] text-[#4a504e]"
                   }`}
               >
                 <svg

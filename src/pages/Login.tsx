@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { usePageTitle } from "../hooks/usePageTitle";
 import { useAuthStore } from "../stores";
 import {
   AuthLayout,
@@ -73,6 +74,9 @@ const Login = () => {
   const navigate = useNavigate();
   const login = useAuthStore((state) => state.login);
   const { isOffline } = useNetworkStatus();
+
+  // Set page title
+  usePageTitle();
 
   const [formData, setFormData] = useState({
     email: "",

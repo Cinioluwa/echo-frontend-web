@@ -5,3 +5,4 @@
 
 export { useDebounce } from "./useDebounce";
 export { useNetworkStatus } from "./useNetworkStatus";
+export { usePageTitle } from "./usePageTitle";

@@ -162,14 +162,17 @@ const waveService = {
    * Create a wave for a specific ping
    * @param pingId Ping ID
    * @param solution Wave solution text
+   * @param mediaIds Optional array of media IDs to attach
    * @returns Created wave
    */
   createWaveForPing: async (
     pingId: string,
     solution: string,
+    mediaIds?: number[],
   ): Promise<Wave> => {
     const response = await api.post<Wave>(`/pings/${pingId}/waves`, {
       solution,
+      ...(mediaIds && mediaIds.length > 0 && { mediaIds }),
     });
     return response.data;
   },

@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { usePageTitle } from "../hooks/usePageTitle";
 import { useAuthStore, useRegistrationStore } from "../stores";
 import AuthLayout from "../components/auth/AuthLayout";
 import AuthCard from "../components/auth/AuthCard";
@@ -44,6 +45,9 @@ const SignUp: React.FC = () => {
   const register = useAuthStore((state) => state.register);
   const setRegistrationFormData = useRegistrationStore((state) => state.setFormData);
   const { isOffline } = useNetworkStatus();
+
+  // Set page title
+  usePageTitle();
 
   const [formData, setFormData] = useState({
     email: "",

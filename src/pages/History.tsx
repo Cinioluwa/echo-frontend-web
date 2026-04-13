@@ -12,6 +12,7 @@
  *   Row 4: Tab content
  */
 import { useNavigate, useOutletContext, useParams } from "react-router-dom";
+import { usePageTitle } from "../hooks/usePageTitle";
 import {
     HistoryBanner,
     HistoryTabs,
@@ -33,6 +34,9 @@ const History = () => {
         showPingFormModal: boolean;
         setShowPingFormModal: (value: boolean) => void;
     }>();
+
+    // Set page title
+    usePageTitle();
 
     const activeTab: HistoryTab =
         tab && VALID_TABS.includes(tab as HistoryTab)
