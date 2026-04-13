@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useAuthStore } from "../../stores";
 import { commentService } from "../../api/services";
 import userService from "../../api/services/user.service";
@@ -18,12 +18,13 @@ const CommentInput = ({
     targetId,
     parentCommentId: _parentCommentId,
     onCommentAdded,
-    onCancel,
 }: Props) => {
     const [content, setContent] = useState("");
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [userPreferences, setUserPreferences] = useState<UserPreference | null>(null);
+    const [isFocused, setIsFocused] = useState(false);
+    const containerRef = useRef<HTMLDivElement>(null);
 
     const { user } = useAuthStore();
 
@@ -40,6 +41,25 @@ const CommentInput = ({
 
         fetchPreferences();
     }, []);
+
+    // Close input when clicking outside
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (
+                containerRef.current &&
+                !containerRef.current.contains(event.target as Node)
+            ) {
+                setIsFocused(false);
+            }
+        };
+
+        if (isFocused) {
+            document.addEventListener("mousedown", handleClickOutside);
+            return () => {
+                document.removeEventListener("mousedown", handleClickOutside);
+            };
+        }
+    }, [isFocused]);
 
     const handleSubmit = async () => {
         if (!content.trim()) {
@@ -72,56 +92,61 @@ const CommentInput = ({
         }
     };
 
-    const handleCancel = () => {
-        setContent("");
-        setError(null);
-        onCancel?.();
-    };
 
     return (
-        <div className="flex flex-col gap-3.5 rounded-[10px] w-full">
-            <div className=" flex gap-2.5 items-start p-4 rounded-[10px]">
-
-                {/* User info */}
-                <div className="flex items-center">
-                    {/* Avatar */}
-                    <UserAvatar user={user} size="md" bgColor="bg-[#f49b31]" />
-                </div>
-                <div className="flex flex-col w-full gap-2">
-
-                    {/* Text input */}
-                    <textarea
-                        value={content}
-                        onChange={(e) => setContent(e.target.value)}
-                        placeholder="What do you have to say?"
-                        className="w-full min-h-[100px] p-4 rounded-[10px] bg-[#FFF7E8] border border-[#F49B31] text-sm text-[#292936] placeholder:text-[#9191A8] resize-none focus:outline-none focus:ring-2 focus:ring-[#F49B31] focus:border-transparent"
-                        disabled={isSubmitting}
+        <div className="bg-none md:bg-[#f49b31] flex gap-2 items-start px-[15px] py-2.5 rounded-bl-[15px] rounded-br-[15px] w-full" data-node-id="4790:11755" ref={containerRef}>
+            {/* Avatar */}
+            <div className="flex items-center shrink-0" data-node-id="4790:11756">
+                <div className="size-[30px]" data-node-id="4790:11757">
+                    <UserAvatar
+                        user={user}
+                        size="sm"
+                        bgColor="bg-[#f49b31]"
                     />
-                    {/* Action buttons */}
-                    <div className="flex items-center gap-3">
-                        <button
-                            onClick={handleSubmit}
-                            disabled={isSubmitting || !content.trim()}
-                            className="bg-[#F49B31] text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-[#d88429] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                        >
-                            {isSubmitting ? "Posting..." : "Reply"}
-                        </button>
-                        <button
-                            onClick={handleCancel}
-                            disabled={isSubmitting}
-                            className="text-[#63637B] text-base hover:text-[#292936] transition-colors disabled:opacity-50"
-                        >
-                            Cancel
-                        </button>
-                    </div>
                 </div>
             </div>
 
-            {/* Error message */}
-            {error && (
-                <p className="text-sm text-red-500">{error}</p>
-            )}
+            {/* Input field container */}
+            <div className="flex-1" ref={containerRef}>
+                {!isFocused ? (
+                    /* Default state - button */
+                    <button
+                        onClick={() => setIsFocused(true)}
+                        className="bg-white flex h-[30px] items-center px-2.5 rounded-[30px] w-full cursor-pointer hover:bg-gray-50 transition-colors"
+                        data-node-id="5210:15041"
+                    >
+                        <div className="text-[#626665] text-[9px] font-['Poppins',sans-serif] font-normal">
+                            What do you have to say?
+                        </div>
+                    </button>
+                ) : (
+                    /* Active state - textarea with button */
+                    <div className="bg-white flex flex-col gap-[5px] items-end justify-end h-[46px] pl-2.5 pr-[5px] py-[5px] rounded-[12.5px]" data-node-id="5210:15043">
+                        <textarea
+                            value={content}
+                            onChange={(e) => setContent(e.target.value)}
+                            placeholder="What do you have to say?"
+                            autoFocus
+                            className="w-full flex-1 p-0 text-sm text-[#292936] placeholder:text-[#626665] resize-none focus:outline-none font-['Poppins',sans-serif] bg-transparent text-[9px]"
+                            disabled={isSubmitting}
+                        />
 
+                        {/* Comment button - right aligned */}
+                        <button
+                            onClick={handleSubmit}
+                            disabled={isSubmitting || !content.trim()}
+                            className="bg-[#f49b31] flex items-center justify-center px-[5px] py-[2.5px] rounded-[15px] text-white text-[8px] font-['Poppins',sans-serif] font-medium hover:bg-[#d88429] transition-colors disabled:opacity-50 disabled:cursor-not-allowed w-[52px] shrink-0"
+                            data-node-id="5210:15071"
+                        >
+                            {isSubmitting ? "..." : "Comment"}
+                        </button>
+                    </div>
+                )}
+                {/* Error message */}
+                {error && (
+                    <p className="text-xs text-red-500 px-[5px] w-full mt-1">{error}</p>
+                )}
+            </div>
         </div>
     );
 };

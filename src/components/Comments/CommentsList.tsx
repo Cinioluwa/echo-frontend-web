@@ -10,6 +10,7 @@ interface Props {
 
 export interface CommentsListHandle {
     refresh: () => void;
+    getCommentsCount: () => number;
 }
 
 const CommentsList = forwardRef<CommentsListHandle, Props>(({ targetType, targetId }, ref) => {
@@ -45,6 +46,7 @@ const CommentsList = forwardRef<CommentsListHandle, Props>(({ targetType, target
     // Expose refresh function to parent
     useImperativeHandle(ref, () => ({
         refresh: fetchComments,
+        getCommentsCount: () => comments.length,
     }));
 
     if (isLoading) {
@@ -79,9 +81,9 @@ const CommentsList = forwardRef<CommentsListHandle, Props>(({ targetType, target
     }
 
     return (
-        <div className="flex flex-col gap-[15px]">
+        <div className="flex flex-col gap-[15px] ">
             {/* Comments list - scrollable */}
-            <div className="flex flex-col gap-[15px] max-h-[300px] overflow-y-auto pr-2">
+            <div className="flex flex-col gap-[15px] max-h-[300px] overflow-y-visible pr-2">
                 {comments.map((comment) => (
                     <CommentItem
                         key={comment.id}

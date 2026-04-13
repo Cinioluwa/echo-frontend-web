@@ -5,6 +5,7 @@ import UserAvatar from "../UserAvatar";
 import { useAuthStore } from "../../stores/auth/useAuthStore";
 import { commentService } from "../../api/services";
 import DeleteConfirmationModal from "../DeleteConfirmationModal";
+import CommentActionsDropdown from "./CommentActionsDropdown";
 
 interface Props {
     comment: Comment;
@@ -23,18 +24,18 @@ const formatTimestamp = (dateString: string) => {
         const diffInHours = Math.floor(diffInMs / (1000 * 60 * 60));
         if (diffInHours === 0) {
             const diffInMinutes = Math.floor(diffInMs / (1000 * 60));
-            return diffInMinutes <= 1 ? "Just now" : `${diffInMinutes} minutes ago`;
+            return diffInMinutes <= 1 ? "Just now" : `${diffInMinutes}m`;
         }
-        return diffInHours === 1 ? "1 hour ago" : `${diffInHours} hours ago`;
+        return diffInHours === 1 ? "1h" : `${diffInHours}h`;
     }
-    if (diffInDays === 1) return "1 day ago";
-    if (diffInDays < 7) return `${diffInDays} days ago`;
+    if (diffInDays === 1) return "1d";
+    if (diffInDays < 7) return `${diffInDays}d`;
     if (diffInDays < 30) {
         const weeks = Math.floor(diffInDays / 7);
-        return weeks === 1 ? "1 week ago" : `${weeks} weeks ago`;
+        return weeks === 1 ? "1w" : `${weeks}w`;
     }
     const months = Math.floor(diffInDays / 30);
-    return months === 1 ? "1 month ago" : `${months} months ago`;
+    return months === 1 ? "1mo" : `${months}mo`;
 };
 
 const getAuthorName = (author: Comment["author"]) => {
@@ -57,7 +58,7 @@ const CommentItem = ({ comment, onRefresh: _onRefresh }: Props) => {
     const [isDeleting, setIsDeleting] = useState(false);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
 
-    const isOwner = user && (user.id === comment.authorId || (typeof comment.author === "object" && user.id === comment.author?.id));
+    const isOwner = !!(user && (user.id === comment.authorId || (typeof comment.author === "object" && user.id === comment.author?.id)));
 
     const handleSurge = async () => {
         if (isToggling) return;
@@ -96,8 +97,7 @@ const CommentItem = ({ comment, onRefresh: _onRefresh }: Props) => {
         }
     };
 
-    const handleDeleteClick = () => {
-        if (!isOwner) return;
+    const handleShowDeleteModal = () => {
         setShowDeleteModal(true);
     };
 
@@ -109,77 +109,84 @@ const CommentItem = ({ comment, onRefresh: _onRefresh }: Props) => {
 
     return (
         <>
-            <div className="flex flex-col gap-2.5 bg-white p-2 rounded-xl">
-                {/* User info */}
-                <div className="flex flex-col gap-2 justify-between">
-                    {/* Avatar and user details */}
-                    <div className="flex items-center gap-2 min-w-0">
-                        {/* Avatar */}
+            <div className="bg-white border border-[#f49b31] rounded-xl p-[7px] w-full overflow-visible" data-node-id="4925:13685">
+                <div className="flex gap-[5px] items-start" data-node-id="4923:13601">
+                    {/* Avatar */}
+                    <div className="shrink-0 size-[23px]" data-node-id="4923:13602">
                         <UserAvatar
                             user={typeof comment.author === "object" ? comment.author : null}
                             size="sm"
                             bgColor="bg-[#f49b31]"
                         />
-
-                        {/* User details */}
-                        <div className="flex items-center gap-2 min-w-0 justify-between w-full">
-                            <p className="text-sm font-semibold truncate">{authorName}</p>
-                            <p className="text-xs whitespace-nowrap">{formatTimestamp(comment.createdAt)}</p>
-                        </div>
                     </div>
 
-                    <div className="grid grid-cols-3">
-                        {/* Comment content */}
-                        <p className="text-base leading-6 whitespace-pre-wrap col-span-2 wrap-break-word">
-                            {comment.content}
-                        </p>
-                        <div className="flex justify-end  gap-1 col-span-1">
+                    {/* Content */}
+                    <div className="flex flex-col gap-[5px] items-start flex-1 min-w-0" data-node-id="4923:13603">
+                        {/* Info row with name, timestamp, and dots button */}
+                        <div className="flex items-start justify-between w-full" data-node-id="4923:13604">
+                            <div className="flex flex-col gap-0.5" data-node-id="5145:14071">
+                                <p className="text-[10px] font-['Poppins',sans-serif] font-semibold text-black leading-none">
+                                    {authorName}
+                                </p>
+                                <p className="text-[8px] font-['Poppins',sans-serif] font-medium text-[#454545] leading-none">
+                                    {formatTimestamp(comment.createdAt)}
+                                </p>
+                            </div>
 
-                            {/* Surge button */}
-                            <button
-                                type="button"
-                                onClick={handleSurge}
-                                disabled={isToggling}
-                                aria-label={localHasSurged ? "Remove surge" : "Surge"}
-                                className={`flex items-center w-12 h-10 gap-[3px] px-2.5 py-[7px] rounded-[15px] border border-black cursor-pointer transition-colors duration-300 disabled:opacity-50 ${localHasSurged || comment.hasSurged
-                                    ? "bg-[#f49b31] text-white border-[#f49b31]"
-                                    : "bg-[#fef5ea] text-[#4a504e]"
-                                    }`}
-                                style={{ transition: 'background-color 0.3s, color 0.3s, border-color 0.3s' }}
-                            >
-                                <svg
-                                    width="15"
-                                    height="19"
-                                    viewBox="0 0 12 16"
-                                    fill="none"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    aria-hidden="true"
-                                    style={{ transition: 'filter 0.3s' }}
-                                >
-                                    <path
-                                        d="M6.5 1L1 9h5l-0.5 6 6-8H7l0.5-6z"
-                                        fill={localHasSurged || comment.hasSurged ? "white" : "#4A504E"}
-                                        style={{ transition: 'fill 0.3s' }}
-                                    />
-                                </svg>
-                                <span className="font-['Poppins',sans-serif] font-semibold text-[11px]">
-                                    {localSurgeCount}
-                                </span>
-                            </button>
+                            {/* Dots vertical button with dropdown */}
+                            <CommentActionsDropdown
+                                commentId={comment.id}
+                                isOwner={isOwner}
+                                onDelete={handleShowDeleteModal}
+                            />
+                        </div>
 
-                            {/* Delete button - only for owner */}
-                            {isOwner && (
+                        {/* Body */}
+                        <div className="flex flex-col gap-[5px] w-full">
+                            <p className="text-[9px] font-['Poppins',sans-serif] font-normal text-black leading-normal wrap-break-word">
+                                {comment.content}
+                            </p>
+
+                            {/* Surge and Comment buttons */}
+                            <div className="flex gap-[5px] items-center">
+                                {/* Surge button */}
                                 <button
                                     type="button"
-                                    onClick={handleDeleteClick}
-                                    disabled={isDeleting}
-                                    aria-label="Delete comment"
-                                    className="ml-2 h-10 w-12 shrink-0 p-2 rounded-full text-red-600 bg-red-200 border-red-400 border hover:bg-red-50 transition-colors disabled:opacity-50"
-                                    title="Delete comment"
+                                    onClick={handleSurge}
+                                    disabled={isToggling}
+                                    aria-label={localHasSurged ? "Remove surge" : "Surge"}
+                                    className={`flex items-center gap-[2.25px] px-[7.5px] py-[5.25px] rounded-[18px] border-[0.75px] border-black cursor-pointer transition-all duration-200 disabled:opacity-50 text-[9px] font-['Baloo_Bhai_2',sans-serif] font-bold uppercase leading-none ${localHasSurged ? "bg-[#f49b31] text-white border-[#f49b31]" : "bg-white text-black"
+                                        }`}
+                                    data-node-id="4923:13612"
                                 >
-                                    <img src="/assets/icon/delete.svg" width="20" height="20" alt="Delete comment" />
+                                    <svg
+                                        width="7.5"
+                                        height="12"
+                                        viewBox="0 0 8 13"
+                                        fill="none"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        className="shrink-0"
+                                    >
+                                        <path
+                                            d="M4 1L0.5 7.5H3.5V12L7.5 5.5H4.5L4 1Z"
+                                            fill="currentColor"
+                                        />
+                                    </svg>
+                                    <span>{localSurgeCount}</span>
                                 </button>
-                            )}
+
+                                {/* Comment button */}
+                                <button
+                                    type="button"
+                                    disabled
+                                    aria-label="Comments count"
+                                    className="flex items-center gap-[2.5px] px-[7.5px] py-[5.25px] rounded-[13.5px] border-[0.75px] border-black bg-white text-black cursor-pointer text-[9px] font-['Baloo_Bhai_2',sans-serif] font-bold uppercase leading-none "
+                                    data-node-id="4923:13613"
+                                >
+                                    <img src="/assets/icon/comment.svg" alt="Comment icon" className="w-[7.5px] h-3 shrink-0" style={{ filter: 'brightness(0)' }} />
+                                    <span>{comment.replyCount ?? 0}</span>
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>

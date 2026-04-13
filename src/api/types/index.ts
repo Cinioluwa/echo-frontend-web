@@ -267,6 +267,7 @@ export interface Comment {
   targetId?: string;
   parentComment?: Comment; // For nested comments/replies
   parentCommentId?: number;
+  replies?: Comment[]; // For nested comments
   replyCount?: number;
   createdAt: string;
   updatedAt?: string;
