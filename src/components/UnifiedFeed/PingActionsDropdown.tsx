@@ -10,6 +10,7 @@
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link2, Flag, Trash2, MoreVertical } from "lucide-react";
+import Toast from "../shared/Toast";
 
 interface PingActionsDropdownProps {
     pingId: number;
@@ -24,6 +25,7 @@ const PingActionsDropdown = ({
 }: PingActionsDropdownProps) => {
     const [isOpen, setIsOpen] = useState(false);
     const [isHovered, setIsHovered] = useState(false);
+    const [showCopyToast, setShowCopyToast] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
     const buttonRef = useRef<HTMLButtonElement>(null);
 
@@ -53,7 +55,7 @@ const PingActionsDropdown = ({
         const url = `${window.location.origin}/feed/${pingId}`;
         navigator.clipboard.writeText(url);
         setIsOpen(false);
-        // Optional: Show toast notification here
+        setShowCopyToast(true);
     };
 
     const handleReport = (e: React.MouseEvent) => {
@@ -70,6 +72,15 @@ const PingActionsDropdown = ({
 
     return (
         <div className="relative" ref={dropdownRef}>
+            {showCopyToast && (
+                <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50">
+                    <Toast
+                        variant="copied"
+                        duration={2000}
+                        onDismiss={() => setShowCopyToast(false)}
+                    />
+                </div>
+            )}
             {/* Vertical ellipsis button */}
             <button
                 ref={buttonRef}
