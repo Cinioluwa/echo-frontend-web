@@ -297,6 +297,7 @@ const PingDetail = () => {
               }
               onDelete={handleDeleteWave}
               allWavesForPing={waves}
+              pingId={Number(pingId)}
             />
           ))}
         </div>

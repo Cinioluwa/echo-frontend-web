@@ -14,6 +14,7 @@ import { useSurgeStore, useWavesStore } from "../stores";
 import { waveService } from "../api/services";
 import UserAvatar from "./UserAvatar";
 import DeleteConfirmationModal from "./DeleteConfirmationModal";
+import WaveActionsDropdown from "./WaveActionsDropdown";
 import { calculateWaveBadge } from "../utils/badgeUtils";
 import type { Wave } from "../api/types";
 import { Tooltip } from "./Tooltip";
@@ -23,6 +24,7 @@ interface WaveCardProps {
   isOwner: boolean;
   onDelete?: (id: number) => void;
   allWavesForPing?: Wave[]; // All waves for the parent Ping (needed for Community Pick calculation)
+  pingId: number; // Parent ping ID for generating direct links
 }
 
 // ─── Helper Functions (Module-level for performance) ───────────────────────
@@ -58,7 +60,7 @@ const getAuthorName = (author: Wave["author"]) => {
 // ─── WaveCard Component ─────────────────────────────────────────────────────
 
 const WaveCard = React.memo(
-  ({ wave, isOwner, onDelete, allWavesForPing = [] }: WaveCardProps) => {
+  ({ wave, isOwner, onDelete, allWavesForPing = [], pingId }: WaveCardProps) => {
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
 
@@ -166,29 +168,12 @@ const WaveCard = React.memo(
                 </Tooltip>
               )}
               {isOwner && (
-                <button
-                  type="button"
-                  onClick={handleDeleteClick}
-                  aria-label="Delete wave"
-                  className="w-7 h-7 rounded-full bg-[#fef5ea] flex items-center justify-center hover:bg-red-100 transition-colors cursor-pointer"
-                >
-                  <svg
-                    width="14"
-                    height="14"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                    aria-hidden="true"
-                  >
-                    <path
-                      d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"
-                      stroke="#EF4444"
-                      strokeWidth="1.8"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
-                </button>
+                <WaveActionsDropdown
+                  waveId={wave.id}
+                  pingId={pingId}
+                  isOwner={isOwner}
+                  onDelete={handleDeleteClick}
+                />
               )}
             </div>
           </div>
