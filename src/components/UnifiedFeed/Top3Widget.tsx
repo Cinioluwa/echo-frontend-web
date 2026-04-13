@@ -10,6 +10,7 @@
 import { useNavigate } from "react-router-dom";
 import type { Ping } from "../../api/types";
 import UserAvatar from "../UserAvatar";
+import Top3Skeleton from "../skeletons/top3Skeleton";
 
 interface Top3WidgetProps {
   pings?: Ping[];
@@ -22,21 +23,32 @@ const Top3Widget = ({ pings = [] }: Top3WidgetProps) => {
   const navigate = useNavigate();
 
   return (
-    <div className="bg-[#FFC37B] border-2 border-[#FFC37B] rounded-[15px] flex flex-col gap-2.5 items-start px-5 p-7  w-[276px]">
+    <div className="bg-white border border-[#FFC37B] rounded-[15px] flex flex-col gap-2.5 items-start px-5 p-7 pb-4 pt-2 w-[300px]">
       {/* Header */}
-      <h3 className="font-['Poppins',sans-serif] font-semibold text-[22px] text-black leading-normal">
-        Top 3
-      </h3>
+      <div className="flex justify-between pt-2 pb-4 w-full items-center">
+        <h3 className="font-['Poppins',sans-serif] font-semibold text-[22px] text-black leading-normal">
+          Top Pings
+        </h3>
+        <p className="text-[10px]">This week</p>
+      </div>
 
       {/* Rows */}
       <div className="flex flex-col gap-3.5 w-full">
+
+        {
+          (top3.length === 0) ? (
+            <Top3Skeleton />
+          ) : null
+        }
         {top3.map((ping, index) => {
+          // console.log(index)
           return (
             <div
               onClick={() => navigate(`feed/${ping.id}`)}
               key={ping.id}
-              className="flex items-center cursor-pointer gap-2 w-full bg-[#fef0e0] rounded-[15px] px-2.5 py-3.5"
+              className={`flex items-center cursor-pointer gap-2 w-full ${index === 0 ? 'bg-[#f5a548]' : index === 1 ? 'bg-[#ffd8ab]' : index === 2 ? 'bg-[#faefe3]' : ''} rounded-[15px] px-2.5 py-3.5`}
             >
+              <p className={`${index === 0 ? 'text-white' : 'text-[#ee860e]'}`}>#{index + 1}</p>
               {/* Avatar */}
               <div
                 style={{ backgroundColor: DOT_COLORS[index] }}
