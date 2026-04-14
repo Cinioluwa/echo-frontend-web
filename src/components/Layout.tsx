@@ -146,7 +146,7 @@ const Layout = () => {
 
           <PingCreatorProvider expandPingCreator={() => { }}>
             <main
-              className={` mx-[15px] mt-[15px] md:mx-5 lg:mt-5 md:w-a[calc(100vw-45vw)] ${isFeedPage ? "lg:max-w-[calc(100vw-680px)]" : pingDetailId ? "lg:max-w-11/12 lg:w-full" : "lg:max-w-5/6 lg:w-5/6 lg:mx-10"}  `}
+              className={` mx-[15px] mt-[15px] md:ml-5 lg:mt-5 md:w-a[calc(100vw-45vw)] ${isFeedPage ? "lg:max-w-[calc(100vw-680px)]" : pingDetailId ? "lg:max-w-11/12 lg:w-full" : "lg:max-w-5/6 lg:w-5/6 lg:mx-10"}  `}
             >
               <Outlet context={{ showPingFormModal, setShowPingFormModal }} />
             </main>
@@ -155,7 +155,7 @@ const Layout = () => {
 
         {/* Right aside — desktop only */}
         {isFeedPage && (
-          <aside className="hidden lg:block w-[310px] shrink-0 pt-[15px] pr-5 fixed right-0">
+          <aside className="hidden lg:block w-[310px] shrink-0 pt-[15px] fixed right-5">
             <div className="flex flex-col gap-[15px]">
               <AnnouncementWidget announcement={announcement} />
               <Top3Widget pings={top3} />
