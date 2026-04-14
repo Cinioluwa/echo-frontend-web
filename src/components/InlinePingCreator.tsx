@@ -5,112 +5,200 @@
  *
  * Expandable inline form that replaces the modal-first ping creation approach.
  * State 1 — Collapsed: avatar + "What's the problem?" clickable bar
- * State 2 — Expanded: title + body inputs + category chips + attach + Post button
- * State 3 — Expanded with images: same as State 2 + photo thumbnails
+ * State 2 — Expanded: title + body inputs + category dropdown + attach + Post button
+ * Matches PingFormModal structure with simple photo display (no grid layouts)
  */
 
-import { useState, useRef, forwardRef, useImperativeHandle } from "react";
-import { useAuthStore, useCategoriesStore, usePingsStore } from "../stores";
-import { pingService, uploadService } from "../api/services";
+import { useState, useRef, forwardRef, useImperativeHandle, useEffect } from "react";
+import { useAuthStore, usePingsStore } from "../stores";
+import { pingService, uploadService, categoryService } from "../api/services";
 import UserAvatar from "./UserAvatar";
+import { ChevronDown, Trash2 } from "lucide-react";
+import { FaLink } from "react-icons/fa6";
+import type { CategoryData } from "../api/types/index";
 
-type ExpansionState = "collapsed" | "expanded" | "with-photos";
-
-const CATEGORIES = [
-  "General",
-  "Academics",
-  "Chapel",
-  "Finance",
-  "Hall",
-  "Sport",
-  "Welfare",
-] as const;
-type Category = (typeof CATEGORIES)[number];
+type ExpansionState = "collapsed" | "expanded";
 
 export interface InlinePingCreatorHandle {
   expand: () => void;
 }
 
+interface PingData {
+  title: string;
+  description: string;
+  categoryId: number;
+  categoryName: string;
+  anonymous: boolean;
+  photos: File[];
+}
+
 const InlinePingCreator = forwardRef<InlinePingCreatorHandle>((_, ref) => {
   const user = useAuthStore((state) => state.user);
   const [state, setState] = useState<ExpansionState>("collapsed");
-  const [title, setTitle] = useState("");
-  const [body, setBody] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState<Category | null>(
-    null,
-  );
-  const [photos, setPhotos] = useState<File[]>([]);
-  const [isAnonymous, setIsAnonymous] = useState(false);
-  const [isPosting, setIsPosting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
+  // Ping form state
+  const [pingData, setPingData] = useState<PingData>({
+    title: "",
+    description: "",
+    categoryId: 0,
+    categoryName: "",
+    anonymous: false,
+    photos: [],
+  });
+
+  // UI state
+  const [isPosting, setIsPosting] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [showCategoryDropdown, setShowCategoryDropdown] = useState(false);
+  const [showPostMenu, setShowPostMenu] = useState(false);
+  const [categories, setCategories] = useState<CategoryData[]>([]);
+
+  // Refs
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const categoryDropdownRef = useRef<HTMLDivElement>(null);
+  const postMenuRef = useRef<HTMLDivElement>(null);
+
+  // Fetch categories on mount
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const data = await categoryService.getAll();
+        setCategories(data);
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+      }
+    };
+    fetchCategories();
+  }, []);
+
+  // Close dropdowns when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        categoryDropdownRef.current &&
+        !categoryDropdownRef.current.contains(event.target as Node)
+      ) {
+        setShowCategoryDropdown(false);
+      }
+      if (
+        postMenuRef.current &&
+        !postMenuRef.current.contains(event.target as Node)
+      ) {
+        setShowPostMenu(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   // Expose expand method to parent components
   useImperativeHandle(ref, () => ({
     expand: () => setState("expanded"),
   }));
 
+  // Handlers
   const handleCollapsedClick = () => {
     setState("expanded");
   };
 
   const handleCancel = () => {
     setState("collapsed");
-    setTitle("");
-    setBody("");
-    setSelectedCategory(null);
-    setPhotos([]);
-    setIsAnonymous(false);
+    setPingData({
+      title: "",
+      description: "",
+      categoryId: 0,
+      categoryName: "",
+      anonymous: false,
+      photos: [],
+    });
+    setErrors({});
+    setUploadError(null);
   };
 
   const handlePhotoSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = Array.from(e.target.files || []);
-    setPhotos((prev) => [...prev, ...files].slice(0, 5));
-    if (files.length > 0) setState("with-photos");
+    const files = e.target.files;
+    if (!files) return;
+
+    const newFiles = Array.from(files);
+    const totalFiles = pingData.photos.length + newFiles.length;
+
+    if (totalFiles > 3) {
+      setUploadError("You can only upload up to 3 photos");
+      return;
+    }
+
+    setPingData((prev) => ({ ...prev, photos: [...prev.photos, ...newFiles] }));
+    setUploadError(null);
+
+    // Reset input
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
   };
 
-  const handleRemovePhoto = (index: number) => {
-    setPhotos((prev) => {
-      const updated = prev.filter((_, i) => i !== index);
-      if (updated.length === 0) setState("expanded");
-      return updated;
-    });
+  const handleRemovePhoto = (indexToRemove: number) => {
+    setPingData((prev) => ({
+      ...prev,
+      photos: prev.photos.filter((_, index) => index !== indexToRemove),
+    }));
   };
 
-  const handlePost = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!title.trim() || !selectedCategory) return;
+  // Validation
+  const validateForm = (): boolean => {
+    const newErrors: Record<string, string> = {};
+
+    if (!pingData.title.trim()) {
+      newErrors.title = "Title is required";
+    }
+
+    if (!pingData.categoryId || pingData.categoryId === 0) {
+      newErrors.category = "Please select a category";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  // Submit handler
+  const handleSubmit = async () => {
+    if (!validateForm()) {
+      return;
+    }
+
     setIsPosting(true);
-    setError(null);
-    try {
-      let mediaIds: number[] = [];
-      if (photos.length > 0) {
-        const uploaded = await uploadService.uploadFiles(photos, "ping");
+    setUploadError(null);
+
+    let mediaIds: number[] = [];
+    // Upload photos if any
+    if (pingData.photos.length > 0) {
+      try {
+        const uploaded = await uploadService.uploadFiles(pingData.photos, "ping");
         mediaIds = uploaded.map((m) => m.id);
+      } catch (err: any) {
+        setUploadError("Photo upload failed. Please try again.");
+        setIsPosting(false);
+        return;
       }
+    }
 
-      const categories = useCategoriesStore.getState().categories;
-      const categoryId = categories.find(
-        (c) => c.label === selectedCategory,
-      )?.id;
-      if (!categoryId) throw new Error("Category not found");
-
-      await pingService.createPing({
-        title: title.trim(),
-        content: body.trim(),
-        categoryId,
-        isAnonymous,
+    try {
+      const createdPing = await pingService.createPing({
+        title: pingData.title.trim(),
+        content: pingData.description.trim(),
+        categoryId: pingData.categoryId,
+        isAnonymous: pingData.anonymous,
         mediaIds: mediaIds.length > 0 ? mediaIds : undefined,
       });
 
-      usePingsStore.getState().invalidateCache();
-      usePingsStore.getState().fetchPings({ sort: "trending" });
-
+      usePingsStore.getState().addPing(createdPing);
       handleCancel();
-    } catch (err) {
+    } catch (err: any) {
+      setUploadError("Failed to submit. Please try again.");
       console.error("Failed to create ping:", err);
-      setError("Failed to create ping. Please try again.");
     } finally {
       setIsPosting(false);
     }
@@ -138,176 +226,211 @@ const InlinePingCreator = forwardRef<InlinePingCreatorHandle>((_, ref) => {
     );
   }
 
-  /* ─── Expanded States (with and without photos) ─────── */
+  /* ─── Expanded State ─────────────────────────────────── */
   return (
-    <form
-      onSubmit={handlePost}
-      className="bg-white rounded-[10px] px-5 py-[15px] flex flex-col gap-[13px] w-full"
-    >
-      {/* Row 1: Avatar + Title */}
-      <div className="flex items-center gap-[13px]">
-        <UserAvatar user={user} size="lg" bgColor="bg-[#FFC37B]" />
-        <div className="flex-1 h-[50px] border-2 border-[#FFC37B] rounded-[20px] flex items-center pl-[27px] pr-5 bg-white">
-          <input
-            type="text"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            placeholder="Title..."
-            required
-            autoFocus
-            className="flex-1 font-['Poppins',sans-serif] font-semibold italic text-[14px] text-black/70 bg-transparent outline-none"
-          />
-        </div>
+    <div className="w-full flex gap-3 bg-white rounded-[10px] px-5 py-[15px]">
+      {/* Left Column: Avatar */}
+      <div className="shrink-0">
+        <UserAvatar user={user} size="lg" responsive={false} />
       </div>
 
-      {/* Row 2: Body textarea */}
-      <div className="border-2 border-[#FFC37B] rounded-[20px] flex items-center pl-[27px] pr-5 py-3 bg-white min-h-[50px]">
-        <textarea
-          value={body}
-          onChange={(e) => setBody(e.target.value)}
-          placeholder="Body..."
-          rows={2}
-          className="flex-1 font-['Poppins',sans-serif] font-semibold italic text-[14px] text-black/70 bg-transparent outline-none resize-none leading-snug"
-        />
-      </div>
-
-      {/* Anonymous toggle */}
-      <label className="flex items-center gap-2 cursor-pointer select-none w-fit">
-        <input
-          type="checkbox"
-          checked={isAnonymous}
-          onChange={(e) => setIsAnonymous(e.target.checked)}
-          className="w-4 h-4 accent-[#F49B31]"
-        />
-        <span className="font-['Poppins',sans-serif] text-[13px] text-black/70">
-          Post anonymously
-        </span>
-      </label>
-
-      {/* Row 3: Attach + Category selector + Post */}
-      <div className="flex items-center gap-2.5 md:gap-[30px]">
-        {/* Attach */}
-        <button
-          type="button"
-          onClick={() => fileInputRef.current?.click()}
-          aria-label="Attach photos"
-          className="shrink-0 cursor-pointer"
-        >
-          <svg
-            width="35"
-            height="36"
-            viewBox="0 0 35 36"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-            aria-hidden="true"
+      {/* Right Column: Form Content */}
+      <div className="flex flex-col gap-3 flex-1 overflow-visible">
+        {/* Category Dropdown */}
+        <div className="relative" ref={categoryDropdownRef}>
+          <button
+            onClick={() => setShowCategoryDropdown(!showCategoryDropdown)}
+            className="flex items-center gap-1 px-4 py-1.5 border-2 border-[#F49B31] rounded-full bg-white hover:bg-[#FEF5EA] transition-colors duration-200 text-[14px] font-medium text-[#454545]"
           >
-            <circle
-              cx="17.5"
-              cy="18"
-              r="16.5"
-              stroke="#F49B31"
-              strokeWidth="2"
-            />
-            <path
-              d="M17.5 11v14M11 18h13"
-              stroke="#F49B31"
-              strokeWidth="2"
-              strokeLinecap="round"
-            />
-          </svg>
-        </button>
-        <input
-          ref={fileInputRef}
-          type="file"
-          accept="image/*"
-          multiple
-          onChange={handlePhotoSelect}
-          className="hidden"
-          aria-label="Upload photos"
-        />
+            {pingData.categoryId
+              ? categories.find((c) => c.id === pingData.categoryId)?.name ||
+              "Select Category"
+              : "Select Category"}
+            <ChevronDown size={16} className="text-[#F49B31]" />
+          </button>
 
-        {/* Category chips - scrollable */}
-        <div className="flex-1 overflow-x-auto">
-          <div className="flex items-center min-w-max">
-            {CATEGORIES.map((cat, i) => (
-              <button
-                key={cat}
-                type="button"
-                onClick={() =>
-                  setSelectedCategory(cat === selectedCategory ? null : cat)
-                }
-                className={`font-['Poppins',sans-serif] font-medium text-[12px] md:text-[14px] px-2 md:px-5 py-1 md:py-2.5 border-2 border-[#454545] cursor-pointer transition-colors ${
-                  selectedCategory === cat
-                    ? "bg-[#F49B31] text-white border-[#F49B31]"
-                    : "bg-[#FEF5EA] text-black"
-                } ${i === 0 ? "rounded-l-[25px] border-r" : i === CATEGORIES.length - 1 ? "rounded-r-[25px] border-l" : "border-l border-r"}`}
-              >
-                {cat}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Post button */}
-        <button
-          type="submit"
-          disabled={isPosting || !title.trim()}
-          className="bg-[#F49B31] text-white font-['Poppins',sans-serif] font-medium text-[14px] px-5 py-2.5 rounded-[15px] cursor-pointer hover:bg-[#d88429] transition-colors disabled:opacity-50 disabled:cursor-not-allowed shrink-0"
-        >
-          {isPosting ? "Posting..." : "Post"}
-        </button>
-      </div>
-
-      {/* Photo thumbnails (State 3) */}
-      {photos.length > 0 && (
-        <div className="flex items-center gap-2.5 flex-wrap">
-          {photos.slice(0, 3).map((file, idx) => (
-            <div
-              key={idx}
-              className="relative w-[100px] h-[100px] rounded-xs overflow-hidden shadow"
-            >
-              <img
-                src={URL.createObjectURL(file)}
-                alt={`Upload ${idx + 1}`}
-                className="w-full h-full object-cover"
-              />
-              <button
-                type="button"
-                onClick={() => handleRemovePhoto(idx)}
-                aria-label="Remove photo"
-                className="absolute top-1 right-1 bg-white/90 rounded-full w-[22px] h-[22px] flex items-center justify-center text-red-500 text-xs font-bold cursor-pointer hover:bg-red-500 hover:text-white transition-colors"
-              >
-                ✕
-              </button>
-            </div>
-          ))}
-          {photos.length > 3 && (
-            <div className="w-[33px] h-[33px] rounded-[15px] bg-[#F49B31] flex items-center justify-center shrink-0">
-              <span className="font-['Poppins',sans-serif] text-[14px] text-white leading-none">
-                {photos.length - 3}+
-              </span>
+          {/* Dropdown Menu */}
+          {showCategoryDropdown && (
+            <div className="absolute top-full left-0 mt-2 w-48 bg-white border-2 border-[#F49B31] rounded-lg shadow-lg z-50 max-h-40 overflow-y-auto scrollbar-subtle-rounded">
+              {categories.map((cat) => (
+                <button
+                  key={cat.id}
+                  onClick={() => {
+                    setPingData((prev) => ({
+                      ...prev,
+                      categoryId: cat.id,
+                      categoryName: cat.name,
+                    }));
+                    setShowCategoryDropdown(false);
+                    setErrors((prev) => {
+                      const newErrors = { ...prev };
+                      delete newErrors.category;
+                      return newErrors;
+                    });
+                  }}
+                  className="w-full text-left px-4 py-2 hover:bg-[#FEF5EA] transition-colors text-sm text-[#454545]"
+                >
+                  {cat.name}
+                </button>
+              ))}
             </div>
           )}
         </div>
-      )}
 
-      {/* Error message */}
-      {error && (
-        <p className="text-red-500 text-[13px] font-['Poppins',sans-serif]">
-          {error}
-        </p>
-      )}
+        {errors.category && (
+          <p className="text-red-500 text-xs">{errors.category}</p>
+        )}
 
-      {/* Cancel link */}
-      <button
-        type="button"
-        onClick={handleCancel}
-        className="font-['Poppins',sans-serif] text-[13px] text-[#F49B31] cursor-pointer hover:underline text-left w-fit"
-      >
-        Cancel
-      </button>
-    </form>
+        {/* Title Input */}
+        <div className="flex px-[27px] py-3 border-2 border-[#FFC37B] rounded-[20px] focus-within:border-[#F49B31] focus-within:shadow-md transition-all duration-200 bg-white w-full h-[50px]">
+          <input
+            type="text"
+            placeholder="Title*"
+            className="text-[14px] text-[#454545] outline-0 flex-1 bg-transparent placeholder:text-[#9e9e9e]"
+            onChange={(e) =>
+              setPingData((prev) => ({ ...prev, title: e.target.value }))
+            }
+            value={pingData.title}
+            autoComplete="off"
+            autoFocus
+          />
+        </div>
+        {errors.title && <p className="text-red-500 text-xs">{errors.title}</p>}
+
+        {/* Body/Description Input */}
+        <div className="flex px-[27px] py-3 border-2 border-[#FFC37B] rounded-[20px] focus-within:border-[#F49B31] focus-within:shadow-md transition-all duration-200 bg-white min-h-[100px] w-full">
+          <textarea
+            placeholder="Body (optional)"
+            onChange={(e) =>
+              setPingData((prev) => ({ ...prev, description: e.target.value }))
+            }
+            value={pingData.description}
+            className="text-[14px] text-[#454545] outline-0 flex-1 bg-transparent resize-none placeholder:text-[#9e9e9e]"
+          />
+        </div>
+
+        {/* Photo Thumbnails - Simple display (no grid layouts) */}
+        {pingData.photos.length > 0 && (
+          <div className="w-full">
+            <div className="flex items-center gap-2.5 flex-wrap">
+              {pingData.photos.map((file, idx) => (
+                <div
+                  key={idx}
+                  className="relative w-[100px] h-[100px] rounded-lg overflow-hidden border-2 border-[#F49B31] shadow-sm group"
+                >
+                  <img
+                    src={URL.createObjectURL(file)}
+                    alt={`Upload ${idx + 1}`}
+                    className="w-full h-full object-cover"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => handleRemovePhoto(idx)}
+                    className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                  >
+                    <Trash2 size={14} />
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Upload Error */}
+        {uploadError && (
+          <div className="w-full text-xs text-red-500">{uploadError}</div>
+        )}
+
+        {/* Bottom Action Row: Attach + Post Button */}
+        <div className="w-full flex justify-between items-center">
+          {/* Photo Upload Button */}
+          <button
+            type="button"
+            onClick={() =>
+              pingData.photos.length < 3 && fileInputRef.current?.click()
+            }
+            disabled={pingData.photos.length >= 3}
+            className="cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed transition-opacity"
+          >
+            <FaLink fontSize={36} color="#F49B31" />
+          </button>
+
+          {/* Hidden Photo Input */}
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            multiple
+            onChange={handlePhotoSelect}
+            className="hidden"
+          />
+
+          {/* Post Button with Dropdown */}
+          <div className="relative" ref={postMenuRef}>
+            <div className="flex items-center bg-[#FFC37B] rounded-[15px] border-2 border-[#FFC37B] overflow-hidden">
+              {/* Post Submit Button - Left side */}
+              <button
+                type="button"
+                onClick={handleSubmit}
+                disabled={isPosting}
+                className="flex items-center justify-center px-4 py-2 bg-[#F49B31] hover:bg-[#d88429] rounded-[13px] font-medium text-sm text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {isPosting ? "Posting..." : "Post"}
+              </button>
+
+              {/* Dropdown Arrow Button - Right side */}
+              <button
+                type="button"
+                onClick={() => setShowPostMenu(!showPostMenu)}
+                className="flex items-center justify-center px-2 py-2 hover:bg-[#f2b866] transition-colors"
+              >
+                <ChevronDown size={16} className="text-white" />
+              </button>
+            </div>
+
+            {/* Post Menu Dropdown */}
+            {showPostMenu && (
+              <div className="absolute top-full right-0 mt-2 bg-white rounded-lg shadow-lg p-3 z-50 w-max">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setPingData((prev) => ({
+                      ...prev,
+                      anonymous: !prev.anonymous,
+                    }));
+                  }}
+                  className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-[#FEF5EA] transition-colors w-full text-left text-sm text-black"
+                >
+                  {/* Anonymous Toggle Switch */}
+                  <div
+                    className={`w-9 h-5 flex items-center rounded-full transition-colors ${pingData.anonymous ? "bg-[#F49B31]" : "bg-gray-300"
+                      }`}
+                  >
+                    <div
+                      className={`w-4 h-4 rounded-full bg-white transition-transform ${pingData.anonymous ? "translate-x-[18.5px]" : "translate-x-0"
+                        }`}
+                    />
+                  </div>
+                  <span>Post Anonymously</span>
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Cancel link */}
+        <button
+          type="button"
+          onClick={handleCancel}
+          className="font-['Poppins',sans-serif] text-[13px] text-[#F49B31] cursor-pointer hover:underline text-left w-fit"
+        >
+          Cancel
+        </button>
+      </div>
+    </div>
   );
 });
+
+InlinePingCreator.displayName = "InlinePingCreator";
 
 export default InlinePingCreator;
