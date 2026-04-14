@@ -40,10 +40,16 @@ const formatTimestamp = (dateString: string) => {
     return months === 1 ? "1mo" : `${months}mo`;
 };
 
-const getAuthorName = (author: Comment["author"]) => {
-    if (!author) return "Anonymous";
-    if (typeof author === "string") return author;
-    return `${author.firstName ?? ""} ${author.lastName ?? ""}`.trim() || "Anonymous";
+const getAuthorName = (comment: Comment) => {
+    // If anonymous, use the alias
+    if (comment.isAnonymous && comment.anonymousAlias) {
+        return comment.anonymousAlias;
+    }
+    // Otherwise use the author's name
+    if (comment.author && typeof comment.author === "object") {
+        return `${comment.author.firstName ?? ""} ${comment.author.lastName ?? ""}`.trim() || "Anonymous";
+    }
+    return "Anonymous";
 };
 
 // ─── CommentItem Component ──────────────────────────────────────────────────
@@ -64,7 +70,13 @@ const CommentItem = ({ comment, onRefresh: _onRefresh, pingId }: Props) => {
     const [replyInput, setReplyInput] = useState("");
     const [isPostingReply, setIsPostingReply] = useState(false);
 
-    const isOwner = !!(user && (user.id === comment.authorId || (typeof comment.author === "object" && user.id === comment.author?.id)));
+    // Use API's isOwner field for anonymous comments, calculate ownership for non-anonymous
+    const isOwner = comment.isAnonymous
+        ? (comment.isOwner ?? false)
+        : (user?.id === (typeof comment.author === "object" ? comment.author?.id : undefined));
+    // Anonymous comments cannot be deleted, even by their author
+    const canDelete = isOwner && !comment.isAnonymous;
+    const authorName = getAuthorName(comment);
 
     const handleSurge = async () => {
         if (isToggling) return;
@@ -90,7 +102,7 @@ const CommentItem = ({ comment, onRefresh: _onRefresh, pingId }: Props) => {
     };
 
     const handleDelete = async () => {
-        if (isDeleting || !isOwner) return;
+        if (isDeleting || !isOwner || comment.isAnonymous) return;
         setIsDeleting(true);
         try {
             await commentService.deleteComment(String(comment.id));
@@ -143,8 +155,6 @@ const CommentItem = ({ comment, onRefresh: _onRefresh, pingId }: Props) => {
         }
     };
 
-    const authorName = getAuthorName(comment.author);
-
     return (
         <>
             <div className="bg-white border border-[#f49b31] rounded-xl p-[7px] w-full overflow-visible" data-node-id="4925:13685">
@@ -155,6 +165,11 @@ const CommentItem = ({ comment, onRefresh: _onRefresh, pingId }: Props) => {
                             user={typeof comment.author === "object" ? comment.author : null}
                             size="sm"
                             bgColor="bg-[#f49b31]"
+                            pictureUrl={
+                                comment.isAnonymous && comment.anonymousProfilePicture
+                                    ? comment.anonymousProfilePicture
+                                    : undefined
+                            }
                         />
                     </div>
 
@@ -174,7 +189,7 @@ const CommentItem = ({ comment, onRefresh: _onRefresh, pingId }: Props) => {
                             {/* Dots vertical button with dropdown */}
                             <CommentActionsDropdown
                                 commentId={comment.id}
-                                isOwner={isOwner}
+                                isOwner={canDelete}
                                 onDelete={handleShowDeleteModal}
                             />
                         </div>
@@ -303,7 +318,7 @@ const ReplyItem = ({ reply }: ReplyItemProps) => {
     );
     const [isReplyToggling, setIsReplyToggling] = useState(false);
 
-    const replyAuthorName = getAuthorName(reply.author);
+    const replyAuthorName = getAuthorName(reply);
 
     const handleReplySurge = async () => {
         if (isReplyToggling) return;
@@ -338,6 +353,11 @@ const ReplyItem = ({ reply }: ReplyItemProps) => {
                     user={typeof reply.author === "object" ? reply.author : null}
                     size="sm"
                     bgColor="bg-[#f49b31]"
+                    pictureUrl={
+                        reply.isAnonymous && reply.anonymousProfilePicture
+                            ? reply.anonymousProfilePicture
+                            : undefined
+                    }
                 />
             </div>
 

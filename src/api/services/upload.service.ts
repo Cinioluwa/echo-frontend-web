@@ -41,6 +41,24 @@ const uploadService = {
     });
     return res.data;
   },
+
+  /**
+   * Upload anonymous profile picture (alias avatar)
+   * @param file - Image file (JPEG, PNG, GIF, WebP, max 5MB)
+   * @returns Uploaded media URL
+   */
+  uploadAnonProfilePicture: async (file: File): Promise<string> => {
+    const formData = new FormData();
+    formData.append("file", file);
+    const res = await api.post<UploadedMedia>(
+      "/uploads/anonymous-profile",
+      formData,
+      {
+        headers: { "Content-Type": "multipart/form-data" },
+      },
+    );
+    return res.data.url;
+  },
 };
 
 export default uploadService;

@@ -28,6 +28,9 @@ interface CommentWithContext extends Comment {
         author?: { firstName: string; lastName: string };
         surgeCount?: number;
         createdAt?: string;
+        isAnonymous?: boolean;
+        anonymousAlias?: string | null;
+        anonymousProfilePicture?: string | null;
     };
 }
 
@@ -113,9 +116,11 @@ interface CommentedPingCardProps {
 const CommentedPingCard = ({ comment }: CommentedPingCardProps) => {
     const ping = comment.ping;
 
-    const pingAuthorName = ping?.author
-        ? `${ping.author.firstName} ${ping.author.lastName}`
-        : "Anonymous";
+    const pingAuthorName = ping?.isAnonymous && ping?.anonymousAlias
+        ? ping.anonymousAlias
+        : ping?.author
+            ? `${ping.author.firstName} ${ping.author.lastName}`
+            : "Anonymous";
 
     const pingTimestamp = ping?.createdAt
         ? new Date(ping.createdAt).toLocaleDateString("en-US", {

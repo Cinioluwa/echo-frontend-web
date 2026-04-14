@@ -16,6 +16,8 @@ export interface UpdateUserRequest {
 export interface UpdateUserPreferencesRequest {
   commentAnonymously?: boolean;
   pingAnonymously?: boolean;
+  anonymousAlias?: string | null; // Alias name (2-30 chars) or null to clear
+  anonymousAliasProfilePicture?: string | null; // URL to profile picture or null to clear
 }
 
 /**
@@ -88,7 +90,7 @@ const userService = {
 
   /**
    * Update current user's posting preferences
-   * @param data Updated preference fields
+   * @param data Updated preference fields (alias, picture, etc.)
    */
   updateMyPreferences: async (
     data: UpdateUserPreferencesRequest,

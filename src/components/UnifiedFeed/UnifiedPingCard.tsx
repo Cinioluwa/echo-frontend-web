@@ -53,16 +53,16 @@ const UnifiedPingCard = ({
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
 
-  const isOwner =
-    currentUser?.id ===
-    (typeof currentPing.author === "object"
-      ? currentPing.author?.id
-      : undefined);
+  const isOwner = currentPing.isAnonymous
+    ? (currentPing.isOwner ?? false)
+    : (currentUser?.id === (typeof currentPing.author === "object" ? currentPing.author?.id : undefined));
 
   const authorName =
-    typeof currentPing.author === "object" && currentPing.author
-      ? `${currentPing.author.firstName} ${currentPing.author.lastName}`
-      : "Anonymous";
+    currentPing.isAnonymous && currentPing.anonymousAlias
+      ? currentPing.anonymousAlias
+      : typeof currentPing.author === "object" && currentPing.author
+        ? `${currentPing.author.firstName} ${currentPing.author.lastName}`
+        : "Anonymous";
 
   const timestamp = currentPing.createdAt
     ? new Date(currentPing.createdAt).toLocaleDateString("en-US", {
@@ -171,6 +171,11 @@ const UnifiedPingCard = ({
                 responsive
                 bgColor="bg-[#FFC37B]"
                 className="shrink-0"
+                pictureUrl={
+                  currentPing.isAnonymous && currentPing.anonymousProfilePicture
+                    ? currentPing.anonymousProfilePicture
+                    : undefined
+                }
               />
               {/* Name + timestamp */}
               <div

@@ -106,7 +106,64 @@ All routes are prefixed with `/api`
 }
 ```
 
-### Error Response
+---
+
+## Anonymous Author Profiles (Alias Feature)
+
+The anonymous posting feature supports custom author profiles (aliases) with custom names and profile pictures. This allows users to post anonymously under a memorable identity while maintaining organizational transparency.
+
+### Overview
+
+- **Anonymous Posting**: Users can choose to post pings, waves, or comments anonymously
+- **Custom Alias**: Optionally assign a custom name/handle (2-30 characters)
+- **Alias Profile Picture**: Optionally upload a custom avatar/profile picture for the anonymous identity
+- **Snapshots**: The alias and profile picture are snapshots taken at post time and remain immutable
+
+### How It Works
+
+1. User configures their anonymous preference via `UserPreference` settings
+2. When posting anonymously, the system retrieves the user's current alias configuration
+3. The current alias and profile picture are **stored as snapshots** in the post record
+4. When returning post data, anonymous items expose:
+   - `anonymousAlias`: The author's anonymous name
+   - `anonymousProfilePicture`: The author's anonymous avatar URL
+   - `isAnonymous`: Boolean flag indicating anonymous status
+   - `author`: `null` (real author info is hidden)
+   - `isOwner`: Boolean indicating if current user is the author
+
+### Example Response
+
+```json
+{
+  "id": 1,
+  "content": "This is an anonymous comment",
+  "isAnonymous": true,
+  "isOwner": true,
+  "anonymousAlias": "Phoenix",
+  "anonymousProfilePicture": "https://res.cloudinary.com/echo/image/upload/v1/alias/phoenix.jpg",
+  "author": null,
+  "createdAt": "2025-11-07T11:30:00.000Z"
+}
+```
+
+### Key Fields
+
+- `isOwner`: Indicates whether the current user is the post author (available on ALL items)
+- `anonymousAlias`: Custom name for anonymous posts (null if not posted anonymously or alias not set)
+- `anonymousProfilePicture`: Custom avatar for anonymous posts (null if not posted anonymously or avatar not set)
+- `author`: Always `null` when `isAnonymous` is `true`; contains user object when `isAnonymous` is `false`
+
+### Related Endpoints
+
+- `PATCH /api/users/me/preferences` - Update user's alias and preference settings
+- `POST /api/pings` - Create ping with `isAnonymous` parameter
+- `POST /api/pings/:pingId/comments` - Create comment with `isAnonymous` parameter
+- `POST /api/pings/:pingId/waves` - Create wave with anonymous option
+- `POST /api/waves/:waveId/comments` - Create comment on wave with anonymous option
+
+---
+
+## Error Response
 
 ```json
 {
@@ -236,7 +293,7 @@ Represents a user account within an organization.
 
 ### UserPreference Model
 
-Stores user posting preferences (anonymity settings).
+Stores user posting preferences (anonymity settings) and anonymous author profile (alias).
 
 **Fields:**
 
@@ -246,6 +303,9 @@ Stores user posting preferences (anonymity settings).
   "userId": 5,
   "commentAnonymously": false,
   "pingAnonymously": false,
+  "anonymousAlias": "Phoenix",
+  "anonymousAliasProfilePicture": "https://res.cloudinary.com/echo/image/upload/v1/alias/phoenix.jpg",
+  "anonymousAliasUpdatedAt": "2026-03-01T14:20:00.000Z",
   "createdAt": "2025-11-07T10:30:00.000Z",
   "updatedAt": "2026-01-15T10:30:00.000Z"
 }
@@ -256,6 +316,9 @@ Stores user posting preferences (anonymity settings).
 - `userId`: ID of the user (unique, one preference per user)
 - `commentAnonymously`: Whether comments should be posted anonymously by default
 - `pingAnonymously`: Whether pings should be posted anonymously by default
+- `anonymousAlias`: Custom name/handle displayed on anonymous posts (2-30 characters, optional)
+- `anonymousAliasProfilePicture`: Avatar/profile picture URL shown on anonymous posts (optional)
+- `anonymousAliasUpdatedAt`: Timestamp when the alias or profile picture was last updated
 
 ---
 
@@ -994,55 +1057,13 @@ Get activity analytics for the current user.
   "totalComments": 18,
   "totalWaves": 7,
   "chartData": [
-    {
-      "date": "2026-03-08",
-      "day": "Sun",
-      "surges": 3,
-      "comments": 1,
-      "waves": 0
-    },
-    {
-      "date": "2026-03-09",
-      "day": "Mon",
-      "surges": 0,
-      "comments": 2,
-      "waves": 1
-    },
-    {
-      "date": "2026-03-10",
-      "day": "Tue",
-      "surges": 5,
-      "comments": 0,
-      "waves": 0
-    },
-    {
-      "date": "2026-03-11",
-      "day": "Wed",
-      "surges": 2,
-      "comments": 3,
-      "waves": 2
-    },
-    {
-      "date": "2026-03-12",
-      "day": "Thu",
-      "surges": 0,
-      "comments": 1,
-      "waves": 0
-    },
-    {
-      "date": "2026-03-13",
-      "day": "Fri",
-      "surges": 8,
-      "comments": 4,
-      "waves": 1
-    },
-    {
-      "date": "2026-03-14",
-      "day": "Sat",
-      "surges": 1,
-      "comments": 0,
-      "waves": 0
-    }
+    { "date": "2026-03-08", "day": "Sun", "surges": 3, "comments": 1, "waves": 0 },
+    { "date": "2026-03-09", "day": "Mon", "surges": 0, "comments": 2, "waves": 1 },
+    { "date": "2026-03-10", "day": "Tue", "surges": 5, "comments": 0, "waves": 0 },
+    { "date": "2026-03-11", "day": "Wed", "surges": 2, "comments": 3, "waves": 2 },
+    { "date": "2026-03-12", "day": "Thu", "surges": 0, "comments": 1, "waves": 0 },
+    { "date": "2026-03-13", "day": "Fri", "surges": 8, "comments": 4, "waves": 1 },
+    { "date": "2026-03-14", "day": "Sat", "surges": 1, "comments": 0, "waves": 0 }
   ]
 }
 ```
@@ -1144,7 +1165,7 @@ Update the authenticated user's notification preferences (partial update).
 
 ### GET /api/users/me/preferences
 
-Get the authenticated user's posting preferences (anonymity settings).
+Get the authenticated user's posting preferences and anonymous profile settings.
 
 **Auth Required:** Yes
 
@@ -1156,27 +1177,34 @@ Get the authenticated user's posting preferences (anonymity settings).
   "userId": 5,
   "commentAnonymously": false,
   "pingAnonymously": false,
+  "anonymousAlias": "Phoenix",
+  "anonymousAliasProfilePicture": "https://res.cloudinary.com/echo/image/upload/v1/alias/phoenix.jpg",
+  "anonymousAliasUpdatedAt": "2026-03-01T10:30:00.000Z",
   "createdAt": "2025-11-07T10:30:00.000Z",
-  "updatedAt": "2025-11-07T10:30:00.000Z"
+  "updatedAt": "2026-03-15T08:45:00.000Z"
 }
 ```
 
-**Notes:**
-
-- If preferences don't exist, default values (both `false`) are returned
-- These preferences control the default anonymity setting when posting new content
-- Users can still override the default when creating individual posts
-
-**Preference Fields:**
+**Response Fields:**
 
 - `commentAnonymously`: Post comments anonymously by default (hide username/avatar)
 - `pingAnonymously`: Post pings (issues) anonymously by default (hide username/avatar)
+- `anonymousAlias`: Custom name displayed on anonymous posts (null if not set)
+- `anonymousAliasProfilePicture`: Avatar URL displayed on anonymous posts (null if not set)
+- `anonymousAliasUpdatedAt`: Timestamp of when the alias or profile picture was last updated
+
+**Notes:**
+
+- If preferences don't exist, default values with null alias fields are returned
+- These preferences control the default anonymity setting and profile when posting new content
+- The alias and profile picture are snapshots captured at post time, so changes only affect new posts
+- Users can still override the default `commentAnonymously` and `pingAnonymously` when creating individual posts
 
 ---
 
 ### PATCH /api/users/me/preferences
 
-Update the authenticated user's posting preferences (partial update).
+Update the authenticated user's posting preferences and anonymous profile settings.
 
 **Auth Required:** Yes
 
@@ -1185,15 +1213,26 @@ Update the authenticated user's posting preferences (partial update).
 ```json
 {
   "commentAnonymously": true,
-  "pingAnonymously": false
+  "pingAnonymously": false,
+  "anonymousAlias": "Phoenix",
+  "anonymousAliasProfilePicture": "https://res.cloudinary.com/echo/image/upload/v1/alias/phoenix.jpg"
 }
 ```
+
+**Request Fields:**
+
+- `commentAnonymously` (boolean, optional): Post comments anonymously by default
+- `pingAnonymously` (boolean, optional): Post pings anonymously by default
+- `anonymousAlias` (string, optional): Custom name for anonymous posts (2-30 characters). Set to `null` to clear.
+- `anonymousAliasProfilePicture` (string, optional): URL to avatar image for anonymous posts. Set to `null` to clear.
 
 **Notes:**
 
 - All fields are optional; only provided fields are updated
 - Omitted fields retain their current values
-- Individual posts can override these defaults using the `isAnonymous` parameter
+- Individual posts can override the `commentAnonymously` and `pingAnonymously` defaults using the `isAnonymous` parameter
+- Alias and profile picture snapshots are captured at the time of posting, so changes only affect new posts
+- Profile picture should be a valid image URL (PNG, JPG, GIF, WebP)
 
 **Success Response (200):**
 
@@ -1203,6 +1242,9 @@ Update the authenticated user's posting preferences (partial update).
   "userId": 5,
   "commentAnonymously": true,
   "pingAnonymously": false,
+  "anonymousAlias": "Phoenix",
+  "anonymousAliasProfilePicture": "https://res.cloudinary.com/echo/image/upload/v1/alias/phoenix.jpg",
+  "anonymousAliasUpdatedAt": "2026-03-18T14:22:00.000Z",
   "createdAt": "2025-11-07T10:30:00.000Z",
   "updatedAt": "2026-03-18T14:22:00.000Z"
 }
@@ -1210,7 +1252,7 @@ Update the authenticated user's posting preferences (partial update).
 
 **Error Responses:**
 
-- `400` - Invalid request body
+- `400` - Invalid request body (e.g., alias exceeds 30 characters)
 - `401` - Unauthorized (missing or invalid token)
 
 ---
@@ -1249,6 +1291,7 @@ Create a new ping.
   "progressStatus": "PENDING",
   "surgeCount": 0,
   "isAnonymous": false,
+  "isOwner": true,
   "authorId": 1,
   "organizationId": 1,
   "createdAt": "2025-11-07T10:30:00.000Z",
@@ -1272,9 +1315,40 @@ Create a new ping.
 }
 ```
 
-**Notes:**
+**Anonymous Ping Example:**
 
-- When `isAnonymous` is `true`, the `author` field will be `null` in responses
+```json
+{
+  "id": 2,
+  "title": "Lab Equipment Issues",
+  "content": "Some of the equipment in the lab needs maintenance...",
+  "categoryId": 1,
+  "status": "POSTED",
+  "surgeCount": 15,
+  "isAnonymous": true,
+  "isOwner": false,
+  "anonymousAlias": "Phoenix",
+  "anonymousProfilePicture": "https://res.cloudinary.com/echo/image/upload/v1/alias/phoenix.jpg",
+  "author": null,
+  "category": {
+    "id": 1,
+    "name": "Academics"
+  },
+  "_count": {
+    "waves": 2,
+    "comments": 5,
+    "surges": 15
+  }
+}
+```
+
+**Response Fields:**
+
+- `isOwner`: Boolean indicating whether the current user is the ping author
+- When `isAnonymous` is `true`:
+  - `author` field is `null`
+  - `anonymousAlias` contains the author's anonymous profile name
+  - `anonymousProfilePicture` contains the author's anonymous profile picture URL
 - Anonymous pings still store the author ID internally for accountability, but it's not exposed via the API
 
 ---
@@ -1305,6 +1379,7 @@ Get all pings in organization (with filters & pagination).
       "surgeCount": 42,
       "hashtag": "library",
       "isAnonymous": false,
+      "isOwner": false,
       "createdAt": "2025-11-07T10:30:00.000Z",
       "author": {
         "id": 1,
@@ -1337,7 +1412,9 @@ Get all pings in organization (with filters & pagination).
 
 **Notes:**
 
+- `isOwner` indicates whether the current user is the ping author
 - `author` field will be `null` if `isAnonymous` is `true`
+- Anonymous pings will include `anonymousAlias` and `anonymousProfilePicture` fields
 
 ---
 
@@ -1420,6 +1497,8 @@ Get a specific ping by ID with full details.
   "progressStatus": "PENDING",
   "surgeCount": 42,
   "hashtag": "library",
+  "isAnonymous": false,
+  "isOwner": false,
   "createdAt": "2025-11-07T10:30:00.000Z",
   "author": {
     "id": 1,
@@ -1444,6 +1523,8 @@ Get a specific ping by ID with full details.
     {
       "id": 1,
       "content": "I agree, this is a major issue!",
+      "isAnonymous": false,
+      "isOwner": false,
       "createdAt": "2025-11-07T10:45:00.000Z",
       "author": {
         "id": 2,
@@ -1451,6 +1532,16 @@ Get a specific ping by ID with full details.
         "firstName": "Jane",
         "lastName": "Smith"
       }
+    },
+    {
+      "id": 2,
+      "content": "This is preventing me from studying effectively",
+      "isAnonymous": true,
+      "isOwner": true,
+      "anonymousAlias": "Owl",
+      "anonymousProfilePicture": "https://res.cloudinary.com/echo/image/upload/v1/alias/owl.jpg",
+      "createdAt": "2025-11-07T11:10:00.000Z",
+      "author": null
     }
   ],
   "officialResponse": {
@@ -1466,6 +1557,12 @@ Get a specific ping by ID with full details.
   }
 }
 ```
+
+**Response Fields:**
+
+- `isOwner`: Boolean indicating whether the current user created this ping
+- `comments`: Array includes both anonymous and non-anonymous comments with their respective fields
+- Anonymous comments have `author: null` and include `anonymousAlias` + `anonymousProfilePicture`
 
 ---
 
@@ -1628,6 +1725,7 @@ Get all waves for a specific ping.
       "surgeCount": 15,
       "viewCount": 200,
       "isAnonymous": false,
+      "isOwner": false,
       "createdAt": "2025-11-07T11:00:00.000Z",
       "author": {
         "id": 3,
@@ -1639,6 +1737,7 @@ Get all waves for a specific ping.
           "id": 1,
           "content": "Great solution!",
           "isAnonymous": false,
+          "isOwner": false,
           "author": {
             "id": 2,
             "email": "student2@university.edu",
@@ -1666,7 +1765,9 @@ Get all waves for a specific ping.
 
 **Notes:**
 
+- `isOwner` indicates whether the current user is the wave author
 - `author` field will be `null` if `isAnonymous` is `true`
+- Anonymous waves include `anonymousAlias` and `anonymousProfilePicture` fields
 
 ---
 
@@ -1800,6 +1901,7 @@ Create a comment on a ping.
   "authorId": 1,
   "pingId": 1,
   "createdAt": "2025-11-07T11:30:00.000Z",
+  "isOwner": true,
   "author": {
     "id": 1,
     "email": "student@university.edu",
@@ -1809,9 +1911,34 @@ Create a comment on a ping.
 }
 ```
 
-**Notes:**
+**Anonymous Comment Example:**
 
-- When `isAnonymous` is `true`, the `author` field will be `null` in responses
+```json
+{
+  "id": 2,
+  "content": "Great idea!",
+  "isAnonymous": true,
+  "surgeCount": 5,
+  "anonymousAlias": "Phoenix",
+  "anonymousProfilePicture": "https://res.cloudinary.com/echo/image/upload/v1/alias/phoenix.jpg",
+  "authorId": 12,
+  "pingId": 1,
+  "createdAt": "2025-11-07T11:35:00.000Z",
+  "isOwner": false,
+  "author": null
+}
+```
+
+**Response Fields:**
+
+- `isOwner`: Boolean indicating whether the current user is the author of this comment
+- When `isAnonymous` is `true`:
+  - `author` field is `null`
+  - `anonymousAlias` contains the author's anonymous profile name
+  - `anonymousProfilePicture` contains the author's anonymous profile picture URL
+- When `isAnonymous` is `false`:
+  - `author` contains full user information
+  - `anonymousAlias` and `anonymousProfilePicture` are `null`
 
 ---
 
@@ -1835,6 +1962,7 @@ Get all comments for a ping.
       "id": 1,
       "content": "I completely agree with this!",
       "isAnonymous": false,
+      "isOwner": true,
       "createdAt": "2025-11-07T11:30:00.000Z",
       "author": {
         "id": 1,
@@ -4105,8 +4233,8 @@ Echo uses Socket.IO for real-time updates. Connect to the same server URL used f
 Authenticate by passing the JWT token as a query parameter on connect:
 
 ```js
-const socket = io("https://your-api-url", {
-  auth: { token: "YOUR_JWT_TOKEN" },
+const socket = io('https://your-api-url', {
+  auth: { token: 'YOUR_JWT_TOKEN' },
 });
 ```
 

@@ -36,6 +36,15 @@ const UserProfile = () => {
     getNameChangeStatus("", undefined)
   );
 
+  // Alias management state
+  const [editingAlias, setEditingAlias] = useState(false);
+  const [alias, setAlias] = useState("");
+  const [aliasSaving, setAliasSaving] = useState(false);
+  const [aliasError, setAliasError] = useState("");
+  const [uploadingAnonPicture, setUploadingAnonPicture] = useState(false);
+  const [anonPictureError, setAnonPictureError] = useState("");
+  const [anonProfilePicture, setAnonProfilePicture] = useState("");
+
   useEffect(() => {
     const fetchUser = async () => {
       setLoading(true);
@@ -52,6 +61,18 @@ const UserProfile = () => {
           data.lastNameChangeAt
         );
         setNameChangeStatus(status);
+
+        // Fetch user preferences separately for alias data
+        try {
+          const prefs = await userService.getMyPreferences();
+          setAlias(prefs.anonymousAlias || "");
+          setAnonProfilePicture(prefs.anonymousAliasProfilePicture || "");
+        } catch (prefsErr) {
+          console.warn("Failed to fetch user preferences", prefsErr);
+          // Fallback to empty if preferences can't be fetched
+          setAlias("");
+          setAnonProfilePicture("");
+        }
       } catch (err) {
         setError("Failed to load profile");
       } finally {
@@ -75,6 +96,81 @@ const UserProfile = () => {
     } finally {
       setUploading(false);
     }
+  };
+
+  // Anonymous picture upload handler
+  const handleAnonPictureChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploadingAnonPicture(true);
+    setAnonPictureError("");
+    try {
+      const picUrl = await uploadService.uploadAnonProfilePicture(file);
+      setAnonProfilePicture(picUrl);
+
+      // Update preferences with the new picture URL
+      const updatedPrefs = await userService.updateMyPreferences({
+        anonymousAliasProfilePicture: picUrl,
+      });
+
+      // Update the user state if needed
+      if (user?.userPreference) {
+        setUser({
+          ...user,
+          userPreference: updatedPrefs,
+        });
+      }
+    } catch (err) {
+      setAnonPictureError("Failed to upload anonymous picture");
+      console.error("Anonymous picture upload error:", err);
+    } finally {
+      setUploadingAnonPicture(false);
+    }
+  };
+
+  // Handle alias save
+  const handleSaveAlias = async () => {
+    if (!alias.trim()) {
+      setAliasError("Alias cannot be empty");
+      return;
+    }
+
+    if (alias.length < 2 || alias.length > 30) {
+      setAliasError("Alias must be between 2 and 30 characters");
+      return;
+    }
+
+    setAliasError("");
+    setAliasSaving(true);
+    try {
+      const updatedPrefs = await userService.updateMyPreferences({
+        anonymousAlias: alias.trim(),
+      });
+
+      // Update the user state with new preferences
+      if (user?.userPreference) {
+        setUser({
+          ...user,
+          userPreference: updatedPrefs,
+        });
+      }
+
+      // Exit editing mode and reset saving state
+      setEditingAlias(false);
+      setAliasSaving(false);
+    } catch (err) {
+      const errorMsg = err instanceof Error ? err.message : "Failed to update alias";
+      setAliasError(errorMsg);
+      console.error("Alias update error:", err);
+      setAliasSaving(false);
+    }
+  };
+
+  // Handle cancel alias edit
+  const handleCancelEditAlias = () => {
+    setAlias(user?.userPreference?.anonymousAlias || "");
+    setAliasError("");
+    setEditingAlias(false);
   };
 
   // Handle name change
@@ -260,7 +356,7 @@ const UserProfile = () => {
                         note={nameChangeStatus.canChangeName
                           ? (nameChangeStatus.isInGracePeriod
                             ? "You can change your name during the grace period"
-                            : "You can change your name anytime")
+                            : "Your name can be changed every 30 days")
                           : nameChangeStatus.message
                         }
                       />
@@ -286,6 +382,101 @@ const UserProfile = () => {
                     value={user.email}
                     note="Your email address cannot be changed"
                   />
+                </div>
+
+                {/* ANONYMOUS IDENTITY SECTION */}
+                <div className="space-y-6 mt-8 pt-8 border-t border-gray-200">
+                  <h2 className="text-xl mb-6">Anonymous Identity</h2>
+
+                  <div className="flex flex-col lg:flex-row gap-6 lg:gap-12 lg:items-center">
+                    {/* Left: Picture and Change Button */}
+                    <div className="flex flex-col sm:flex-row gap-6 items-start sm:items-center shrink-0">
+                      <div className="relative">
+                        <img
+                          src={anonProfilePicture || profileImage}
+                          className="w-24 h-24 rounded-full object-cover border-4 border-white shadow-sm"
+                          alt="Anonymous Profile"
+                        />
+                      </div>
+                      <div className="flex-1">
+                        <label className="px-5 py-2 bg-white border border-orange-200 rounded-lg text-sm shadow-sm hover:border-orange-300 transition cursor-pointer inline-block">
+                          <input
+                            type="file"
+                            accept="image/*"
+                            className="hidden"
+                            onChange={handleAnonPictureChange}
+                            disabled={uploadingAnonPicture}
+                          />
+                          {uploadingAnonPicture ? "Uploading..." : "Change Picture"}
+                        </label>
+                        <p className="text-[11px] text-gray-400 mt-2 font-medium">
+                          JPG, PNG or GIF. Max size 5MB
+                        </p>
+                        {anonPictureError && (
+                          <div className="text-xs text-red-500 mt-1">{anonPictureError}</div>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Right: Alias Field */}
+                    <div className="flex-1 space-y-3">
+                      <label className="block text-sm font-medium text-gray-700">
+                        Alias
+                      </label>
+
+                      {editingAlias ? (
+                        // Editing mode
+                        <div className="space-y-3">
+                          <input
+                            type="text"
+                            value={alias}
+                            onChange={(e) => setAlias(e.target.value)}
+                            disabled={aliasSaving}
+                            className="w-full px-5 py-3 border border-gray-300 rounded-[9px] focus:outline-none focus:ring-2 focus:ring-orange-500 disabled:bg-gray-100 text-base"
+                            placeholder="Enter your alias"
+                          />
+                          {aliasError && (
+                            <div className="text-xs text-red-500">{aliasError}</div>
+                          )}
+                          <p className="text-xs text-gray-500">
+                            Your alias can be changed every 30 days
+                          </p>
+                          <div className="flex gap-2">
+                            <button
+                              onClick={handleSaveAlias}
+                              disabled={aliasSaving || !alias.trim()}
+                              className="px-4 py-2 bg-orange-500 text-white rounded-lg text-sm hover:bg-orange-600 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                              {aliasSaving ? "Saving..." : "Save Alias"}
+                            </button>
+                            <button
+                              onClick={handleCancelEditAlias}
+                              disabled={aliasSaving}
+                              className="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg text-sm hover:bg-gray-300 transition disabled:opacity-50"
+                            >
+                              Cancel
+                            </button>
+                          </div>
+                        </div>
+                      ) : (
+                        // View mode
+                        <div className="space-y-3">
+                          <div className="bg-orange-50 border border-orange-300 rounded-[9px] px-5 py-3">
+                            <p className="text-base text-black font-poppins">{alias || "Not set"}</p>
+                          </div>
+                          <p className="text-xs text-gray-500">
+                            Your alias can be changed every 30 days
+                          </p>
+                          <button
+                            onClick={() => setEditingAlias(true)}
+                            className="px-4 py-2 bg-white border border-orange-200 rounded-lg text-sm hover:border-orange-300 transition"
+                          >
+                            Edit Alias
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  </div>
                 </div>
               </>
             ) : null}

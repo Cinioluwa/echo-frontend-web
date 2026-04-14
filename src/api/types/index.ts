@@ -18,6 +18,8 @@ export interface User {
   createdAt: string;
   updatedAt?: string;
   lastNameChangeAt?: string; // Timestamp of last name change
+  alias?: string; // Anonymous alias/name
+  anonProfilePicture?: string; // Anonymous profile picture URL
   pendingRequests?: Array<{
     id: number;
     organizationId: number;
@@ -114,7 +116,7 @@ export interface Ping {
   };
   categoryId?: number; // Backend sends this for category lookup (name fetched separately)
   hashtag?: string;
-  author?: User;
+  author?: User | null;
   authorId?: number; // For consistency with Wave type
   status:
     | "POSTED"
@@ -128,6 +130,10 @@ export interface Ping {
   surgeCount: number;
   viewCount?: number;
   hasSurged?: boolean; // Whether the current user has surged this ping
+  isOwner: boolean; // Whether the current user is the author
+  isAnonymous?: boolean; // Whether this ping was posted anonymously
+  anonymousAlias?: string | null; // Custom name for anonymous posts
+  anonymousProfilePicture?: string | null; // Avatar URL for anonymous posts
   resolvedAt?: string; // Timestamp when ping was marked as resolved
   createdAt: string;
   updatedAt?: string;
@@ -190,11 +196,16 @@ export interface Wave {
       surges?: number;
     };
   };
-  author?: User | string; // Backend should send full author object like Ping does
+  author?: User | null;
+  authorId?: number;
   surgeCount: number;
   commentCount?: number;
   viewCount: number;
   hasSurged?: boolean; // Whether the current user has surged this wave
+  isOwner: boolean; // Whether the current user is the author
+  isAnonymous?: boolean; // Whether this wave was posted anonymously
+  anonymousAlias?: string | null; // Custom name for anonymous posts
+  anonymousProfilePicture?: string | null; // Avatar URL for anonymous posts
   rank?: number; // Top ranking (1-3 for top waves)
   status:
     | "POSTED"
@@ -258,7 +269,7 @@ export interface CreateSurgeRequest {
 export interface Comment {
   id: string | number;
   content: string;
-  author: User | string;
+  author: User | null;
   authorId?: number;
   organizationId?: number;
   pingId?: number;
@@ -272,7 +283,10 @@ export interface Comment {
   createdAt: string;
   updatedAt?: string;
   surgeCount?: number;
-  isAnonymous?: boolean;
+  isAnonymous?: boolean; // Whether this comment was posted anonymously
+  anonymousAlias?: string | null; // Custom name for anonymous posts
+  anonymousProfilePicture?: string | null; // Avatar URL for anonymous posts
+  isOwner: boolean; // Whether the current user is the author
   hasSurged?: boolean; // Whether the current user has surged this comment
 }
 
@@ -452,6 +466,9 @@ export interface UserPreference {
   userId?: number;
   commentAnonymously?: boolean;
   pingAnonymously?: boolean;
+  anonymousAlias?: string; // Custom alias for anonymous posts
+  anonymousAliasProfilePicture?: string; // URL to anonymous profile picture
+  anonymousAliasUpdatedAt?: string; // Timestamp of last alias change
   createdAt?: string;
   updatedAt?: string;
 }

@@ -179,11 +179,9 @@ const PingDetail = () => {
   const displayPing = pingFromStore || ping;
   if (!displayPing) return null;
 
-  const isOwner =
-    currentUser?.id ===
-    (typeof displayPing.author === "object"
-      ? displayPing.author?.id
-      : undefined);
+  const isOwner = displayPing.isAnonymous
+    ? (displayPing.isOwner ?? false)
+    : (currentUser?.id === (typeof displayPing.author === "object" ? displayPing.author?.id : undefined));
 
   const surgeCount = displayPing.surgeCount || displayPing._count?.surges || 0;
   const commentCount = displayPing._count?.comments || 0;
@@ -287,19 +285,21 @@ const PingDetail = () => {
       )}
       {waves.length > 0 && (
         <div className="flex flex-col gap-2.5">
-          {waves.map((wave) => (
-            <WaveCard
-              key={wave.id}
-              wave={wave}
-              isOwner={
-                currentUser?.id ===
-                (typeof wave.author === "object" ? wave.author?.id : undefined)
-              }
-              onDelete={handleDeleteWave}
-              allWavesForPing={waves}
-              pingId={Number(pingId)}
-            />
-          ))}
+          {waves.map((wave) => {
+            const waveIsOwner = wave.isAnonymous
+              ? (wave.isOwner ?? false)
+              : (currentUser?.id === (typeof wave.author === "object" ? wave.author?.id : undefined));
+            return (
+              <WaveCard
+                key={wave.id}
+                wave={wave}
+                isOwner={waveIsOwner}
+                onDelete={handleDeleteWave}
+                allWavesForPing={waves}
+                pingId={Number(pingId)}
+              />
+            );
+          })}
         </div>
       )}
 

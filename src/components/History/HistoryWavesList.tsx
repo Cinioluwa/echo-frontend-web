@@ -102,11 +102,13 @@ const WaveHistoryCard = ({ wave, onDelete }: WaveHistoryCardProps) => {
     const [isDeleting, setIsDeleting] = useState(false);
 
     const authorName =
-        typeof wave.author === "object" && wave.author
-            ? `${wave.author.firstName ?? ""} ${wave.author.lastName ?? ""}`.trim() || "Anonymous"
-            : typeof wave.author === "string"
-                ? wave.author
-                : "Anonymous";
+        wave.isAnonymous && wave.anonymousAlias
+            ? wave.anonymousAlias
+            : typeof wave.author === "object" && wave.author
+                ? `${wave.author.firstName ?? ""} ${wave.author.lastName ?? ""}`.trim() || "Anonymous"
+                : typeof wave.author === "string"
+                    ? wave.author
+                    : "Anonymous";
 
     const timestamp = wave.createdAt
         ? new Date(wave.createdAt).toLocaleDateString("en-US", {
@@ -153,8 +155,11 @@ const WaveHistoryCard = ({ wave, onDelete }: WaveHistoryCardProps) => {
                             size="lg"
                             responsive
                             bgColor="bg-[#FFC37B]"
-                            className="shrink-0"
-                        />
+                            className="shrink-0" pictureUrl={
+                                wave.isAnonymous && wave.anonymousProfilePicture
+                                    ? wave.anonymousProfilePicture
+                                    : undefined
+                            } />
                         {/* Name + timestamp */}
                         <div className="flex flex-col">
                             <span className="font-['Poppins',sans-serif] font-semibold text-[13px] md:text-[15px] text-black leading-normal">

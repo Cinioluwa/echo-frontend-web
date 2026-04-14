@@ -46,11 +46,13 @@ const InlineWavePreview = ({ pingId }: InlineWavePreviewProps) => {
             <div className="flex flex-col xl:flex-row gap-2.5 md:gap-5 w-full">
                 {displayedWaves.map((wave) => {
                     const authorName =
-                        typeof wave.author === "object" && wave.author
-                            ? `${wave.author.firstName ?? ""} ${wave.author.lastName ?? ""}`.trim() || "Anonymous"
-                            : typeof wave.author === "string"
-                                ? wave.author
-                                : "Anonymous";
+                        wave.isAnonymous && wave.anonymousAlias
+                            ? wave.anonymousAlias
+                            : typeof wave.author === "object" && wave.author
+                                ? `${wave.author.firstName ?? ""} ${wave.author.lastName ?? ""}`.trim() || "Anonymous"
+                                : typeof wave.author === "string"
+                                    ? wave.author
+                                    : "Anonymous";
 
                     const timestamp = wave.createdAt
                         ? new Date(wave.createdAt).toLocaleDateString("en-US", {
@@ -73,6 +75,11 @@ const InlineWavePreview = ({ pingId }: InlineWavePreviewProps) => {
                                     size="sm"
                                     responsive
                                     bgColor="bg-[#F49B31]"
+                                    pictureUrl={
+                                        wave.isAnonymous && wave.anonymousProfilePicture
+                                            ? wave.anonymousProfilePicture
+                                            : undefined
+                                    }
                                 />
                                 <div className="flex flex-col gap-[3px] md:gap-[5px]">
                                     <span className="font-['Poppins',sans-serif] font-semibold text-[8px] md:text-[11px] text-black whitespace-nowrap leading-normal">

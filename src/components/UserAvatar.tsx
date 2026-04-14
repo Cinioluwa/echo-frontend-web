@@ -21,6 +21,7 @@ interface UserAvatarProps {
     className?: string;
     initialsOnly?: boolean;
     bgColor?: string;
+    pictureUrl?: string; // Custom picture URL (takes precedence over user.profilePicture)
 }
 
 const sizeClasses = {
@@ -49,8 +50,26 @@ const UserAvatar = ({
     initialsOnly = false,
     responsive = false,
     bgColor = "bg-[#f49b31]",
+    pictureUrl,
 }: UserAvatarProps) => {
     const [imageLoadError, setImageLoadError] = useState(false);
+
+    // If custom picture URL provided, use it
+    if (pictureUrl && !imageLoadError) {
+        const sizeClass = responsive ? responsiveSizeClasses[size] : sizeClasses[size];
+        return (
+            <div
+                className={`${sizeClass} rounded-full overflow-hidden shrink-0 ${className}`}
+            >
+                <img
+                    src={pictureUrl}
+                    alt="Avatar"
+                    className="w-full h-full object-cover"
+                    onError={() => setImageLoadError(true)}
+                />
+            </div>
+        );
+    }
 
     // No user data - show user icon
     if (!user) {

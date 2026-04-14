@@ -178,18 +178,9 @@ const Layout = () => {
             {/* ── Mark as Resolved bar ─────────────────── */}
             {ping &&
               (() => {
-                // Extract ping author ID, handling both string and object author types
-                const pingAuthorId =
-                  typeof ping.author === "object" && ping.author !== null
-                    ? ping.author.id
-                    : null;
-                console.log(
-                  "Ping author ID:",
-                  pingAuthorId,
-                  "Current user ID:",
-                  currentUser?.id,
-                );
-                const isOwner = currentUser?.id === pingAuthorId;
+                const isOwner = ping.isAnonymous
+                  ? (ping.isOwner ?? false)
+                  : (currentUser?.id === (typeof ping.author === "object" ? ping.author?.id : undefined));
                 const isResolved = !!ping.resolvedAt;
                 return isOwner && !isResolved ? (
                   <MarkAsResolvedBar

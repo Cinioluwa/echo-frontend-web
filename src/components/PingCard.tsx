@@ -46,13 +46,18 @@ const formatTimestamp = (dateString: string) => {
     return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
 };
 
-const getAuthorName = (author: Ping["author"]) => {
-    if (!author) return "Anonymous";
-    if (typeof author === "string") return author;
-    if (author.firstName || author.lastName) {
-        return (
-            `${author.firstName ?? ""} ${author.lastName ?? ""}`.trim() || "Anonymous"
-        );
+const getAuthorName = (ping: Ping) => {
+    // If anonymous, use the alias
+    if (ping.isAnonymous && ping.anonymousAlias) {
+        return ping.anonymousAlias;
+    }
+    // Otherwise use the author's name
+    if (ping.author && typeof ping.author === "object") {
+        if (ping.author.firstName || ping.author.lastName) {
+            return (
+                `${ping.author.firstName ?? ""} ${ping.author.lastName ?? ""}`.trim() || "Anonymous"
+            );
+        }
     }
     return "Anonymous";
 };
@@ -71,7 +76,7 @@ const PingCard = ({
     onCommentClick,
     onDelete,
 }: PingCardProps) => {
-    const authorName = getAuthorName(ping.author);
+    const authorName = getAuthorName(ping);
     const categoryName =
         ping.categoryId && categories[ping.categoryId]
             ? categories[ping.categoryId].name
@@ -93,6 +98,11 @@ const PingCard = ({
                                 : null
                         }
                         size="md"
+                        pictureUrl={
+                            ping.isAnonymous && ping.anonymousProfilePicture
+                                ? ping.anonymousProfilePicture
+                                : undefined
+                        }
                         bgColor="bg-[#ffc37b]"
                     />
                     <div className="flex flex-col">

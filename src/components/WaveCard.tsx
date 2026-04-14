@@ -46,13 +46,18 @@ const formatTimestamp = (dateString: string) => {
   return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
 };
 
-const getAuthorName = (author: Wave["author"]) => {
-  if (!author) return "Anonymous";
-  if (typeof author === "string") return author;
-  if (author.firstName || author.lastName) {
-    return (
-      `${author.firstName ?? ""} ${author.lastName ?? ""}`.trim() || "Anonymous"
-    );
+const getAuthorName = (wave: Wave) => {
+  // If anonymous, use the alias
+  if (wave.isAnonymous && wave.anonymousAlias) {
+    return wave.anonymousAlias;
+  }
+  // Otherwise use the author's name
+  if (wave.author && typeof wave.author === "object") {
+    if (wave.author.firstName || wave.author.lastName) {
+      return (
+        `${wave.author.firstName ?? ""} ${wave.author.lastName ?? ""}`.trim() || "Anonymous"
+      );
+    }
   }
   return "Anonymous";
 };
@@ -77,7 +82,7 @@ const WaveCard = React.memo(
       (state) => state.isToggling[`wave-${currentWave.id}`] || false,
     );
 
-    const authorName = getAuthorName(currentWave.author);
+    const authorName = getAuthorName(currentWave);
     const surgeCount =
       currentWave.surgeCount || currentWave._count?.surges || 0;
 
@@ -138,8 +143,11 @@ const WaveCard = React.memo(
                     : null
                 }
                 size="md"
-                bgColor="bg-[#ffc37b]"
-              />
+                bgColor="bg-[#ffc37b]" pictureUrl={
+                  currentWave.isAnonymous && currentWave.anonymousProfilePicture
+                    ? currentWave.anonymousProfilePicture
+                    : undefined
+                } />
               <div className="flex flex-col">
                 <span className="font-['Poppins',sans-serif] font-semibold text-[14px] text-black">
                   {authorName}
@@ -199,8 +207,8 @@ const WaveCard = React.memo(
                   disabled={isToggling}
                   aria-label={hasSurged ? "Remove surge" : "Surge"}
                   className={`flex items-center gap-[5px] px-2 py-1 rounded-[15px] border border-black cursor-pointer transition-colors duration-300 disabled:opacity-50 ${hasSurged
-                      ? "bg-[#f49b31] text-white border-[#f49b31]"
-                      : "bg-[#fef5ea] text-[#4a504e]"
+                    ? "bg-[#f49b31] text-white border-[#f49b31]"
+                    : "bg-[#fef5ea] text-[#4a504e]"
                     }`}
                   style={{
                     transition:
