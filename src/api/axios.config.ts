@@ -19,6 +19,14 @@ let isTokenExpired = false;
 // Request interceptor to add auth token
 api.interceptors.request.use(
   (config) => {
+    // Let the browser set the multipart boundary for FormData payloads.
+    // Keeping the default JSON content-type here causes file uploads to fail.
+    if (config.data instanceof FormData) {
+      const headers = config.headers as Record<string, unknown>;
+      delete headers["Content-Type"];
+      delete headers["content-type"];
+    }
+
     const token = localStorage.getItem("authToken");
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
