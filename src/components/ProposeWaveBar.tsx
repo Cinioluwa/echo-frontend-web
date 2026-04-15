@@ -13,6 +13,7 @@
 import { useState, useRef, useEffect } from "react";
 import { useAuthStore, useWavesStore } from "../stores";
 import { waveService, uploadService } from "../api/services";
+import type { Wave } from "../api/types";
 import UserAvatar from "./UserAvatar";
 
 const waveIcon = "/assets/icon/wave.svg";
@@ -22,7 +23,7 @@ interface Props {
   pingId: string;
   pingTitle?: string;
   pingCreatedAt?: string;
-  onWaveProposed?: () => void;
+  onWaveProposed?: (createdWave: Wave) => void;
 }
 
 interface UploadedFile {
@@ -151,7 +152,7 @@ const ProposeWaveBar = ({ pingId, onWaveProposed }: Props) => {
       setSolution("");
       setUploadedFiles([]);
       setIsActive(false);
-      onWaveProposed?.();
+      onWaveProposed?.(createdWave);
     } catch (err: any) {
       console.error("Failed to propose wave:", err);
       setError(getErrorMessage(err));

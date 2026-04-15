@@ -82,7 +82,12 @@ const UnifiedPingCard = ({
     media.mimeType.startsWith("image/"),
   );
 
-  const surgeCount = currentPing.surgeCount || currentPing._count?.surges || 0;
+  const initialHasSurged = currentPing.hasSurged ?? false;
+  const baseSurgeCount = currentPing.surgeCount ?? currentPing._count?.surges ?? 0;
+  const surgeCount = Math.max(
+    0,
+    baseSurgeCount + (hasSurged ? 1 : 0) - (initialHasSurged ? 1 : 0),
+  );
   const waveCount =
     currentPing._count?.waves ?? currentPing.waves?.length ?? 0;
   const commentCount = currentPing._count?.comments || 0;

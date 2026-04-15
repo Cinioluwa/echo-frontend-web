@@ -23,6 +23,12 @@ const PostActionMenu = ({
 
   const idString = String(entityId);
   const [loading, setLoading] = useState(false);
+  const menuPanelClass =
+    "absolute right-2 top-14 px-2 py-2 z-50 w-[186px] md:w-56 rounded-xl bg-white shadow-md border border-gray-100 overflow-hidden";
+  const menuItemClass =
+    "w-full rounded-[6px] flex items-center gap-2.5 px-3 py-2 text-left text-[13px] leading-[1.2] text-gray-700 hover:bg-gray-100 transition disabled:opacity-50";
+  const menuStatusItemClass =
+    "w-full rounded-[6px] px-3 py-2 text-left text-[13px] leading-[1.2] text-gray-700 hover:bg-gray-100 transition disabled:opacity-50";
 
 
   const handleWaveStatusUpdate = async (
@@ -54,14 +60,14 @@ const PostActionMenu = ({
       />
 
       {/* Action menu */}
-      <div className="absolute right-4 top-14 px-3 py-2 z-50 w-56 rounded-xl bg-white shadow-md border border-gray-100 overflow-hidden">
+      <div className={menuPanelClass}>
         {entityType === 'ping' && (
           <Link
             to={`/admin/feed/details/${idString}`}
             onClick={() => setOpenMenu(false)}
-            className="w-full rounded border-b border-gray-300 flex items-center gap-2 px-4 py-3 mb-2 text-left text-sm text-gray-700 hover:bg-gray-100 transition"
+            className={`${menuItemClass} border-b border-gray-200 rounded-none mb-1.5 pb-2.5`}
           >
-            <FiInfo />
+            <FiInfo className="w-[17px] h-[17px]" />
             More Details
           </Link>
         )}
@@ -77,7 +83,7 @@ const PostActionMenu = ({
             <button
               onClick={() => handleWaveStatusUpdate('POSTED')}
               disabled={loading}
-              className="w-full rounded px-4 py-3 text-left text-sm text-gray-700 hover:bg-gray-100 transition disabled:opacity-50"
+              className={menuStatusItemClass}
             >
               Posted
             </button>
@@ -85,7 +91,7 @@ const PostActionMenu = ({
             <button
               onClick={() => handleWaveStatusUpdate('UNDER_REVIEW')}
               disabled={loading}
-              className="w-full rounded px-4 py-3 text-left text-sm text-gray-700 hover:bg-gray-100 transition disabled:opacity-50"
+              className={menuStatusItemClass}
             >
               Under Review
             </button>
@@ -93,7 +99,7 @@ const PostActionMenu = ({
             <button
               onClick={() => handleWaveStatusUpdate('APPROVED')}
               disabled={loading}
-              className="w-full rounded px-4 py-3 text-left text-sm text-gray-700 hover:bg-gray-100 transition disabled:opacity-50"
+              className={menuStatusItemClass}
             >
               Approve
             </button>
@@ -101,7 +107,7 @@ const PostActionMenu = ({
             <button
               onClick={() => handleWaveStatusUpdate('REJECTED')}
               disabled={loading}
-              className="w-full rounded px-4 py-3 text-left text-sm text-gray-700 hover:bg-gray-100 transition disabled:opacity-50"
+              className={menuStatusItemClass}
             >
               Reject
             </button>

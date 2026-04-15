@@ -172,6 +172,7 @@ export interface Wave {
   title?: string;
   description?: string;
   solution: string;
+  media?: Media[];
   category?: CategoryData;
   ping?: {
     id: number;

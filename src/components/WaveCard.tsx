@@ -16,7 +16,7 @@ import UserAvatar from "./UserAvatar";
 import DeleteConfirmationModal from "./DeleteConfirmationModal";
 import WaveActionsDropdown from "./WaveActionsDropdown";
 import { calculateWaveBadge } from "../utils/badgeUtils";
-import type { Wave } from "../api/types";
+import type { Wave, Media } from "../api/types";
 import { Tooltip } from "./Tooltip";
 
 interface WaveCardProps {
@@ -62,6 +62,17 @@ const getAuthorName = (wave: Wave) => {
   return "Anonymous";
 };
 
+const getWaveMedia = (wave: Wave): Media[] => {
+  const maybeWave = wave as Wave & {
+    medias?: Media[];
+    attachments?: Media[];
+  };
+  const media = maybeWave.media ?? maybeWave.medias ?? maybeWave.attachments;
+
+  if (!Array.isArray(media)) return [];
+  return media.filter((item): item is Media => Boolean(item?.url));
+};
+
 // ─── WaveCard Component ─────────────────────────────────────────────────────
 
 const WaveCard = React.memo(
@@ -83,14 +94,30 @@ const WaveCard = React.memo(
     );
 
     const authorName = getAuthorName(currentWave);
-    const surgeCount =
-      currentWave.surgeCount || currentWave._count?.surges || 0;
-
-    console.log(`🌊 WaveCard [ID: ${wave.id}]`, {
-      authorRaw: currentWave.author,
-      authorName,
-      solution: currentWave.solution?.substring(0, 50),
-    });
+    const initialHasSurged = currentWave.hasSurged ?? false;
+    const baseSurgeCount =
+      currentWave.surgeCount ?? currentWave._count?.surges ?? 0;
+    const surgeCount = Math.max(
+      0,
+      baseSurgeCount + (hasSurged ? 1 : 0) - (initialHasSurged ? 1 : 0),
+    );
+    const waveMedia = getWaveMedia(currentWave);
+    const imageMedia = waveMedia.filter((item) =>
+      item.mimeType?.startsWith("image/"),
+    );
+    const videoMedia = waveMedia.filter((item) =>
+      item.mimeType?.startsWith("video/"),
+    );
+    const fileMedia = waveMedia.filter(
+      (item) =>
+        !item.mimeType?.startsWith("image/") &&
+        !item.mimeType?.startsWith("video/"),
+    );
+    const previewMedia = imageMedia[0] ?? videoMedia[0];
+    const remainingMediaCount = Math.max(
+      0,
+      waveMedia.length - (previewMedia ? 1 : 0),
+    );
 
     const handleSurge = async (e: React.MouseEvent) => {
       e.stopPropagation();
@@ -189,7 +216,7 @@ const WaveCard = React.memo(
           {/* Body: solution text + surge */}
           <div className="flex items-start justify-between gap-2.5">
             <p className="flex-1 font-['Poppins',sans-serif] font-medium text-[12px] text-black leading-relaxed">
-              {wave.solution}
+              {currentWave.solution}
             </p>
 
             <div className="flex flex-col items-center gap-2 shrink-0">
@@ -235,6 +262,52 @@ const WaveCard = React.memo(
               </Tooltip>
             </div>
           </div>
+
+          {previewMedia && (
+            <div className="relative overflow-hidden rounded-[12px] border border-black/10 bg-[#F8F7F3]">
+              {previewMedia.mimeType?.startsWith("video/") ? (
+                <video
+                  src={previewMedia.url}
+                  controls
+                  preload="metadata"
+                  className="w-full max-h-[320px] object-cover"
+                />
+              ) : (
+                <img
+                  src={previewMedia.url}
+                  alt="Wave attachment"
+                  className="w-full max-h-[320px] object-cover"
+                  loading="lazy"
+                />
+              )}
+              {remainingMediaCount > 0 && (
+                <span className="absolute right-2 top-2 bg-black/70 text-white text-[11px] px-2 py-0.5 rounded-full">
+                  +{remainingMediaCount}
+                </span>
+              )}
+            </div>
+          )}
+
+          {!previewMedia && fileMedia.length > 0 && (
+            <div className="flex flex-wrap gap-2">
+              {fileMedia.slice(0, 2).map((item) => (
+                <a
+                  key={item.id}
+                  href={item.url}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="text-[12px] font-medium text-[#4A504E] bg-[#FEF5EA] border border-[#FFC37B] rounded-[12px] px-2.5 py-1 hover:bg-[#FDE8CD] transition-colors"
+                >
+                  {item.filename ?? "Attachment"}
+                </a>
+              ))}
+              {fileMedia.length > 2 && (
+                <span className="text-[12px] font-medium text-[#4A504E] px-1 py-1">
+                  +{fileMedia.length - 2} more
+                </span>
+              )}
+            </div>
+          )}
         </div>
 
         {showDeleteModal && (

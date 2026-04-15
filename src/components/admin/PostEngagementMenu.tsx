@@ -28,6 +28,10 @@ const PostEngagementMenu = ({
     wave: false,
     comment: false,
   });
+  const menuPanelClass =
+    "absolute right-0 p-2 bottom-14 z-50 w-[186px] md:w-56 rounded-xl bg-white shadow-md border border-gray-100 overflow-hidden";
+  const menuItemClass =
+    "w-full rounded-[6px] flex items-center gap-2.5 px-3 py-2 text-left text-[13px] leading-[1.2] text-gray-700 hover:bg-gray-100 transition disabled:opacity-50 disabled:cursor-not-allowed";
 
   const handleSurge = async () => {
     try {
@@ -113,9 +117,9 @@ const PostEngagementMenu = ({
       />
 
       {/* Menu */}
-      <div className="absolute right-0 p-3 bottom-14 z-50 w-56 rounded-xl bg-white shadow-md border border-gray-100 overflow-hidden">
+      <div className={menuPanelClass}>
         {error && (
-          <div className="mb-2 p-2 bg-red-50 border border-red-200 rounded text-red-700 text-sm">
+          <div className="mb-2 p-2 bg-red-50 border border-red-200 rounded text-red-700 text-[12px]">
             {error}
           </div>
         )}
@@ -123,27 +127,27 @@ const PostEngagementMenu = ({
         <button
           onClick={handleProposeWave}
           disabled={loading}
-          className="w-full rounded flex items-center gap-3 px-4 py-3 text-left text-sm text-gray-700 hover:bg-gray-100 transition disabled:opacity-50 disabled:cursor-not-allowed"
+          className={menuItemClass}
         >
-          <FiTrendingUp size={18} />
+          <FiTrendingUp size={17} />
           Propose a Wave
         </button>
 
         <button
           onClick={handleSurge}
           disabled={loading}
-          className="w-full rounded flex items-center gap-3 px-4 py-3 text-left text-sm text-gray-700 hover:bg-gray-100 transition disabled:opacity-50 disabled:cursor-not-allowed"
+          className={menuItemClass}
         >
-          <FiZap size={18} />
+          <FiZap size={17} />
           Surge
         </button>
 
         <button
           onClick={handleComment}
           disabled={loading}
-          className="w-full rounded flex items-center gap-3 px-4 py-3 text-left text-sm text-gray-700 hover:bg-gray-100 transition disabled:opacity-50 disabled:cursor-not-allowed"
+          className={menuItemClass}
         >
-          <FiMessageSquare size={18} />
+          <FiMessageSquare size={17} />
           Comment
         </button>
       </div>
