@@ -164,7 +164,7 @@ const ProposeWaveBar = ({ pingId, onWaveProposed }: Props) => {
     <form
       ref={formRef}
       onSubmit={handleSubmit}
-      className="bg-white rounded-[16px] md:rounded-[25px] mb-4 md:mb-5 p-2 md:p-2.5 flex items-start gap-2 md:gap-[13px] w-full max-w-full transition-all duration-300"
+      className="bg-white rounded-[16px] md:rounded-[25px] mb-4 md:mb-5 p-2 md:p-2.5 flex items-start md:items-center gap-2 md:gap-[13px] w-full max-w-full transition-all duration-300"
     >
       {/* Hidden file input */}
       <input
@@ -183,13 +183,13 @@ const ProposeWaveBar = ({ pingId, onWaveProposed }: Props) => {
       </div>
 
       {/* Main input container */}
-      <div className="flex-1 transition-all duration-300">
+      <div className="flex-1 min-w-0 transition-all duration-300">
         {/* Input area - animates height and content */}
         <div className="w-full bg-[#fefefe] border-2 border-[#ffc37b] rounded-[16px] md:rounded-[20px] overflow-hidden transition-all duration-300">
           {/* Expanded state: textarea with controls */}
           <div
             className={`flex flex-col transition-all duration-300 ${isActive
-              ? "max-h-96 opacity-100 px-3 md:px-5 py-1.5"
+              ? "max-h-96 opacity-100 px-3 md:px-4 py-2 md:py-2.5"
               : "max-h-0 opacity-0 overflow-hidden"
               }`}
           >
@@ -199,7 +199,7 @@ const ProposeWaveBar = ({ pingId, onWaveProposed }: Props) => {
               value={solution}
               onChange={handleChange}
               placeholder="What's your solution?"
-              className="flex-1 bg-[#fefefe] border-0 px-0 py-0 text-[13px] md:text-[14px] text-black outline-none resize-none font-['Poppins',sans-serif] font-medium placeholder:text-[#9e9e9e] placeholder:font-medium min-h-[30px] md:min-h-[35px] focus:ring-0"
+              className="flex-1 bg-[#fefefe] border-0 px-0 py-0 text-[13px] md:text-[14px] leading-[1.35] text-black outline-none resize-none font-['Poppins',sans-serif] font-medium placeholder:text-[#9e9e9e] placeholder:font-medium min-h-[24px] md:min-h-[28px] focus:ring-0"
               rows={1}
               disabled={isSubmitting || isUploading}
             />
@@ -230,7 +230,7 @@ const ProposeWaveBar = ({ pingId, onWaveProposed }: Props) => {
             )}
 
             {/* Controls row: attach icon + button */}
-            <div className="flex items-center justify-between">
+            <div className="mt-1.5 md:mt-2 flex items-center justify-between gap-2">
               {/* Attach icon button */}
               <button
                 type="button"
@@ -250,10 +250,10 @@ const ProposeWaveBar = ({ pingId, onWaveProposed }: Props) => {
               <button
                 type="submit"
                 disabled={isSubmitting || isUploading || !solution.trim()}
-                className="bg-[#fef5ea] border border-black rounded-[16px] md:rounded-[20px] px-2 md:px-2.5 py-1 md:py-1.5 flex items-center gap-1 md:gap-[5px] cursor-pointer hover:bg-[#f9eedb] disabled:opacity-50 disabled:cursor-not-allowed transition-colors shrink-0"
+                className="bg-[#fef5ea] border border-black rounded-[16px] md:rounded-[20px] px-2 md:px-2.5 py-1 md:py-1.5 flex items-center gap-1 md:gap-[5px] cursor-pointer hover:bg-[#f9eedb] disabled:opacity-50 disabled:cursor-not-allowed transition-colors shrink-0 self-end"
               >
                 {/* Wave icon */}
-                <img src={waveIcon} alt="Wave" className="size-6 md:size-8" />
+                <img src={waveIcon} alt="Wave" className="size-5 md:size-6" />
                 <span className="font-['Baloo_Bhai_2',sans-serif] font-bold text-[12px] md:text-[14px] text-black uppercase whitespace-nowrap">
                   {isUploading
                     ? "Uploading..."
@@ -271,7 +271,7 @@ const ProposeWaveBar = ({ pingId, onWaveProposed }: Props) => {
             onChange={handleChange}
             onFocus={handleFocus}
             placeholder="What's your solution?"
-            className={`w-full bg-[#fefefe] border-0 px-3 md:px-5 py-2 md:py-2.5 text-[13px] md:text-[14px] text-black outline-none resize-none font-['Poppins',sans-serif] font-medium placeholder:text-[#9e9e9e] placeholder:font-medium focus:ring-0 transition-all duration-300 ${isActive
+            className={`w-full bg-[#fefefe] border-0 px-3 md:px-4 py-2 md:py-2.5 text-[13px] md:text-[14px] leading-[1.35] text-black outline-none resize-none font-['Poppins',sans-serif] font-medium placeholder:text-[#9e9e9e] placeholder:font-medium focus:ring-0 transition-all duration-300 ${isActive
               ? "max-h-0 opacity-0 overflow-hidden pointer-events-none py-0"
               : "max-h-[44px] md:max-h-[50px] opacity-100"
               }`}
@@ -283,7 +283,7 @@ const ProposeWaveBar = ({ pingId, onWaveProposed }: Props) => {
 
       {/* Error message - displayed when active */}
       {error && isActive && (
-        <p className="text-red-500 text-xs px-5 py-1 w-full">{error}</p>
+        <p className="text-red-500 text-xs px-5 py-1 w-full basis-full">{error}</p>
       )}
     </form>
   );

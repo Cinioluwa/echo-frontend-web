@@ -104,16 +104,16 @@ const ProfileDropdown = () => {
 
       {/* Dropdown Menu */}
       {isOpen && (
-        <div className="absolute top-[calc(100%+8px)] right-0 bg-white rounded-lg shadow-lg border border-[#CECECE] z-50 w-[274px] overflow-hidden">
+        <div className="absolute top-[calc(100%+8px)] right-0 bg-white rounded-lg shadow-lg border border-[#CECECE] z-50 w-[220px] md:w-[274px] overflow-hidden">
           {/* User Profile Section */}
-          <div className="border-b border-[#CECECE] p-4 flex items-center gap-3">
+          <div className="border-b border-[#CECECE] p-3 md:p-4 flex items-center gap-2.5 md:gap-3">
             <UserAvatar user={user} size="md" bgColor="bg-[#f49b31]" />
             <div className="flex flex-col gap-0.5 flex-1 min-w-0">
-              <p className="font-medium text-[18px] text-black truncate tracking-[-0.18px]">
+              <p className="font-medium text-[14px] md:text-[16px] text-black truncate tracking-[-0.14px] md:tracking-[-0.16px]">
                 {fullName}
               </p>
               {user?.email && (
-                <p className="font-medium text-[16px] text-[#999999] truncate tracking-[-0.16px]">
+                <p className="font-medium text-[12px] md:text-[14px] text-[#999999] truncate tracking-[-0.12px] md:tracking-[-0.14px]">
                   {user.email}
                 </p>
               )}
@@ -123,10 +123,10 @@ const ProfileDropdown = () => {
           {/* Profile Settings */}
           <button
             onClick={handleProfileSettings}
-            className="w-full px-4 py-3 flex items-center gap-3 hover:bg-gray-50 transition-colors text-left"
+            className="w-full px-3.5 md:px-4 py-2.5 md:py-3 flex items-center gap-2.5 md:gap-3 hover:bg-gray-50 transition-colors text-left"
           >
-            <Settings className="w-5 h-5 text-gray-600" />
-            <span className="font-medium text-[18px] text-black">
+            <Settings className="w-[18px] h-[18px] md:w-5 md:h-5 text-gray-600" />
+            <span className="font-medium text-[13px] md:text-[15px] text-black">
               Profile Settings
             </span>
           </button>
@@ -137,10 +137,10 @@ const ProfileDropdown = () => {
               setIsOpen(false);
               setOpenOnboarding(true);
             }}
-            className="w-full px-4 py-3 flex items-center gap-3 hover:bg-gray-50 transition-colors text-left"
+            className="w-full px-3.5 md:px-4 py-2.5 md:py-3 flex items-center gap-2.5 md:gap-3 hover:bg-gray-50 transition-colors text-left"
           >
-            <HelpCircle className="w-5 h-5 text-gray-600" />
-            <span className="font-medium text-[18px] text-black">Help</span>
+            <HelpCircle className="w-[18px] h-[18px] md:w-5 md:h-5 text-gray-600" />
+            <span className="font-medium text-[13px] md:text-[15px] text-black">Help</span>
           </button>
 
           {/* Divider */}
@@ -149,10 +149,10 @@ const ProfileDropdown = () => {
           {/* Sign Out */}
           <button
             onClick={handleLogout}
-            className="w-full px-4 py-3 flex items-center gap-3 hover:bg-gray-50 transition-colors text-left"
+            className="w-full px-3.5 md:px-4 py-2.5 md:py-3 flex items-center gap-2.5 md:gap-3 hover:bg-gray-50 transition-colors text-left"
           >
-            <LogOut className="w-5 h-5 text-gray-600" />
-            <span className="font-medium text-[18px] text-black">Sign Out</span>
+            <LogOut className="w-[18px] h-[18px] md:w-5 md:h-5 text-gray-600" />
+            <span className="font-medium text-[13px] md:text-[15px] text-black">Sign Out</span>
           </button>
         </div>
       )}

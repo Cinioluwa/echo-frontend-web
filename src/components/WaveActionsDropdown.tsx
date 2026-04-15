@@ -30,6 +30,10 @@ const WaveActionsDropdown = ({
     const [showCopyToast, setShowCopyToast] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
     const buttonRef = useRef<HTMLButtonElement>(null);
+    const menuItemClass =
+        "w-full flex gap-2.5 items-center py-1.5 px-2 hover:bg-gray-50 rounded-[6px] transition-colors text-left";
+    const menuLabelClass =
+        "font-['Poppins',sans-serif] font-medium text-[13px] leading-[1.2] text-black whitespace-nowrap";
 
     // Close dropdown when clicking outside
     useEffect(() => {
@@ -115,16 +119,16 @@ const WaveActionsDropdown = ({
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: -8, scale: 0.95 }}
                         transition={{ duration: 0.15 }}
-                        className="absolute right-0 top-full mt-2 bg-white rounded-[5px] shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)] py-5 px-[15px] min-w-[220px] z-50"
+                        className="absolute right-0 top-full mt-2 bg-white rounded-[8px] shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)] py-2 px-2 min-w-[172px] z-50"
                         onClick={(e) => e.stopPropagation()}
                     >
                         {/* Copy link */}
                         <button
                             onClick={handleCopyLink}
-                            className="w-full flex gap-[15px] items-center py-[7.5px] px-0 hover:bg-gray-50 rounded-[5px] transition-colors text-left"
+                            className={menuItemClass}
                         >
-                            <Link2 width={30} height={30} className="text-black shrink-0" />
-                            <span className="font-['Poppins',sans-serif] font-medium text-[18px] text-black">
+                            <Link2 width={17} height={17} className="text-black shrink-0" />
+                            <span className={menuLabelClass}>
                                 Copy link
                             </span>
                         </button>
@@ -132,10 +136,10 @@ const WaveActionsDropdown = ({
                         {/* Report */}
                         <button
                             onClick={handleReport}
-                            className="w-full flex gap-[15px] items-center py-[7.5px] px-0 hover:bg-gray-50 rounded-[5px] transition-colors text-left mt-[15px]"
+                            className={`${menuItemClass} mt-1`}
                         >
-                            <Flag width={30} height={30} className="text-black shrink-0" />
-                            <span className="font-['Poppins',sans-serif] font-medium text-[18px] text-black">
+                            <Flag width={17} height={17} className="text-black shrink-0" />
+                            <span className={menuLabelClass}>
                                 Report
                             </span>
                         </button>
@@ -144,14 +148,14 @@ const WaveActionsDropdown = ({
                         {isOwner && (
                             <button
                                 onClick={handleDelete}
-                                className="w-full flex gap-[15px] items-center py-[7.5px] px-0 hover:bg-red-50 rounded-[5px] transition-colors text-left mt-[15px]"
+                                className={`${menuItemClass} mt-1 hover:bg-red-50`}
                             >
                                 <Trash2
-                                    width={30}
-                                    height={30}
+                                    width={17}
+                                    height={17}
                                     className="text-red-500 shrink-0"
                                 />
-                                <span className="font-['Poppins',sans-serif] font-medium text-[18px] text-black">
+                                <span className={menuLabelClass}>
                                     Delete
                                 </span>
                             </button>
