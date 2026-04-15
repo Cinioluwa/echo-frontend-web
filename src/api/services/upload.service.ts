@@ -36,9 +36,7 @@ const uploadService = {
   uploadProfilePicture: async (file: File) => {
     const formData = new FormData();
     formData.append("file", file);
-    const res = await api.post("/uploads/profile", formData, {
-      headers: { "Content-Type": "multipart/form-data" },
-    });
+    const res = await api.patch("/uploads/profile", formData);
     return res.data;
   },
 
