@@ -48,12 +48,9 @@ const uploadService = {
   uploadAnonProfilePicture: async (file: File): Promise<string> => {
     const formData = new FormData();
     formData.append("file", file);
-    const res = await api.post<UploadedMedia>(
+    const res = await api.patch<UploadedMedia>(
       "/uploads/anonymous-profile",
       formData,
-      {
-        headers: { "Content-Type": "multipart/form-data" },
-      },
     );
     return res.data.url;
   },
