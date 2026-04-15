@@ -199,7 +199,7 @@ const ProposeWaveBar = ({ pingId, onWaveProposed }: Props) => {
               value={solution}
               onChange={handleChange}
               placeholder="What's your solution?"
-              className="flex-1 bg-[#fefefe] border-0 px-0 py-0 text-[13px] md:text-[14px] text-[#454545] outline-none resize-none font-['Poppins:Medium',sans-serif] placeholder:text-[#9e9e9e] placeholder:italic min-h-[30px] md:min-h-[35px] focus:ring-0"
+              className="flex-1 bg-[#fefefe] border-0 px-0 py-0 text-[13px] md:text-[14px] text-black outline-none resize-none font-['Poppins',sans-serif] font-medium placeholder:text-[#9e9e9e] placeholder:font-medium min-h-[30px] md:min-h-[35px] focus:ring-0"
               rows={1}
               disabled={isSubmitting || isUploading}
             />
@@ -254,7 +254,7 @@ const ProposeWaveBar = ({ pingId, onWaveProposed }: Props) => {
               >
                 {/* Wave icon */}
                 <img src={waveIcon} alt="Wave" className="size-6 md:size-8" />
-                <span className="font-['Baloo_Bhai_2:Bold',sans-serif] font-bold text-[12px] md:text-[14px] text-black uppercase whitespace-nowrap">
+                <span className="font-['Baloo_Bhai_2',sans-serif] font-bold text-[12px] md:text-[14px] text-black uppercase whitespace-nowrap">
                   {isUploading
                     ? "Uploading..."
                     : isSubmitting
@@ -271,7 +271,7 @@ const ProposeWaveBar = ({ pingId, onWaveProposed }: Props) => {
             onChange={handleChange}
             onFocus={handleFocus}
             placeholder="What's your solution?"
-            className={`w-full bg-[#fefefe] border-0 px-3 md:px-5 py-2 md:py-2.5 text-[13px] md:text-[14px] text-[#454545] outline-none resize-none font-['Poppins:Medium',sans-serif] placeholder:text-[#9e9e9e] focus:ring-0 transition-all duration-300 ${isActive
+            className={`w-full bg-[#fefefe] border-0 px-3 md:px-5 py-2 md:py-2.5 text-[13px] md:text-[14px] text-black outline-none resize-none font-['Poppins',sans-serif] font-medium placeholder:text-[#9e9e9e] placeholder:font-medium focus:ring-0 transition-all duration-300 ${isActive
               ? "max-h-0 opacity-0 overflow-hidden pointer-events-none py-0"
               : "max-h-[44px] md:max-h-[50px] opacity-100"
               }`}

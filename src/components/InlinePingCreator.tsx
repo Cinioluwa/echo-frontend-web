@@ -218,7 +218,7 @@ const InlinePingCreator = forwardRef<InlinePingCreatorHandle>((_, ref) => {
       >
         <UserAvatar user={user} size="lg" responsive bgColor="bg-[#FFC37B]" />
         <div className="flex-1 h-11 md:h-[50px] border-2 border-[#FFC37B] rounded-[16px] md:rounded-[20px] flex items-center pl-4 md:pl-[27px]">
-          <span className="font-['Poppins',sans-serif] font-semibold italic text-[13px] md:text-[14px] text-black/70 select-none">
+          <span className="font-['Poppins',sans-serif] font-medium text-[13px] md:text-[14px] text-[#9e9e9e] select-none">
             What's the problem?
           </span>
         </div>
