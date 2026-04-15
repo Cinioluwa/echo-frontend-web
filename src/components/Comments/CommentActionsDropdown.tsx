@@ -11,12 +11,14 @@ import Toast from "../shared/Toast";
 
 interface CommentActionsDropdownProps {
     commentId: number | string;
+    pingId: string;
     isOwner: boolean;
     onDelete: () => void;
 }
 
 const CommentActionsDropdown = ({
     commentId,
+    pingId,
     isOwner,
     onDelete,
 }: CommentActionsDropdownProps) => {
@@ -48,7 +50,7 @@ const CommentActionsDropdown = ({
 
     const handleCopyLink = (e: React.MouseEvent) => {
         e.stopPropagation();
-        const url = `${window.location.origin}/comments/${commentId}`;
+        const url = `${window.location.origin}/feed/${pingId}#comment-${commentId}`;
         navigator.clipboard.writeText(url);
         setIsOpen(false);
         setShowCopyToast(true);

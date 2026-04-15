@@ -189,6 +189,7 @@ const CommentItem = ({ comment, onRefresh: _onRefresh, pingId }: Props) => {
                             {/* Dots vertical button with dropdown */}
                             <CommentActionsDropdown
                                 commentId={comment.id}
+                                pingId={pingId}
                                 isOwner={canDelete}
                                 onDelete={handleShowDeleteModal}
                             />
