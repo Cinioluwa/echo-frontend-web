@@ -5,7 +5,7 @@ import type { Organization } from "../types/index";
 // Unauthed axios instance — used for endpoints that must not carry a Bearer token
 // (e.g. the claim flow, which is a pre-registration step)
 const unauthApi = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL || "http://127.0.0.1:3000/api",
+  baseURL: "https://echo-backend-twvk.onrender.com/api",
   timeout: 10000,
   headers: { "Content-Type": "application/json" },
 });

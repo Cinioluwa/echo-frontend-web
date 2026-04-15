@@ -13,30 +13,73 @@ import { waveService } from "../../api/services";
 import UserAvatar from "../UserAvatar";
 import type { Wave } from "../../api/types";
 
+type WavePreviewMode = "embedded-only" | "fetch-if-missing";
+
 interface InlineWavePreviewProps {
-    pingId: number;
+    pingId?: number;
+    waves?: Wave[];
+    mode?: WavePreviewMode;
 }
 
-const InlineWavePreview = ({ pingId }: InlineWavePreviewProps) => {
-    const [waves, setWaves] = useState<Wave[]>([]);
-    const [isLoading, setIsLoading] = useState(true);
+const InlineWavePreview = ({
+    pingId,
+    waves: embeddedWaves = [],
+    mode = "fetch-if-missing",
+}: InlineWavePreviewProps) => {
+    const [fetchedWaves, setFetchedWaves] = useState<Wave[]>([]);
+    const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
+    const hasEmbeddedWaves = embeddedWaves.length > 0;
+
     useEffect(() => {
+        if (
+            mode !== "fetch-if-missing" ||
+            hasEmbeddedWaves ||
+            typeof pingId !== "number"
+        ) {
+            setFetchedWaves([]);
+            setIsLoading(false);
+            setError(null);
+            return;
+        }
+
+        let isCancelled = false;
         setIsLoading(true);
         setError(null);
+
         waveService
             .getWavesForPing(String(pingId), { limit: 2 })
-            .then((res) => setWaves(res.data))
-            .catch(() => setError("Failed to load waves"))
-            .finally(() => setIsLoading(false));
-    }, [pingId]);
+            .then((res) => {
+                if (!isCancelled) {
+                    setFetchedWaves(res.data);
+                }
+            })
+            .catch(() => {
+                if (!isCancelled) {
+                    setError("Failed to load waves");
+                }
+            })
+            .finally(() => {
+                if (!isCancelled) {
+                    setIsLoading(false);
+                }
+            });
 
-    if (isLoading) return null;
-    if (error) return <p className="text-red-500 text-xs">{error}</p>;
-    if (!waves || waves.length === 0) return null;
+        return () => {
+            isCancelled = true;
+        };
+    }, [hasEmbeddedWaves, mode, pingId]);
 
-    const displayedWaves = waves.slice(0, 2);
+    const displayedWaves = (hasEmbeddedWaves ? embeddedWaves : fetchedWaves).slice(
+        0,
+        2,
+    );
+
+    if (isLoading && displayedWaves.length === 0) return null;
+    if (error && displayedWaves.length === 0)
+        return <p className="text-red-500 text-xs">{error}</p>;
+    if (displayedWaves.length === 0) return null;
 
     return (
         <div className="flex flex-col gap-[13px] w-full max-w-full">

@@ -2,8 +2,7 @@ import axios from "axios";
 import { parseNetworkError, NetworkErrorType } from "../utils/networkUtils";
 
 // API Base URL for both HTTP and WebSocket connections
-export const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL || "http://127.0.0.1:3000/api";
+export const API_BASE_URL = "https://echo-backend-twvk.onrender.com/api";
 
 // Create axios instance with base configuration
 const api = axios.create({

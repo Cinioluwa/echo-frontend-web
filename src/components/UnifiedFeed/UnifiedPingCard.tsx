@@ -27,12 +27,14 @@ interface UnifiedPingCardProps {
   ping: Ping;
   isHistoryContext?: boolean;
   weeklyTop3Ids?: number[];
+  wavePreviewMode?: "embedded-only" | "fetch-if-missing";
 }
 
 const UnifiedPingCard = ({
   ping,
   isHistoryContext = false,
   weeklyTop3Ids = [],
+  wavePreviewMode = "fetch-if-missing",
 }: UnifiedPingCardProps) => {
   const navigate = useNavigate();
   const currentUser = useAuthStore((state) => state.user);
@@ -81,7 +83,8 @@ const UnifiedPingCard = ({
   );
 
   const surgeCount = currentPing.surgeCount || currentPing._count?.surges || 0;
-  const waveCount = currentPing._count?.waves || 0;
+  const waveCount =
+    currentPing._count?.waves ?? currentPing.waves?.length ?? 0;
   const commentCount = currentPing._count?.comments || 0;
 
   const handleCardClick = () => {
@@ -380,7 +383,11 @@ const UnifiedPingCard = ({
         <div className="h-px w-full bg-black/10" />
 
         {/* ─── Inline Wave Preview ─────────────────── */}
-        <InlineWavePreview pingId={currentPing.id} />
+        <InlineWavePreview
+          pingId={currentPing.id}
+          waves={currentPing.waves}
+          mode={wavePreviewMode}
+        />
       </div>
 
       {showDeleteModal && (

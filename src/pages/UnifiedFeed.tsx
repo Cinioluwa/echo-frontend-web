@@ -133,7 +133,11 @@ const UnifiedFeed = () => {
         <div className="flex flex-col gap-[15px] w-full">
           {pings.map((ping) => (
             <div className="relative group" key={ping.id}>
-              <UnifiedPingCard ping={ping} weeklyTop3Ids={weeklyTop3Ids} />
+              <UnifiedPingCard
+                ping={ping}
+                weeklyTop3Ids={weeklyTop3Ids}
+                wavePreviewMode="embedded-only"
+              />
               <div className="absolute inset-0 group-hover:bg-black/6 cursor-pointer pointer-events-none rounded-[10px]" />
             </div>
           ))}
