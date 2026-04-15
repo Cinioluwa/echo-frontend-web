@@ -136,7 +136,7 @@ const UnifiedPingCard = ({
     <>
       <div
         className={[
-          "bg-[#FEFEFE] rounded-[10px] px-5 py-[15px] flex flex-col gap-[15px] cursor-pointer hover:shadow-sm transition-shadow w-full",
+          "bg-[#FEFEFE] rounded-[10px] px-3.5 sm:px-4 md:px-5 py-3 md:py-[15px] flex flex-col gap-[15px] cursor-pointer hover:shadow-sm transition-shadow w-full overflow-hidden",
           isHistoryContext ? "max-w-full min-w-0" : "",
           "text-wrap",
         ].join(" ")}
@@ -159,7 +159,7 @@ const UnifiedPingCard = ({
           >
             <div
               className={[
-                "flex items-center gap-4",
+                "flex items-center gap-2.5 md:gap-4",
                 isHistoryContext ? "min-w-0" : "",
               ].join(" ")}
             >
@@ -187,10 +187,10 @@ const UnifiedPingCard = ({
                   isHistoryContext ? "min-w-0" : "",
                 ].join(" ")}
               >
-                <span className="font-['Poppins',sans-serif] font-semibold text-[13px] md:text-[15px] text-black leading-normal">
+                <span className="font-['Poppins',sans-serif] font-semibold text-[clamp(12px,3vw,15px)] text-black leading-normal">
                   {authorName}
                 </span>
-                <span className="font-['Poppins',sans-serif] font-medium text-[11px] md:text-[13px] text-[#8B8E8D] leading-normal">
+                <span className="font-['Poppins',sans-serif] font-medium text-[clamp(10px,2.4vw,13px)] text-[#8B8E8D] leading-normal">
                   {timestamp}
                 </span>
               </div>
@@ -199,7 +199,7 @@ const UnifiedPingCard = ({
             {/* Badges: Ping status + actions dropdown */}
             <div
               className={[
-                "flex items-center gap-5",
+                "flex items-center gap-2 md:gap-5",
                 isHistoryContext ? "min-w-0" : "",
               ].join(" ")}
             >
@@ -219,12 +219,12 @@ const UnifiedPingCard = ({
                     position="left"
                     delay={0.2}
                   >
-                    <div className="border border-[#626665] rounded-[23px] flex items-center gap-1.5 px-[15px] py-[7px]">
+                    <div className="border border-[#626665] rounded-[23px] flex items-center gap-1 px-2.5 md:px-[15px] py-[5px] md:py-[7px]">
                       <div
                         className="w-[7px] h-[7px] rounded-full"
                         style={{ backgroundColor: badgeConfig.color }}
                       />
-                      <span className="font-['Poppins',sans-serif] font-medium text-[11px] text-black">
+                      <span className="font-['Poppins',sans-serif] font-medium text-[clamp(9px,2.3vw,11px)] text-black whitespace-nowrap">
                         {badgeConfig.label}
                       </span>
                     </div>
@@ -255,7 +255,7 @@ const UnifiedPingCard = ({
                   className="w-[13px] h-[13px] md:w-5 md:h-5 object-contain"
                 />
               )}
-              <span className="font-['Poppins',sans-serif] font-medium text-[13px] md:text-[15px] text-[#171717]">
+              <span className="font-['Poppins',sans-serif] font-medium text-[clamp(11px,2.8vw,15px)] text-[#171717]">
                 {categoryName}
               </span>
             </div>
@@ -269,13 +269,13 @@ const UnifiedPingCard = ({
             isHistoryContext ? "min-w-0" : "",
           ].join(" ")}
         >
-          <h3 className="font-['Poppins',sans-serif] font-semibold text-[14px] md:text-[16px] text-black leading-normal">
+          <h3 className="font-['Poppins',sans-serif] font-semibold text-[clamp(13px,3.1vw,16px)] text-black leading-normal">
             {currentPing.title}
           </h3>
           {currentPing.content && (
             <p
               className={[
-                "font-['Poppins',sans-serif] font-medium text-[12px] md:text-[14px] text-black/70 leading-relaxed text-wrap line-clamp-3",
+                "font-['Poppins',sans-serif] font-medium text-[clamp(11px,2.7vw,14px)] text-black/70 leading-relaxed text-wrap line-clamp-3",
                 isHistoryContext ? "break-all truncate" : "",
               ].join(" ")}
             >
@@ -324,7 +324,7 @@ const UnifiedPingCard = ({
               onClick={handleSurge}
               disabled={isToggling}
               aria-label={hasSurged ? "Remove surge" : "Surge"}
-              className={`flex items-center gap-[5px] px-2.5 py-[5px] rounded-[15px] border border-black cursor-pointer transition-colors disabled:opacity-50 ${hasSurged ? "bg-[#F49B31] text-white border-[#F49B31]" : "bg-[#FEF5EA] text-[#4A504E]"}`}
+              className={`flex items-center gap-[5px] px-2 md:px-2.5 py-1 md:py-[5px] rounded-[15px] border border-black cursor-pointer transition-colors disabled:opacity-50 ${hasSurged ? "bg-[#F49B31] text-white border-[#F49B31]" : "bg-[#FEF5EA] text-[#4A504E]"}`}
             >
               <svg
                 width="12"
@@ -339,14 +339,14 @@ const UnifiedPingCard = ({
                   fill={hasSurged ? "white" : "#4A504E"}
                 />
               </svg>
-              <span className="font-['Poppins',sans-serif] font-semibold text-[12px] md:text-[14px] leading-normal">
+              <span className="font-['Poppins',sans-serif] font-semibold text-[clamp(11px,2.6vw,14px)] leading-normal">
                 {surgeCount}
               </span>
             </button>
           </Tooltip>
 
           {/* Wave + comment counts */}
-          <div className="flex items-center gap-3.5">
+          <div className="flex items-center gap-2 md:gap-3.5 flex-wrap justify-end">
             {/* Wave count */}
             <div
               className="flex items-center gap-0"
@@ -354,11 +354,12 @@ const UnifiedPingCard = ({
             >
               <img
                 src={waveIcon}
-                className=" h-[27px] w-[25px]"
+                className="h-[22px] w-[20px] md:h-[27px] md:w-[25px]"
                 alt="waveIcon"
               />
-              <span className="font-['Inter',sans-serif] font-medium text-[12px] md:text-[14px] text-[#63637B] leading-5">
-                {waveCount} Waves Proposed
+              <span className="font-['Inter',sans-serif] font-medium text-[clamp(10px,2.5vw,14px)] text-[#63637B] leading-5 whitespace-nowrap">
+                {waveCount} <span className="md:hidden">Waves</span>
+                <span className="hidden md:inline">Waves Proposed</span>
               </span>
             </div>
 
@@ -369,10 +370,10 @@ const UnifiedPingCard = ({
             >
               <img
                 src={commentIcon}
-                className=" h-[27px] w-[25px]"
+                className="h-[22px] w-[20px] md:h-[27px] md:w-[25px]"
                 alt="commentIcon"
               />
-              <span className="font-['Inter',sans-serif] font-medium text-[12px] md:text-[14px] text-[#63637B] leading-5">
+              <span className="font-['Inter',sans-serif] font-medium text-[clamp(10px,2.5vw,14px)] text-[#63637B] leading-5 whitespace-nowrap">
                 {commentCount} Comments
               </span>
             </button>
