@@ -292,6 +292,11 @@ const InlinePingCreator = forwardRef<InlinePingCreatorHandle>((_, ref) => {
             }
             value={pingData.title}
             autoComplete="off"
+            spellCheck={false}
+            data-gramm="false"
+            data-gramm_editor="false"
+            data-enable-grammarly="false"
+            data-ms-editor="false"
             autoFocus
           />
         </div>
@@ -306,6 +311,12 @@ const InlinePingCreator = forwardRef<InlinePingCreatorHandle>((_, ref) => {
             }
             value={pingData.description}
             className="text-[14px] text-[#454545] outline-0 flex-1 bg-transparent resize-none placeholder:text-[#9e9e9e]"
+            autoComplete="off"
+            spellCheck={false}
+            data-gramm="false"
+            data-gramm_editor="false"
+            data-enable-grammarly="false"
+            data-ms-editor="false"
           />
         </div>
 
