@@ -36,7 +36,9 @@ const uploadService = {
   uploadProfilePicture: async (file: File) => {
     const formData = new FormData();
     formData.append("file", file);
-    const res = await api.patch("/uploads/profile", formData);
+    const res = await api.post("/uploads/profile", formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
     return res.data;
   },
 
@@ -48,9 +50,12 @@ const uploadService = {
   uploadAnonProfilePicture: async (file: File): Promise<string> => {
     const formData = new FormData();
     formData.append("file", file);
-    const res = await api.patch<UploadedMedia>(
+    const res = await api.post<UploadedMedia>(
       "/uploads/anonymous-profile",
       formData,
+      {
+        headers: { "Content-Type": "multipart/form-data" },
+      },
     );
     return res.data.url;
   },
