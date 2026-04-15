@@ -121,13 +121,13 @@ const CommentInput = ({
                     </button>
                 ) : (
                     /* Active state - textarea with button */
-                    <div className="bg-white flex flex-col gap-1.5 items-end justify-end min-h-[72px] md:min-h-[58px] pl-2.5 pr-[5px] py-[6px] rounded-[12.5px] transition-all duration-200" data-node-id="5210:15043">
+                    <div className="bg-white flex flex-col gap-2 items-stretch justify-between min-h-[74px] md:min-h-[60px] px-2.5 py-2 rounded-[12.5px] transition-all duration-200" data-node-id="5210:15043">
                         <textarea
                             value={content}
                             onChange={(e) => setContent(e.target.value)}
                             placeholder="What do you have to say?"
                             autoFocus
-                            className="w-full flex-1 p-0 text-sm text-[#292936] placeholder:text-[#626665] resize-none focus:outline-none font-['Poppins',sans-serif] bg-transparent text-[10px] md:text-[9px] min-h-[36px] md:min-h-[30px]"
+                            className="w-full flex-1 p-0 text-sm text-[#292936] placeholder:text-[#626665] resize-none focus:outline-none font-['Poppins',sans-serif] bg-transparent text-[10px] md:text-[9px] min-h-[34px] md:min-h-[30px]"
                             disabled={isSubmitting}
                         />
 
@@ -135,7 +135,7 @@ const CommentInput = ({
                         <button
                             onClick={handleSubmit}
                             disabled={isSubmitting || !content.trim()}
-                            className="bg-[#f49b31] flex items-center justify-center px-[6px] py-[3px] rounded-[15px] text-white text-[9px] md:text-[8px] font-['Poppins',sans-serif] font-medium hover:bg-[#d88429] transition-colors disabled:opacity-50 disabled:cursor-not-allowed w-[58px] md:w-[52px] shrink-0"
+                            className="self-end bg-[#f49b31] inline-flex items-center justify-center px-2.5 py-1 rounded-[16px] text-white text-[9px] md:text-[8px] font-['Poppins',sans-serif] font-medium leading-none hover:bg-[#d88429] transition-colors disabled:opacity-50 disabled:cursor-not-allowed min-w-[64px] md:min-w-[58px] shrink-0"
                             data-node-id="5210:15071"
                         >
                             {isSubmitting ? "..." : "Comment"}
