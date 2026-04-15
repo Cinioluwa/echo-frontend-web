@@ -20,6 +20,27 @@ export interface UpdateUserPreferencesRequest {
   anonymousAliasProfilePicture?: string | null; // URL to profile picture or null to clear
 }
 
+const getApiErrorMessage = (error: unknown, fallback: string): string => {
+  const responseError =
+    typeof error === "object" && error !== null && "response" in error
+      ? (error as { response?: { data?: { message?: string; error?: string } } })
+      : undefined;
+
+  const apiMessage =
+    responseError?.response?.data?.message ||
+    responseError?.response?.data?.error;
+
+  if (apiMessage && apiMessage.trim().length > 0) {
+    return apiMessage;
+  }
+
+  if (error instanceof Error && error.message.trim().length > 0) {
+    return error.message;
+  }
+
+  return fallback;
+};
+
 /**
  * User Service
  * Handles user profile management and user-specific data
@@ -100,6 +121,30 @@ const userService = {
       data,
     );
     return response.data;
+  },
+
+  /**
+   * Update the anonymous alias profile picture URL in user preferences.
+   * @param imageUrl URL to save, or null to clear existing picture.
+   */
+  updateAnonymousAliasProfilePicture: async (
+    imageUrl: string | null,
+  ): Promise<UserPreference> => {
+    try {
+      const response = await api.patch<UserPreference>("/users/me/preferences", {
+        anonymousAliasProfilePicture: imageUrl,
+      });
+      return response.data;
+    } catch (error) {
+      throw new Error(
+        getApiErrorMessage(
+          error,
+          imageUrl
+            ? "Could not save anonymous alias picture. Please try again."
+            : "Could not remove anonymous alias picture. Please try again.",
+        ),
+      );
+    }
   },
 };
 

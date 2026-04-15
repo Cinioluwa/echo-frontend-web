@@ -102,27 +102,67 @@ const UserProfile = () => {
   const handleAnonPictureChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
+
     setUploadingAnonPicture(true);
     setAnonPictureError("");
+
     try {
-      const picUrl = await uploadService.uploadAnonProfilePicture(file);
-      setAnonProfilePicture(picUrl);
+      // Step 1: Upload file to /uploads and get media URL
+      const uploadedUrl = await uploadService.uploadAnonProfilePicture(file);
 
-      // Update preferences with the new picture URL
-      const updatedPrefs = await userService.updateMyPreferences({
-        anonymousAliasProfilePicture: picUrl,
-      });
+      // Step 2: Persist anonymous alias picture URL in preferences
+      const updatedPrefs = await userService.updateAnonymousAliasProfilePicture(
+        uploadedUrl,
+      );
 
-      // Update the user state if needed
-      if (user?.userPreference) {
-        setUser({
-          ...user,
-          userPreference: updatedPrefs,
-        });
-      }
+      setAnonProfilePicture(updatedPrefs.anonymousAliasProfilePicture || "");
+      setUser((prev) =>
+        prev
+          ? {
+            ...prev,
+            userPreference: updatedPrefs,
+          }
+          : prev,
+      );
     } catch (err) {
-      setAnonPictureError("Failed to upload anonymous picture");
+      const errorMessage =
+        err instanceof Error
+          ? err.message
+          : "Could not update anonymous alias picture. Please try again.";
+      setAnonPictureError(errorMessage);
       console.error("Anonymous picture upload error:", err);
+    } finally {
+      setUploadingAnonPicture(false);
+    }
+  };
+
+  const handleClearAnonPicture = async () => {
+    if (!anonProfilePicture) return;
+
+    setUploadingAnonPicture(true);
+    setAnonPictureError("");
+
+    try {
+      const updatedPrefs = await userService.updateAnonymousAliasProfilePicture(
+        null,
+      );
+
+      setAnonProfilePicture("");
+      setUser((prev) =>
+        prev
+          ? {
+            ...prev,
+            userPreference: updatedPrefs,
+          }
+          : prev,
+      );
+    } catch (err) {
+      const errorMessage =
+        err instanceof Error
+          ? err.message
+          : "Could not remove anonymous alias picture. Please try again.";
+      setAnonPictureError(errorMessage);
+      console.error("Anonymous picture clear error:", err);
     } finally {
       setUploadingAnonPicture(false);
     }
@@ -412,6 +452,14 @@ const UserProfile = () => {
                         <p className="text-[11px] text-gray-400 mt-2 font-medium">
                           JPG, PNG or GIF. Max size 5MB
                         </p>
+                        <button
+                          type="button"
+                          onClick={handleClearAnonPicture}
+                          disabled={uploadingAnonPicture || !anonProfilePicture}
+                          className="text-[11px] text-[#F49B31] mt-1 font-medium hover:underline disabled:text-gray-400 disabled:no-underline disabled:cursor-not-allowed"
+                        >
+                          Remove picture
+                        </button>
                         {anonPictureError && (
                           <div className="text-xs text-red-500 mt-1">{anonPictureError}</div>
                         )}

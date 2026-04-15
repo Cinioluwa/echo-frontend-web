@@ -10,6 +10,31 @@ interface UploadedMedia {
   height?: number;
 }
 
+interface UploadMediaResponse {
+  media?: UploadedMedia[];
+}
+
+const getApiErrorMessage = (error: unknown, fallback: string): string => {
+  const responseError =
+    typeof error === "object" && error !== null && "response" in error
+      ? (error as { response?: { data?: { message?: string; error?: string } } })
+      : undefined;
+
+  const apiMessage =
+    responseError?.response?.data?.message ||
+    responseError?.response?.data?.error;
+
+  if (apiMessage && apiMessage.trim().length > 0) {
+    return apiMessage;
+  }
+
+  if (error instanceof Error && error.message.trim().length > 0) {
+    return error.message;
+  }
+
+  return fallback;
+};
+
 const uploadService = {
   uploadFiles: async (
     files: File[],
@@ -49,15 +74,27 @@ const uploadService = {
    */
   uploadAnonProfilePicture: async (file: File): Promise<string> => {
     const formData = new FormData();
-    formData.append("file", file);
-    const res = await api.post<UploadedMedia>(
-      "/uploads/anonymous-profile",
-      formData,
-      {
-        headers: { "Content-Type": "multipart/form-data" },
-      },
-    );
-    return res.data.url;
+    formData.append("files", file);
+
+    try {
+      const res = await api.post<UploadMediaResponse>("/uploads", formData);
+      const uploadedUrl = res.data.media?.[0]?.url;
+
+      if (!uploadedUrl) {
+        throw new Error(
+          "Upload succeeded but no media URL was returned. Please try again.",
+        );
+      }
+
+      return uploadedUrl;
+    } catch (error) {
+      throw new Error(
+        getApiErrorMessage(
+          error,
+          "Could not upload anonymous alias picture. Please check file type/size and retry.",
+        ),
+      );
+    }
   },
 };
 
