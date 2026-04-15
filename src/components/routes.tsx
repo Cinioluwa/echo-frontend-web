@@ -9,7 +9,7 @@
  * - Added redirects from old paths for backward compatibility
  * - Auth and admin routes unchanged
  */
-import { lazy, Suspense } from "react";
+import { lazy, Suspense, type ComponentType } from "react";
 import { createBrowserRouter, Navigate } from "react-router-dom";
 import LoadingFallback from "./auth/LoadingFallback";
 import AdminRoute from "./auth/AdminRoute";
@@ -17,48 +17,89 @@ import ProtectedRoute from "./auth/ProtectedRoute";
 import ProfileRedirect from "./auth/ProfileRedirect";
 import Layout from "./Layout";
 
+const CHUNK_RELOAD_KEY = "echo:chunk-reload-attempted";
+const CHUNK_LOAD_ERROR_PATTERN =
+  /ChunkLoadError|Failed to fetch dynamically imported module|Loading chunk [\d]+ failed|text\/html is not a valid JavaScript MIME type|Importing a module script failed/i;
+
+const isChunkLoadError = (error: unknown): boolean => {
+  const message = error instanceof Error ? error.message : String(error);
+  return CHUNK_LOAD_ERROR_PATTERN.test(message);
+};
+
+const forceRefreshForChunkError = () => {
+  if (typeof window === "undefined") return;
+
+  const alreadyRetried = sessionStorage.getItem(CHUNK_RELOAD_KEY) === "1";
+  if (alreadyRetried) return;
+
+  sessionStorage.setItem(CHUNK_RELOAD_KEY, "1");
+  const locationWithLegacyReload = window.location as Location & {
+    reload: (forcedReload?: boolean) => void;
+  };
+  locationWithLegacyReload.reload(true);
+};
+
+const lazyWithRetry = <T extends ComponentType<any>>(
+  importer: () => Promise<{ default: T }>,
+) =>
+  lazy(async () => {
+    try {
+      const module = await importer();
+      if (typeof window !== "undefined") {
+        sessionStorage.removeItem(CHUNK_RELOAD_KEY);
+      }
+      return module;
+    } catch (error) {
+      if (isChunkLoadError(error)) {
+        forceRefreshForChunkError();
+        return new Promise<never>(() => { });
+      }
+      throw error;
+    }
+  });
+
 // Eager load critical auth pages for immediate user experience
 import Login from "../pages/Login";
 import SignUp from "../pages/SignUp";
 
 // Lazy load auth flow pages - Phase 10 Performance Optimization
-const Verification = lazy(() => import("../pages/auth/Verification"));
-const SignUpError = lazy(() => import("../pages/auth/SignUpError"));
-const FindInstitution = lazy(() => import("../pages/auth/FindInstitution"));
-const FindInstitutionError = lazy(() => import("../pages/auth/FindInstitutionError"));
-const InstitutionFound = lazy(() => import("../pages/auth/InstitutionFound"));
-const MakeRequest = lazy(() => import("../pages/auth/MakeRequest"));
-const RequestSubmitted = lazy(() => import("../pages/auth/RequestSubmitted"));
-const AllVerified = lazy(() => import("../pages/auth/AllVerified"));
-const WaitingRoom = lazy(() => import("../pages/auth/WaitingRoom"));
-const ResetPassword = lazy(() => import("../pages/auth/ResetPassword"));
+const Verification = lazyWithRetry(() => import("../pages/auth/Verification"));
+const SignUpError = lazyWithRetry(() => import("../pages/auth/SignUpError"));
+const FindInstitution = lazyWithRetry(() => import("../pages/auth/FindInstitution"));
+const FindInstitutionError = lazyWithRetry(() => import("../pages/auth/FindInstitutionError"));
+const InstitutionFound = lazyWithRetry(() => import("../pages/auth/InstitutionFound"));
+const MakeRequest = lazyWithRetry(() => import("../pages/auth/MakeRequest"));
+const RequestSubmitted = lazyWithRetry(() => import("../pages/auth/RequestSubmitted"));
+const AllVerified = lazyWithRetry(() => import("../pages/auth/AllVerified"));
+const WaitingRoom = lazyWithRetry(() => import("../pages/auth/WaitingRoom"));
+const ResetPassword = lazyWithRetry(() => import("../pages/auth/ResetPassword"));
 
 // Lazy load main app pages (new unified architecture)
-const UnifiedFeed = lazy(() => import("../pages/UnifiedFeed"));
-const PingDetail = lazy(() => import("../pages/PingDetail"));
-const History = lazy(() => import("../pages/History"));
+const UnifiedFeed = lazyWithRetry(() => import("../pages/UnifiedFeed"));
+const PingDetail = lazyWithRetry(() => import("../pages/PingDetail"));
+const History = lazyWithRetry(() => import("../pages/History"));
 
 // Lazy load admin pages
-const Feed = lazy(() => import("../pages/admin/AdminFeed"));
-const FollowUp = lazy(() => import("../pages/admin/FollowUp"));
-const Overview = lazy(() => import("../pages/admin/Overview"));
+const Feed = lazyWithRetry(() => import("../pages/admin/AdminFeed"));
+const FollowUp = lazyWithRetry(() => import("../pages/admin/FollowUp"));
+const Overview = lazyWithRetry(() => import("../pages/admin/Overview"));
 
 // Lazy load admin components
-const PostDetails = lazy(() => import("./admin/PostDetails"));
+const PostDetails = lazyWithRetry(() => import("./admin/PostDetails"));
 
 // Lazy load user pages
-const UserProfile = lazy(() => import("../pages/UserProfile"));
-const UserPrivacy = lazy(() => import("../pages/UserPrivacy"));
-const UserAccount = lazy(() => import("../pages/UserAccount"));
-const UserNotification = lazy(() => import("../pages/UserNotification"));
+const UserProfile = lazyWithRetry(() => import("../pages/UserProfile"));
+const UserPrivacy = lazyWithRetry(() => import("../pages/UserPrivacy"));
+const UserAccount = lazyWithRetry(() => import("../pages/UserAccount"));
+const UserNotification = lazyWithRetry(() => import("../pages/UserNotification"));
 
 // Lazy load admin profile pages
-const AdminProfile = lazy(() => import("../pages/admin/AdminProfile"));
-const AdminAccount = lazy(() => import("../pages/admin/AdminAccount"));
-const AdminNotification = lazy(() => import("../pages/admin/AdminNotification"));
+const AdminProfile = lazyWithRetry(() => import("../pages/admin/AdminProfile"));
+const AdminAccount = lazyWithRetry(() => import("../pages/admin/AdminAccount"));
+const AdminNotification = lazyWithRetry(() => import("../pages/admin/AdminNotification"));
 
 // Lazy load error page
-const ErrorPage = lazy(() => import("../pages/ErrorPage"));
+const ErrorPage = lazyWithRetry(() => import("../pages/ErrorPage"));
 
 // Helper to wrap lazy-loaded components with Suspense
 const withSuspense = (Component: React.LazyExoticComponent<React.ComponentType<any>>) => (
