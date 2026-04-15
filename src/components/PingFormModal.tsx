@@ -330,7 +330,7 @@ const PingFormModal = ({
               type="text"
               id="pingTitle"
               placeholder="Title*"
-              className="text-[14px] text-[#454545] outline-0 flex-1 bg-transparent placeholder:text-[#9e9e9e]"
+              className="text-[14px] text-black font-['Poppins',sans-serif] font-medium outline-0 flex-1 bg-transparent placeholder:text-[#9e9e9e] placeholder:font-medium"
               onChange={(e) =>
                 setPingData((prev) => ({ ...prev, title: e.target.value }))
               }
@@ -350,7 +350,7 @@ const PingFormModal = ({
                 setPingData((prev) => ({ ...prev, description: e.target.value }))
               }
               value={pingData.description}
-              className="text-[14px] text-[#454545] outline-0 flex-1 bg-transparent resize-none placeholder:text-[#9e9e9e]"
+              className="text-[14px] text-black font-['Poppins',sans-serif] font-medium outline-0 flex-1 bg-transparent resize-none placeholder:text-[#9e9e9e] placeholder:font-medium"
             />
           </div>
           {errors.description && (

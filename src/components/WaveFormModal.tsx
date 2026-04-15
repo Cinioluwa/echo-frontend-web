@@ -230,13 +230,13 @@ const WaveFormModal = ({
                 id="solution"
                 name="solution"
                 required
-                placeholder="What can be done?"
+                placeholder="What's your solution?"
                 autoComplete="off"
                 onChange={(e) =>
                   setWaveFormData({ ...waveFormData, solution: e.target.value })
                 }
                 value={waveFormData.solution}
-                className="pl-[11px] py-0.5 resize-none h-[100px] text-[12px] text-[#454545] outline-0 flex-1"
+                className="pl-[11px] py-0.5 resize-none h-[100px] text-[12px] text-black font-['Poppins',sans-serif] font-medium outline-0 flex-1 placeholder:text-[#9e9e9e] placeholder:font-medium"
               />
             </div>
           </fieldset>
