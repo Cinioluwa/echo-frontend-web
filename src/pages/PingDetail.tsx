@@ -44,6 +44,11 @@ const mergeServerWaves = (serverWaves: Wave[], localWaves: Wave[]) => {
 const PingDetail = () => {
   const { pingId } = useParams<{ pingId: string }>();
   const navigate = useNavigate();
+  // ⚠️ useOutletContext MUST stay here — before all other hooks — to satisfy Rules of Hooks
+  const { setShowPingFormModal } = useOutletContext<{
+    showPingFormModal: boolean;
+    setShowPingFormModal: (value: boolean) => void;
+  }>();
   const currentUser = useAuthStore((state) => state.user);
   const toggleSurge = useSurgeStore((state) => state.toggleSurge);
   const updatePingStore = usePingsStore((state) => state.updatePing);
@@ -67,10 +72,6 @@ const PingDetail = () => {
   );
   const [showCommentsModal, setShowCommentsModal] = useState(false);
   const [weeklyTop3Ids, setWeeklyTop3Ids] = useState<number[]>([]);
-  const { setShowPingFormModal } = useOutletContext<{
-    showPingFormModal: boolean;
-    setShowPingFormModal: (value: boolean) => void;
-  }>();
 
   // Update page title with the ping title when ping is loaded
   usePageTitle(ping?.title);
@@ -205,7 +206,7 @@ const PingDetail = () => {
     }
   };
 
-  // if (isLoading) return <PingDetailSkeleton />;
+  if (isLoading) return <PingDetailSkeleton />;
   if (error) return <p className="text-red-500 text-center py-10">{error}</p>;
 
   const displayPing = pingFromStore || ping;
@@ -262,24 +263,20 @@ const PingDetail = () => {
 
       {/* ── Ping Card ─────────────────────────────── */}
 
-      {isLoading && <PingDetailSkeleton />}
-
-      {!isLoading && (
-        <PingCard
-          ping={displayPing}
-          isLoading={isLoading}
-          hasSurged={hasSurged}
-          isToggling={isToggling}
-          surgeCount={surgeCount}
-          commentCount={commentCount}
-          weeklyTop3Ids={weeklyTop3Ids}
-          categories={categories}
-          isOwner={isOwner}
-          onSurge={handleSurge}
-          onCommentClick={() => setShowCommentsModal(true)}
-          onDelete={handleDeletePing}
-        />
-      )}
+      <PingCard
+        ping={displayPing}
+        isLoading={false}
+        hasSurged={hasSurged}
+        isToggling={isToggling}
+        surgeCount={surgeCount}
+        commentCount={commentCount}
+        weeklyTop3Ids={weeklyTop3Ids}
+        categories={categories}
+        isOwner={isOwner}
+        onSurge={handleSurge}
+        onCommentClick={() => setShowCommentsModal(true)}
+        onDelete={handleDeletePing}
+      />
 
       {/* ── ProposeWaveBar ────────────────────────── */}
       <ProposeWaveBar
@@ -307,13 +304,6 @@ const PingDetail = () => {
       </p>
 
       {/* ── Wave Cards ────────────────────────────── */}
-      {isLoading && (
-        <div className="space-y-7">
-          <WaveCardSkeleton />
-          <WaveCardSkeleton />
-          <WaveCardSkeleton />
-        </div>
-      )}
       {waves.length > 0 && (
         <div className="flex flex-col gap-2.5">
           {waves.map((wave) => {

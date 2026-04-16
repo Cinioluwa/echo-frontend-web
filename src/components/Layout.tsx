@@ -148,7 +148,7 @@ const Layout = () => {
             <main
               className={` mx-[15px] mt-[15px] md:ml-5 lg:mt-5 md:w-a[calc(100vw-45vw)] ${isFeedPage ? "lg:max-w-[calc(100vw-680px)]" : pingDetailId ? "lg:max-w-11/12 lg:w-full" : "lg:max-w-5/6 lg:w-5/6 lg:mx-10"}  `}
             >
-              <Outlet context={{ showPingFormModal, setShowPingFormModal }} />
+              <Outlet context={{ showPingFormModal, setShowPingFormModal, announcement, top3 }} />
             </main>
           </PingCreatorProvider>
         </div>

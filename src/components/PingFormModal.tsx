@@ -8,6 +8,7 @@ import { usePingsStore } from "../stores";
 import UserAvatar from "./UserAvatar";
 import { useAuthStore } from "../stores";
 import type { CategoryData } from "../api/types/index";
+import { checkPingContent } from "../utils/contentModeration";
 
 interface Props {
   children?: ReactNode;
@@ -180,7 +181,16 @@ const PingFormModal = ({
     }
 
     setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+    if (Object.keys(newErrors).length > 0) return false;
+
+    // Content moderation check
+    const moderation = checkPingContent(pingData.title, pingData.description);
+    if (!moderation.passed) {
+      setUploadError(moderation.reason);
+      return false;
+    }
+
+    return true;
   };
 
   // Submit handler
@@ -546,18 +556,6 @@ const PingFormModal = ({
     );
   };
 
-  // Success modal check
-  if (postSuccessModal) {
-    return (
-      <PostSuccessModal
-        formSegment="ping"
-        setPostSuccessModal={() => {
-          setPostSuccessModal(false);
-          setPingForm();
-        }}
-      />
-    );
-  }
 
   return (
     <div
@@ -591,6 +589,17 @@ const PingFormModal = ({
 
         {children}
       </div>
+
+      {/* Success toast — rendered inside the portal tree to avoid removeChild crash */}
+      {postSuccessModal && (
+        <PostSuccessModal
+          formSegment="ping"
+          setPostSuccessModal={() => {
+            setPostSuccessModal(false);
+            setPingForm();
+          }}
+        />
+      )}
     </div>
   );
 };

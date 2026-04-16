@@ -2,14 +2,15 @@ import { useState, useEffect, useRef } from "react";
 import { useAuthStore } from "../../stores";
 import { commentService } from "../../api/services";
 import userService from "../../api/services/user.service";
-import type { UserPreference } from "../../api/types";
+import type { UserPreference, Comment } from "../../api/types";
 import UserAvatar from "../UserAvatar";
+import { checkContent } from "../../utils/contentModeration";
 
 interface Props {
     targetType: "ping" | "wave";
     targetId: string;
     parentCommentId?: string;
-    onCommentAdded?: () => void;
+    onCommentAdded?: (comment: Comment) => void;
     onCancel?: () => void;
 }
 
@@ -67,6 +68,13 @@ const CommentInput = ({
             return;
         }
 
+        // Content moderation check
+        const moderation = checkContent(content);
+        if (!moderation.passed) {
+            setError(moderation.reason);
+            return;
+        }
+
         setIsSubmitting(true);
         setError(null);
 
@@ -75,15 +83,17 @@ const CommentInput = ({
             const isAnonymous = userPreferences?.commentAnonymously ?? false;
 
             // Use the correct API endpoints that match the documentation
+            let createdComment;
             if (targetType === "ping") {
-                await commentService.createCommentOnPing(targetId, content.trim(), isAnonymous);
+                createdComment = await commentService.createCommentOnPing(targetId, content.trim(), isAnonymous);
             } else {
-                await commentService.createCommentOnWave(targetId, content.trim(), isAnonymous);
+                createdComment = await commentService.createCommentOnWave(targetId, content.trim(), isAnonymous);
             }
 
-            // Success - clear input and notify parent
+            // Success - clear input and notify parent with the new comment
             setContent("");
-            onCommentAdded?.();
+            onCommentAdded?.(createdComment);
+            setIsFocused(false);
         } catch (err) {
             console.error("Failed to post comment:", err);
             setError("Failed to post comment. Please try again.");
@@ -115,7 +125,7 @@ const CommentInput = ({
                         className="bg-white flex h-[32px] md:h-[30px] items-center px-2.5 rounded-[30px] w-full cursor-pointer hover:bg-gray-50 transition-colors"
                         data-node-id="5210:15041"
                     >
-                        <div className="text-[#626665] text-[10px] md:text-[9px] font-['Poppins',sans-serif] font-normal">
+                        <div className="text-[#626665] text-[12px] font-['Poppins',sans-serif] font-normal">
                             What do you have to say?
                         </div>
                     </button>
@@ -127,15 +137,16 @@ const CommentInput = ({
                             onChange={(e) => setContent(e.target.value)}
                             placeholder="What do you have to say?"
                             autoFocus
-                            className="w-full flex-1 p-0 text-sm text-[#292936] placeholder:text-[#626665] resize-none focus:outline-none font-['Poppins',sans-serif] bg-transparent text-[10px] md:text-[9px] min-h-[34px] md:min-h-[30px]"
+                            className="w-full flex-1 p-0 text-[12px] text-[#292936] placeholder:text-[#626665] resize-none focus:outline-none font-['Poppins',sans-serif] bg-transparent min-h-[34px] md:min-h-[30px]"
                             disabled={isSubmitting}
                         />
 
                         {/* Comment button - right aligned */}
                         <button
+                            type="button"
                             onClick={handleSubmit}
                             disabled={isSubmitting || !content.trim()}
-                            className="self-end bg-[#f49b31] inline-flex items-center justify-center px-2.5 py-1 rounded-[16px] text-white text-[9px] md:text-[8px] font-['Poppins',sans-serif] font-medium leading-none hover:bg-[#d88429] transition-colors disabled:opacity-50 disabled:cursor-not-allowed min-w-[64px] md:min-w-[58px] shrink-0"
+                            className="self-end bg-[#f49b31] inline-flex items-center justify-center px-2.5 py-1 rounded-[16px] text-white text-[11px] font-['Poppins',sans-serif] font-medium leading-none hover:bg-[#d88429] transition-colors disabled:opacity-50 disabled:cursor-not-allowed min-w-[64px] md:min-w-[58px] shrink-0"
                             data-node-id="5210:15071"
                         >
                             {isSubmitting ? "..." : "Comment"}

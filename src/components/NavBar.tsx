@@ -4,15 +4,20 @@
  * Phase: 1
  */
 import ProfileDropdown from "./ProfileDropdown";
+import { useNavigate } from "react-router-dom";
 
 const logo = "/assets/images/Echo Logo_black.svg";
 const echoBrand = "/assets/images/Echo brand.svg";
 
 const NavBar = () => {
+  const navigate = useNavigate();
   return (
     <div className="bg-[#FFC37B] flex items-center justify-between px-5 md:px-[45px] py-1.5 md:py-2.5">
       {/* Desktop: Logo icon + "Echo" text */}
-      <div className="hidden md:flex items-center gap-[5px]">
+      <div 
+        onClick={() => navigate("/feed")}
+        className="hidden md:flex items-center gap-[5px] cursor-pointer"
+      >
         <img
           src={logo}
           className="brightness-0 contrast-200 h-[27px] w-[25px]"
@@ -24,7 +29,10 @@ const NavBar = () => {
       </div>
 
       {/* Mobile: Logo icon only */}
-      <div className="block md:hidden">
+      <div 
+        onClick={() => navigate("/feed")}
+        className="block md:hidden cursor-pointer"
+      >
         <img
           src={echoBrand}
           className="brightness-0 contrast-200 h-12 w-12"

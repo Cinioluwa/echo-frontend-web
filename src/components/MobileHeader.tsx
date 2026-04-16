@@ -68,7 +68,7 @@ const MobileHeader = () => {
                         /* Category pill — shown on main feed page only */
                         <button
                             onClick={() => setOpenCat(!openCat)}
-                            className="flex items-center justify-center px-2.5 md:px-[13px] py-[3px] h-5 w-auto min-w-[84px] max-w-[120px] border border-[#7D7D7D] rounded-[25px] cursor-pointer"
+                            className="flex items-center justify-center px-2.5 md:px-[13px] py-[3px] h-5 w-auto min-w-[84px] border border-[#7D7D7D] rounded-[25px] cursor-pointer"
                         >
                             <span className="text-[clamp(8px,2.2vw,9px)] font-medium font-['Poppins',sans-serif] text-black leading-normal whitespace-nowrap">
                                 Category :{" "}

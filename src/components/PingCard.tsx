@@ -4,11 +4,13 @@
  * Used in PingDetail page
  */
 
+import { useState } from "react";
 import { Tooltip } from "./Tooltip";
 import UserAvatar from "./UserAvatar";
 import { categoryImages } from "./CategoryImages";
 import { calculatePingBadge } from "../utils/badgeUtils";
 import PingActionsDropdown from "./UnifiedFeed/PingActionsDropdown";
+import ImageLightbox from "./shared/ImageLightbox";
 import type { Ping, CategoryData } from "../api/types";
 
 interface PingCardProps {
@@ -88,6 +90,9 @@ const PingCard = ({
         0,
         surgeCount + (hasSurged ? 1 : 0) - (initialHasSurged ? 1 : 0),
     );
+
+    // Hook must be declared before any conditional returns
+    const [lightboxSrc, setLightboxSrc] = useState<string | null>(null);
 
     if (isLoading) return null;
 
@@ -182,22 +187,27 @@ const PingCard = ({
                         media.mimeType.startsWith("image/"),
                     );
                     return pingImage?.url ? (
-                        <div className="flex justify-center mt-3">
-                            <div
-                                className="overflow-hidden rounded-[14px] border border-black/10 bg-[#F8F7F3] max-h-[700px] w-full"
-                                style={{
-                                    aspectRatio: `${pingImage.width} / ${pingImage.height}`,
-                                }}
+                        <div className="mt-3">
+                            <button
+                                type="button"
+                                aria-label="View full image"
+                                onClick={() => setLightboxSrc(pingImage.url)}
+                                className="block w-full cursor-zoom-in"
                             >
                                 <img
                                     src={pingImage.url}
                                     alt={ping.title || "User uploaded image"}
-                                    width={pingImage.width}
-                                    height={pingImage.height}
-                                    className="h-full w-full object-fill"
+                                    className="w-full h-auto object-contain max-h-[700px] rounded-[14px] border border-black/10"
                                     loading="lazy"
                                 />
-                            </div>
+                            </button>
+                            {lightboxSrc && (
+                                <ImageLightbox
+                                    src={lightboxSrc}
+                                    alt={ping.title || "Image"}
+                                    onClose={() => setLightboxSrc(null)}
+                                />
+                            )}
                         </div>
                     ) : null;
                 })()}

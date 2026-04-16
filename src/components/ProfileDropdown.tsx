@@ -83,11 +83,11 @@ const ProfileDropdown = () => {
         </div>
 
         {/* Mobile: truncated user info */}
-        <div className="text-right block md:hidden w-[65px]">
-          <p className="text-[#926B3D] text-[8px] font-medium leading-normal font-['Poppins',sans-serif]">
+        <div className="text-right block md:hidden max-w-[100px]">
+          <p className="text-[#926B3D] text-[10px] font-medium leading-normal font-['Poppins',sans-serif] whitespace-nowrap truncate">
             Welcome back!
           </p>
-          <p className="text-[9px] text-black font-medium leading-normal truncate font-['Poppins',sans-serif]">
+          <p className="text-[11px] text-black font-medium leading-normal truncate font-['Poppins',sans-serif]">
             {fullName}
           </p>
         </div>

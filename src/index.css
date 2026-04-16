@@ -61,6 +61,13 @@ body,
 * {
   outline: none;
   scrollbar-width: none;
+  box-sizing: border-box;
+}
+
+/* Prevent long unbreakable strings from busting flex containers on mobile */
+p, h1, h2, h3, h4, h5, h6, span, a {
+  overflow-wrap: break-word;
+  word-break: break-word;
 }
 
 /* Subtle rounded scrollbar for dropdowns - overrides global scrollbar-width: none */
