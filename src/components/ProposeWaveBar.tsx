@@ -97,6 +97,9 @@ const ProposeWaveBar = ({ pingId, onWaveProposed }: Props) => {
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setSolution(e.target.value);
+    // Dynamic auto-resize
+    e.target.style.height = "auto";
+    e.target.style.height = `${e.target.scrollHeight}px`;
   };
 
   const handleAttachClick = () => {
@@ -173,7 +176,7 @@ const ProposeWaveBar = ({ pingId, onWaveProposed }: Props) => {
     <form
       ref={formRef}
       onSubmit={handleSubmit}
-      className="bg-white rounded-[16px] md:rounded-[25px] mb-4 md:mb-5 p-2 md:p-2.5 flex items-start md:items-center gap-2 md:gap-[13px] w-full max-w-full transition-all duration-300"
+      className="bg-white rounded-[16px] md:rounded-[25px] mb-4 md:mb-5 p-2 md:p-2.5 flex items-start gap-2 md:gap-[13px] w-full max-w-full transition-all duration-300"
     >
       {/* Hidden file input */}
       <input
@@ -187,7 +190,7 @@ const ProposeWaveBar = ({ pingId, onWaveProposed }: Props) => {
       />
 
       {/* Avatar */}
-      <div className="shrink-0 size-[38px] md:size-[50px] flex items-center justify-center">
+      <div className="shrink-0 size-[38px] md:size-[50px] flex items-center justify-center mt-1 md:mt-1.5">
         <UserAvatar user={user} size="md" responsive bgColor="bg-[#ffc37b]" />
       </div>
 
@@ -198,7 +201,7 @@ const ProposeWaveBar = ({ pingId, onWaveProposed }: Props) => {
           {/* Expanded state: textarea with controls */}
           <div
             className={`flex flex-col transition-all duration-300 ${isActive
-              ? "max-h-96 opacity-100 px-3 md:px-4 py-2 md:py-2.5"
+              ? "max-h-[600px] opacity-100 px-3 md:px-4 pt-3 pb-1 md:pt-4 md:pb-1"
               : "max-h-0 opacity-0 overflow-hidden"
               }`}
           >
@@ -208,8 +211,8 @@ const ProposeWaveBar = ({ pingId, onWaveProposed }: Props) => {
               value={solution}
               onChange={handleChange}
               placeholder="What's your solution?"
-              className="flex-1 bg-[#fefefe] border-0 px-0 py-0 text-[13px] md:text-[14px] leading-[1.35] text-black outline-none resize-none font-['Poppins',sans-serif] font-medium placeholder:text-[#9e9e9e] placeholder:font-medium min-h-[24px] md:min-h-[28px] focus:ring-0"
-              rows={1}
+              className="flex-1 w-full bg-[#fefefe] border-0 px-0 py-0 text-[13px] md:text-[14px] leading-[1.5] text-black outline-none resize-none font-['Poppins',sans-serif] font-medium placeholder:text-[#9e9e9e] placeholder:font-medium min-h-[80px] md:min-h-[100px] overflow-hidden focus:ring-0"
+              rows={3}
               disabled={isSubmitting || isUploading}
             />
 
