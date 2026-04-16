@@ -193,7 +193,7 @@ const ProposeWaveBar = ({ pingId, onWaveProposed }: Props) => {
           {/* Expanded state: textarea with controls */}
           <div
             className={`flex flex-col transition-all duration-300 ${isActive
-              ? "max-h-[600px] opacity-100 px-3 md:px-4 pt-3 pb-2 md:pt-4 md:pb-2.5"
+              ? "max-h-[600px] opacity-100 px-3 md:px-4 pt-3 pb-1 md:pt-4 md:pb-1"
               : "max-h-0 opacity-0 overflow-hidden"
               }`}
           >
