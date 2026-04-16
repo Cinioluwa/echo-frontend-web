@@ -30,6 +30,7 @@ const VALID_TABS: HistoryTab[] = ["pings", "waves", "comments", "surged"];
 const History = () => {
     const { tab } = useParams<{ tab: string }>();
     const navigate = useNavigate();
+    // ⚠️ useOutletContext MUST stay here — before all other hooks — to satisfy Rules of Hooks
     const { setShowPingFormModal } = useOutletContext<{
         showPingFormModal: boolean;
         setShowPingFormModal: (value: boolean) => void;

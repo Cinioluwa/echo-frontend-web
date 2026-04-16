@@ -1,7 +1,6 @@
 import { MdOutlineManageAccounts } from "react-icons/md";
 import { HiOutlineBell, HiOutlineUser } from "react-icons/hi";
 import { HiOutlineLockClosed } from "react-icons/hi";
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 type Pages = {
@@ -14,30 +13,28 @@ type Pages = {
 };
 
 const UserProfileSidePanel = ({ pages }: Pages) => {
-  const [activeItem, setActiveItem] = useState(pages);
-
   const navigate = useNavigate();
 
   const menuItems = [
     {
       label: "Profile",
       icon: <HiOutlineUser size={20} />,
-      active: activeItem.profile,
+      active: pages.profile,
     },
     {
       label: "Privacy",
       icon: <HiOutlineLockClosed size={20} />,
-      active: activeItem.privacy,
+      active: pages.privacy,
     },
     {
       label: "Notification",
       icon: <HiOutlineBell size={20} />,
-      active: activeItem.notification,
+      active: pages.notification,
     },
     {
       label: "Account",
       icon: <MdOutlineManageAccounts size={20} />,
-      active: activeItem.account,
+      active: pages.account,
     },
   ];
 
@@ -48,36 +45,12 @@ const UserProfileSidePanel = ({ pages }: Pages) => {
           key={item.label}
           onClick={() => {
             if (item.label === "Profile") {
-              setActiveItem({
-                profile: true,
-                account: false,
-                notification: false,
-                privacy: false,
-              });
               navigate("/user/profile");
             } else if (item.label === "Privacy") {
-              setActiveItem({
-                profile: false,
-                account: false,
-                notification: false,
-                privacy: true,
-              });
               navigate("/user/privacy");
             } else if (item.label === "Notification") {
-              setActiveItem({
-                profile: false,
-                account: false,
-                notification: true,
-                privacy: false,
-              });
               navigate("/user/notification");
             } else if (item.label === "Account") {
-              setActiveItem({
-                profile: false,
-                account: true,
-                notification: false,
-                privacy: false,
-              });
               navigate("/user/account");
             }
           }}

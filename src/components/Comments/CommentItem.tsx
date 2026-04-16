@@ -147,7 +147,6 @@ const CommentItem = ({ comment, onRefresh: _onRefresh, pingId }: Props) => {
             );
             setReplies([...replies, newReply]);
             setReplyInput("");
-            _onRefresh?.();
         } catch (err) {
             console.error("Error posting reply:", err);
         } finally {
@@ -178,10 +177,10 @@ const CommentItem = ({ comment, onRefresh: _onRefresh, pingId }: Props) => {
                         {/* Info row with name, timestamp, and dots button */}
                         <div className="flex items-start justify-between w-full" data-node-id="4923:13604">
                             <div className="flex flex-col gap-0.5" data-node-id="5145:14071">
-                                <p className="text-[10px] font-['Poppins',sans-serif] font-semibold text-black leading-none">
+                                <p className="text-[11px] font-['Poppins',sans-serif] font-semibold text-black leading-none">
                                     {authorName}
                                 </p>
-                                <p className="text-[8px] font-['Poppins',sans-serif] font-medium text-[#454545] leading-none">
+                                <p className="text-[10px] font-['Poppins',sans-serif] font-medium text-[#454545] leading-none">
                                     {formatTimestamp(comment.createdAt)}
                                 </p>
                             </div>
@@ -197,7 +196,7 @@ const CommentItem = ({ comment, onRefresh: _onRefresh, pingId }: Props) => {
 
                         {/* Body */}
                         <div className="flex flex-col gap-[5px] w-full">
-                            <p className="text-[9px] font-['Poppins',sans-serif] font-normal text-black leading-normal wrap-break-word">
+                            <p className="text-[12px] font-['Poppins',sans-serif] font-normal text-black leading-normal break-words">
                                 {comment.content}
                             </p>
 
@@ -209,7 +208,7 @@ const CommentItem = ({ comment, onRefresh: _onRefresh, pingId }: Props) => {
                                     onClick={handleSurge}
                                     disabled={isToggling}
                                     aria-label={localHasSurged ? "Remove surge" : "Surge"}
-                                    className={`flex items-center gap-[2.25px] px-[7.5px] py-[5.25px] rounded-[18px] border-[0.75px] border-black cursor-pointer transition-all duration-200 disabled:opacity-50 text-[9px] font-['Baloo_Bhai_2',sans-serif] font-bold uppercase leading-none ${localHasSurged ? "bg-[#f49b31] text-white border-[#f49b31]" : "bg-white text-black"
+                                    className={`flex items-center gap-[2.25px] px-[7.5px] py-[5.25px] rounded-[18px] border-[0.75px] border-black cursor-pointer transition-all duration-200 disabled:opacity-50 text-[11px] font-['Baloo_Bhai_2',sans-serif] font-bold uppercase leading-none ${localHasSurged ? "bg-[#f49b31] text-white border-[#f49b31]" : "bg-white text-black"
                                         }`}
                                     data-node-id="4923:13612"
                                 >
@@ -234,7 +233,7 @@ const CommentItem = ({ comment, onRefresh: _onRefresh, pingId }: Props) => {
                                     type="button"
                                     onClick={handleToggleReplies}
                                     aria-label="View replies or write a reply"
-                                    className="flex items-center gap-[2.5px] px-[7.5px] py-[5.25px] rounded-[13.5px] border-[0.75px] border-black bg-white text-black cursor-pointer text-[9px] font-['Baloo_Bhai_2',sans-serif] font-bold uppercase leading-none transition-all duration-200"
+                                    className="flex items-center gap-[2.5px] px-[7.5px] py-[5.25px] rounded-[13.5px] border-[0.75px] border-black bg-white text-black cursor-pointer text-[11px] font-['Baloo_Bhai_2',sans-serif] font-bold uppercase leading-none transition-all duration-200"
                                     data-node-id="4923:13613"
                                 >
                                     <img src="/assets/icon/comment.svg" alt="Comment icon" className="w-[7.5px] h-3 shrink-0" style={{ filter: 'brightness(0)' }} />
@@ -271,7 +270,7 @@ const CommentItem = ({ comment, onRefresh: _onRefresh, pingId }: Props) => {
                                             onChange={(e) => setReplyInput(e.target.value)}
                                             disabled={isPostingReply}
                                             placeholder="Reply"
-                                            className="flex-1 bg-transparent text-black text-[9px] font-normal font-['Poppins'] outline-none placeholder-neutral-500 disabled:opacity-50"
+                                            className="flex-1 bg-transparent text-black text-[11px] font-normal font-['Poppins'] outline-none placeholder-neutral-500 disabled:opacity-50"
                                         />
                                         <button
                                             type="button"
@@ -365,15 +364,15 @@ const ReplyItem = ({ reply }: ReplyItemProps) => {
             {/* Reply Content */}
             <div className="flex-1 flex flex-col gap-[5px] items-start min-w-0">
                 <div className="flex flex-col gap-0.5 w-full">
-                    <p className="text-[10px] font-['Poppins',sans-serif] font-semibold text-black leading-none">
+                    <p className="text-[11px] font-['Poppins',sans-serif] font-semibold text-black leading-none">
                         {replyAuthorName}
                     </p>
-                    <p className="text-[8px] font-['Poppins',sans-serif] font-medium text-[#454545] leading-none">
+                    <p className="text-[10px] font-['Poppins',sans-serif] font-medium text-[#454545] leading-none">
                         {formatTimestamp(reply.createdAt)}
                     </p>
                 </div>
 
-                <p className="text-[9px] font-['Poppins',sans-serif] font-normal text-black leading-normal wrap-break-word w-full">
+                <p className="text-[12px] font-['Poppins',sans-serif] font-normal text-black leading-normal break-words w-full">
                     {reply.content}
                 </p>
 
@@ -383,7 +382,7 @@ const ReplyItem = ({ reply }: ReplyItemProps) => {
                     onClick={handleReplySurge}
                     disabled={isReplyToggling}
                     aria-label={replyLocalHasSurged ? "Remove surge" : "Surge"}
-                    className={`flex items-center gap-[2.25px] px-[7.5px] py-[5.25px] rounded-[18px] border-[0.75px] border-black cursor-pointer transition-all duration-200 disabled:opacity-50 text-[9px] font-['Baloo_Bhai_2',sans-serif] font-bold uppercase leading-none ${replyLocalHasSurged
+                    className={`flex items-center gap-[2.25px] px-[7.5px] py-[5.25px] rounded-[18px] border-[0.75px] border-black cursor-pointer transition-all duration-200 disabled:opacity-50 text-[11px] font-['Baloo_Bhai_2',sans-serif] font-bold uppercase leading-none ${replyLocalHasSurged
                         ? "bg-[#f49b31] text-white border-[#f49b31]"
                         : "bg-white text-black"
                         }`}

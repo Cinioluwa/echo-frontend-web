@@ -17,6 +17,7 @@ import InlineWavePreview from "./InlineWavePreview";
 import DeleteConfirmationModal from "../DeleteConfirmationModal";
 import UserAvatar from "../UserAvatar";
 import PingActionsDropdown from "./PingActionsDropdown";
+import ImageLightbox from "../shared/ImageLightbox";
 import type { Ping } from "../../api/types";
 import { categoryImages } from "../CategoryImages";
 import { Tooltip } from "../Tooltip";
@@ -54,6 +55,7 @@ const UnifiedPingCard = ({
 
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [lightboxSrc, setLightboxSrc] = useState<string | null>(null);
 
   const isOwner = currentPing.isAnonymous
     ? (currentPing.isOwner ?? false)
@@ -249,7 +251,7 @@ const UnifiedPingCard = ({
           {categoryName && (
             <div
               className={[
-                "flex items-center gap-[9px]",
+                "flex items-center gap-[9px] min-w-0 flex-wrap",
                 isHistoryContext ? "min-w-0" : "",
               ].join(" ")}
             >
@@ -257,10 +259,10 @@ const UnifiedPingCard = ({
                 <img
                   src={categoryIcon}
                   alt={categoryName}
-                  className="w-[13px] h-[13px] md:w-5 md:h-5 object-contain"
+                  className="w-[13px] h-[13px] md:w-5 md:h-5 object-contain shrink-0"
                 />
               )}
-              <span className="font-['Poppins',sans-serif] font-medium text-[clamp(11px,2.8vw,15px)] text-[#171717]">
+              <span className="font-['Poppins',sans-serif] font-medium text-[clamp(11px,2.8vw,15px)] text-[#171717] truncate">
                 {categoryName}
               </span>
             </div>
@@ -274,37 +276,30 @@ const UnifiedPingCard = ({
             isHistoryContext ? "min-w-0" : "",
           ].join(" ")}
         >
-          <h3 className="font-['Poppins',sans-serif] font-semibold text-[clamp(13px,3.1vw,16px)] text-black leading-normal">
+          <h3 className="font-['Poppins',sans-serif] font-semibold text-[clamp(13px,3.1vw,16px)] text-black leading-normal break-words overflow-hidden">
             {currentPing.title}
           </h3>
           {currentPing.content && (
             <p
-              className={[
-                "font-['Poppins',sans-serif] font-medium text-[clamp(11px,2.7vw,14px)] text-black/70 leading-relaxed text-wrap line-clamp-3",
-                isHistoryContext ? "break-all truncate" : "",
-              ].join(" ")}
+              className="font-['Poppins',sans-serif] font-medium text-[clamp(11px,2.7vw,14px)] text-black/70 leading-relaxed break-words overflow-hidden line-clamp-3"
             >
               {currentPing.content}
             </p>
           )}
           {pingImage?.url && (
-            <div className="flex justify-center mt-3">
-              <div
-                className="overflow-hidden rounded-[14px] border border-black/10 bg-[#F8F7F3] max-h-[500px] w-full"
-                style={{
-                  aspectRatio: `${pingImage.width} / ${pingImage.height}`,
-                }}
-              >
-                <img
-                  src={pingImage.url}
-                  alt={currentPing.title || "User uploaded image"}
-                  width={pingImage.width}
-                  height={pingImage.height}
-                  className="h-full w-full object-fill"
-                  loading="lazy"
-                />
-              </div>
-            </div>
+            <button
+              type="button"
+              aria-label="View full image"
+              onClick={(e) => { e.stopPropagation(); setLightboxSrc(pingImage.url); }}
+              className="mt-3 block w-full overflow-hidden rounded-[14px] border border-black/10 bg-[#F8F7F3] aspect-video cursor-zoom-in"
+            >
+              <img
+                src={pingImage.url}
+                alt={currentPing.title || "User uploaded image"}
+                className="h-full w-full object-cover"
+                loading="lazy"
+              />
+            </button>
           )}
         </div>
 
@@ -401,6 +396,14 @@ const UnifiedPingCard = ({
           onConfirm={handleDeleteConfirm}
           onCancel={() => setShowDeleteModal(false)}
           isLoading={isDeleting}
+        />
+      )}
+
+      {lightboxSrc && (
+        <ImageLightbox
+          src={lightboxSrc}
+          alt={currentPing.title || "Image"}
+          onClose={() => setLightboxSrc(null)}
         />
       )}
     </>

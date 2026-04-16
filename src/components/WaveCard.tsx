@@ -18,6 +18,7 @@ import WaveActionsDropdown from "./WaveActionsDropdown";
 import { calculateWaveBadge } from "../utils/badgeUtils";
 import type { Wave, Media } from "../api/types";
 import { Tooltip } from "./Tooltip";
+import ImageLightbox from "./shared/ImageLightbox";
 
 interface WaveCardProps {
   wave: Wave;
@@ -79,6 +80,7 @@ const WaveCard = React.memo(
   ({ wave, isOwner, onDelete, allWavesForPing = [], pingId }: WaveCardProps) => {
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
+    const [lightboxSrc, setLightboxSrc] = useState<string | null>(null);
 
     const toggleSurge = useSurgeStore((state) => state.toggleSurge);
     const updateWaveStore = useWavesStore((state) => state.updateWave);
@@ -273,12 +275,19 @@ const WaveCard = React.memo(
                   className="w-full max-h-[320px] object-cover"
                 />
               ) : (
-                <img
-                  src={previewMedia.url}
-                  alt="Wave attachment"
-                  className="w-full max-h-[320px] object-cover"
-                  loading="lazy"
-                />
+                <button
+                  type="button"
+                  onClick={() => setLightboxSrc(previewMedia.url)}
+                  aria-label="View full image"
+                  className="w-full text-left cursor-zoom-in"
+                >
+                  <img
+                    src={previewMedia.url}
+                    alt="Wave attachment"
+                    className="w-full max-h-[320px] object-cover"
+                    loading="lazy"
+                  />
+                </button>
               )}
               {remainingMediaCount > 0 && (
                 <span className="absolute right-2 top-2 bg-black/70 text-white text-[11px] px-2 py-0.5 rounded-full">
@@ -316,6 +325,13 @@ const WaveCard = React.memo(
             onCancel={handleCancelDelete}
             isLoading={isDeleting}
             itemType="Wave"
+          />
+        )}
+        {lightboxSrc && (
+          <ImageLightbox
+            src={lightboxSrc}
+            alt="Wave image"
+            onClose={() => setLightboxSrc(null)}
           />
         )}
       </>

@@ -15,6 +15,7 @@ import { useAuthStore, useWavesStore } from "../stores";
 import { waveService, uploadService } from "../api/services";
 import type { Wave } from "../api/types";
 import UserAvatar from "./UserAvatar";
+import { checkContent } from "../utils/contentModeration";
 
 const waveIcon = "/assets/icon/wave.svg";
 const attachIcon = "/assets/icon/attach-circle.svg";
@@ -135,6 +136,13 @@ const ProposeWaveBar = ({ pingId, onWaveProposed }: Props) => {
 
     if (!solution.trim()) {
       setError("Please enter a solution");
+      return;
+    }
+
+    // Content moderation check
+    const moderation = checkContent(solution);
+    if (!moderation.passed) {
+      setError(moderation.reason);
       return;
     }
 

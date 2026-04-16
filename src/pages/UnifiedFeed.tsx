@@ -14,6 +14,7 @@
  */
 
 import { useCallback, useEffect, useState } from "react";
+import { useOutletContext } from "react-router-dom";
 import { useShallow } from "zustand/react/shallow";
 import { publicService } from "../api/services";
 import { getSocket } from "../api/socket";
@@ -22,11 +23,16 @@ import ClaimSpaceModal from "../components/ClaimSpaceModal";
 import InlinePingCreator from "../components/InlinePingCreator";
 import InviteLeaderModal from "../components/InviteLeaderModal";
 import OnboardingOverlay from "../components/onboarding/OnboardingOverlay";
+import AnnouncementWidget from "../components/UnifiedFeed/AnnouncementWidget";
+import Top3Widget from "../components/UnifiedFeed/Top3Widget";
 import UnifiedPingCard from "../components/UnifiedFeed/UnifiedPingCard";
+import type { Announcement, Ping } from "../api/types";
 import { useAuthStore, usePingsStore, useSearchStore } from "../stores";
 import UnifiedFeedSkeleton from "../components/skeletons/UnifiedFeedSkeleton";
 
 const UnifiedFeed = () => {
+  const { announcement = null, top3 = [] } = useOutletContext<{ announcement: Announcement | null, top3: Ping[] }>() || {};
+
   // ── Pings store ────────────────────────────────────────────────────────────
   const { pings, isLoading, error, fetchPings, fetchNextPage, hasNextPage } =
     usePingsStore(
@@ -117,6 +123,12 @@ const UnifiedFeed = () => {
 
       {/* Inline ping creator */}
       <InlinePingCreator />
+
+      {/* Mobile-only Top Widgets (Desktop renders these in Layout's right aside) */}
+      <div className="lg:hidden flex flex-col gap-[15px]">
+        <AnnouncementWidget announcement={announcement} />
+        <Top3Widget pings={top3} />
+      </div>
 
       {/* ── Feed list ── */}
       {isLoading && pings.length === 0 ? (

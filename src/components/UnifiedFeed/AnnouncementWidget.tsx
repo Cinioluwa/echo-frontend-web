@@ -24,29 +24,34 @@ const AnnouncementWidget = ({
 
   return (
     <div
-      className="bg-white border border-[#FFC37B] overflow-hidden rounded-[15px] flex flex-col gap-2.5 items-start  w-[300px]"
+      className="bg-white border border-[#FFC37B] overflow-hidden rounded-[15px] flex flex-col gap-2.5 w-full lg:w-[300px]"
       style={{ maxHeight: isExpanded ? "400px" : "290px" }}
     >
       {/* Announcement content */}
       {/* Header: "GENERAL ANNOUNCEMENT" */}
-      <div className="bg-[#F49B31] w-full p-4">
+      <div className="bg-[#F49B31] w-full p-4 flex justify-between items-center">
         <p className="font-['Inter',sans-serif] font-extrabold text-[14px] flex items-center justify-start gap-1 text-white decoration-solid leading-5">
           <GoDotFill />
           GENERAL ANNOUNCEMENT
         </p>
+        <button className="text-white hover:text-white/80 transition-colors">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M14 1.41L12.59 0L7 5.59L1.41 0L0 1.41L5.59 7L0 12.59L1.41 14L7 8.41L12.59 14L14 12.59L8.41 7L14 1.41Z" fill="currentColor"/>
+          </svg>
+        </button>
       </div>
-      <div className="pb-8 px-4">
+      <div className="pb-8 px-4 w-full">
         <div className="flex flex-col  gap-2.5 w-full text-black">
-          <div className="flex flex-col gap-[5px] whitespace-nowrap">
+          <div className="flex flex-col gap-[5px] w-full">
             {/* Title */}
             <p className="font-['Poppins',sans-serif] font-bold  text-[18px] leading-normal text-wrap">
               {announcement.title.toUpperCase()}
             </p>
           </div>
           {/* Description */}
-          <div className="font-extrabold text-[0px] min-w-full w-min">
+          <div className="w-full">
             <p className="text-[14px] font-['Poppins',sans-serif]">
-              <span className="font-medium leading-[1.8]">
+              <span className="font-medium leading-[1.8] text-black/90">
                 {isExpanded || announcement.content.length <= 160
                   ? announcement.content
                   : announcement.content.slice(0, 160) + "..."}

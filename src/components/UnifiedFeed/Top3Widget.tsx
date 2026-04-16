@@ -23,7 +23,7 @@ const Top3Widget = ({ pings = [] }: Top3WidgetProps) => {
   const navigate = useNavigate();
 
   return (
-    <div className="bg-white border border-[#FFC37B] rounded-[15px] flex flex-col gap-2.5 items-start px-5 p-7 pb-4 pt-2 w-[300px]">
+    <div className="bg-white border border-[#FFC37B] rounded-[15px] flex flex-col gap-2.5 items-start px-5 p-7 pb-4 pt-2 w-full lg:w-[300px]">
       {/* Header */}
       <div className="flex justify-between pt-2 pb-4 w-full items-center">
         <h3 className="font-['Poppins',sans-serif] font-semibold text-[22px] text-black leading-normal">
@@ -33,7 +33,7 @@ const Top3Widget = ({ pings = [] }: Top3WidgetProps) => {
       </div>
 
       {/* Rows */}
-      <div className="flex flex-col gap-3.5 w-full">
+      <div className="flex flex-row overflow-x-auto lg:flex-col gap-3.5 w-full snap-x snap-mandatory pt-1 pb-2 lg:pb-0 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
 
         {
           (top3.length === 0) ? (
@@ -46,9 +46,9 @@ const Top3Widget = ({ pings = [] }: Top3WidgetProps) => {
             <div
               onClick={() => navigate(`feed/${ping.id}`)}
               key={ping.id}
-              className={`flex items-center cursor-pointer gap-2 w-full ${index === 0 ? 'bg-[#f5a548]' : index === 1 ? 'bg-[#ffd8ab]' : index === 2 ? 'bg-[#faefe3]' : ''} rounded-[15px] px-2.5 py-3.5`}
+              className={`flex items-center cursor-pointer gap-2 flex-none w-[85%] lg:w-full snap-center ${index === 0 ? 'bg-[#f5a548]' : index === 1 ? 'bg-[#ffd8ab]' : index === 2 ? 'bg-[#faefe3]' : ''} rounded-[15px] px-2.5 py-3.5`}
             >
-              <p className={`${index === 0 ? 'text-white' : 'text-[#ee860e]'}`}>#{index + 1}</p>
+              <p className={`${index === 0 ? 'text-white' : 'text-[#ee860e]'} font-bold`}>#{index + 1}</p>
               {/* Avatar */}
               <div
                 style={{ backgroundColor: DOT_COLORS[index] }}
@@ -62,10 +62,15 @@ const Top3Widget = ({ pings = [] }: Top3WidgetProps) => {
                   className="text-[10px]! font-bold text-white"
                 />
               </div>
-              {/* Title */}
-              <span className="flex-1 font-['Poppins',sans-serif] font-medium text-[12px] text-black truncate leading-normal min-w-0">
-                {ping.title}
-              </span>
+              {/* Title & Author */}
+              <div className="flex-1 flex flex-col min-w-0 justify-center">
+                <span className={`font-['Poppins',sans-serif] font-medium text-[12px] truncate leading-normal ${index === 0 ? 'text-white' : 'text-black'}`}>
+                  {ping.title}
+                </span>
+                <span className={`font-['Poppins',sans-serif] font-normal text-[9px] truncate leading-normal ${index === 0 ? 'text-[#fdfdfd]' : 'text-[#626665]'}`}>
+                  {typeof ping.author === 'object' && ping.author ? `${ping.author.firstName} ${ping.author.lastName}` : "Anonymous"}
+                </span>
+              </div>
               {/* Surge count */}
               <div className="flex items-center gap-[3px] shrink-0">
                 <svg

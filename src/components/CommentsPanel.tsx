@@ -29,10 +29,10 @@ const CommentsPanel = ({ pingId, className = "", isDrawer = false }: Props) => {
     return () => clearTimeout(timer);
   }, [pingId]);
 
-  const handleCommentAdded = () => {
-    commentsListRef.current?.refresh();
-    // Update count from the list
-    setCommentsCount(commentsListRef.current?.getCommentsCount() ?? 0);
+  const handleCommentAdded = (comment: import("../api/types").Comment) => {
+    // Optimistic prepend — no refetch, no loading flash
+    commentsListRef.current?.addComment(comment);
+    setCommentsCount((prev) => prev + 1);
   };
 
   return (

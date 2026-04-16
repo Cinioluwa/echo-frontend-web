@@ -10,6 +10,7 @@ interface Props {
 
 export interface CommentsListHandle {
     refresh: () => void;
+    addComment: (comment: Comment) => void;
     getCommentsCount: () => number;
 }
 
@@ -43,9 +44,10 @@ const CommentsList = forwardRef<CommentsListHandle, Props>(({ targetType, target
         fetchComments();
     }, [targetType, targetId]);
 
-    // Expose refresh function to parent
+    // Expose refresh and optimistic-add to parent
     useImperativeHandle(ref, () => ({
         refresh: fetchComments,
+        addComment: (comment: Comment) => setComments((prev) => [comment, ...prev]),
         getCommentsCount: () => comments.length,
     }));
 
