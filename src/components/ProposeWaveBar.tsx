@@ -96,6 +96,9 @@ const ProposeWaveBar = ({ pingId, onWaveProposed }: Props) => {
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setSolution(e.target.value);
+    // Dynamic auto-resize
+    e.target.style.height = "auto";
+    e.target.style.height = `${e.target.scrollHeight}px`;
   };
 
   const handleAttachClick = () => {
@@ -190,7 +193,7 @@ const ProposeWaveBar = ({ pingId, onWaveProposed }: Props) => {
           {/* Expanded state: textarea with controls */}
           <div
             className={`flex flex-col transition-all duration-300 ${isActive
-              ? "max-h-96 opacity-100 px-3 md:px-4 py-2 md:py-2.5"
+              ? "max-h-[600px] opacity-100 px-3 md:px-4 py-3 md:py-4"
               : "max-h-0 opacity-0 overflow-hidden"
               }`}
           >
@@ -200,8 +203,8 @@ const ProposeWaveBar = ({ pingId, onWaveProposed }: Props) => {
               value={solution}
               onChange={handleChange}
               placeholder="What's your solution?"
-              className="flex-1 bg-[#fefefe] border-0 px-0 py-0 text-[13px] md:text-[14px] leading-[1.35] text-black outline-none resize-none font-['Poppins',sans-serif] font-medium placeholder:text-[#9e9e9e] placeholder:font-medium min-h-[24px] md:min-h-[28px] focus:ring-0"
-              rows={1}
+              className="flex-1 w-full bg-[#fefefe] border-0 px-0 py-0 text-[13px] md:text-[14px] leading-[1.5] text-black outline-none resize-none font-['Poppins',sans-serif] font-medium placeholder:text-[#9e9e9e] placeholder:font-medium min-h-[80px] md:min-h-[100px] overflow-hidden focus:ring-0"
+              rows={3}
               disabled={isSubmitting || isUploading}
             />
 
