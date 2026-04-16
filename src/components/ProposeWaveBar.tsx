@@ -168,7 +168,7 @@ const ProposeWaveBar = ({ pingId, onWaveProposed }: Props) => {
     <form
       ref={formRef}
       onSubmit={handleSubmit}
-      className="bg-white rounded-[16px] md:rounded-[25px] mb-4 md:mb-5 p-2 md:p-2.5 flex items-start md:items-center gap-2 md:gap-[13px] w-full max-w-full transition-all duration-300"
+      className="bg-white rounded-[16px] md:rounded-[25px] mb-4 md:mb-5 p-2 md:p-2.5 flex items-start gap-2 md:gap-[13px] w-full max-w-full transition-all duration-300"
     >
       {/* Hidden file input */}
       <input
@@ -182,7 +182,7 @@ const ProposeWaveBar = ({ pingId, onWaveProposed }: Props) => {
       />
 
       {/* Avatar */}
-      <div className="shrink-0 size-[38px] md:size-[50px] flex items-center justify-center">
+      <div className="shrink-0 size-[38px] md:size-[50px] flex items-center justify-center mt-1 md:mt-1.5">
         <UserAvatar user={user} size="md" responsive bgColor="bg-[#ffc37b]" />
       </div>
 
@@ -193,7 +193,7 @@ const ProposeWaveBar = ({ pingId, onWaveProposed }: Props) => {
           {/* Expanded state: textarea with controls */}
           <div
             className={`flex flex-col transition-all duration-300 ${isActive
-              ? "max-h-[600px] opacity-100 px-3 md:px-4 py-3 md:py-4"
+              ? "max-h-[600px] opacity-100 px-3 md:px-4 pt-3 pb-2 md:pt-4 md:pb-2.5"
               : "max-h-0 opacity-0 overflow-hidden"
               }`}
           >
