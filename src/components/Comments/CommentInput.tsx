@@ -107,27 +107,27 @@ const CommentInput = ({
             </div>
 
             {/* Input field container */}
-            <div className="flex-1" ref={containerRef}>
+            <div className="flex-1">
                 {!isFocused ? (
                     /* Default state - button */
                     <button
                         onClick={() => setIsFocused(true)}
-                        className="bg-white flex h-[30px] items-center px-2.5 rounded-[30px] w-full cursor-pointer hover:bg-gray-50 transition-colors"
+                        className="bg-white flex h-[32px] md:h-[30px] items-center px-2.5 rounded-[30px] w-full cursor-pointer hover:bg-gray-50 transition-colors"
                         data-node-id="5210:15041"
                     >
-                        <div className="text-[#626665] text-[9px] font-['Poppins',sans-serif] font-normal">
+                        <div className="text-[#626665] text-[10px] md:text-[9px] font-['Poppins',sans-serif] font-normal">
                             What do you have to say?
                         </div>
                     </button>
                 ) : (
                     /* Active state - textarea with button */
-                    <div className="bg-white flex flex-col gap-[5px] items-end justify-end h-[46px] pl-2.5 pr-[5px] py-[5px] rounded-[12.5px]" data-node-id="5210:15043">
+                    <div className="bg-white flex flex-col gap-2 items-stretch justify-between min-h-[74px] md:min-h-[60px] px-2.5 py-2 rounded-[12.5px] transition-all duration-200" data-node-id="5210:15043">
                         <textarea
                             value={content}
                             onChange={(e) => setContent(e.target.value)}
                             placeholder="What do you have to say?"
                             autoFocus
-                            className="w-full flex-1 p-0 text-sm text-[#292936] placeholder:text-[#626665] resize-none focus:outline-none font-['Poppins',sans-serif] bg-transparent text-[9px]"
+                            className="w-full flex-1 p-0 text-sm text-[#292936] placeholder:text-[#626665] resize-none focus:outline-none font-['Poppins',sans-serif] bg-transparent text-[10px] md:text-[9px] min-h-[34px] md:min-h-[30px]"
                             disabled={isSubmitting}
                         />
 
@@ -135,7 +135,7 @@ const CommentInput = ({
                         <button
                             onClick={handleSubmit}
                             disabled={isSubmitting || !content.trim()}
-                            className="bg-[#f49b31] flex items-center justify-center px-[5px] py-[2.5px] rounded-[15px] text-white text-[8px] font-['Poppins',sans-serif] font-medium hover:bg-[#d88429] transition-colors disabled:opacity-50 disabled:cursor-not-allowed w-[52px] shrink-0"
+                            className="self-end bg-[#f49b31] inline-flex items-center justify-center px-2.5 py-1 rounded-[16px] text-white text-[9px] md:text-[8px] font-['Poppins',sans-serif] font-medium leading-none hover:bg-[#d88429] transition-colors disabled:opacity-50 disabled:cursor-not-allowed min-w-[64px] md:min-w-[58px] shrink-0"
                             data-node-id="5210:15071"
                         >
                             {isSubmitting ? "..." : "Comment"}

@@ -47,7 +47,7 @@ const MobileHeader = () => {
                             className="w-full h-full object-contain"
                         />
                     </button>
-                    <span className="font-semibold text-[13px] text-black font-['Poppins',sans-serif] leading-normal">
+                    <span className="font-semibold text-[clamp(12px,3vw,13px)] text-black font-['Poppins',sans-serif] leading-normal">
                         {pageTitle}
                     </span>
                 </div>
@@ -68,9 +68,9 @@ const MobileHeader = () => {
                         /* Category pill — shown on main feed page only */
                         <button
                             onClick={() => setOpenCat(!openCat)}
-                            className="flex items-center justify-center px-[13px] py-[3px] h-5 w-[90px] border border-[#7D7D7D] rounded-[25px] cursor-pointer min-w-max"
+                            className="flex items-center justify-center px-2.5 md:px-[13px] py-[3px] h-5 w-auto min-w-[84px] max-w-[120px] border border-[#7D7D7D] rounded-[25px] cursor-pointer"
                         >
-                            <span className="text-[9px] font-medium font-['Poppins',sans-serif] text-black leading-normal">
+                            <span className="text-[clamp(8px,2.2vw,9px)] font-medium font-['Poppins',sans-serif] text-black leading-normal whitespace-nowrap">
                                 Category :{" "}
                                 <span className="text-[#F49B31]">
                                     {selectedMobileCat || "ALL"}
@@ -102,7 +102,7 @@ const MobileHeader = () => {
                     className="flex items-center justify-center gap-2 bg-[#F49B31] hover:bg-[#d88429] transition-colors rounded-[25px] px-3 py-2 cursor-pointer"
                 >
                     <FaPlus className="w-3 h-3 text-white" />
-                    <span className="text-[11px] font-medium text-white font-['Poppins',sans-serif] leading-normal whitespace-nowrap">
+                    <span className="text-[clamp(10px,2.5vw,11px)] font-medium text-white font-['Poppins',sans-serif] leading-normal whitespace-nowrap">
                         Create Ping
                     </span>
                 </button>)}

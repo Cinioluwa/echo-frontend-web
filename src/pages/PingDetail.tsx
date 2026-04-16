@@ -33,6 +33,12 @@ import { Tooltip } from "../components/Tooltip";
 import PingDetailSkeleton from "../components/skeletons/PingDetailSkeleton";
 import WaveCardSkeleton from "../components/skeletons/WaveCardSkeleton";
 
+const mergeServerWaves = (serverWaves: Wave[], localWaves: Wave[]) => {
+  const serverIds = new Set(serverWaves.map((wave) => wave.id));
+  const localOnly = localWaves.filter((wave) => !serverIds.has(wave.id));
+  return [...serverWaves, ...localOnly];
+};
+
 // ─── PingDetail Page ─────────────────────────────────────────────────────────
 
 const PingDetail = () => {
@@ -61,6 +67,10 @@ const PingDetail = () => {
   );
   const [showCommentsModal, setShowCommentsModal] = useState(false);
   const [weeklyTop3Ids, setWeeklyTop3Ids] = useState<number[]>([]);
+  const { setShowPingFormModal } = useOutletContext<{
+    showPingFormModal: boolean;
+    setShowPingFormModal: (value: boolean) => void;
+  }>();
 
   // Update page title with the ping title when ping is loaded
   usePageTitle(ping?.title);
@@ -75,6 +85,7 @@ const PingDetail = () => {
         console.log("📂 Category:", data.category);
         console.log("🌊 Waves:", data.waves);
         setPing(data);
+        // Keep a lightweight fallback while full wave payload hydrates below.
         setWaves(data.waves ?? []);
         if (data.hasSurged) {
           useSurgeStore.getState().addSurge("ping", pingId);
@@ -82,6 +93,27 @@ const PingDetail = () => {
       })
       .catch(() => setError("Failed to load ping"))
       .finally(() => setIsLoading(false));
+  }, [pingId]);
+
+  useEffect(() => {
+    if (!pingId) return;
+
+    let isCancelled = false;
+    waveService
+      .getWavesForPing(pingId, { page: 1, limit: 10 })
+      .then((res) => {
+        if (!isCancelled) {
+          setWaves((prev) => mergeServerWaves(res.data, prev));
+          setWavesPage(1);
+        }
+      })
+      .catch((err) => {
+        console.error("Failed to fetch full wave payload:", err);
+      });
+
+    return () => {
+      isCancelled = true;
+    };
   }, [pingId]);
 
   // Fetch categories for category name lookup
@@ -204,11 +236,6 @@ const PingDetail = () => {
     }
   };
 
-  const { setShowPingFormModal } = useOutletContext<{
-    showPingFormModal: boolean;
-    setShowPingFormModal: (value: boolean) => void;
-  }>();
-
   return (
     <div className="flex flex-col gap-[15px] pb-[30px] relative z-0">
       {/* ── Back button ───────────────────────────── */}
@@ -259,12 +286,16 @@ const PingDetail = () => {
         pingId={pingId ?? String(displayPing.id)}
         pingTitle={displayPing.title}
         pingCreatedAt={displayPing.createdAt}
-        onWaveProposed={() => {
+        onWaveProposed={(createdWave) => {
+          // Show new wave instantly, then hydrate from server without dropping optimistic data.
+          setWaves((prev) => [createdWave, ...prev.filter((wave) => wave.id !== createdWave.id)]);
+          setWavesPage(1);
+
           if (!pingId) return;
           waveService
             .getWavesForPing(pingId, { page: 1, limit: 10 })
             .then((res) => {
-              setWaves(res.data);
+              setWaves((prev) => mergeServerWaves(res.data, prev));
               setWavesPage(1);
             })
             .catch((err) => console.error("Failed to refresh waves:", err));

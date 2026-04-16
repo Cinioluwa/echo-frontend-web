@@ -83,6 +83,11 @@ const PingCard = ({
             : ping.category?.name || "";
     const categoryIcon = categoryImages[categoryName];
     const waveCount = ping._count?.waves || 0;
+    const initialHasSurged = ping.hasSurged ?? false;
+    const displayedSurgeCount = Math.max(
+        0,
+        surgeCount + (hasSurged ? 1 : 0) - (initialHasSurged ? 1 : 0),
+    );
 
     if (isLoading) return null;
 
@@ -240,7 +245,7 @@ const PingCard = ({
                             />
                         </svg>
                         <span className="font-['Poppins',sans-serif] font-semibold text-[11px]">
-                            {surgeCount}
+                            {displayedSurgeCount}
                         </span>
                     </button>
                 </Tooltip>

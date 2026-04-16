@@ -208,7 +208,7 @@ const InlinePingCreator = forwardRef<InlinePingCreatorHandle>((_, ref) => {
   if (state === "collapsed") {
     return (
       <div
-        className="bg-white rounded-[10px] px-5 py-[15px] flex items-center gap-[13px] cursor-pointer w-full"
+        className="bg-white rounded-[10px] px-3 md:px-5 py-3 md:py-[15px] flex items-center gap-2 md:gap-[13px] cursor-pointer w-full"
         onClick={handleCollapsedClick}
         role="button"
         tabIndex={0}
@@ -216,9 +216,9 @@ const InlinePingCreator = forwardRef<InlinePingCreatorHandle>((_, ref) => {
           if (e.key === "Enter") handleCollapsedClick();
         }}
       >
-        <UserAvatar user={user} size="lg" bgColor="bg-[#FFC37B]" />
-        <div className="flex-1 h-[50px] border-2 border-[#FFC37B] rounded-[20px] flex items-center pl-[27px]">
-          <span className="font-['Poppins',sans-serif] font-semibold italic text-[14px] text-black/70 select-none">
+        <UserAvatar user={user} size="lg" responsive bgColor="bg-[#FFC37B]" />
+        <div className="flex-1 h-11 md:h-[50px] border-2 border-[#FFC37B] rounded-2xl md:rounded-[20px] flex items-center pl-4 md:pl-[27px]">
+          <span className="font-['Poppins',sans-serif] font-medium text-[13px] md:text-[14px] text-[#9e9e9e] select-none">
             What's the problem?
           </span>
         </div>
@@ -228,10 +228,10 @@ const InlinePingCreator = forwardRef<InlinePingCreatorHandle>((_, ref) => {
 
   /* ─── Expanded State ─────────────────────────────────── */
   return (
-    <div className="w-full flex gap-3 bg-white rounded-[10px] px-5 py-[15px]">
+    <div className="w-full flex gap-2 md:gap-3 bg-white rounded-[10px] px-3 md:px-5 py-3 md:py-[15px]">
       {/* Left Column: Avatar */}
       <div className="shrink-0">
-        <UserAvatar user={user} size="lg" responsive={false} />
+        <UserAvatar user={user} size="lg" responsive />
       </div>
 
       {/* Right Column: Form Content */}
@@ -240,7 +240,7 @@ const InlinePingCreator = forwardRef<InlinePingCreatorHandle>((_, ref) => {
         <div className="relative" ref={categoryDropdownRef}>
           <button
             onClick={() => setShowCategoryDropdown(!showCategoryDropdown)}
-            className="flex items-center gap-1 px-4 py-1.5 border-2 border-[#F49B31] rounded-full bg-white hover:bg-[#FEF5EA] transition-colors duration-200 text-[14px] font-medium text-[#454545]"
+            className="flex items-center gap-1 px-3 md:px-4 py-1.5 border-2 border-[#F49B31] rounded-full bg-white hover:bg-[#FEF5EA] transition-colors duration-200 text-[13px] md:text-[14px] font-medium text-[#454545]"
           >
             {pingData.categoryId
               ? categories.find((c) => c.id === pingData.categoryId)?.name ||
@@ -282,11 +282,11 @@ const InlinePingCreator = forwardRef<InlinePingCreatorHandle>((_, ref) => {
         )}
 
         {/* Title Input */}
-        <div className="flex px-[27px] py-3 border-2 border-[#FFC37B] rounded-[20px] focus-within:border-[#F49B31] focus-within:shadow-md transition-all duration-200 bg-white w-full h-[50px]">
+        <div className="flex px-4 md:px-[27px] py-2.5 md:py-3 border-2 border-[#FFC37B] rounded-2xl md:rounded-[20px] focus-within:border-[#F49B31] focus-within:shadow-md transition-all duration-200 bg-white w-full min-h-11 md:h-[50px]">
           <input
             type="text"
             placeholder="Title*"
-            className="text-[14px] text-[#454545] outline-0 flex-1 bg-transparent placeholder:text-[#9e9e9e]"
+            className="text-[13px] md:text-[14px] text-[#454545] outline-0 flex-1 bg-transparent placeholder:text-[#9e9e9e]"
             onChange={(e) =>
               setPingData((prev) => ({ ...prev, title: e.target.value }))
             }
@@ -303,14 +303,14 @@ const InlinePingCreator = forwardRef<InlinePingCreatorHandle>((_, ref) => {
         {errors.title && <p className="text-red-500 text-xs">{errors.title}</p>}
 
         {/* Body/Description Input */}
-        <div className="flex px-[27px] py-3 border-2 border-[#FFC37B] rounded-[20px] focus-within:border-[#F49B31] focus-within:shadow-md transition-all duration-200 bg-white min-h-[100px] w-full">
+        <div className="flex px-4 md:px-[27px] py-2.5 md:py-3 border-2 border-[#FFC37B] rounded-2xl md:rounded-[20px] focus-within:border-[#F49B31] focus-within:shadow-md transition-all duration-200 bg-white min-h-[84px] md:min-h-[100px] w-full">
           <textarea
             placeholder="Body (optional)"
             onChange={(e) =>
               setPingData((prev) => ({ ...prev, description: e.target.value }))
             }
             value={pingData.description}
-            className="text-[14px] text-[#454545] outline-0 flex-1 bg-transparent resize-none placeholder:text-[#9e9e9e]"
+            className="text-[13px] md:text-[14px] text-[#454545] outline-0 flex-1 bg-transparent resize-none placeholder:text-[#9e9e9e]"
             autoComplete="off"
             spellCheck={false}
             data-gramm="false"
@@ -363,7 +363,7 @@ const InlinePingCreator = forwardRef<InlinePingCreatorHandle>((_, ref) => {
             disabled={pingData.photos.length >= 3}
             className="cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed transition-opacity"
           >
-            <FaLink fontSize={36} color="#F49B31" />
+            <FaLink className="text-[26px] md:text-[36px]" color="#F49B31" />
           </button>
 
           {/* Hidden Photo Input */}
@@ -384,7 +384,7 @@ const InlinePingCreator = forwardRef<InlinePingCreatorHandle>((_, ref) => {
                 type="button"
                 onClick={handleSubmit}
                 disabled={isPosting}
-                className="flex items-center justify-center px-4 py-2 bg-[#F49B31] hover:bg-[#d88429] rounded-[13px] font-medium text-sm text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex items-center justify-center px-3 md:px-4 py-1.5 md:py-2 bg-[#F49B31] hover:bg-[#d88429] rounded-[13px] font-medium text-[13px] md:text-sm text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isPosting ? "Posting..." : "Post"}
               </button>
