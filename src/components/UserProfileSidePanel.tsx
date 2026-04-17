@@ -54,14 +54,14 @@ const UserProfileSidePanel = ({ pages }: Pages) => {
               navigate("/user/account");
             }
           }}
-          className={`flex items-center md:my-1 gap-5 cursor-pointer px-7 py-3 rounded-xl whitespace-nowrap transition-all shrink-0 ${
+          className={`flex items-center md:my-1 gap-3 md:gap-5 cursor-pointer px-4 md:px-7 py-2 md:py-3 rounded-xl whitespace-nowrap transition-all shrink-0 ${
             item.active
               ? "bg-[#E8A355] text-white shadow-lg shadow-orange-200"
               : "bg-[#FEF5EA] hover:bg-orange-100"
           }`}
         >
           {item.icon}
-          <span className="text-sm">{item.label}</span>
+          <span className="text-xs md:text-sm">{item.label}</span>
         </button>
       ))}
     </aside>

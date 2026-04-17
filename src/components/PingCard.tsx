@@ -11,6 +11,7 @@ import { categoryImages } from "./CategoryImages";
 import { calculatePingBadge } from "../utils/badgeUtils";
 import PingActionsDropdown from "./UnifiedFeed/PingActionsDropdown";
 import ImageLightbox from "./shared/ImageLightbox";
+import ImageCarousel from "./shared/ImageCarousel";
 import type { Ping, CategoryData } from "../api/types";
 
 interface PingCardProps {
@@ -90,9 +91,6 @@ const PingCard = ({
         0,
         surgeCount + (hasSurged ? 1 : 0) - (initialHasSurged ? 1 : 0),
     );
-
-    // Hook must be declared before any conditional returns
-    const [lightboxSrc, setLightboxSrc] = useState<string | null>(null);
 
     if (isLoading) return null;
 
@@ -183,31 +181,12 @@ const PingCard = ({
             {ping.media &&
                 ping.media.length > 0 &&
                 (() => {
-                    const pingImage = ping.media.find((media) =>
+                    const pingImages = ping.media.filter((media) =>
                         media.mimeType.startsWith("image/"),
                     );
-                    return pingImage?.url ? (
+                    return pingImages.length > 0 ? (
                         <div className="mt-3">
-                            <button
-                                type="button"
-                                aria-label="View full image"
-                                onClick={() => setLightboxSrc(pingImage.url)}
-                                className="block w-full cursor-zoom-in"
-                            >
-                                <img
-                                    src={pingImage.url}
-                                    alt={ping.title || "User uploaded image"}
-                                    className="w-full h-auto object-contain max-h-[700px] rounded-[14px] border border-black/10"
-                                    loading="lazy"
-                                />
-                            </button>
-                            {lightboxSrc && (
-                                <ImageLightbox
-                                    src={lightboxSrc}
-                                    alt={ping.title || "Image"}
-                                    onClose={() => setLightboxSrc(null)}
-                                />
-                            )}
+                            <ImageCarousel images={pingImages} altText={ping.title || "User uploaded image"} />
                         </div>
                     ) : null;
                 })()}

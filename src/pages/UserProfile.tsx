@@ -279,25 +279,36 @@ const UserProfile = () => {
           {/* SIDE PANEL COMPONENT */}
           <UserProfileSidePanel pages={pages} />
           {/* FORM CONTENT */}
-          <div className="flex-1 md:border-l overflow-scroll md:border-orange-200 md:pl-12 pt-4 md:pt-0">
-            <h2 className="text-xl mb-6">Profile Picture</h2>
-            {loading ? (
-              <div className="text-center py-10">Loading...</div>
-            ) : error ? (
-              <div className="text-center text-red-500 py-10">{error}</div>
+          <div className="flex-1 md:border-l overflow-scroll md:border-orange-200 md:pl-12 md:pt-0">
+            <h2 className="text-lg md:text-xl md:mb-6 mb-4 font-semibold text-[#4A3728]">Profile Information</h2>
+            {loading || error ? (
+              <div className="space-y-6 animate-pulse">
+                <div className="flex items-center gap-6">
+                  <div className="w-16 h-16 md:w-24 md:h-24 bg-gray-200 rounded-full" />
+                  <div className="flex-1 space-y-2">
+                    <div className="h-4 bg-gray-200 rounded w-1/4" />
+                    <div className="h-3 bg-gray-200 rounded w-1/2" />
+                  </div>
+                </div>
+                <div className="space-y-4 pt-8 border-t border-gray-100">
+                  <div className="h-4 bg-gray-200 rounded w-1/3" />
+                  <div className="h-10 bg-gray-100 rounded w-full" />
+                  <div className="h-10 bg-gray-100 rounded w-full" />
+                </div>
+              </div>
             ) : user ? (
               <>
-                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6 mb-10">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 md:gap-6 mb-8 md:mb-10">
                   <div className="relative">
                     {user.profilePicture ? (
                       <img
                         src={user.profilePicture}
-                        className="w-24 h-24 rounded-full object-cover border-4 border-white shadow-sm"
+                        className="w-20 h-20 md:w-24 md:h-24 rounded-full object-cover border-4 border-white shadow-sm"
                         alt="Profile"
                       />
                     ) : (
-                      <div className="w-24 h-24 rounded-full bg-gray-300 border-4 border-white shadow-sm flex items-center justify-center">
-                        <UserIcon size={48} className="text-gray-600" />
+                      <div className="w-20 h-20 md:w-24 md:h-24 rounded-full bg-gray-300 border-4 border-white shadow-sm flex items-center justify-center">
+                        <UserIcon size={40} className="md:size-[48px] text-gray-600" />
                       </div>
                     )}
                   </div>
@@ -325,8 +336,8 @@ const UserProfile = () => {
                 </div>
 
                 {/* NAME SECTION (EDITABLE) */}
-                <div className="space-y-6 mt-8 pt-8 border-t border-gray-200">
-                  <h2 className="text-xl mb-6">Name Information</h2>
+                <div className="space-y-4 md:space-y-6 mt-6 md:mt-8 pt-6 md:pt-8 border-t border-gray-200">
+                  <h2 className="text-lg md:text-xl mb-4 md:mb-6 font-semibold text-[#4A3728]">Name Information</h2>
 
                   {editingName ? (
                     // Editing mode
@@ -340,7 +351,7 @@ const UserProfile = () => {
                           value={firstName}
                           onChange={(e) => setFirstName(e.target.value)}
                           disabled={nameChangeSaving}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 disabled:bg-gray-100"
+                          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 disabled:bg-gray-100 text-sm"
                         />
                       </div>
                       <div>
@@ -352,7 +363,7 @@ const UserProfile = () => {
                           value={lastName}
                           onChange={(e) => setLastName(e.target.value)}
                           disabled={nameChangeSaving}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 disabled:bg-gray-100"
+                          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 disabled:bg-gray-100 text-sm"
                         />
                       </div>
 
@@ -431,22 +442,22 @@ const UserProfile = () => {
                 </div>
 
                 {/* ANONYMOUS IDENTITY SECTION */}
-                <div className="space-y-6 mt-8 pt-8 border-t border-gray-200">
-                  <h2 className="text-xl mb-6">Anonymous Identity</h2>
+                <div className="space-y-6 mt-6 md:mt-8 pt-6 md:pt-8 border-t border-gray-200">
+                  <h2 className="text-lg md:text-xl mb-4 md:mb-6">Anonymous Identity</h2>
 
                   <div className="flex flex-col lg:flex-row gap-6 lg:gap-12 lg:items-center">
                     {/* Left: Picture and Change Button */}
-                    <div className="flex flex-col sm:flex-row gap-6 items-start sm:items-center shrink-0">
+                    <div className="flex flex-col sm:flex-row gap-4 md:gap-6 items-start sm:items-center shrink-0">
                       <div className="relative">
                         {anonProfilePicture ? (
                           <img
                             src={anonProfilePicture}
-                            className="w-24 h-24 rounded-full object-cover border-4 border-white shadow-sm"
+                            className="w-20 h-20 md:w-24 md:h-24 rounded-full object-cover border-4 border-white shadow-sm"
                             alt="Anonymous Profile"
                           />
                         ) : (
-                          <div className="w-24 h-24 rounded-full bg-gray-300 border-4 border-white shadow-sm flex items-center justify-center">
-                            <UserIcon size={48} className="text-gray-600" />
+                          <div className="w-20 h-20 md:w-24 md:h-24 rounded-full bg-gray-300 border-4 border-white shadow-sm flex items-center justify-center">
+                            <UserIcon size={40} className="md:size-[48px] text-gray-600" />
                           </div>
                         )}
                       </div>

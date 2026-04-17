@@ -44,7 +44,7 @@ const Top3Widget = ({ pings = [] }: Top3WidgetProps) => {
           // console.log(index)
           return (
             <div
-              onClick={() => navigate(`feed/${ping.id}`)}
+              onClick={() => navigate(`/feed/${ping.id}`)}
               key={ping.id}
               className={`flex items-center cursor-pointer gap-2 flex-none w-[85%] lg:w-full snap-center ${index === 0 ? 'bg-[#f5a548]' : index === 1 ? 'bg-[#ffd8ab]' : index === 2 ? 'bg-[#faefe3]' : ''} rounded-[15px] px-2.5 py-3.5`}
             >

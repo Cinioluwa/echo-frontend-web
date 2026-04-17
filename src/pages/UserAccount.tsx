@@ -19,10 +19,10 @@ const SignOutButton = () => {
   const logout = useAuthStore((s) => s.logout);
   return (
     <button
-      className="flex items-center gap-2 px-6 py-2 bg-white border border-orange-200 rounded-xl text-sm text-[#4A3728] hover:bg-orange-50 transition"
+      className="flex items-center gap-2 px-4 md:px-6 py-2 bg-white border border-orange-200 rounded-xl text-xs md:text-sm text-[#4A3728] hover:bg-orange-50 transition"
       onClick={logout}
     >
-      <HiOutlineLogout size={18} />
+      <HiOutlineLogout size={16} className="md:size-[18px]" />
       Sign out
     </button>
   );
@@ -60,11 +60,11 @@ const DeleteAccountButton = () => {
   return (
     <div className="flex flex-col items-end gap-2">
       <button
-        className="flex items-center justify-center gap-2 px-6 py-3 bg-[#D96666] text-white rounded-xl text-sm font-bold hover:bg-red-700 transition shadow-sm disabled:opacity-60"
+        className="flex items-center justify-center gap-2 px-4 md:px-6 py-2.5 md:py-3 bg-[#D96666] text-white rounded-xl text-xs md:text-sm font-bold hover:bg-red-700 transition shadow-sm disabled:opacity-60"
         onClick={handleDelete}
         disabled={loading || success}
       >
-        <HiOutlineTrash size={18} />
+        <HiOutlineTrash size={16} className="md:size-[18px]" />
         {loading ? "Deleting..." : success ? "Deleted" : "Delete Account"}
       </button>
       {error && <div className="text-red-600 text-xs text-right">{error}</div>}
@@ -90,15 +90,15 @@ const UserAccount = () => {
           {/* FORM CONTENT */}
           <div className="flex-1 md:border-l border-orange-200 md:pl-12 pt-4 md:pt-0">
             {/* Account Section */}
-            <section className="mb-10">
-              <h2 className="text-xl text-[#4A3728] mb-1">Account</h2>
-              <p className="text-sm text-gray-400 mb-6">Manage your account</p>
+            <section className="mb-8 md:mb-10">
+              <h2 className="text-lg md:text-xl text-[#4A3728] mb-0.5 font-semibold">Account</h2>
+              <p className="text-xs md:text-sm text-gray-400 mb-4 md:mb-6">Manage your account</p>
 
-              <div className="flex justify-between items-center p-6 bg-transparent border border-orange-200 rounded-2xl">
+              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center p-4 md:p-6 bg-transparent border border-orange-200 rounded-2xl gap-4">
                 <div>
-                  <h3 className="text-base text-[#4A3728]">Sign out</h3>
-                  <p className="text-sm text-gray-400">
-                    Sign out of your account on this device
+                  <h3 className="text-sm md:text-base text-[#4A3728] font-medium">Sign out</h3>
+                  <p className="text-xs md:text-sm text-gray-400">
+                    Sign out of your account
                   </p>
                 </div>
                 <SignOutButton />
@@ -111,25 +111,25 @@ const UserAccount = () => {
             <hr className="my-10 border-orange-100" />
 
             {/* Danger Zone */}
-            <section>
-              <h2 className="text-xl text-red-800 mb-1 **font-bold**">
+            <section className="mt-10">
+              <h2 className="text-lg md:text-xl text-red-800 mb-0.5 font-bold">
                 Danger Zone
               </h2>
-              <p className="text-sm text-gray-400 mb-6">
+              <p className="text-xs md:text-sm text-gray-400 mb-4 md:mb-6">
                 Irreversible actions for your account
               </p>
 
-              <div className="p-6 bg-red-50/30 border border-red-200 rounded-2xl flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <div className="flex gap-4">
+              <div className="p-4 md:p-6 bg-red-50/30 border border-red-200 rounded-2xl flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div className="flex gap-3 md:gap-4">
                   <HiOutlineExclamationTriangle
-                    className="text-red-600 mt-1"
-                    size={24}
+                    className="text-red-600 mt-0.5 md:mt-1 shrink-0"
+                    size={22}
                   />
                   <div>
-                    <h3 className="text-base text-red-800 **font-bold**">
+                    <h3 className="text-sm md:text-base text-red-800 font-bold">
                       Delete Account
                     </h3>
-                    <p className="text-sm text-red-700/70">
+                    <p className="text-xs md:text-sm text-red-700/70">
                       Permanently delete your account and all data. This cannot
                       be undone
                     </p>

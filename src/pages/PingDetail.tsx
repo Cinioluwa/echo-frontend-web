@@ -205,8 +205,7 @@ const PingDetail = () => {
     }
   };
 
-  if (isLoading) return <PingDetailSkeleton />;
-  if (error) return <p className="text-red-500 text-center py-10">{error}</p>;
+  if (isLoading || error) return <PingDetailSkeleton />;
 
   const displayPing = pingFromStore || ping;
   if (!displayPing) return null;

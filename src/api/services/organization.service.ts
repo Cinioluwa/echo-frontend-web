@@ -73,9 +73,8 @@ const organizationService = {
     orgId: number,
     data: { name: string; email: string; proofLink: string },
   ): Promise<{ message: string }> => {
-    // TODO: waiting on backend — POST /api/organization/:id/invite-leader
     const response = await api.post<{ message: string }>(
-      `/organization/${orgId}/invite-leader`,
+      `/public/organizations/${orgId}/invite-leader`,
       data,
     );
     return response.data;

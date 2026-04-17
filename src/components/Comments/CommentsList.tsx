@@ -51,24 +51,10 @@ const CommentsList = forwardRef<CommentsListHandle, Props>(({ targetType, target
         getCommentsCount: () => comments.length,
     }));
 
-    if (isLoading) {
+    if (isLoading || error) {
         return (
             <div className="flex justify-center items-center py-8">
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#F49B31]"></div>
-            </div>
-        );
-    }
-
-    if (error) {
-        return (
-            <div className="flex flex-col items-center gap-2 py-8">
-                <p className="text-sm text-red-500">{error}</p>
-                <button
-                    onClick={fetchComments}
-                    className="text-sm text-[#F49B31] hover:underline"
-                >
-                    Try again
-                </button>
             </div>
         );
     }

@@ -14,20 +14,27 @@ interface Props {
   pingId: string;
   className?: string;
   isDrawer?: boolean;
+  initialCount?: number;
 }
 
-const CommentsPanel = ({ pingId, className = "", isDrawer = false }: Props) => {
+const CommentsPanel = ({ pingId, className = "", isDrawer = false, initialCount = 0 }: Props) => {
   const commentsListRef = useRef<CommentsListHandle>(null);
-  const [commentsCount, setCommentsCount] = useState(0);
+  const [commentsCount, setCommentsCount] = useState(initialCount);
 
   // Update count when comments list is ready
   useEffect(() => {
     const timer = setTimeout(() => {
-      setCommentsCount(commentsListRef.current?.getCommentsCount() ?? 0);
+      setCommentsCount(prev => Math.max(prev, commentsListRef.current?.getCommentsCount() ?? 0));
     }, 100); // Small delay to let CommentsList load first
 
     return () => clearTimeout(timer);
   }, [pingId]);
+
+  useEffect(() => {
+      if (initialCount > commentsCount) {
+          setCommentsCount(initialCount);
+      }
+  }, [initialCount, commentsCount]);
 
   const handleCommentAdded = (comment: import("../api/types").Comment) => {
     // Optimistic prepend — no refetch, no loading flash

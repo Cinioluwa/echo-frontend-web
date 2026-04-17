@@ -18,6 +18,7 @@ import DeleteConfirmationModal from "../DeleteConfirmationModal";
 import UserAvatar from "../UserAvatar";
 import PingActionsDropdown from "./PingActionsDropdown";
 import ImageLightbox from "../shared/ImageLightbox";
+import ImageCarousel from "../shared/ImageCarousel";
 import type { Ping } from "../../api/types";
 import { categoryImages } from "../CategoryImages";
 import { Tooltip } from "../Tooltip";
@@ -55,7 +56,6 @@ const UnifiedPingCard = ({
 
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
-  const [lightboxSrc, setLightboxSrc] = useState<string | null>(null);
 
   const isOwner = currentPing.isAnonymous
     ? (currentPing.isOwner ?? false)
@@ -80,9 +80,9 @@ const UnifiedPingCard = ({
 
   const categoryName = currentPing.category?.name || "";
   const categoryIcon = categoryImages[categoryName];
-  const pingImage = currentPing.media?.find((media) =>
+  const pingImages = currentPing.media?.filter((media) =>
     media.mimeType.startsWith("image/"),
-  );
+  ) || [];
 
   const initialHasSurged = currentPing.hasSurged ?? false;
   const baseSurgeCount = currentPing.surgeCount ?? currentPing._count?.surges ?? 0;
@@ -286,20 +286,10 @@ const UnifiedPingCard = ({
               {currentPing.content}
             </p>
           )}
-          {pingImage?.url && (
-            <button
-              type="button"
-              aria-label="View full image"
-              onClick={(e) => { e.stopPropagation(); setLightboxSrc(pingImage.url); }}
-              className="mt-3 block w-full overflow-hidden rounded-[14px] border border-black/10 bg-[#F8F7F3] aspect-video cursor-zoom-in"
-            >
-              <img
-                src={pingImage.url}
-                alt={currentPing.title || "User uploaded image"}
-                className="h-full w-full object-cover"
-                loading="lazy"
-              />
-            </button>
+          {pingImages.length > 0 && (
+            <div onClick={(e) => e.stopPropagation()}>
+              <ImageCarousel images={pingImages} altText={currentPing.title || "User uploaded image"} />
+            </div>
           )}
         </div>
 
@@ -396,14 +386,6 @@ const UnifiedPingCard = ({
           onConfirm={handleDeleteConfirm}
           onCancel={() => setShowDeleteModal(false)}
           isLoading={isDeleting}
-        />
-      )}
-
-      {lightboxSrc && (
-        <ImageLightbox
-          src={lightboxSrc}
-          alt={currentPing.title || "Image"}
-          onClose={() => setLightboxSrc(null)}
         />
       )}
     </>
