@@ -31,7 +31,6 @@ import type { Ping, Wave, CategoryData } from "../api/types";
 import { FaPlus } from "react-icons/fa6";
 import { Tooltip } from "../components/Tooltip";
 import PingDetailSkeleton from "../components/skeletons/PingDetailSkeleton";
-import WaveCardSkeleton from "../components/skeletons/WaveCardSkeleton";
 
 const mergeServerWaves = (serverWaves: Wave[], localWaves: Wave[]) => {
   const serverIds = new Set(serverWaves.map((wave) => wave.id));

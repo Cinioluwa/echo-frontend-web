@@ -18,8 +18,17 @@
 
 /** Racial / ethnic slurs — whole-word match */
 const ETHNIC_SLURS = [
-  "nigger", "nigga", "kike", "spic", "chink", "gook", "wetback",
-  "coon", "beaner", "cracker", "honky",
+  "nigger",
+  "nigga",
+  "kike",
+  "spic",
+  "chink",
+  "gook",
+  "wetback",
+  "coon",
+  "beaner",
+  "cracker",
+  "honky",
 ];
 
 /**
@@ -27,19 +36,28 @@ const ETHNIC_SLURS = [
  * These are epithets used to demean specific ethnic groups.
  */
 const TRIBAL_SLURS = [
-  "nyamiri", "aboki", "omo igbo", "omo yoruba", "omo hausa",
-  "gambari", "onye ofe mmanu", "ngwere",
+  "nyamiri",
+  "aboki",
+  "omo igbo",
+  "omo yoruba",
+  "omo hausa",
+  "gambari",
+  "onye ofe mmanu",
+  "ngwere",
 ];
 
 /** Homophobic / transphobic slurs — whole-word match */
-const HOMOPHOBIC_SLURS = [
-  "faggot", "fag", "dyke", "tranny", "shemale", "homo",
-];
+const HOMOPHOBIC_SLURS = ["faggot", "fag", "dyke", "tranny", "shemale", "homo"];
 
 /** Religious bigotry terms — whole-word match */
 const RELIGIOUS_BIGOTRY = [
-  "infidel", "kafir", "kuffar", "christain dog", "muslim dog",
-  "pagan fool", "heathen",
+  "infidel",
+  "kafir",
+  "kuffar",
+  "christain dog",
+  "muslim dog",
+  "pagan fool",
+  "heathen",
 ];
 
 /**
@@ -47,29 +65,45 @@ const RELIGIOUS_BIGOTRY = [
  * longer words too, e.g. "pornographic").
  */
 const SEXUAL_CONTENT = [
-  "porn", "xxx", "nude", "nudes", "naked", "sex tape", "onlyfans",
-  "dick pic", "pussy", "cock", "boobs", "tits", "cum shot",
+  "porn",
+  "xxx",
+  "nude",
+  "nudes",
+  "naked",
+  "sex tape",
+  "onlyfans",
+  "dick pic",
+  "pussy",
+  "cock",
+  "boobs",
+  "tits",
+  "cum shot",
 ];
 
 /** Violent / threatening language — whole-word match */
 const VIOLENT_LANGUAGE = [
-  "kill yourself", "kys", "i will kill", "i\'ll kill", "go die",
-  "bomb threat", "shoot you",
+  "kill yourself",
+  "kys",
+  "i will kill",
+  "i\'ll kill",
+  "go die",
+  "bomb threat",
+  "shoot you",
 ];
 
 // ─── Match Configuration ──────────────────────────────────────────────────────
 
 /** Terms that should match even inside longer words (substring match) */
-const SUBSTRING_TERMS = new Set([...SEXUAL_CONTENT]);
+// const SUBSTRING_TERMS = new Set([...SEXUAL_CONTENT]);
 
-/** All whole-word terms */
-const WHOLE_WORD_TERMS = [
-  ...ETHNIC_SLURS,
-  ...TRIBAL_SLURS,
-  ...HOMOPHOBIC_SLURS,
-  ...RELIGIOUS_BIGOTRY,
-  ...VIOLENT_LANGUAGE,
-];
+// /** All whole-word terms */
+// const WHOLE_WORD_TERMS = [
+//   ...ETHNIC_SLURS,
+//   ...TRIBAL_SLURS,
+//   ...HOMOPHOBIC_SLURS,
+//   ...RELIGIOUS_BIGOTRY,
+//   ...VIOLENT_LANGUAGE,
+// ];
 
 // ─── Category labels for user-friendly error messages ────────────────────────
 
