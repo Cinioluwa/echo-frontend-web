@@ -7,13 +7,12 @@ import ProfileDropdown from "./ProfileDropdown";
 import { useNavigate } from "react-router-dom";
 
 const logo = "/assets/images/Echo Logo_black.svg";
-const echoBrand = "/assets/images/Echo brand.svg";
 
 const NavBar = () => {
   const navigate = useNavigate();
   return (
     <div className="bg-[#FFC37B] flex items-center justify-between px-5 md:px-[45px] py-1.5 md:py-2.5">
-      <div 
+      <div
         onClick={() => navigate("/feed")}
         className="flex items-center gap-[5px] cursor-pointer"
       >

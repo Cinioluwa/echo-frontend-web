@@ -17,7 +17,6 @@ import InlineWavePreview from "./InlineWavePreview";
 import DeleteConfirmationModal from "../DeleteConfirmationModal";
 import UserAvatar from "../UserAvatar";
 import PingActionsDropdown from "./PingActionsDropdown";
-import ImageLightbox from "../shared/ImageLightbox";
 import ImageCarousel from "../shared/ImageCarousel";
 import type { Ping } from "../../api/types";
 import { categoryImages } from "../CategoryImages";
@@ -276,12 +275,12 @@ const UnifiedPingCard = ({
             isHistoryContext ? "min-w-0" : "",
           ].join(" ")}
         >
-          <h3 className="font-['Poppins',sans-serif] font-semibold text-[clamp(13px,3.1vw,16px)] text-black leading-normal break-words overflow-hidden">
+          <h3 className="font-['Poppins',sans-serif] font-semibold text-[clamp(13px,3.1vw,16px)] text-black leading-normal wrap-break-words overflow-hidden">
             {currentPing.title}
           </h3>
           {currentPing.content && (
             <p
-              className="font-['Poppins',sans-serif] font-medium text-[clamp(11px,2.7vw,14px)] text-black/70 leading-relaxed break-words overflow-hidden line-clamp-3"
+              className="font-['Poppins',sans-serif] font-medium text-[clamp(11px,2.7vw,14px)] text-black/70 leading-relaxed wrap-break-words overflow-hidden line-clamp-3"
             >
               {currentPing.content}
             </p>
@@ -344,7 +343,7 @@ const UnifiedPingCard = ({
             >
               <img
                 src={waveIcon}
-                className="h-[22px] w-[20px] md:h-[27px] md:w-[25px]"
+                className="h-[22px] w-5 md:h-[27px] md:w-[25px]"
                 alt="waveIcon"
               />
               <span className="font-['Inter',sans-serif] font-medium text-[clamp(10px,2.5vw,14px)] text-[#63637B] leading-5 whitespace-nowrap">
@@ -360,7 +359,7 @@ const UnifiedPingCard = ({
             >
               <img
                 src={commentIcon}
-                className="h-[22px] w-[20px] md:h-[27px] md:w-[25px]"
+                className="h-[22px] w-5 md:h-[27px] md:w-[25px]"
                 alt="commentIcon"
               />
               <span className="font-['Inter',sans-serif] font-medium text-[clamp(10px,2.5vw,14px)] text-[#63637B] leading-5 whitespace-nowrap">
