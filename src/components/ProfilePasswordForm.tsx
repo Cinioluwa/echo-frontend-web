@@ -17,9 +17,9 @@ const ProfilePasswordForm = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <h2 className="text-xl text-[#4A3728] mb-1">Change Password</h2>
-      <p className="text-sm text-gray-400 mb-6">Manage your account</p>
+    <form onSubmit={handleSubmit} className="mt-8 md:mt-10">
+      <h2 className="text-lg md:text-xl text-[#4A3728] mb-1 font-semibold">Change Password</h2>
+      <p className="text-xs md:text-sm text-gray-400 mb-4 md:mb-6">Update your account password</p>
 
       <div className="space-y-4">
         <div className="flex flex-col md:flex-row gap-4">
@@ -28,7 +28,7 @@ const ProfilePasswordForm = () => {
             placeholder="Old Password"
             value={currentPassword}
             onChange={e => setCurrentPassword(e.target.value)}
-            className="flex-1 p-4 bg-[#FFFBF5] border border-orange-100 rounded-xl text-sm italic focus:outline-none focus:ring-1 focus:ring-orange-200"
+            className="flex-1 p-3 md:p-4 bg-[#FFFBF5] border border-orange-100 rounded-xl text-sm italic focus:outline-none focus:ring-1 focus:ring-orange-200"
             required
             minLength={6}
           />
@@ -37,16 +37,16 @@ const ProfilePasswordForm = () => {
             placeholder="New Password"
             value={newPassword}
             onChange={e => setNewPassword(e.target.value)}
-            className="flex-1 p-4 bg-[#FFFBF5] border border-orange-100 rounded-xl text-sm italic focus:outline-none focus:ring-1 focus:ring-orange-200"
+            className="flex-1 p-3 md:p-4 bg-[#FFFBF5] border border-orange-100 rounded-xl text-sm italic focus:outline-none focus:ring-1 focus:ring-orange-200"
             required
             minLength={8}
           />
           <button
             type="submit"
-            className="px-6 py-4 bg-[#E8A355] text-white rounded-xl text-sm shadow-md hover:bg-[#d49246] transition md:w-auto disabled:opacity-60"
+            className="px-6 py-3 md:py-4 bg-[#E8A355] text-white rounded-xl text-sm font-semibold shadow-md hover:bg-[#d49246] transition md:w-auto disabled:opacity-60"
             disabled={loading || !currentPassword || !newPassword}
           >
-            {loading ? "Changing..." : "Change Password"}
+            {loading ? "Changing..." : "Update Password"}
           </button>
         </div>
         {error && (

@@ -84,18 +84,18 @@ const UserPrivacy = () => {
           <UserProfileSidePanel pages={pages} />
 
           {/* FORM CONTENT */}
-          <div className="flex-1 mb-80 md:border-l border-orange-200 md:pl-12 pt-4 md:pt-0">
-            <h2 className="text-xl text-[#4A3728] mb-6">Email Verification</h2>
+          <div className="flex-1 mb-20 md:border-l border-orange-200 md:pl-12 pt-4 md:pt-0">
+            <h2 className="text-lg md:text-xl text-[#4A3728] mb-4 md:mb-6 font-semibold">Email Verification</h2>
 
             {/* Verified Status Banner */}
-            <div className="mb-8 p-6 bg-[#E8F9F1] border border-[#4ADE80] rounded-2xl flex items-start gap-4">
+            <div className="mb-6 md:mb-8 p-4 md:p-6 bg-[#E8F9F1] border border-[#4ADE80] rounded-2xl flex items-start gap-4">
               <HiOutlineCheckBadge
-                className="text-[#22C55E] mt-1 shrink-0"
-                size={24}
+                className="text-[#22C55E] mt-0.5 md:mt-1 shrink-0"
+                size={22}
               />
               <div>
-                <h3 className="text-[#166534] text-base">Email Verified</h3>
-                <p className="text-[#166534]/70 text-sm mt-1">
+                <h3 className="text-[#166534] text-sm md:text-base font-semibold">Email Verified</h3>
+                <p className="text-[#166534]/70 text-xs md:text-sm mt-0.5 md:mt-1">
                   Your email has been verified. You can now enjoy the full
                   features of ECHO
                 </p>
@@ -103,11 +103,11 @@ const UserPrivacy = () => {
             </div>
 
             {/* Error Message */}
-            {error && (
-              <div className="mb-8 p-6 bg-[#FEE2E2] border border-[#EF4444] rounded-2xl flex items-start gap-4">
+            {(loading || error) && (
+              <div className="mb-6 md:mb-8 p-4 md:p-6 bg-[#FEE2E2] border border-[#EF4444] rounded-2xl flex items-start gap-4 animate-pulse">
                 <div>
-                  <h3 className="text-[#991B1B] text-base">Error</h3>
-                  <p className="text-[#991B1B]/70 text-sm mt-1">{error}</p>
+                  <h3 className="text-[#991B1B] text-sm md:text-base font-semibold">{error ? "Error" : "Loading..."}</h3>
+                  <p className="text-[#991B1B]/70 text-xs md:text-sm mt-0.5 md:mt-1">{error || "Fetching your privacy settings..."}</p>
                 </div>
               </div>
             )}
@@ -137,14 +137,10 @@ const UserPrivacy = () => {
             )}
 
             {/* Toggle Options Section */}
-            {loading ? (
-              <div className="text-center py-8">
-                <p className="text-[#4A3728]">Loading preferences...</p>
-              </div>
-            ) : userPreference ? (
+            {userPreference && !loading && (
               <div className="space-y-4">
-                <div className="flex justify-between items-center p-5 bg-transparent border border-orange-200 rounded-2xl">
-                  <span className="text-[#4A3728] text-base">
+                <div className="flex justify-between items-center p-4 md:p-5 bg-transparent border border-orange-200 rounded-2xl">
+                  <span className="text-[#4A3728] text-sm md:text-base font-medium">
                     Comment Anonymously
                   </span>
                   <Toggle
@@ -155,9 +151,9 @@ const UserPrivacy = () => {
                     disabled={updateMessage?.type === "error"}
                   />
                 </div>
-                <div className="flex justify-between items-center p-5 bg-transparent border border-orange-200 rounded-2xl">
-                  <span className="text-[#4A3728] text-base">
-                    Post Pings (Problems) Anonymously
+                <div className="flex justify-between items-center p-4 md:p-5 bg-transparent border border-orange-200 rounded-2xl">
+                  <span className="text-[#4A3728] text-sm md:text-base font-medium">
+                    Post Pings Anonymously
                   </span>
                   <Toggle
                     checked={userPreference.pingAnonymously}
@@ -168,7 +164,7 @@ const UserPrivacy = () => {
                   />
                 </div>
               </div>
-            ) : null}
+            )}
           </div>
         </div>
       </main>
