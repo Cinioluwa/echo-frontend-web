@@ -101,6 +101,10 @@ const AdminNotification = lazyWithRetry(() => import("../pages/admin/AdminNotifi
 // Lazy load error page
 const ErrorPage = lazyWithRetry(() => import("../pages/ErrorPage"));
 
+// Lazy load legal pages
+const TermsOfUse = lazyWithRetry(() => import("../pages/TermsOfUse"));
+const PrivacyPolicy = lazyWithRetry(() => import("../pages/PrivacyPolicy"));
+
 // Helper to wrap lazy-loaded components with Suspense
 const withSuspense = (Component: React.LazyExoticComponent<React.ComponentType<any>>) => (
   <Suspense fallback={<LoadingFallback />}>
@@ -139,6 +143,14 @@ const router = createBrowserRouter([
   {
     path: "/find-institution-error",
     element: withSuspense(FindInstitutionError),
+  },
+  {
+    path: "/terms",
+    element: withSuspense(TermsOfUse),
+  },
+  {
+    path: "/privacy",
+    element: withSuspense(PrivacyPolicy),
   },
   {
     path: "/institution-found",

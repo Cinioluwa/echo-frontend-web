@@ -25,12 +25,21 @@ const AuthFooter: React.FC<AuthFooterProps> = ({
                     <p className="text-[#838383]">
                         By creating an account, you agree to Echo
                     </p>
-                    <Link
-                        to="/terms"
-                        className="text-[#f49b31] hover:text-[#e08a2a] transition-colors"
-                    >
-                        Terms of Use, Privacy Policy
-                    </Link>
+                    <div className="flex gap-1 text-[#f49b31]">
+                        <Link
+                            to="/terms"
+                            className="hover:text-[#e08a2a] transition-colors"
+                        >
+                            Terms of Use
+                        </Link>
+                        <span>and</span>
+                        <Link
+                            to="/privacy"
+                            className="hover:text-[#e08a2a] transition-colors"
+                        >
+                            Privacy Policy
+                        </Link>
+                    </div>
                 </div>
             )}
 

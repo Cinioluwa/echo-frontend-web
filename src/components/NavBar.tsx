@@ -13,31 +13,18 @@ const NavBar = () => {
   const navigate = useNavigate();
   return (
     <div className="bg-[#FFC37B] flex items-center justify-between px-5 md:px-[45px] py-1.5 md:py-2.5">
-      {/* Desktop: Logo icon + "Echo" text */}
       <div 
         onClick={() => navigate("/feed")}
-        className="hidden md:flex items-center gap-[5px] cursor-pointer"
+        className="flex items-center gap-[5px] cursor-pointer"
       >
         <img
           src={logo}
-          className="brightness-0 contrast-200 h-[27px] w-[25px]"
+          className="brightness-0 contrast-200 h-[25px] w-[23px] md:h-[27px] md:w-[25px]"
           alt="Echo logo"
         />
-        <span className="font-bold text-[30px] text-black font-['Poppins',sans-serif] leading-normal">
+        <span className="font-bold text-[24px] md:text-[30px] text-black font-['Poppins',sans-serif] leading-normal">
           Echo
         </span>
-      </div>
-
-      {/* Mobile: Logo icon only */}
-      <div 
-        onClick={() => navigate("/feed")}
-        className="block md:hidden cursor-pointer"
-      >
-        <img
-          src={echoBrand}
-          className="brightness-0 contrast-200 h-12 w-12"
-          alt="Echo logo"
-        />
       </div>
 
       {/* User profile + dropdown */}

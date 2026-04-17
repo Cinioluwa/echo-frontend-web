@@ -283,12 +283,15 @@ const PingFormModal = ({
     return (
       <div className="w-full flex gap-3">
         {/* Left Column: Avatar */}
-        <div className="shrink-0">
+        <div className="shrink-0 hidden md:block">
           <UserAvatar user={user} size="lg" responsive={false} />
+        </div>
+        <div className="shrink-0 block md:hidden">
+          <UserAvatar user={user} size="md" responsive={false} />
         </div>
 
         {/* Right Column: Form Content */}
-        <div className="flex flex-col gap-3 flex-1 overflow-visible">
+        <div className="flex flex-col gap-2 md:gap-3 flex-1 overflow-visible">
           {/* Category Dropdown */}
           <div className="relative" ref={categoryDropdownRef}>
             <button
@@ -335,7 +338,7 @@ const PingFormModal = ({
           )}
 
           {/* Title Input */}
-          <div className="flex px-[27px] py-3 border-2 border-[#FFC37B] rounded-[20px] focus-within:border-[#F49B31] focus-within:shadow-md transition-all duration-200 bg-white w-full h-[50px]">
+          <div className="flex px-4 md:px-[27px] py-2 md:py-3 border-2 border-[#FFC37B] rounded-[20px] focus-within:border-[#F49B31] focus-within:shadow-md transition-all duration-200 bg-white w-full h-[40px] md:h-[50px]">
             <input
               type="text"
               id="pingTitle"
@@ -351,7 +354,7 @@ const PingFormModal = ({
           {errors.title && <p className="text-red-500 text-xs">{errors.title}</p>}
 
           {/* Body/Description Input */}
-          <div className="flex px-[27px] py-3 border-2 border-[#FFC37B] rounded-[20px] focus-within:border-[#F49B31] focus-within:shadow-md transition-all duration-200 bg-white min-h-[100px] w-full">
+          <div className="flex px-4 md:px-[27px] py-2 md:py-3 border-2 border-[#FFC37B] rounded-[20px] focus-within:border-[#F49B31] focus-within:shadow-md transition-all duration-200 bg-white min-h-[80px] md:min-h-[100px] w-full">
             <textarea
               name="pingDescription"
               id="pingDescription"
@@ -369,10 +372,10 @@ const PingFormModal = ({
 
           {/* Photo Gallery - Constrained to max-height, no overflow */}
           {pingData.photos.length > 0 && (
-            <div className="w-full max-h-[200px]">
+            <div className="w-full max-h-[140px] md:max-h-[200px]">
               {pingData.photos.length === 1 ? (
                 // Single photo - full width, constrained height
-                <div className="relative group w-full h-[200px] rounded-lg overflow-hidden border-2 border-[#F49B31] shadow-sm">
+                <div className="relative group w-full h-[140px] md:h-[200px] rounded-lg overflow-hidden border-2 border-[#F49B31] shadow-sm">
                   <img
                     src={URL.createObjectURL(pingData.photos[0])}
                     alt="Upload 1"
@@ -381,14 +384,14 @@ const PingFormModal = ({
                   <button
                     type="button"
                     onClick={() => handleRemovePingPhoto(0)}
-                    className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1.5 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                    className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1.5 opacity-100 md:opacity-0 group-hover:opacity-100 transition-opacity duration-200 cursor-pointer"
                   >
                     <Trash2 size={14} />
                   </button>
                 </div>
               ) : pingData.photos.length === 2 ? (
                 // Two photos - side by side, constrained height
-                <div className="flex gap-2 h-[200px]">
+                <div className="flex gap-2 h-[140px] md:h-[200px]">
                   <div className="relative group flex-1 rounded-lg overflow-hidden border-2 border-[#F49B31] shadow-sm">
                     <img
                       src={URL.createObjectURL(pingData.photos[0])}
@@ -398,7 +401,7 @@ const PingFormModal = ({
                     <button
                       type="button"
                       onClick={() => handleRemovePingPhoto(0)}
-                      className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1.5 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                      className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1.5 opacity-100 md:opacity-0 group-hover:opacity-100 transition-opacity duration-200 cursor-pointer"
                     >
                       <Trash2 size={14} />
                     </button>
@@ -412,7 +415,7 @@ const PingFormModal = ({
                     <button
                       type="button"
                       onClick={() => handleRemovePingPhoto(1)}
-                      className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1.5 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                      className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1.5 opacity-100 md:opacity-0 group-hover:opacity-100 transition-opacity duration-200 cursor-pointer"
                     >
                       <Trash2 size={14} />
                     </button>
@@ -420,7 +423,7 @@ const PingFormModal = ({
                 </div>
               ) : (
                 // Three photos - 1 large on left, 2 stacked on right, constrained height
-                <div className="flex gap-2 h-[200px]">
+                <div className="flex gap-2 h-[140px] md:h-[200px]">
                   {/* Large photo on left */}
                   <div className="relative group flex-1 rounded-lg overflow-hidden border-2 border-[#F49B31] shadow-sm">
                     <img
@@ -431,7 +434,7 @@ const PingFormModal = ({
                     <button
                       type="button"
                       onClick={() => handleRemovePingPhoto(0)}
-                      className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1.5 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                      className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1.5 opacity-100 md:opacity-0 group-hover:opacity-100 transition-opacity duration-200 cursor-pointer"
                     >
                       <Trash2 size={14} />
                     </button>
@@ -448,7 +451,7 @@ const PingFormModal = ({
                       <button
                         type="button"
                         onClick={() => handleRemovePingPhoto(1)}
-                        className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1.5 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                        className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1.5 opacity-100 md:opacity-0 group-hover:opacity-100 transition-opacity duration-200 cursor-pointer"
                       >
                         <Trash2 size={14} />
                       </button>
@@ -462,7 +465,7 @@ const PingFormModal = ({
                       <button
                         type="button"
                         onClick={() => handleRemovePingPhoto(2)}
-                        className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1.5 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                        className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1.5 opacity-100 md:opacity-0 group-hover:opacity-100 transition-opacity duration-200 cursor-pointer"
                       >
                         <Trash2 size={14} />
                       </button>
@@ -492,9 +495,9 @@ const PingFormModal = ({
                 pingData.photos.length < 3 && pingPhotoInputRef.current?.click()
               }
               disabled={pingData.photos.length >= 3}
-              className="cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed transition-opacity"
+              className="cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed transition-opacity flex items-center justify-center p-2 rounded-full hover:bg-[#FEF5EA]"
             >
-              <FaLink fontSize={36} color="#F49B31" />
+              <FaLink className="text-[22px] text-[#F49B31]" />
             </button>
 
             {/* Post Button - Separate submit and dropdown toggle */}
@@ -578,7 +581,7 @@ const PingFormModal = ({
         onClick={(e) => e.stopPropagation()}
       >
         {/* Modal Title */}
-        <h2 className="font-semibold text-center text-[30px] text-black w-full">
+        <h2 className="font-semibold text-center text-2xl md:text-[30px] text-black w-full">
           Create Ping
         </h2>
 

@@ -9,6 +9,7 @@
 
 import { useState } from "react";
 import { organizationService } from "../api/services";
+import EchoLogo from "./auth/EchoLogo";
 
 interface InviteLeaderModalProps {
     isOpen: boolean;
@@ -51,19 +52,7 @@ const InviteLeaderModal = ({ isOpen, onClose, organizationId }: InviteLeaderModa
         >
             <div className="bg-white rounded-[30px] p-[50px] flex flex-col gap-[30px] items-center w-full max-w-[480px]">
                 {/* Echo Logo */}
-                <div className="flex items-center gap-[5.6px] justify-center">
-                    <img
-                        src="/assets/images/echo-logo-coloured.png"
-                        alt="Echo Logo"
-                        className="h-[30px] w-auto"
-                        onError={(e) => {
-                            (e.currentTarget as HTMLImageElement).style.display = "none";
-                        }}
-                    />
-                    <span className="font-['Poppins',sans-serif] font-bold text-[33.75px] text-[#FFC37B] leading-normal">
-                        Echo
-                    </span>
-                </div>
+                <EchoLogo size="md" />
 
                 {/* Header */}
                 <div className="flex flex-col gap-2.5 items-center text-center w-full">

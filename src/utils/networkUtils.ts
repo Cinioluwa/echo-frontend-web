@@ -66,7 +66,7 @@ export const parseNetworkError = (error: any): NetworkError => {
     ) {
       return {
         type: NetworkErrorType.TIMEOUT,
-        message: "Request timed out. Please try again.",
+        message: "Network is slow. Please check your connection and try again.",
         originalError: error,
         retryable: true,
       };
@@ -141,7 +141,7 @@ export const parseNetworkError = (error: any): NetworkError => {
       case 504:
         return {
           type: NetworkErrorType.SERVER_ERROR,
-          message: message || "Server error. Please try again later.",
+          message: message || "We are experiencing server issues. Please try again later.",
           statusCode: status,
           originalError: error,
           retryable: true,

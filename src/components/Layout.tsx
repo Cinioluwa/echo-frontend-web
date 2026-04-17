@@ -165,8 +165,8 @@ const Layout = () => {
 
         {/* Ping Detail right aside — CommentsPanel (Phase 3) */}
         {pingDetailId && (
-          <aside className="hidden lg:flex w-[360px] shrink-0 pt-[15px] pr-5 flex-col gap-[15px] h-[75vh]">
-            <CommentsPanel pingId={pingDetailId} className="flex-1" />
+          <aside className="hidden lg:flex w-[360px] shrink-0 pt-[15px] pr-5 lg:mr-[5vw] xl:mr-[12vw] flex-col gap-[15px] h-[75vh]">
+            <CommentsPanel pingId={pingDetailId} className="flex-1" initialCount={ping?._count?.comments} />
 
             {/* ── Resolve error message ─────────────────── */}
             {resolveError && (

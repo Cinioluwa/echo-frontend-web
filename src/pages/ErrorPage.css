@@ -11,13 +11,13 @@
   --border-color: rgba(244, 155, 49, 0.15);
 }
 
-* {
+.error-page-container * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
-body {
+.error-page-container {
   font-family: "Space Mono", monospace;
   background: var(--dark-bg);
   color: var(--text-primary);
