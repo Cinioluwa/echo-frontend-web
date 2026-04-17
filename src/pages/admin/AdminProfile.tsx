@@ -2,7 +2,7 @@ import { useEffect, useState, useRef } from "react";
 import type { User } from "../../api/types/index";
 import ProfileLayout from "../../components/ProfileLayout";
 import AdminProfileSidePanel from "../../components/admin/AdminProfileSidePanel";
-import profileImage from "/assets/images/profileImage.jpeg";
+import { User as UserIcon } from "lucide-react";
 import ProfileBadge from "../../components/ProfileBadge";
 import ProfileDataField from "../../components/ProfileDataField";
 import userService from "../../api/services/user.service";
@@ -190,11 +190,17 @@ const AdminProfile = () => {
               <>
                 <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6 mb-10">
                   <div className="relative">
-                    <img
-                      src={user.profilePicture || profileImage}
-                      className="w-24 h-24 rounded-full object-cover border-4 border-white shadow-sm"
-                      alt={`${user.firstName} ${user.lastName}`}
-                    />
+                    {user.profilePicture ? (
+                      <img
+                        src={user.profilePicture}
+                        className="w-24 h-24 rounded-full object-cover border-4 border-white shadow-sm"
+                        alt={`${user.firstName} ${user.lastName}`}
+                      />
+                    ) : (
+                      <div className="w-24 h-24 rounded-full bg-gray-300 border-4 border-white shadow-sm flex items-center justify-center">
+                        <UserIcon size={48} className="text-gray-600" />
+                      </div>
+                    )}
                     {uploading && (
                       <div className="absolute inset-0 bg-black/20 rounded-full flex items-center justify-center">
                         <span className="text-white text-xs">Uploading...</span>

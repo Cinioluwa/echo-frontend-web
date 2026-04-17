@@ -1,5 +1,5 @@
 import { FaCheckCircle } from "react-icons/fa";
-import profileImage from "/assets/images/profileImage.jpeg";
+import { User } from "lucide-react";
 
 export default function AdminCommentBox() {
   return (
@@ -7,11 +7,9 @@ export default function AdminCommentBox() {
       {/* Header */}
       <div className="flex items-center gap-3 mb-4">
         <div className="relative">
-          <img
-            src={profileImage}
-            alt="admin"
-            className="w-9 h-9 rounded-full object-cover"
-          />
+          <div className="w-9 h-9 rounded-full bg-gray-300 flex items-center justify-center">
+            <User size={20} className="text-gray-600" />
+          </div>
 
           <FaCheckCircle className="absolute -bottom-1 -left-1 text-amber-700 bg-white rounded-full text-sm" />
         </div>

@@ -4,7 +4,7 @@ import type { User } from "../api/types/index";
 import ProfileBadge from "../components/ProfileBadge";
 import ProfileDataField from "../components/ProfileDataField";
 import UserProfileSidePanel from "../components/UserProfileSidePanel";
-import profileImage from "/assets/images/profileImage.jpeg";
+import { User as UserIcon } from "lucide-react";
 import ProfileLayout from "../components/ProfileLayout";
 import userService from "../api/services/user.service";
 import uploadService from "../api/services/upload.service";
@@ -289,11 +289,17 @@ const UserProfile = () => {
               <>
                 <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6 mb-10">
                   <div className="relative">
-                    <img
-                      src={user.profilePicture || profileImage}
-                      className="w-24 h-24 rounded-full object-cover border-4 border-white shadow-sm"
-                      alt="Profile"
-                    />
+                    {user.profilePicture ? (
+                      <img
+                        src={user.profilePicture}
+                        className="w-24 h-24 rounded-full object-cover border-4 border-white shadow-sm"
+                        alt="Profile"
+                      />
+                    ) : (
+                      <div className="w-24 h-24 rounded-full bg-gray-300 border-4 border-white shadow-sm flex items-center justify-center">
+                        <UserIcon size={48} className="text-gray-600" />
+                      </div>
+                    )}
                   </div>
                   <div className="flex-1">
                     <label className="px-5 py-2 bg-white border border-orange-200 rounded-lg text-sm shadow-sm hover:border-orange-300 transition cursor-pointer inline-block">
@@ -432,11 +438,17 @@ const UserProfile = () => {
                     {/* Left: Picture and Change Button */}
                     <div className="flex flex-col sm:flex-row gap-6 items-start sm:items-center shrink-0">
                       <div className="relative">
-                        <img
-                          src={anonProfilePicture || profileImage}
-                          className="w-24 h-24 rounded-full object-cover border-4 border-white shadow-sm"
-                          alt="Anonymous Profile"
-                        />
+                        {anonProfilePicture ? (
+                          <img
+                            src={anonProfilePicture}
+                            className="w-24 h-24 rounded-full object-cover border-4 border-white shadow-sm"
+                            alt="Anonymous Profile"
+                          />
+                        ) : (
+                          <div className="w-24 h-24 rounded-full bg-gray-300 border-4 border-white shadow-sm flex items-center justify-center">
+                            <UserIcon size={48} className="text-gray-600" />
+                          </div>
+                        )}
                       </div>
                       <div className="flex-1">
                         <label className="px-5 py-2 bg-white border border-orange-200 rounded-lg text-sm shadow-sm hover:border-orange-300 transition cursor-pointer inline-block">

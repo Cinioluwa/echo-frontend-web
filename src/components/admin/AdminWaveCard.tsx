@@ -1,9 +1,10 @@
+import { User } from "lucide-react";
+
 const cardProfile = "/assets/images/wavecardprofile.svg";
 const approve = "/assets/images/approve.svg";
 const waveMenu = "/assets/images/waveMenu.svg";
 const reject = "/assets/images/reject.svg";
 const dropdown = "/assets/images/customDropdown.svg";
-const profileImage = "/assets/images/profileImage.jpeg";
 import CollapsibleText from "../CollapsibleText";
 import type { AdminWave } from "../../api/types/admin.types";
 import { categoryImages } from "../CategoryImages";
@@ -144,12 +145,9 @@ const AdminWaveCard = ({ waves, onUpdate }: AdminWaveCardProps) => {
         <div className="my-[15px]">
           <div className="flex items-center w-full justify-between px-[5px] py-[9px] rounded-2xl bg-[#FFC37B]">
             <div className="  inline-flex mr-2.5 ml-2.5  items-center gap-2.5 ">
-              <span className="w-[35px] inline-block overflow-hidden h-[35px] cursor-pointer rounded-full">
-                <img
-                  src={profileImage}
-                  className=" object-cover w-full h-full"
-                />
-              </span>
+              <div className="w-[35px] h-[35px] rounded-full bg-gray-300 flex items-center justify-center">
+                <User size={20} className="text-gray-600" />
+              </div>
               <div className="text-start">
                 <p className="text-[#926B3D] text-[0.45rem] md:text-[0.74rem] ">
                   Original Ping
