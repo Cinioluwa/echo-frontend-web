@@ -9,6 +9,7 @@
 import { useRef, useState, useEffect } from "react";
 import { CommentsList, CommentInput } from "./Comments";
 import type { CommentsListHandle } from "./Comments/CommentsList";
+import { usePingsStore } from "../stores";
 
 interface Props {
   pingId: string;
@@ -20,6 +21,7 @@ interface Props {
 const CommentsPanel = ({ pingId, className = "", isDrawer = false, initialCount = 0 }: Props) => {
   const commentsListRef = useRef<CommentsListHandle>(null);
   const [commentsCount, setCommentsCount] = useState(initialCount);
+  const updatePing = usePingsStore((state) => state.updatePing);
 
   // Update count when comments list is ready
   useEffect(() => {
@@ -40,6 +42,17 @@ const CommentsPanel = ({ pingId, className = "", isDrawer = false, initialCount 
     // Optimistic prepend — no refetch, no loading flash
     commentsListRef.current?.addComment(comment);
     setCommentsCount((prev) => prev + 1);
+
+    const currentPing = usePingsStore.getState().pingsById[pingId];
+    if (!currentPing) return;
+
+    const currentComments = currentPing._count?.comments ?? 0;
+    updatePing(pingId, {
+      _count: {
+        ...(currentPing._count || { waves: 0, surges: 0, comments: 0 }),
+        comments: currentComments + 1,
+      },
+    });
   };
 
   return (

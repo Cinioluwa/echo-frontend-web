@@ -9,14 +9,21 @@ type category = {
   id: number;
 };
 
+const CountBadge = ({ value }: { value: number }) => {
+  const displayValue = value > 99 ? "99+" : String(value);
+
+  return (
+    <span className="min-w-[26px] h-[26px] px-1.5 font-semibold text-white text-[11px] leading-none tabular-nums whitespace-nowrap flex justify-center items-center rounded-full bg-[#F49B31] shrink-0">
+      {displayValue}
+    </span>
+  );
+};
+
 const Categories = () => {
   const setCategory = useSearchStore((state) => state.setCategory);
   const clearCategory = useSearchStore((state) => state.clearCategory);
   const categoryCounts = useSearchStore((state) => state.categoryCounts);
-  const totalCount = useSearchStore((state) => {
-    console.log("Total count:", state);
-    return state.totalCount;
-  });
+  const totalCount = useSearchStore((state) => state.totalCount);
   // Categories from global store
   const categories = useCategoriesStore((state) => state.categories);
   const isLoading = useCategoriesStore((state) => state.isLoading);
@@ -51,12 +58,7 @@ const Categories = () => {
   }
 
   if (error) {
-    return (
-      <div className="p-2">
-        <header className="my-2.5 pl-2.5 font-[18px]">Category</header>
-        <div className="text-center py-4 text-sm text-red-500">{error}</div>
-      </div>
-    );
+    return <CategoriesSkeleton />;
   }
 
   return (
@@ -70,9 +72,7 @@ const Categories = () => {
         } w-full rounded-lg font-bold cursor-pointer`}
       >
         All Categories
-        <span className="w-[26px] font-normal text-white p-4 h-[26px] text-[13px] flex justify-center items-center rounded-full bg-[#F49B31]">
-          {totalCount || 0}
-        </span>
+        <CountBadge value={totalCount || 0} />
       </button>
 
       <div className="">
@@ -94,9 +94,7 @@ const Categories = () => {
               </span>
               <div>{category.label}</div>
             </div>
-            <span className="w-[26px] font-normal text-white h-[26px] flex justify-center items-center rounded-full bg-[#F49B31] text-[13px]">
-              {categoryCounts[category.id] || 0}
-            </span>
+            <CountBadge value={categoryCounts[category.id] || 0} />
           </button>
         ))}
       </div>

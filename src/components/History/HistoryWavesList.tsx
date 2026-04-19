@@ -58,16 +58,12 @@ const HistoryWavesList = ({ isLoading: parentIsLoading = false }: HistoryWavesLi
         }
     };
 
-    if (parentIsLoading || isLoading) {
+    if (parentIsLoading || isLoading || error) {
         return (
             <div className="flex justify-center py-10">
                 <LoadingSpinner />
             </div>
         );
-    }
-
-    if (error) {
-        return <p className="text-red-500">{error}</p>;
     }
 
     if (waves.length === 0) {

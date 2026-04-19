@@ -17,11 +17,11 @@ export interface CommentsListHandle {
 const CommentsList = forwardRef<CommentsListHandle, Props>(({ targetType, targetId }, ref) => {
     const [comments, setComments] = useState<Comment[]>([]);
     const [isLoading, setIsLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
+    const [hasLoadError, setHasLoadError] = useState(false);
 
     const fetchComments = async () => {
         setIsLoading(true);
-        setError(null);
+        setHasLoadError(false);
 
         try {
             // Using the API endpoint structure: /pings/:pingId/comments or /waves/:waveId/comments
@@ -34,7 +34,7 @@ const CommentsList = forwardRef<CommentsListHandle, Props>(({ targetType, target
             // Use totalItems as defined in PaginatedResponse type
         } catch (err) {
             console.error("Failed to fetch comments:", err);
-            setError("Failed to load comments");
+            setHasLoadError(true);
         } finally {
             setIsLoading(false);
         }
@@ -51,7 +51,7 @@ const CommentsList = forwardRef<CommentsListHandle, Props>(({ targetType, target
         getCommentsCount: () => comments.length,
     }));
 
-    if (isLoading || error) {
+    if (isLoading || hasLoadError) {
         return (
             <div className="flex justify-center items-center py-8">
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#F49B31]"></div>

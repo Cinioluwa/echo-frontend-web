@@ -131,12 +131,8 @@ const UnifiedFeed = () => {
       </div>
 
       {/* ── Feed list ── */}
-      {isLoading && pings.length === 0 ? (
+      {(isLoading || error) && pings.length === 0 ? (
         <UnifiedFeedSkeleton />
-      ) : error ? (
-        <div className="bg-red-50 border border-red-200 rounded-[10px] px-4 py-3 text-red-600 text-sm">
-          {error}
-        </div>
       ) : pings.length === 0 ? (
         <div className="text-center py-16 text-[#4A504E] text-sm">
           No pings yet. Be the first to raise an issue!

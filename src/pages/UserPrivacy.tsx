@@ -5,6 +5,7 @@ import ProfileLayout from "../components/ProfileLayout";
 import { useState, useEffect } from "react";
 import userService from "../api/services/user.service";
 import type { UserPreference } from "../api/types";
+import { getErrorMessage } from "../utils/networkUtils";
 
 const pages = {
   profile: false,
@@ -23,6 +24,9 @@ const UserPrivacy = () => {
     type: "success" | "error";
     text: string;
   } | null>(null);
+  const [updatingField, setUpdatingField] = useState<
+    "commentAnonymously" | "pingAnonymously" | null
+  >(null);
 
   // Fetch user preferences on component mount
   useEffect(() => {
@@ -32,10 +36,8 @@ const UserPrivacy = () => {
         setError(null);
         const preferences = await userService.getMyPreferences();
         setUserPreference(preferences);
-      } catch (err) {
-        const message =
-          err instanceof Error ? err.message : "Failed to load preferences";
-        setError(message);
+      } catch (err: unknown) {
+        setError(getErrorMessage(err));
         console.error("Error fetching preferences:", err);
       } finally {
         setLoading(false);
@@ -52,25 +54,35 @@ const UserPrivacy = () => {
   ) => {
     if (!userPreference) return;
 
+    const previousPreference = userPreference;
+
     try {
       setUpdateMessage(null);
+      setUpdatingField(field);
+
+      setUserPreference({
+        ...userPreference,
+        [field]: value,
+      });
+
       const updatedPreference = await userService.updateMyPreferences({
         [field]: value,
       });
       setUserPreference(updatedPreference);
       setUpdateMessage({
         type: "success",
-        text: "Preference updated successfully",
+        text: "Privacy preference saved.",
       });
       setTimeout(() => setUpdateMessage(null), 3000);
-    } catch (err) {
-      const message =
-        err instanceof Error ? err.message : "Failed to update preference";
+    } catch (err: unknown) {
+      setUserPreference(previousPreference);
       setUpdateMessage({
         type: "error",
-        text: message,
+        text: getErrorMessage(err),
       });
       console.error("Error updating preference:", err);
+    } finally {
+      setUpdatingField(null);
     }
   };
 
@@ -102,13 +114,21 @@ const UserPrivacy = () => {
               </div>
             </div>
 
+            {/* Loading Message */}
+            {loading && (
+              <div className="mb-6 md:mb-8 p-4 md:p-6 bg-[#FEF5EA] border border-[#FFCD71] rounded-2xl">
+                <h3 className="text-[#926B3D] text-sm md:text-base font-semibold">Loading preferences</h3>
+                <p className="text-[#926B3D]/80 text-xs md:text-sm mt-0.5 md:mt-1">
+                  Fetching your privacy settings...
+                </p>
+              </div>
+            )}
+
             {/* Error Message */}
-            {(loading || error) && (
-              <div className="mb-6 md:mb-8 p-4 md:p-6 bg-[#FEE2E2] border border-[#EF4444] rounded-2xl flex items-start gap-4 animate-pulse">
-                <div>
-                  <h3 className="text-[#991B1B] text-sm md:text-base font-semibold">{error ? "Error" : "Loading..."}</h3>
-                  <p className="text-[#991B1B]/70 text-xs md:text-sm mt-0.5 md:mt-1">{error || "Fetching your privacy settings..."}</p>
-                </div>
+            {error && !loading && (
+              <div className="mb-6 md:mb-8 p-4 md:p-6 bg-[#FEE2E2] border border-[#EF4444] rounded-2xl">
+                <h3 className="text-[#991B1B] text-sm md:text-base font-semibold">Could not load preferences</h3>
+                <p className="text-[#991B1B]/70 text-xs md:text-sm mt-0.5 md:mt-1">{error}</p>
               </div>
             )}
 
@@ -148,7 +168,7 @@ const UserPrivacy = () => {
                     onChange={(checked) =>
                       handlePreferenceUpdate("commentAnonymously", checked)
                     }
-                    disabled={updateMessage?.type === "error"}
+                    disabled={updatingField !== null}
                   />
                 </div>
                 <div className="flex justify-between items-center p-4 md:p-5 bg-transparent border border-orange-200 rounded-2xl">
@@ -160,7 +180,7 @@ const UserPrivacy = () => {
                     onChange={(checked) =>
                       handlePreferenceUpdate("pingAnonymously", checked)
                     }
-                    disabled={updateMessage?.type === "error"}
+                    disabled={updatingField !== null}
                   />
                 </div>
               </div>

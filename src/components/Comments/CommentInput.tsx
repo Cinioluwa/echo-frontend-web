@@ -5,6 +5,7 @@ import userService from "../../api/services/user.service";
 import type { UserPreference, Comment } from "../../api/types";
 import UserAvatar from "../UserAvatar";
 import { checkContent } from "../../utils/contentModeration";
+import { getErrorMessage } from "../../utils/networkUtils";
 
 interface Props {
     targetType: "ping" | "wave";
@@ -64,7 +65,7 @@ const CommentInput = ({
 
     const handleSubmit = async () => {
         if (!content.trim()) {
-            setError("Comment cannot be empty");
+            setError("Enter a comment before posting.");
             return;
         }
 
@@ -96,7 +97,7 @@ const CommentInput = ({
             setIsFocused(false);
         } catch (err) {
             console.error("Failed to post comment:", err);
-            setError("Failed to post comment. Please try again.");
+            setError(getErrorMessage(err));
         } finally {
             setIsSubmitting(false);
         }

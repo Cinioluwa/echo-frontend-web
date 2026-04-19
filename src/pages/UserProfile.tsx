@@ -8,6 +8,8 @@ import { User as UserIcon } from "lucide-react";
 import ProfileLayout from "../components/ProfileLayout";
 import userService from "../api/services/user.service";
 import uploadService from "../api/services/upload.service";
+import { useAuthStore } from "../stores";
+import { getErrorMessage } from "../utils/networkUtils";
 import {
   getNameChangeStatus,
   hasNameChanged,
@@ -22,8 +24,11 @@ const pages = {
 
 
 const UserProfile = () => {
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
+  const authUser = useAuthStore((state) => state.user);
+  const updateAuthUser = useAuthStore((state) => state.updateUser);
+
+  const [user, setUser] = useState<User | null>(authUser);
+  const [loading, setLoading] = useState(!authUser);
   const [error, setError] = useState("");
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState("");
@@ -46,12 +51,21 @@ const UserProfile = () => {
   const [anonProfilePicture, setAnonProfilePicture] = useState("");
 
   useEffect(() => {
+    if (!authUser) return;
+
+    setUser((prev) => prev ?? authUser);
+    setFirstName((prev) => prev || authUser.firstName);
+    setLastName((prev) => prev || authUser.lastName);
+  }, [authUser]);
+
+  useEffect(() => {
     const fetchUser = async () => {
       setLoading(true);
       setError("");
       try {
         const data = await userService.getMe();
         setUser(data);
+        updateAuthUser(data);
         setFirstName(data.firstName);
         setLastName(data.lastName);
 
@@ -73,8 +87,8 @@ const UserProfile = () => {
           setAlias("");
           setAnonProfilePicture("");
         }
-      } catch (err) {
-        setError("Failed to load profile");
+      } catch (err: unknown) {
+        setError(getErrorMessage(err));
       } finally {
         setLoading(false);
       }
@@ -86,15 +100,65 @@ const UserProfile = () => {
   const handlePictureChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
+
+    if (file.size > 5 * 1024 * 1024) {
+      setUploadError("Profile image must be 5MB or smaller.");
+      return;
+    }
+
+    if (!file.type.startsWith("image/")) {
+      setUploadError("Please upload a valid image file.");
+      return;
+    }
+
+    const previousPicture = user?.profilePicture;
+    const previewUrl = URL.createObjectURL(file);
+
+    setUser((prev) =>
+      prev
+        ? {
+          ...prev,
+          profilePicture: previewUrl,
+        }
+        : prev,
+    );
+    updateAuthUser({ profilePicture: previewUrl });
+
     setUploading(true);
     setUploadError("");
+
     try {
       const res = await uploadService.uploadProfilePicture(file);
-      setUser((prev) => prev ? { ...prev, profilePicture: res.user.profilePictureUrl } : prev);
-    } catch (err) {
-      setUploadError("Failed to upload profile picture");
+      const uploadedPicture =
+        res?.user?.profilePictureUrl || res?.profilePictureUrl || previousPicture;
+
+      setUser((prev) =>
+        prev
+          ? {
+            ...prev,
+            profilePicture: uploadedPicture,
+          }
+          : prev,
+      );
+      updateAuthUser({ profilePicture: uploadedPicture });
+    } catch (err: unknown) {
+      setUser((prev) =>
+        prev
+          ? {
+            ...prev,
+            profilePicture: previousPicture,
+          }
+          : prev,
+      );
+      updateAuthUser({ profilePicture: previousPicture });
+      setUploadError(getErrorMessage(err));
     } finally {
       setUploading(false);
+      URL.revokeObjectURL(previewUrl);
+
+      if (e.target) {
+        e.target.value = "";
+      }
     }
   };
 
@@ -124,12 +188,8 @@ const UserProfile = () => {
           }
           : prev,
       );
-    } catch (err) {
-      const errorMessage =
-        err instanceof Error
-          ? err.message
-          : "Could not update anonymous alias picture. Please try again.";
-      setAnonPictureError(errorMessage);
+    } catch (err: unknown) {
+      setAnonPictureError(getErrorMessage(err));
       console.error("Anonymous picture upload error:", err);
     } finally {
       setUploadingAnonPicture(false);
@@ -156,12 +216,8 @@ const UserProfile = () => {
           }
           : prev,
       );
-    } catch (err) {
-      const errorMessage =
-        err instanceof Error
-          ? err.message
-          : "Could not remove anonymous alias picture. Please try again.";
-      setAnonPictureError(errorMessage);
+    } catch (err: unknown) {
+      setAnonPictureError(getErrorMessage(err));
       console.error("Anonymous picture clear error:", err);
     } finally {
       setUploadingAnonPicture(false);
@@ -198,9 +254,8 @@ const UserProfile = () => {
       // Exit editing mode and reset saving state
       setEditingAlias(false);
       setAliasSaving(false);
-    } catch (err) {
-      const errorMsg = err instanceof Error ? err.message : "Failed to update alias";
-      setAliasError(errorMsg);
+    } catch (err: unknown) {
+      setAliasError(getErrorMessage(err));
       console.error("Alias update error:", err);
       setAliasSaving(false);
     }
@@ -252,9 +307,8 @@ const UserProfile = () => {
       setNameChangeStatus(status);
 
       setEditingName(false);
-    } catch (err) {
-      const errorMsg = err instanceof Error ? err.message : "Failed to update name";
-      setNameChangeError(errorMsg);
+    } catch (err: unknown) {
+      setNameChangeError(getErrorMessage(err));
       console.error("Name update error:", err);
     } finally {
       setNameChangeSaving(false);

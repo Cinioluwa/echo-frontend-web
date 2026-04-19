@@ -6,6 +6,44 @@
 import { AxiosError } from "axios";
 
 /**
+ * Convert raw/API error text into user-friendly copy.
+ */
+export const normalizeErrorMessage = (
+  rawMessage: unknown,
+  fallback: string = "Something went wrong. Please try again.",
+): string => {
+  if (typeof rawMessage !== "string") return fallback;
+
+  const trimmed = rawMessage.trim();
+  if (!trimmed) return fallback;
+
+  const normalized = trimmed.replace(/^AxiosError:\s*/i, "");
+  const lower = normalized.toLowerCase();
+
+  if (lower.includes("network error") || lower.includes("failed to fetch")) {
+    return "Unable to reach the server. Please check your connection.";
+  }
+
+  if (lower.includes("jwt expired") || lower.includes("token expired")) {
+    return "Your session has expired. Please log in again.";
+  }
+
+  if (lower.includes("invalid token") || lower.includes("unauthorized")) {
+    return "Your session is invalid. Please log in again.";
+  }
+
+  if (lower.includes("timeout") || lower.includes("econnaborted")) {
+    return "The request timed out. Please try again.";
+  }
+
+  if (lower.startsWith("request failed with status code")) {
+    return fallback;
+  }
+
+  return normalized;
+};
+
+/**
  * Check if browser is online
  */
 export const isOnline = (): boolean => {
@@ -85,7 +123,10 @@ export const parseNetworkError = (error: any): NetworkError => {
     // Parse response status
     const status = axiosError.response.status;
     const data = axiosError.response.data as any;
-    const message = data?.message || data?.error || axiosError.message;
+    const message = normalizeErrorMessage(
+      data?.message || data?.error || axiosError.message,
+      "Something went wrong. Please try again.",
+    );
 
     switch (status) {
       case 400:

@@ -46,24 +46,19 @@ const CategoryPanel = () => {
 
     const isAllSelected = selectedCategory === null;
 
-    if (isLoading) {
+    if (isLoading || error) {
         return (
             <div className="w-[244px] h-[447px] bg-[#FFC37B] rounded-[10px] p-5 flex flex-col gap-2">
                 <h2 className="font-['Poppins',sans-serif] font-medium text-[18px] text-black text-center">
                     Category
                 </h2>
-                <div className="text-center py-4 text-sm text-white/70">Loading categories...</div>
-            </div>
-        );
-    }
-
-    if (error) {
-        return (
-            <div className="w-[244px] h-[447px] bg-[#FFC37B] rounded-[10px] p-5 flex flex-col gap-2">
-                <h2 className="font-['Poppins',sans-serif] font-medium text-[18px] text-black text-center">
-                    Category
-                </h2>
-                <div className="text-center py-4 text-sm text-red-600">{error}</div>
+                <div className="mt-2 space-y-2 animate-pulse">
+                    <div className="h-8 rounded-lg bg-[#F9D7A6]" />
+                    <div className="h-8 rounded-lg bg-[#F9D7A6]" />
+                    <div className="h-8 rounded-lg bg-[#F9D7A6]" />
+                    <div className="h-8 rounded-lg bg-[#F9D7A6]" />
+                    <div className="h-8 rounded-lg bg-[#F9D7A6]" />
+                </div>
             </div>
         );
     }
@@ -124,10 +119,12 @@ const CategoryPanel = () => {
 };
 
 function CountBubble({ value }: { value: number }) {
+    const displayValue = value > 99 ? "99+" : String(value);
+
     return (
-        <div className="w-[26px] h-[26px] rounded-full bg-[#F49B31] flex items-center justify-center shrink-0">
-            <span className="font-['Poppins',sans-serif] font-medium text-[13px] text-white leading-none">
-                {value}
+        <div className="min-w-[26px] h-[26px] rounded-full bg-[#F49B31] px-1.5 flex items-center justify-center shrink-0">
+            <span className="font-['Poppins',sans-serif] font-semibold text-[11px] text-white leading-none tabular-nums whitespace-nowrap">
+                {displayValue}
             </span>
         </div>
     );

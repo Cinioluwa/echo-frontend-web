@@ -105,8 +105,7 @@ export const useCategoriesStore = create<CategoriesState>()(
           console.error("❌ Error fetching categories:", err);
 
           set((state) => {
-            state.error =
-              err instanceof Error ? err.message : "Failed to load categories";
+            state.error = "Failed to load categories";
             state.isLoading = false;
           });
         }
