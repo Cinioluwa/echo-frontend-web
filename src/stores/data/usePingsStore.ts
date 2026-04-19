@@ -210,7 +210,7 @@ export const usePingsStore = create<PingsState>()(
           console.error("Error fetching pings:", err);
           set((state) => {
             // Keep showing cached data, just update error state
-            state.error = err.response?.data?.error || "Failed to load pings";
+            state.error = "Failed to load pings";
             state.isLoading = false;
             state.isFetchingInBackground = false;
           });

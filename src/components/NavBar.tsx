@@ -7,7 +7,6 @@ import ProfileDropdown from "./ProfileDropdown";
 import { useNavigate } from "react-router-dom";
 
 const logo = "/assets/images/Echo Logo_black.svg";
-const echoBrand = "/assets/images/Echo brand.svg";
 
 const NavBar = () => {
   const navigate = useNavigate();

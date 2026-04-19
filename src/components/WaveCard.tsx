@@ -11,7 +11,6 @@
  */
 import React, { useState } from "react";
 import { useSurgeStore, useWavesStore } from "../stores";
-import { waveService } from "../api/services";
 import UserAvatar from "./UserAvatar";
 import DeleteConfirmationModal from "./DeleteConfirmationModal";
 import WaveActionsDropdown from "./WaveActionsDropdown";
@@ -83,7 +82,6 @@ const WaveCard = React.memo(
     const [lightboxSrc, setLightboxSrc] = useState<string | null>(null);
 
     const toggleSurge = useSurgeStore((state) => state.toggleSurge);
-    const updateWaveStore = useWavesStore((state) => state.updateWave);
     const waveFromStore = useWavesStore(
       (state) => state.wavesById[String(wave.id)],
     );
@@ -126,11 +124,6 @@ const WaveCard = React.memo(
       if (isToggling) return;
       try {
         await toggleSurge("wave", String(wave.id));
-        const latest = await waveService.getWaveById(String(wave.id));
-        updateWaveStore(String(wave.id), {
-          surgeCount: latest.surgeCount,
-          hasSurged: latest.hasSurged,
-        });
       } catch (err) {
         console.error("Wave surge failed:", err);
       }

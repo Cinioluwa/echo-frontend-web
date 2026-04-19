@@ -10,7 +10,7 @@
  * - Handles image load errors gracefully
  */
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { User } from "lucide-react";
 import type { User as UserType } from "../api/types";
 
@@ -53,6 +53,11 @@ const UserAvatar = ({
     pictureUrl,
 }: UserAvatarProps) => {
     const [imageLoadError, setImageLoadError] = useState(false);
+    const activePicture = pictureUrl || user?.profilePicture || "";
+
+    useEffect(() => {
+        setImageLoadError(false);
+    }, [activePicture]);
 
     // If custom picture URL provided, use it
     if (pictureUrl && !imageLoadError) {

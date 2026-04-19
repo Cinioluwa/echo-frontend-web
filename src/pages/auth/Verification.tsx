@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { useAuthStore } from "../../stores";
 import { authService } from "../../api/services";
@@ -10,28 +10,46 @@ import OfflineIndicator from "../../components/auth/OfflineIndicator";
 import { useNetworkStatus } from "../../hooks";
 import { getErrorMessage } from "../../utils/networkUtils";
 
-// Email Icon
 const EmailIcon = () => (
-    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-10 h-10 sm:w-12 sm:h-12">
-        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" stroke="#f49b31" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-        <polyline points="22,6 12,13 2,6" stroke="#f49b31" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+    <svg
+        width="48"
+        height="48"
+        viewBox="0 0 24 24"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+        className="w-10 h-10 sm:w-12 sm:h-12"
+    >
+        <path
+            d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"
+            stroke="#f49b31"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+        />
+        <polyline
+            points="22,6 12,13 2,6"
+            stroke="#f49b31"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+        />
     </svg>
 );
 
-/**
- * Verification Screen - Phase 2 Implementation
- * Displays email verification instructions and handles verification token from URL
- * Figma: Desktop (3753:8611, 3945:8918) | Mobile (3833:10892, 3982:9027)
- */
 const Verification: React.FC = () => {
     const location = useLocation();
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();
     const fetchUserProfile = useAuthStore((state) => state.fetchUserProfile);
+    const authEmail = useAuthStore((state) => state.user?.email);
     const { isOffline } = useNetworkStatus();
 
-    // Get email from navigation state or fallback
-    const email = location.state?.email || "your email";
+    const emailFromState =
+        typeof location.state?.email === "string" ? location.state.email : "";
+    const emailFromQuery = searchParams.get("email") || "";
+    const email = emailFromState || emailFromQuery || authEmail || "";
+    const emailDisplay = email || "your registered email";
+    const hasValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
     const [isResending, setIsResending] = useState(false);
     const [resendSuccess, setResendSuccess] = useState(false);
@@ -40,22 +58,21 @@ const Verification: React.FC = () => {
     const [verifying, setVerifying] = useState(false);
     const [verifyError, setVerifyError] = useState<string | null>(null);
 
-    // Handle verification token from URL
     useEffect(() => {
         const token = searchParams.get("token");
         if (token) {
-            handleVerifyEmail(token);
+            void handleVerifyEmail(token);
         }
     }, [searchParams]);
 
-    // Cooldown timer
     useEffect(() => {
-        if (resendCooldown > 0) {
-            const timer = setTimeout(() => {
-                setResendCooldown(resendCooldown - 1);
-            }, 1000);
-            return () => clearTimeout(timer);
-        }
+        if (resendCooldown <= 0) return;
+
+        const timer = setTimeout(() => {
+            setResendCooldown((prev) => prev - 1);
+        }, 1000);
+
+        return () => clearTimeout(timer);
     }, [resendCooldown]);
 
     const handleVerifyEmail = async (token: string) => {
@@ -64,32 +81,48 @@ const Verification: React.FC = () => {
 
         try {
             await authService.verifyEmail(token);
-
-            // Fetch user profile to determine next step
             await fetchUserProfile();
             const user = useAuthStore.getState().user;
 
-            // Check user's organization join policy and status
             if (user?.status === "ACTIVE" && user?.organizationId) {
-                // OPEN policy - user is active
                 navigate("/all-verified", {
-                    state: { organizationName: user.organization?.name || "your organization" }
+                    state: {
+                        organizationName: user.organization?.name || "your organization",
+                    },
                 });
-            } else if (user?.status === "PENDING" && user?.pendingRequests && user.pendingRequests.length > 0) {
-                // REQUIRES_APPROVAL policy - user needs approval
-                navigate("/waiting-room", {
-                    state: { organizationName: user.pendingRequests[0]?.organizationName || "your organization" }
-                });
-            } else {
-                // Fallback - redirect to all verified
-                navigate("/all-verified", {
-                    state: { organizationName: user?.organization?.name || "your organization" }
-                });
+                return;
             }
+
+            if (
+                user?.status === "PENDING" &&
+                user.pendingRequests &&
+                user.pendingRequests.length > 0
+            ) {
+                navigate("/waiting-room", {
+                    state: {
+                        organizationName:
+                            user.pendingRequests[0]?.organizationName || "your organization",
+                    },
+                });
+                return;
+            }
+
+            navigate("/all-verified", {
+                state: {
+                    organizationName: user?.organization?.name || "your organization",
+                },
+            });
         } catch (err: any) {
             console.error("Email verification error:", err);
-            const message = err?.response?.data?.message || err?.response?.data?.error || getErrorMessage(err);
-            setVerifyError(message);
+            const status = err?.response?.status;
+
+            if (status === 400 || status === 404 || status === 410) {
+                setVerifyError(
+                    "This verification link is invalid or expired. Request a new one below.",
+                );
+            } else {
+                setVerifyError(getErrorMessage(err));
+            }
         } finally {
             setVerifying(false);
         }
@@ -98,6 +131,11 @@ const Verification: React.FC = () => {
     const handleResendVerification = async () => {
         if (resendCooldown > 0 || isResending || isOffline) return;
 
+        if (!hasValidEmail) {
+            setResendError("We could not detect your email. Return to login and try again.");
+            return;
+        }
+
         setIsResending(true);
         setResendSuccess(false);
         setResendError(null);
@@ -105,7 +143,7 @@ const Verification: React.FC = () => {
         try {
             await authService.resendVerification(email);
             setResendSuccess(true);
-            setResendCooldown(60); // 60 second cooldown
+            setResendCooldown(60);
         } catch (err: any) {
             console.error("Resend verification error:", err);
             const status = err?.response?.status;
@@ -113,10 +151,9 @@ const Verification: React.FC = () => {
 
             if (status === 429) {
                 setResendError("Too many requests. Please wait before trying again.");
-                setResendCooldown(60); // Enforce 60 second cooldown for rate limit
+                setResendCooldown(60);
             } else {
-                const errorMessage = getErrorMessage(err);
-                setResendError(message || errorMessage);
+                setResendError(message || getErrorMessage(err));
             }
         } finally {
             setIsResending(false);
@@ -128,85 +165,88 @@ const Verification: React.FC = () => {
             <OfflineIndicator />
             <AuthLayout>
                 <AuthCard>
-                    {/* Email Icon */}
                     <div className="flex items-center justify-center">
                         <EmailIcon />
                     </div>
 
-                    {/* Title */}
                     <div className="text-center w-full">
                         <h1
                             className="text-[22px] sm:text-[26px] md:text-[28px] font-semibold text-[#4a504e] mb-2.5"
-                            style={{ fontFamily: 'Poppins, sans-serif' }}
+                            style={{ fontFamily: "Poppins, sans-serif" }}
                         >
                             Verify Your Email
                         </h1>
                         <p
                             className="text-[12px] sm:text-[13px] text-[#838383] font-normal leading-relaxed"
-                            style={{ fontFamily: 'Poppins, sans-serif' }}
+                            style={{ fontFamily: "Poppins, sans-serif" }}
                         >
-                            We've sent a verification link to
+                            We&apos;ve sent a verification link to
                         </p>
                         <p
                             className="text-[13px] sm:text-[14px] text-[#f49b31] font-semibold mt-[5px]"
-                            style={{ fontFamily: 'Poppins, sans-serif' }}
+                            style={{ fontFamily: "Poppins, sans-serif" }}
                         >
-                            {email}
+                            {emailDisplay}
                         </p>
                     </div>
 
-                    {/* Instructions */}
                     <div className="w-full bg-[#fef5ea] border border-[#ffcd71] rounded-xl px-4 sm:px-5 py-3 sm:py-[15px]">
                         <p
                             className="text-[12px] text-[#4a504e] text-center leading-relaxed"
-                            style={{ fontFamily: 'Poppins, sans-serif' }}
+                            style={{ fontFamily: "Poppins, sans-serif" }}
                         >
                             Please check your inbox and click the verification link to complete your registration.
                         </p>
                     </div>
 
-                    {/* Verification Error */}
                     {verifyError && (
-                        <div className="w-full">
-                            <div className="w-full p-3 bg-red-50 border border-red-300 rounded-lg">
-                                <p className="text-red-600 text-sm text-center">{verifyError}</p>
-                            </div>
+                        <div className="w-full p-3 bg-red-50 border border-red-300 rounded-lg">
+                            <p className="text-red-600 text-sm text-center">{verifyError}</p>
                         </div>
                     )}
 
-                    {/* Verifying State */}
                     {verifying && (
-                        <div className="w-full">
-                            <div className="w-full p-3 bg-blue-50 border border-blue-300 rounded-lg">
-                                <p className="text-blue-600 text-sm text-center">Verifying your email...</p>
-                            </div>
+                        <div className="w-full p-3 bg-blue-50 border border-blue-300 rounded-lg">
+                            <p className="text-blue-600 text-sm text-center">Confirming your email...</p>
                         </div>
                     )}
 
-                    {/* Resend Success Message */}
                     {resendSuccess && (
-                        <div className="w-full">
-                            <div className="w-full p-3 bg-green-50 border border-green-300 rounded-lg">
-                                <p className="text-green-600 text-sm text-center">Verification email sent successfully!</p>
-                            </div>
+                        <div className="w-full p-3 bg-green-50 border border-green-300 rounded-lg">
+                            <p className="text-green-600 text-sm text-center">
+                                Verification email sent. Please check your inbox.
+                            </p>
                         </div>
                     )}
 
-                    {/* Resend Error Message */}
                     {resendError && (
-                        <div className="w-full">
-                            <div className="w-full p-3 bg-red-50 border border-red-300 rounded-lg">
-                                <p className="text-red-600 text-sm text-center">{resendError}</p>
-                            </div>
+                        <div className="w-full p-3 bg-red-50 border border-red-300 rounded-lg">
+                            <p className="text-red-600 text-sm text-center">{resendError}</p>
                         </div>
                     )}
 
-                    {/* Resend Verification Button */}
+                    {!hasValidEmail && (
+                        <div className="w-full p-3 bg-amber-50 border border-amber-300 rounded-lg">
+                            <p className="text-amber-700 text-sm text-center">
+                                We could not identify the email address for this session.
+                            </p>
+                            <button
+                                type="button"
+                                onClick={() => navigate("/login")}
+                                className="mt-2 text-sm text-amber-800 font-semibold underline w-full text-center"
+                            >
+                                Go to Login
+                            </button>
+                        </div>
+                    )}
+
                     <div className="w-full">
                         <AuthButton
                             type="button"
                             onClick={handleResendVerification}
-                            disabled={isResending || resendCooldown > 0 || isOffline}
+                            disabled={
+                                isResending || resendCooldown > 0 || isOffline || !hasValidEmail
+                            }
                             loading={isResending}
                         >
                             {isResending
@@ -217,14 +257,15 @@ const Verification: React.FC = () => {
                         </AuthButton>
                     </div>
 
-                    {/* Didn't receive email message */}
                     <div className="text-center">
-                        <p className="text-[12px] text-[#838383]" style={{ fontFamily: 'Poppins, sans-serif' }}>
-                            Didn't receive the email? Check your spam folder or click resend above.
+                        <p
+                            className="text-[12px] text-[#838383]"
+                            style={{ fontFamily: "Poppins, sans-serif" }}
+                        >
+                            Didn&apos;t receive the email? Check your spam folder or click resend above.
                         </p>
                     </div>
 
-                    {/* Footer */}
                     <AuthFooter />
                 </AuthCard>
             </AuthLayout>
@@ -233,4 +274,3 @@ const Verification: React.FC = () => {
 };
 
 export default Verification;
-

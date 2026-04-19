@@ -4,13 +4,11 @@
  * Used in PingDetail page
  */
 
-import { useState } from "react";
 import { Tooltip } from "./Tooltip";
 import UserAvatar from "./UserAvatar";
 import { categoryImages } from "./CategoryImages";
 import { calculatePingBadge } from "../utils/badgeUtils";
 import PingActionsDropdown from "./UnifiedFeed/PingActionsDropdown";
-import ImageLightbox from "./shared/ImageLightbox";
 import ImageCarousel from "./shared/ImageCarousel";
 import type { Ping, CategoryData } from "../api/types";
 

@@ -63,21 +63,17 @@ const HistoryCommentsList = ({ isLoading: parentIsLoading = false }: HistoryComm
             setComments((prev) => [...prev, ...(res.data as unknown as CommentWithContext[])]);
             setPage(nextPage);
             setHasNextPage(res.pagination.hasNextPage);
-        } catch {
-            setError("Failed to load more comments");
+        } catch (err) {
+            console.error("Failed to load more comments:", err);
         }
     };
 
-    if (parentIsLoading || isLoading) {
+    if (parentIsLoading || isLoading || error) {
         return (
             <div className="flex justify-center py-10">
                 <LoadingSpinner />
             </div>
         );
-    }
-
-    if (error) {
-        return <p className="text-red-500">{error}</p>;
     }
 
     if (comments.length === 0) {

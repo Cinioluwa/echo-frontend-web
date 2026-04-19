@@ -28,7 +28,7 @@ const InlineWavePreview = ({
 }: InlineWavePreviewProps) => {
     const [fetchedWaves, setFetchedWaves] = useState<Wave[]>([]);
     const [isLoading, setIsLoading] = useState(false);
-    const [error, setError] = useState<string | null>(null);
+    const [hasLoadError, setHasLoadError] = useState(false);
 
     const hasEmbeddedWaves = embeddedWaves.length > 0;
 
@@ -40,13 +40,13 @@ const InlineWavePreview = ({
         ) {
             setFetchedWaves([]);
             setIsLoading(false);
-            setError(null);
+            setHasLoadError(false);
             return;
         }
 
         let isCancelled = false;
         setIsLoading(true);
-        setError(null);
+        setHasLoadError(false);
 
         waveService
             .getWavesForPing(String(pingId), { limit: 2 })
@@ -57,7 +57,7 @@ const InlineWavePreview = ({
             })
             .catch(() => {
                 if (!isCancelled) {
-                    setError("Failed to load waves");
+                    setHasLoadError(true);
                 }
             })
             .finally(() => {
@@ -76,9 +76,7 @@ const InlineWavePreview = ({
         2,
     );
 
-    if (isLoading && displayedWaves.length === 0) return null;
-    if (error && displayedWaves.length === 0)
-        return <p className="text-red-500 text-xs">{error}</p>;
+    if ((isLoading || hasLoadError) && displayedWaves.length === 0) return null;
     if (displayedWaves.length === 0) return null;
 
     return (

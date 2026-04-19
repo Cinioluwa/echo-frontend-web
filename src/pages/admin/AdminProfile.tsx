@@ -11,6 +11,8 @@ import {
   getNameChangeStatus,
   hasNameChanged,
 } from "../../utils/nameChangeUtil";
+import { useAuthStore } from "../../stores";
+import { getErrorMessage } from "../../utils/networkUtils";
 
 const pages = {
   profile: true,
@@ -19,8 +21,11 @@ const pages = {
 };
 
 const AdminProfile = () => {
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
+  const authUser = useAuthStore((state) => state.user);
+  const updateAuthUser = useAuthStore((state) => state.updateUser);
+
+  const [user, setUser] = useState<User | null>(authUser);
+  const [loading, setLoading] = useState(!authUser);
   const [error, setError] = useState("");
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState("");
@@ -34,6 +39,14 @@ const AdminProfile = () => {
   );
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  useEffect(() => {
+    if (!authUser) return;
+
+    setUser((prev) => prev ?? authUser);
+    setFirstName((prev) => prev || authUser.firstName);
+    setLastName((prev) => prev || authUser.lastName);
+  }, [authUser]);
+
   // Fetch user profile on mount
   useEffect(() => {
     const fetchUserProfile = async () => {
@@ -42,6 +55,7 @@ const AdminProfile = () => {
       try {
         const userData = await userService.getMe();
         setUser(userData);
+        updateAuthUser(userData);
         setFirstName(userData.firstName);
         setLastName(userData.lastName);
 
@@ -51,8 +65,8 @@ const AdminProfile = () => {
           userData.lastNameChangeAt
         );
         setNameChangeStatus(status);
-      } catch (err) {
-        setError("Failed to load admin profile. Please try again.");
+      } catch (err: unknown) {
+        setError(getErrorMessage(err));
         console.error("Profile fetch error:", err);
       } finally {
         setLoading(false);
@@ -71,35 +85,62 @@ const AdminProfile = () => {
 
     // Validate file size (5MB max)
     if (file.size > 5 * 1024 * 1024) {
-      setUploadError("File size must be less than 5MB");
+      setUploadError("Profile image must be 5MB or smaller.");
       return;
     }
 
     // Validate file type
     if (!["image/jpeg", "image/png", "image/gif", "image/webp"].includes(file.type)) {
-      setUploadError("Only JPG, PNG, GIF, or WebP files are allowed");
+      setUploadError("Please upload JPG, PNG, GIF, or WebP images only.");
       return;
     }
+
+    const previousPicture = user?.profilePicture;
+    const previewUrl = URL.createObjectURL(file);
+
+    setUser((prev) =>
+      prev
+        ? {
+          ...prev,
+          profilePicture: previewUrl,
+        }
+        : prev,
+    );
+    updateAuthUser({ profilePicture: previewUrl });
 
     setUploading(true);
     setUploadError("");
 
     try {
       const response = await uploadService.uploadProfilePicture(file);
+      const uploadedPicture =
+        response.user?.profilePictureUrl || response.profilePictureUrl || previousPicture;
+
       // Update user with new profile picture URL
       setUser((prev) =>
         prev
           ? {
             ...prev,
-            profilePicture: response.user?.profilePictureUrl || response.profilePictureUrl,
+            profilePicture: uploadedPicture,
           }
           : prev
       );
-    } catch (err) {
-      setUploadError("Failed to upload profile picture. Please try again.");
+      updateAuthUser({ profilePicture: uploadedPicture });
+    } catch (err: unknown) {
+      setUser((prev) =>
+        prev
+          ? {
+            ...prev,
+            profilePicture: previousPicture,
+          }
+          : prev,
+      );
+      updateAuthUser({ profilePicture: previousPicture });
+      setUploadError(getErrorMessage(err));
       console.error("Upload error:", err);
     } finally {
       setUploading(false);
+      URL.revokeObjectURL(previewUrl);
       // Reset input
       if (fileInputRef.current) {
         fileInputRef.current.value = "";
@@ -135,6 +176,10 @@ const AdminProfile = () => {
       });
 
       setUser(updatedUser);
+      updateAuthUser({
+        firstName: updatedUser.firstName,
+        lastName: updatedUser.lastName,
+      });
       setFirstName(updatedUser.firstName);
       setLastName(updatedUser.lastName);
 
@@ -146,9 +191,8 @@ const AdminProfile = () => {
       setNameChangeStatus(status);
 
       setEditingName(false);
-    } catch (err) {
-      const errorMsg = err instanceof Error ? err.message : "Failed to update name";
-      setNameChangeError(errorMsg);
+    } catch (err: unknown) {
+      setNameChangeError(getErrorMessage(err));
       console.error("Name update error:", err);
     } finally {
       setNameChangeSaving(false);

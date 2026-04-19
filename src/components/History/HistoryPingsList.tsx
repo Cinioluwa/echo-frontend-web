@@ -53,21 +53,17 @@ const HistoryPingsList = ({ isLoading: parentIsLoading = false }: HistoryPingsLi
                 totalPages: res.pagination.totalPages,
                 hasNextPage: res.pagination.hasNextPage,
             });
-        } catch {
-            setError("Failed to load more pings");
+        } catch (err) {
+            console.error("Failed to load more pings:", err);
         }
     };
 
-    if (parentIsLoading || isLoading) {
+    if (parentIsLoading || isLoading || error) {
         return (
             <div className="flex justify-center py-10">
                 <LoadingSpinner />
             </div>
         );
-    }
-
-    if (error) {
-        return <p className="text-red-500">{error}</p>;
     }
 
     if (pings.length === 0) {

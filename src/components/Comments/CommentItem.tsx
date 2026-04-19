@@ -7,6 +7,7 @@ import { useAuthStore } from "../../stores/auth/useAuthStore";
 import { commentService } from "../../api/services";
 import DeleteConfirmationModal from "../DeleteConfirmationModal";
 import CommentActionsDropdown from "./CommentActionsDropdown";
+import { getErrorMessage } from "../../utils/networkUtils";
 
 interface Props {
     comment: Comment;
@@ -62,6 +63,9 @@ const CommentItem = ({ comment, onRefresh: _onRefresh, pingId }: Props) => {
     const [localHasSurged, setLocalHasSurged] = useState<boolean>(
         comment.hasSurged ?? false
     );
+    const [localReplyCount, setLocalReplyCount] = useState<number>(
+        comment.replyCount ?? 0,
+    );
     const [isToggling, setIsToggling] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -69,6 +73,7 @@ const CommentItem = ({ comment, onRefresh: _onRefresh, pingId }: Props) => {
     const [replies, setReplies] = useState<Comment[]>([]);
     const [replyInput, setReplyInput] = useState("");
     const [isPostingReply, setIsPostingReply] = useState(false);
+    const [actionError, setActionError] = useState<string | null>(null);
 
     // Use API's isOwner field for anonymous comments, calculate ownership for non-anonymous
     const isOwner = comment.isAnonymous
@@ -80,21 +85,34 @@ const CommentItem = ({ comment, onRefresh: _onRefresh, pingId }: Props) => {
 
     const handleSurge = async () => {
         if (isToggling) return;
+
+        const prevHasSurged = localHasSurged;
+        const prevSurgeCount = localSurgeCount;
+        const nextHasSurged = !prevHasSurged;
+
+        setActionError(null);
+        setLocalHasSurged(nextHasSurged);
+        setLocalSurgeCount((prev) => Math.max(0, prev + (nextHasSurged ? 1 : -1)));
         setIsToggling(true);
+
         try {
             const response = await api.post<{ message: string; surged: boolean; surgeCount?: number }>(
                 `/comments/${comment.id}/surge`
             );
+
             const data = response.data;
             setLocalHasSurged(data.surged);
             setLocalSurgeCount(
                 typeof data.surgeCount === "number"
                     ? data.surgeCount
                     : data.surged
-                        ? localSurgeCount + 1
-                        : Math.max(0, localSurgeCount - 1)
+                        ? prevSurgeCount + 1
+                        : Math.max(0, prevSurgeCount - 1)
             );
         } catch (err) {
+            setLocalHasSurged(prevHasSurged);
+            setLocalSurgeCount(prevSurgeCount);
+            setActionError(getErrorMessage(err));
             console.error("Error toggling comment surge:", err);
         } finally {
             setIsToggling(false);
@@ -109,6 +127,7 @@ const CommentItem = ({ comment, onRefresh: _onRefresh, pingId }: Props) => {
             setShowDeleteModal(false);
             _onRefresh?.();
         } catch (err) {
+            setActionError(getErrorMessage(err));
             console.error("Error deleting comment:", err);
         } finally {
             setIsDeleting(false);
@@ -135,19 +154,44 @@ const CommentItem = ({ comment, onRefresh: _onRefresh, pingId }: Props) => {
     };
 
     const handlePostReply = async () => {
-        if (!replyInput.trim()) return;
+        const trimmedReply = replyInput.trim();
+        if (!trimmedReply) return;
+
+        const tempId = `temp-reply-${Date.now()}`;
+        const optimisticReply: Comment = {
+            id: tempId,
+            content: trimmedReply,
+            author: user ?? null,
+            createdAt: new Date().toISOString(),
+            isOwner: true,
+            hasSurged: false,
+            surgeCount: 0,
+            isAnonymous: false,
+            replyCount: 0,
+        };
+
+        setActionError(null);
+        setReplies((prev) => [...prev, optimisticReply]);
+        setReplyInput("");
+        setLocalReplyCount((prev) => prev + 1);
 
         setIsPostingReply(true);
         try {
             const newReply = await commentService.replyToPingComment(
                 pingId,
                 String(comment.id),
-                replyInput,
+                trimmedReply,
                 false
             );
-            setReplies([...replies, newReply]);
-            setReplyInput("");
+
+            setReplies((prev) =>
+                prev.map((reply) => (reply.id === tempId ? newReply : reply)),
+            );
         } catch (err) {
+            setReplies((prev) => prev.filter((reply) => reply.id !== tempId));
+            setReplyInput(trimmedReply);
+            setLocalReplyCount((prev) => Math.max(prev - 1, 0));
+            setActionError(getErrorMessage(err));
             console.error("Error posting reply:", err);
         } finally {
             setIsPostingReply(false);
@@ -237,9 +281,15 @@ const CommentItem = ({ comment, onRefresh: _onRefresh, pingId }: Props) => {
                                     data-node-id="4923:13613"
                                 >
                                     <img src="/assets/icon/comment.svg" alt="Comment icon" className="w-[7.5px] h-3 shrink-0" style={{ filter: 'brightness(0)' }} />
-                                    <span>{comment.replyCount ?? 0}</span>
+                                    <span>{localReplyCount}</span>
                                 </button>
                             </div>
+
+                            {actionError && (
+                                <p className="text-[10px] text-red-500 leading-tight">
+                                    {actionError}
+                                </p>
+                            )}
                         </div>
 
                         {/* Replies Section - Expanded below parent comment */}
@@ -322,7 +372,15 @@ const ReplyItem = ({ reply }: ReplyItemProps) => {
 
     const handleReplySurge = async () => {
         if (isReplyToggling) return;
+
+        const prevHasSurged = replyLocalHasSurged;
+        const prevSurgeCount = replyLocalSurgeCount;
+        const nextHasSurged = !prevHasSurged;
+
+        setReplyLocalHasSurged(nextHasSurged);
+        setReplyLocalSurgeCount((prev) => Math.max(0, prev + (nextHasSurged ? 1 : -1)));
         setIsReplyToggling(true);
+
         try {
             const response = await api.post<{
                 message: string;
@@ -335,10 +393,12 @@ const ReplyItem = ({ reply }: ReplyItemProps) => {
                 typeof data.surgeCount === "number"
                     ? data.surgeCount
                     : data.surged
-                        ? replyLocalSurgeCount + 1
-                        : Math.max(0, replyLocalSurgeCount - 1)
+                        ? prevSurgeCount + 1
+                        : Math.max(0, prevSurgeCount - 1)
             );
         } catch (err) {
+            setReplyLocalHasSurged(prevHasSurged);
+            setReplyLocalSurgeCount(prevSurgeCount);
             console.error("Error toggling reply surge:", err);
         } finally {
             setIsReplyToggling(false);
