@@ -27,10 +27,22 @@ export interface User {
     status: "PENDING" | "APPROVED" | "REJECTED";
     createdAt: string;
   }>;
+  pendingJoinRequest?: {
+    id: number;
+    status: "PENDING" | "APPROVED" | "REJECTED";
+    reason?: string | null;
+    createdAt?: string;
+    organization?: {
+      id: number;
+      name: string;
+      domain?: string | null;
+    };
+  } | null;
   organization?: {
     id: number;
     name: string;
     logoUrl?: string;
+    domain?: string | null;
   };
   userPreference?: UserPreference;
 }
@@ -61,6 +73,15 @@ export interface GoogleAuthRequest {
 
 export interface VerifyEmailRequest {
   token: string;
+}
+
+export interface ResendVerificationRequest {
+  email: string;
+  organizationId?: number;
+}
+
+export interface ResendVerificationResponse {
+  message: string;
 }
 
 export interface ForgotPasswordRequest {

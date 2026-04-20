@@ -8,7 +8,6 @@ import AuthButton from "../../components/auth/AuthButton";
 import AuthFooter from "../../components/auth/AuthFooter";
 import OfflineIndicator from "../../components/auth/OfflineIndicator";
 import { useNetworkStatus } from "../../hooks";
-import { getErrorMessage } from "../../utils/networkUtils";
 
 const EmailIcon = () => (
     <svg
@@ -47,6 +46,14 @@ const Verification: React.FC = () => {
     const emailFromState =
         typeof location.state?.email === "string" ? location.state.email : "";
     const emailFromQuery = searchParams.get("email") || "";
+    const organizationIdFromQuery = Number(searchParams.get("organizationId") || "");
+    const organizationIdFromState = Number(location.state?.organizationId || "");
+    const organizationId =
+        Number.isFinite(organizationIdFromState) && organizationIdFromState > 0
+            ? organizationIdFromState
+            : Number.isFinite(organizationIdFromQuery) && organizationIdFromQuery > 0
+                ? organizationIdFromQuery
+                : undefined;
     const email = emailFromState || emailFromQuery || authEmail || "";
     const emailDisplay = email || "your registered email";
     const hasValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -84,32 +91,52 @@ const Verification: React.FC = () => {
             await fetchUserProfile();
             const user = useAuthStore.getState().user;
 
-            if (user?.status === "ACTIVE" && user?.organizationId) {
-                navigate("/all-verified", {
-                    state: {
-                        organizationName: user.organization?.name || "your organization",
-                    },
-                });
-                return;
-            }
+            const pendingJoinRequest =
+                user?.pendingJoinRequest?.status === "PENDING"
+                    ? user.pendingJoinRequest
+                    : null;
+            const legacyPendingRequest =
+                user?.pendingRequests?.find((request) => request.status === "PENDING") ||
+                null;
 
-            if (
-                user?.status === "PENDING" &&
-                user.pendingRequests &&
-                user.pendingRequests.length > 0
-            ) {
+            if (pendingJoinRequest || legacyPendingRequest) {
                 navigate("/waiting-room", {
                     state: {
                         organizationName:
-                            user.pendingRequests[0]?.organizationName || "your organization",
+                            pendingJoinRequest?.organization?.name ||
+                            legacyPendingRequest?.organizationName ||
+                            user?.organization?.name ||
+                            "your institution",
                     },
                 });
                 return;
             }
 
-            navigate("/all-verified", {
+            if (user?.status === "ACTIVE" && user?.organizationId) {
+                navigate("/all-verified", {
+                    state: {
+                        organizationName:
+                            user.organization?.name ||
+                            user.pendingJoinRequest?.organization?.name ||
+                            "your institution",
+                        fromVerification: true,
+                    },
+                });
+                return;
+            }
+
+            if (!user?.organizationId) {
+                navigate("/find-institution", {
+                    state: {
+                        email,
+                    },
+                });
+                return;
+            }
+
+            navigate("/verification", {
                 state: {
-                    organizationName: user?.organization?.name || "your organization",
+                    email,
                 },
             });
         } catch (err: any) {
@@ -121,7 +148,7 @@ const Verification: React.FC = () => {
                     "This verification link is invalid or expired. Request a new one below.",
                 );
             } else {
-                setVerifyError(getErrorMessage(err));
+                setVerifyError("We couldn't verify your email right now. Please try again.");
             }
         } finally {
             setVerifying(false);
@@ -141,19 +168,25 @@ const Verification: React.FC = () => {
         setResendError(null);
 
         try {
-            await authService.resendVerification(email);
+            await authService.resendVerification({
+                email,
+                organizationId,
+            });
             setResendSuccess(true);
             setResendCooldown(60);
         } catch (err: any) {
             console.error("Resend verification error:", err);
             const status = err?.response?.status;
-            const message = err?.response?.data?.message || err?.response?.data?.error;
 
             if (status === 429) {
                 setResendError("Too many requests. Please wait before trying again.");
                 setResendCooldown(60);
+            } else if (status === 400) {
+                setResendError(
+                    "Please check the email details and try again.",
+                );
             } else {
-                setResendError(message || getErrorMessage(err));
+                setResendError("We couldn't send another link right now. Please try again.");
             }
         } finally {
             setIsResending(false);
@@ -214,7 +247,7 @@ const Verification: React.FC = () => {
                     {resendSuccess && (
                         <div className="w-full p-3 bg-green-50 border border-green-300 rounded-lg">
                             <p className="text-green-600 text-sm text-center">
-                                Verification email sent. Please check your inbox.
+                                If an account exists for that email, a verification link will arrive shortly.
                             </p>
                         </div>
                     )}

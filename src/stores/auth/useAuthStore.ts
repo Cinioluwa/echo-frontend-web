@@ -4,7 +4,21 @@ import { immer } from "zustand/middleware/immer";
 import { authService, userService } from "../../api/services";
 import { useSurgeStore } from "../interactions/useSurgeStore";
 import { connectSocket, disconnectSocket } from "../../api/socket";
-import type { User, LoginRequest, SignupRequest } from "../../api/types/index";
+import type {
+  User,
+  LoginRequest,
+  SignupRequest,
+  ResendVerificationRequest,
+} from "../../api/types/index";
+
+const getInstitutionConfirmationKey = (user: User): string => {
+  return `echo:institution-confirmed:${user.id}:${user.organizationId}`;
+};
+
+const hasLocalInstitutionConfirmation = (user: User | null): boolean => {
+  if (!user?.organizationId) return false;
+  return localStorage.getItem(getInstitutionConfirmationKey(user)) === "1";
+};
 
 interface AuthState {
   // State
@@ -20,17 +34,19 @@ interface AuthState {
   register: (data: SignupRequest) => Promise<void>;
   logout: () => void;
   verifyEmail: (token: string) => Promise<void>;
-  resendVerification: (email: string) => Promise<void>;
+  resendVerification: (payload: ResendVerificationRequest) => Promise<void>;
   fetchUserProfile: () => Promise<void>;
   fetchUser: () => Promise<void>;
   refreshUser: () => Promise<void>;
   clearError: () => void;
   updateUser: (userData: Partial<User>) => void;
+  markInstitutionConfirmationComplete: () => void;
 
   // Computed getters
   needsOrganization: () => boolean;
   isWaitingApproval: () => boolean;
   canAccessFeed: () => boolean;
+  hasCompletedInstitutionConfirmation: (userOverride?: User | null) => boolean;
 }
 
 export const useAuthStore = create<AuthState>()(
@@ -190,14 +206,14 @@ export const useAuthStore = create<AuthState>()(
           }
         },
 
-        resendVerification: async (email: string) => {
+        resendVerification: async (payload: ResendVerificationRequest) => {
           set((state) => {
             state.isLoading = true;
             state.error = null;
           });
 
           try {
-            await authService.resendVerification(email);
+            await authService.resendVerification(payload);
             set((state) => {
               state.isLoading = false;
             });
@@ -284,6 +300,13 @@ export const useAuthStore = create<AuthState>()(
           });
         },
 
+        markInstitutionConfirmationComplete: () => {
+          const user = get().user;
+          if (!user?.organizationId) return;
+
+          localStorage.setItem(getInstitutionConfirmationKey(user), "1");
+        },
+
         // Computed getters
         needsOrganization: () => {
           const user = get().user;
@@ -292,12 +315,38 @@ export const useAuthStore = create<AuthState>()(
 
         isWaitingApproval: () => {
           const user = get().user;
-          return (user?.pendingRequests?.length ?? 0) > 0;
+          const pendingJoinRequest = user?.pendingJoinRequest;
+          if (pendingJoinRequest?.status === "PENDING") {
+            return true;
+          }
+
+          return (
+            user?.pendingRequests?.some((request) => request.status === "PENDING") ??
+            false
+          );
         },
 
         canAccessFeed: () => {
           const user = get().user;
-          return user?.status === "ACTIVE" && !!user?.organizationId;
+          if (!user) return false;
+
+          if (user.role === "ADMIN" || user.role === "SUPER_ADMIN") {
+            return true;
+          }
+
+          return user.status === "ACTIVE" && !!user.organizationId;
+        },
+
+        hasCompletedInstitutionConfirmation: (userOverride?: User | null) => {
+          const user = userOverride ?? get().user;
+
+          if (!user) return false;
+
+          if (user.role === "ADMIN" || user.role === "SUPER_ADMIN") {
+            return true;
+          }
+
+          return hasLocalInstitutionConfirmation(user);
         },
       })),
       {
