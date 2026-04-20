@@ -117,17 +117,33 @@ const Login = () => {
       return;
     }
 
+    const pendingJoinRequest =
+      user.pendingJoinRequest?.status === "PENDING"
+        ? user.pendingJoinRequest
+        : null;
+    const legacyPendingRequest =
+      user.pendingRequests?.find((request) => request.status === "PENDING") ||
+      null;
+
+    // Pending user with pending approval requests - go to waiting room
+    if (pendingJoinRequest || legacyPendingRequest) {
+      console.log("→ Redirecting to /waiting-room (pending approval)");
+      navigate("/waiting-room", {
+        state: {
+          organizationName:
+            pendingJoinRequest?.organization?.name ||
+            legacyPendingRequest?.organizationName ||
+            user.organization?.name ||
+            "your organization",
+        },
+      });
+      return;
+    }
+
     // Active user with organization - go to main feed
     if (user.status === "ACTIVE" && user.organizationId) {
       console.log("→ Redirecting to /feed (ACTIVE user)");
       navigate("/feed");
-      return;
-    }
-
-    // Pending user with pending approval requests - go to waiting room
-    if (user.status === "PENDING" && user.pendingRequests && user.pendingRequests.length > 0) {
-      console.log("→ Redirecting to /waiting-room (PENDING with requests)");
-      navigate("/waiting-room");
       return;
     }
 
@@ -145,9 +161,9 @@ const Login = () => {
       return;
     }
 
-    // Default fallback - go to feed
-    console.log("→ Redirecting to /feed (fallback)");
-    navigate("/feed");
+    // Default fallback - keep user in verification flow until status is known
+    console.log("→ Redirecting to /verification (fallback)");
+    navigate("/verification", { state: { email: user.email } });
   };
 
   const handleSubmitLogin = async (e: React.FormEvent) => {
@@ -183,9 +199,8 @@ const Login = () => {
         console.log("Redirecting user with role:", user.role);
         redirectUser(user);
       } else {
-        console.warn("No user data after login, redirecting to default feed");
-        // If no user data in response, go to default route
-        navigate("/feed");
+        console.warn("No user data after login, redirecting to verification");
+        navigate("/verification", { state: { email: formData.email } });
       }
     } catch (err: any) {
       console.error("Login error:", err);

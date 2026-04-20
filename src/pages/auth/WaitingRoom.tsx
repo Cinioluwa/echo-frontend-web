@@ -68,7 +68,7 @@ const WaitingRoom: React.FC = () => {
                 if (user.role === "ADMIN" || user.role === "SUPER_ADMIN") {
                     navigate("/admin/feed");
                 } else {
-                    navigate("/soundBoard");
+                    navigate("/feed");
                 }
                 return;
             }
@@ -77,6 +77,12 @@ const WaitingRoom: React.FC = () => {
             if (!isWaitingApproval()) {
                 if (!user.organizationId) {
                     navigate("/find-institution");
+                } else if (user.status === "ACTIVE") {
+                    if (user.role === "ADMIN" || user.role === "SUPER_ADMIN") {
+                        navigate("/admin/feed");
+                    } else {
+                        navigate("/feed");
+                    }
                 } else {
                     navigate("/verification");
                 }
@@ -84,14 +90,22 @@ const WaitingRoom: React.FC = () => {
             }
 
             // Extract organization name from pending requests
-            if (user.pendingRequests && user.pendingRequests.length > 0) {
+            if (user.pendingJoinRequest?.organization?.name) {
+                setOrganizationName(user.pendingJoinRequest.organization.name);
+            } else if (user.pendingRequests && user.pendingRequests.length > 0) {
                 const pendingRequest = user.pendingRequests[0];
                 setOrganizationName(pendingRequest.organizationName);
             } else if (user.organization) {
                 setOrganizationName(user.organization.name);
             }
         }
-    }, [user, isLoading, canAccessFeed, isWaitingApproval, navigate]);
+    }, [
+        user,
+        isLoading,
+        canAccessFeed,
+        isWaitingApproval,
+        navigate,
+    ]);
 
     if (isLoading) {
         return (

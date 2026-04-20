@@ -1,10 +1,11 @@
-import React from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import AuthLayout from "../../components/auth/AuthLayout";
 import AuthCard from "../../components/auth/AuthCard";
 import AuthButton from "../../components/auth/AuthButton";
 import AuthFooter from "../../components/auth/AuthFooter";
 import { useAuthStore } from "../../stores";
+import { organizationService } from "../../api/services";
 
 // Success Icon
 const SuccessIcon = () => (
@@ -22,17 +23,74 @@ const SuccessIcon = () => (
 const AllVerified: React.FC = () => {
     const location = useLocation();
     const navigate = useNavigate();
-    const { user } = useAuthStore();
+    const { user, markInstitutionConfirmationComplete } = useAuthStore();
 
-    // Get organization name from navigation state or fallback
-    const organizationName = location.state?.organizationName || "your organization";
+    const isFromVerification = Boolean(location.state?.fromVerification);
+    const fallbackOrganizationName = useMemo(() => {
+        return (
+            location.state?.organizationName ||
+            user?.organization?.name ||
+            user?.pendingJoinRequest?.organization?.name ||
+            ""
+        );
+    }, [location.state?.organizationName, user]);
+    const [organizationName, setOrganizationName] = useState<string>(
+        fallbackOrganizationName,
+    );
+
+    useEffect(() => {
+        setOrganizationName((prev) => prev || fallbackOrganizationName);
+    }, [fallbackOrganizationName]);
+
+    useEffect(() => {
+        // Keep this screen tied to post-verification onboarding only.
+        if (!isFromVerification) {
+            if (user?.role === "ADMIN" || user?.role === "SUPER_ADMIN") {
+                navigate("/admin/feed", { replace: true });
+            } else if (user?.status === "ACTIVE" && user.organizationId) {
+                navigate("/feed", { replace: true });
+            }
+        }
+    }, [isFromVerification, navigate, user]);
+
+    useEffect(() => {
+        let isCancelled = false;
+
+        const loadOrganizationName = async () => {
+            if (organizationName || !user?.organizationId) {
+                return;
+            }
+
+            try {
+                const organization = await organizationService.getOrganizationById(
+                    user.organizationId,
+                );
+                if (!isCancelled && organization?.name) {
+                    setOrganizationName(organization.name);
+                }
+            } catch (error) {
+                // Keep silent fallback text if organization lookup fails.
+                console.error("Unable to resolve organization name:", error);
+            }
+        };
+
+        void loadOrganizationName();
+
+        return () => {
+            isCancelled = true;
+        };
+    }, [organizationName, user?.organizationId]);
+
+    const displayOrganizationName = organizationName || "your institution";
 
     const handleGoToFeed = () => {
+        markInstitutionConfirmationComplete();
+
         // Redirect admin users to admin feed, regular users to soundboard
         if (user?.role === "ADMIN" || user?.role === "SUPER_ADMIN") {
             navigate("/admin/feed");
         } else {
-            navigate("/soundBoard");
+            navigate("/feed");
         }
     };
 
@@ -50,13 +108,13 @@ const AllVerified: React.FC = () => {
                         className="text-[26px] sm:text-[30px] md:text-[32px] font-bold text-[#10b981] mb-3 sm:mb-[15px]"
                         style={{ fontFamily: 'Poppins, sans-serif' }}
                     >
-                        All Verified!
+                        Email Verified
                     </h1>
                     <p
                         className="text-[13px] sm:text-[14px] text-[#4a504e] font-medium leading-relaxed"
                         style={{ fontFamily: 'Poppins, sans-serif' }}
                     >
-                        Your email has been successfully verified.
+                        Your email has been verified. Confirm your institution to continue.
                     </p>
                 </div>
 
@@ -66,8 +124,7 @@ const AllVerified: React.FC = () => {
                         className="text-[12px] sm:text-[13px] text-[#4a504e] text-center leading-relaxed"
                         style={{ fontFamily: 'Poppins, sans-serif' }}
                     >
-                        Welcome to <span className="font-semibold text-[#f49b31]">{organizationName}</span>!
-                        You can now access your feed and start creating waves.
+                        You have been verified as part of <span className="font-semibold text-[#f49b31]">{displayOrganizationName}</span>. Join the community and start making change.
                     </p>
                 </div>
 
@@ -77,14 +134,14 @@ const AllVerified: React.FC = () => {
                         type="button"
                         onClick={handleGoToFeed}
                     >
-                        Go to Feed
+                        Join the {displayOrganizationName} Space
                     </AuthButton>
                 </div>
 
                 {/* Additional Info */}
                 <div className="text-center">
                     <p className="text-[11px] sm:text-[12px] text-[#838383] leading-relaxed" style={{ fontFamily: 'Poppins, sans-serif' }}>
-                        Start making your voice heard by creating pings, proposing waves, and engaging with your community.
+                        Your institution space is private to your campus community.
                     </p>
                 </div>
 

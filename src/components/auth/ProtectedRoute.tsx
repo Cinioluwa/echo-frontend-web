@@ -33,6 +33,29 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
         return <Navigate to="/login" replace />;
     }
 
+    if (requireAuth && user) {
+        const isAdmin = user.role === "ADMIN" || user.role === "SUPER_ADMIN";
+
+        if (!isAdmin) {
+            const isWaitingApproval =
+                user.pendingJoinRequest?.status === "PENDING" ||
+                (user.pendingRequests?.some((request) => request.status === "PENDING") ??
+                    false);
+
+            if (isWaitingApproval) {
+                return <Navigate to="/waiting-room" replace />;
+            }
+
+            if (!user.organizationId) {
+                return <Navigate to="/find-institution" replace />;
+            }
+
+            if (user.status !== "ACTIVE") {
+                return <Navigate to="/verification" replace />;
+            }
+        }
+    }
+
     return <>{children}</>;
 };
 

@@ -5,6 +5,8 @@ import type {
   SignupRequest,
   AuthResponse,
   OrganizationWaitlistRequest,
+  ResendVerificationRequest,
+  ResendVerificationResponse,
 } from "../types/index";
 
 /**
@@ -67,20 +69,37 @@ const authService = {
    * @param token Email verification token from URL
    */
   verifyEmail: async (token: string): Promise<{ message: string }> => {
-    const response = await api.get<{ message: string }>(
-      `/users/verify-email?token=${token}`,
-    );
-    return response.data;
+    try {
+      const response = await api.post<{ message: string }>(
+        "/users/verify-email",
+        { token },
+      );
+      return response.data;
+    } catch (error: any) {
+      const status = error?.response?.status;
+
+      // Backward compatibility for older GET-only verification handlers.
+      if (status === 404 || status === 405) {
+        const response = await api.get<{ message: string }>(
+          `/users/verify-email?token=${token}`,
+        );
+        return response.data;
+      }
+
+      throw error;
+    }
   },
 
   /**
    * Resend verification email
-   * @param email User's email address
+   * @param payload Email and optional organization for personal domains
    */
-  resendVerification: async (email: string): Promise<{ message: string }> => {
-    const response = await api.post<{ message: string }>(
+  resendVerification: async (
+    payload: ResendVerificationRequest,
+  ): Promise<ResendVerificationResponse> => {
+    const response = await api.post<ResendVerificationResponse>(
       "/users/resend-verification",
-      { email },
+      payload,
     );
     return response.data;
   },
