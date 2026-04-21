@@ -212,7 +212,7 @@ const Login = () => {
       if (status === 401) {
         setError("Invalid email or password. Please try again.");
       } else if (status === 403 && data?.code === "ACCOUNT_PENDING_VERIFICATION") {
-        setError("Please verify your email before logging in. Check your inbox for the verification link.");
+        navigate("/verification", { state: {email: formData.email}});
       } else if (status === 400 && data?.code === "GOOGLE_AUTH_REQUIRED") {
         setError("This account uses Google Sign-In. Please use 'Continue with Google'.");
       } else if (status === 404 && data?.code === "ORG_NOT_FOUND") {
