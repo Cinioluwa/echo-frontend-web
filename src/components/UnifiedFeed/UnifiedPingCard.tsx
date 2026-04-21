@@ -272,7 +272,7 @@ const UnifiedPingCard = ({
           </h3>
           {currentPing.content && (
             <p
-              className="font-['Poppins',sans-serif] font-medium text-[clamp(11px,2.7vw,14px)] text-black/70 leading-relaxed wrap-break-words overflow-hidden line-clamp-3"
+              className="font-['Poppins',sans-serif] font-medium text-[clamp(11px,2.7vw,14px)] text-black/70 leading-relaxed wrap-break-words overflow-hidden line-clamp-3 whitespace-pre-wrap"
             >
               {currentPing.content}
             </p>

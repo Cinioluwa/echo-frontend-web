@@ -191,7 +191,7 @@ const PingCard = ({
 
             {/* Description */}
             {ping.content && (
-                <p className="font-['Poppins',sans-serif] font-medium  text-[14px] text-[#626665] text-justify leading-relaxed">
+                <p className="font-['Poppins',sans-serif] font-medium  text-[14px] text-[#626665] text-justify leading-relaxed whitespace-pre-wrap">
                     {ping.content}
                 </p>
             )}
