@@ -58,6 +58,13 @@ const UnifiedFeed = () => {
   const organizationId = useAuthStore(
     (state) => state.user?.organizationId ?? null,
   );
+  const user = useAuthStore((state) => state.user);
+  const shouldAutoShowOnboarding = useAuthStore(
+    (state) => state.shouldAutoShowOnboarding,
+  );
+  const markOnboardingComplete = useAuthStore(
+    (state) => state.markOnboardingComplete,
+  );
 
   // ── Modal state ─────────────────────────────────────────────────────────────
   const [isClaimModalOpen, setClaimModalOpen] = useState(false);
@@ -111,6 +118,14 @@ const UnifiedFeed = () => {
 
   // ── onboarding Overlay controller ─────────────────────────────────────────────────
   const [openOnboarding, setOpenOnboarding] = useState(false);
+
+  useEffect(() => {
+    if (!user) return;
+
+    if (shouldAutoShowOnboarding(user)) {
+      setOpenOnboarding(true);
+    }
+  }, [user, shouldAutoShowOnboarding]);
 
   // ── Render ──────────────────────────────────────────────────────────────────
   return (
@@ -177,7 +192,12 @@ const UnifiedFeed = () => {
 
       {/* Conditionally Rendered  */}
       {openOnboarding && (
-        <OnboardingOverlay onFinish={() => setOpenOnboarding(false)} />
+        <OnboardingOverlay
+          onFinish={() => {
+            void markOnboardingComplete();
+            setOpenOnboarding(false);
+          }}
+        />
       )}
     </div>
   );

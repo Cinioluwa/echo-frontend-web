@@ -18,6 +18,8 @@ export interface UpdateUserPreferencesRequest {
   pingAnonymously?: boolean;
   anonymousAlias?: string | null; // Alias name (2-30 chars) or null to clear
   anonymousAliasProfilePicture?: string | null; // URL to profile picture or null to clear
+  hasCompletedOnboarding?: boolean;
+  onboardingCompletedAt?: string;
 }
 
 const getApiErrorMessage = (error: unknown, fallback: string): string => {

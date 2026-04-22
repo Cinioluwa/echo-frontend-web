@@ -14,6 +14,9 @@ const ProfileDropdown = () => {
   const user = useAuthStore((state) => state.user);
   const isLoading = useAuthStore((state) => state.isLoading);
   const logout = useAuthStore((state) => state.logout);
+  const markOnboardingComplete = useAuthStore(
+    (state) => state.markOnboardingComplete,
+  );
   const navigate = useNavigate();
 
   const [isOpen, setIsOpen] = useState(false);
@@ -157,7 +160,14 @@ const ProfileDropdown = () => {
         </div>
       )}
 
-      {openOnboarding && <OnboardingOverlay onFinish={() => setOpenOnboarding(false)}/>}
+      {openOnboarding && (
+        <OnboardingOverlay
+          onFinish={() => {
+            void markOnboardingComplete();
+            setOpenOnboarding(false);
+          }}
+        />
+      )}
     </div>
   );
 };

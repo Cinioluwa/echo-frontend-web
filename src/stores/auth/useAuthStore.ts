@@ -20,6 +20,15 @@ const hasLocalInstitutionConfirmation = (user: User | null): boolean => {
   return localStorage.getItem(getInstitutionConfirmationKey(user)) === "1";
 };
 
+const getOnboardingCompletionKey = (user: User): string => {
+  return `echo:onboarding-completed:${user.id}`;
+};
+
+const hasLocalOnboardingCompletion = (user: User | null): boolean => {
+  if (!user) return false;
+  return localStorage.getItem(getOnboardingCompletionKey(user)) === "1";
+};
+
 interface AuthState {
   // State
   user: User | null;
@@ -41,12 +50,15 @@ interface AuthState {
   clearError: () => void;
   updateUser: (userData: Partial<User>) => void;
   markInstitutionConfirmationComplete: () => void;
+  markOnboardingComplete: () => Promise<void>;
 
   // Computed getters
   needsOrganization: () => boolean;
   isWaitingApproval: () => boolean;
   canAccessFeed: () => boolean;
   hasCompletedInstitutionConfirmation: (userOverride?: User | null) => boolean;
+  hasCompletedOnboarding: (userOverride?: User | null) => boolean;
+  shouldAutoShowOnboarding: (userOverride?: User | null) => boolean;
 }
 
 export const useAuthStore = create<AuthState>()(
@@ -307,6 +319,47 @@ export const useAuthStore = create<AuthState>()(
           localStorage.setItem(getInstitutionConfirmationKey(user), "1");
         },
 
+        markOnboardingComplete: async () => {
+          const user = get().user;
+
+          if (!user?.organizationId) return;
+
+          if (user.role === "ADMIN" || user.role === "SUPER_ADMIN") {
+            return;
+          }
+
+          const completedAt = new Date().toISOString();
+
+          localStorage.setItem(getOnboardingCompletionKey(user), "1");
+
+          set((state) => {
+            if (!state.user) return;
+
+            state.user.userPreference = {
+              ...(state.user.userPreference || {}),
+              hasCompletedOnboarding: true,
+              onboardingCompletedAt:
+                state.user.userPreference?.onboardingCompletedAt || completedAt,
+            };
+          });
+
+          try {
+            const updatedPreference = await userService.updateMyPreferences({
+              hasCompletedOnboarding: true,
+              onboardingCompletedAt: completedAt,
+            });
+
+            set((state) => {
+              if (state.user) {
+                state.user.userPreference = updatedPreference;
+              }
+            });
+          } catch (error) {
+            // Keep local completion so onboarding does not repeatedly block users.
+            console.error("Failed to sync onboarding completion:", error);
+          }
+        },
+
         // Computed getters
         needsOrganization: () => {
           const user = get().user;
@@ -347,6 +400,42 @@ export const useAuthStore = create<AuthState>()(
           }
 
           return hasLocalInstitutionConfirmation(user);
+        },
+
+        hasCompletedOnboarding: (userOverride?: User | null) => {
+          const user = userOverride ?? get().user;
+
+          if (!user) return false;
+
+          if (user.role === "ADMIN" || user.role === "SUPER_ADMIN") {
+            return true;
+          }
+
+          return (
+            user.userPreference?.hasCompletedOnboarding === true ||
+            Boolean(user.userPreference?.onboardingCompletedAt) ||
+            hasLocalOnboardingCompletion(user)
+          );
+        },
+
+        shouldAutoShowOnboarding: (userOverride?: User | null) => {
+          const user = userOverride ?? get().user;
+
+          if (!user) return false;
+
+          if (user.role === "ADMIN" || user.role === "SUPER_ADMIN") {
+            return false;
+          }
+
+          if (user.status !== "ACTIVE") {
+            return false;
+          }
+
+          if (!user.organizationId) {
+            return false;
+          }
+
+          return !get().hasCompletedOnboarding(user);
         },
       })),
       {
