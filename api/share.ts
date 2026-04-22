@@ -31,7 +31,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const apiBase =
       process.env.NEXT_PUBLIC_API_URL ||
       process.env.API_BASE_URL ||
-      "http://localhost:3000/api";
+      "https://echo-backend-twvk.onrender.com/api"; // Production fallback
 
     // Fetch metadata from backend
     const metadataUrl = `${apiBase}/public/share/${entityStr}/${idStr}`;
@@ -41,7 +41,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       headers: {
         "Content-Type": "application/json",
       },
-      // Cache for 5 minutes (same as backend cache)
     });
 
     if (!metadataResponse.ok) {
@@ -70,7 +69,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       "public, s-maxage=300, stale-while-revalidate=600",
     );
     return res.status(200).send(html);
-  } catch (error) {
+  } catch (error: any) {
     console.error("Share preview error:", error);
     return res.status(500).html(getErrorPage());
   }
@@ -222,9 +221,6 @@ function getErrorPage(): string {
 </html>`;
 }
 
-/**
- * Escape HTML special characters to prevent XSS
- */
 function escapeHtml(text: string): string {
   const map: Record<string, string> = {
     "&": "&amp;",
