@@ -46,7 +46,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     if (!metadataResponse.ok) {
       // If metadata not found, show 404
       if (metadataResponse.status === 404) {
-        return res.status(404).html(getNotFoundPage());
+        res.setHeader("Content-Type", "text/html; charset=utf-8");
+        return res.status(404).send(getNotFoundPage());
       }
       throw new Error(`Failed to fetch metadata: ${metadataResponse.status}`);
     }
@@ -71,7 +72,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(200).send(html);
   } catch (error: any) {
     console.error("Share preview error:", error);
-    return res.status(500).html(getErrorPage());
+    res.setHeader("Content-Type", "text/html; charset=utf-8");
+    return res.status(500).send(getErrorPage());
   }
 }
 
