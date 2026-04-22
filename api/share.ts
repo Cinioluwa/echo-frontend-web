@@ -31,7 +31,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const apiBase =
       process.env.NEXT_PUBLIC_API_URL ||
       process.env.API_BASE_URL ||
-      "https://echo-backend-twvk.onrender.com/api"; // Production fallback
+      "http://localhost:3000/api";
 
     // Fetch metadata from backend
     const metadataUrl = `${apiBase}/public/share/${entityStr}/${idStr}`;
