@@ -31,20 +31,21 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const apiBase =
       process.env.NEXT_PUBLIC_API_URL ||
       process.env.API_BASE_URL ||
-      "http://localhost:3000/api";
+      "https://echo-backend-twvk.onrender.com/api"; // Better fallback than localhost
 
     // Fetch metadata from backend
     const metadataUrl = `${apiBase}/public/share/${entityStr}/${idStr}`;
+    console.log(`Fetching metadata from: ${metadataUrl}`);
 
     const metadataResponse = await fetch(metadataUrl, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
       },
-      // Cache for 5 minutes (same as backend cache)
     });
 
     if (!metadataResponse.ok) {
+      console.error(`Metadata fetch failed with status: ${metadataResponse.status}`);
       // If metadata not found, show 404
       if (metadataResponse.status === 404) {
         return res.status(404).html(getNotFoundPage());
@@ -53,6 +54,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
 
     const data = (await metadataResponse.json()) as ShareMetadata;
+    console.log(`Metadata fetched successfully for ${entityStr}:${idStr}`);
 
     // Build absolute canonical URL
     const webBase =
@@ -70,8 +72,15 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       "public, s-maxage=300, stale-while-revalidate=600",
     );
     return res.status(200).send(html);
-  } catch (error) {
-    console.error("Share preview error:", error);
+  } catch (error: any) {
+    console.error("Share preview error details:", {
+      message: error.message,
+      stack: error.stack,
+      env: {
+        api_url: process.env.NEXT_PUBLIC_API_URL,
+        app_url: process.env.NEXT_PUBLIC_APP_URL
+      }
+    });
     return res.status(500).html(getErrorPage());
   }
 }
