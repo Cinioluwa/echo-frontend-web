@@ -3,7 +3,7 @@
   "rewrites": [
     {
       "source": "/share/:entity/:id",
-      "destination": "/api/share/:entity/:id"
+      "destination": "/api/share?entity=:entity&id=:id"
     },
     {
       "source": "/api/:path*",

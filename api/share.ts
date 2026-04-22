@@ -41,13 +41,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       headers: {
         "Content-Type": "application/json",
       },
-      // Cache for 5 minutes (same as backend cache)
     });
 
     if (!metadataResponse.ok) {
       // If metadata not found, show 404
       if (metadataResponse.status === 404) {
-        return res.status(404).html(getNotFoundPage());
+        res.setHeader("Content-Type", "text/html; charset=utf-8");
+        return res.status(404).send(getNotFoundPage());
       }
       throw new Error(`Failed to fetch metadata: ${metadataResponse.status}`);
     }
@@ -70,9 +70,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       "public, s-maxage=300, stale-while-revalidate=600",
     );
     return res.status(200).send(html);
-  } catch (error) {
+  } catch (error: any) {
     console.error("Share preview error:", error);
-    return res.status(500).html(getErrorPage());
+    res.setHeader("Content-Type", "text/html; charset=utf-8");
+    return res.status(500).send(getErrorPage());
   }
 }
 
@@ -222,9 +223,6 @@ function getErrorPage(): string {
 </html>`;
 }
 
-/**
- * Escape HTML special characters to prevent XSS
- */
 function escapeHtml(text: string): string {
   const map: Record<string, string> = {
     "&": "&amp;",
