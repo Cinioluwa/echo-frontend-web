@@ -491,6 +491,8 @@ export interface UserPreference {
   anonymousAlias?: string; // Custom alias for anonymous posts
   anonymousAliasProfilePicture?: string; // URL to anonymous profile picture
   anonymousAliasUpdatedAt?: string; // Timestamp of last alias change
+  hasCompletedOnboarding?: boolean; // Whether user has completed first-time onboarding
+  onboardingCompletedAt?: string; // Timestamp of onboarding completion
   createdAt?: string;
   updatedAt?: string;
 }

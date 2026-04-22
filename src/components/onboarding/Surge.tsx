@@ -1,4 +1,8 @@
+import { useState } from "react";
+
 const Surge = () => {
+  const [videoUnavailable, setVideoUnavailable] = useState(false);
+
   return (
     <div className="flex w-full items-center justify-center min-h-screen bg-black/60 p-4">
       {/* Main Container */}
@@ -6,13 +10,23 @@ const Surge = () => {
         {/* Top/Center Section: Branding/Logo */}
         <div className="flex-1  items-center justify-center w-full">
           <div>
-            <video
-              autoPlay
-              loop
-              className="w-full max-h-[500px] rounded-xl object-contain"
-            >
-              <source src="/assets/videos/Surge.mp4" type="video/mp4" />
-            </video>
+            {videoUnavailable ? (
+              <div className="w-full max-h-[500px] min-h-[220px] rounded-xl bg-[#f8f8f8] border border-[#ececec] flex items-center justify-center px-6 text-center text-[#4a504e] text-sm">
+                Video preview is unavailable right now. Continue to the next step.
+              </div>
+            ) : (
+              <video
+                autoPlay
+                loop
+                muted
+                playsInline
+                preload="metadata"
+                onError={() => setVideoUnavailable(true)}
+                className="w-full max-h-[500px] rounded-xl object-contain"
+              >
+                <source src="/assets/videos/Surge.mp4" type="video/mp4" />
+              </video>
+            )}
           </div>
         </div>
 
