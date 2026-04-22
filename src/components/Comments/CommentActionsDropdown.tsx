@@ -8,17 +8,16 @@ import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link2, Flag, Trash2, MoreVertical } from "lucide-react";
 import Toast from "../shared/Toast";
+import { buildCommentShareUrl } from "../../utils/shareUrl";
 
 interface CommentActionsDropdownProps {
     commentId: number | string;
-    pingId: string;
     isOwner: boolean;
     onDelete: () => void;
 }
 
 const CommentActionsDropdown = ({
     commentId,
-    pingId,
     isOwner,
     onDelete,
 }: CommentActionsDropdownProps) => {
@@ -54,7 +53,7 @@ const CommentActionsDropdown = ({
 
     const handleCopyLink = (e: React.MouseEvent) => {
         e.stopPropagation();
-        const url = `${window.location.origin}/feed/${pingId}#comment-${commentId}`;
+        const url = buildCommentShareUrl(Number(commentId));
         navigator.clipboard.writeText(url);
         setIsOpen(false);
         setShowCopyToast(true);

@@ -315,7 +315,6 @@ const PingDetail = () => {
                 isOwner={waveIsOwner}
                 onDelete={handleDeleteWave}
                 allWavesForPing={waves}
-                pingId={Number(pingId)}
               />
             );
           })}

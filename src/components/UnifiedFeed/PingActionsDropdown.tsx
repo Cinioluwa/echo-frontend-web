@@ -11,6 +11,7 @@ import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link2, Flag, Trash2, MoreVertical } from "lucide-react";
 import Toast from "../shared/Toast";
+import { buildPingShareUrl } from "../../utils/shareUrl";
 
 interface PingActionsDropdownProps {
     pingId: number;
@@ -56,7 +57,7 @@ const PingActionsDropdown = ({
 
     const handleCopyLink = (e: React.MouseEvent) => {
         e.stopPropagation();
-        const url = `${window.location.origin}/feed/${pingId}`;
+        const url = buildPingShareUrl(pingId);
         navigator.clipboard.writeText(url);
         setIsOpen(false);
         setShowCopyToast(true);

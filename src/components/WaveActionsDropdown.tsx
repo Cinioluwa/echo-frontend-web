@@ -11,17 +11,16 @@ import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link2, Flag, Trash2, MoreVertical } from "lucide-react";
 import Toast from "./shared/Toast";
+import { buildWaveShareUrl } from "../utils/shareUrl";
 
 interface WaveActionsDropdownProps {
     waveId: number;
-    pingId: number;
     isOwner: boolean;
     onDelete: (e: React.MouseEvent) => void;
 }
 
 const WaveActionsDropdown = ({
     waveId,
-    pingId,
     isOwner,
     onDelete,
 }: WaveActionsDropdownProps) => {
@@ -58,7 +57,7 @@ const WaveActionsDropdown = ({
 
     const handleCopyLink = (e: React.MouseEvent) => {
         e.stopPropagation();
-        const url = `${window.location.origin}/feed/${pingId}#wave-${waveId}`;
+        const url = buildWaveShareUrl(waveId);
         navigator.clipboard.writeText(url);
         setIsOpen(false);
         setShowCopyToast(true);
@@ -119,7 +118,7 @@ const WaveActionsDropdown = ({
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: -8, scale: 0.95 }}
                         transition={{ duration: 0.15 }}
-                        className="absolute right-0 top-full mt-2 bg-white rounded-[8px] shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)] py-2 px-2 min-w-[172px] z-50"
+                        className="absolute right-0 top-full mt-2 bg-white rounded-lg shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)] py-2 px-2 min-w-[172px] z-50"
                         onClick={(e) => e.stopPropagation()}
                     >
                         {/* Copy link */}

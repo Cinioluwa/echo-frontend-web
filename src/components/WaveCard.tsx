@@ -24,7 +24,6 @@ interface WaveCardProps {
   isOwner: boolean;
   onDelete?: (id: number) => void;
   allWavesForPing?: Wave[]; // All waves for the parent Ping (needed for Community Pick calculation)
-  pingId: number; // Parent ping ID for generating direct links
 }
 
 // ─── Helper Functions (Module-level for performance) ───────────────────────
@@ -76,7 +75,7 @@ const getWaveMedia = (wave: Wave): Media[] => {
 // ─── WaveCard Component ─────────────────────────────────────────────────────
 
 const WaveCard = React.memo(
-  ({ wave, isOwner, onDelete, allWavesForPing = [], pingId }: WaveCardProps) => {
+  ({ wave, isOwner, onDelete, allWavesForPing = [] }: WaveCardProps) => {
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
     const [lightboxSrc, setLightboxSrc] = useState<string | null>(null);
@@ -200,7 +199,6 @@ const WaveCard = React.memo(
               {isOwner && (
                 <WaveActionsDropdown
                   waveId={wave.id}
-                  pingId={pingId}
                   isOwner={isOwner}
                   onDelete={handleDeleteClick}
                 />
@@ -259,13 +257,13 @@ const WaveCard = React.memo(
           </div>
 
           {previewMedia && (
-            <div className="relative overflow-hidden rounded-[12px] border border-black/10 bg-[#F8F7F3]">
+            <div className="relative overflow-hidden rounded-xl border border-black/10 bg-[#F8F7F3]">
               {previewMedia.mimeType?.startsWith("video/") ? (
                 <video
                   src={previewMedia.url}
                   controls
                   preload="metadata"
-                  className="w-full max-h-[320px] object-cover"
+                  className="w-full max-h-80 object-cover"
                 />
               ) : (
                 <button
@@ -277,7 +275,7 @@ const WaveCard = React.memo(
                   <img
                     src={previewMedia.url}
                     alt="Wave attachment"
-                    className="w-full max-h-[320px] object-cover"
+                    className="w-full max-h-80 object-cover"
                     loading="lazy"
                   />
                 </button>
@@ -298,7 +296,7 @@ const WaveCard = React.memo(
                   href={item.url}
                   target="_blank"
                   rel="noreferrer"
-                  className="text-[12px] font-medium text-[#4A504E] bg-[#FEF5EA] border border-[#FFC37B] rounded-[12px] px-2.5 py-1 hover:bg-[#FDE8CD] transition-colors"
+                  className="text-[12px] font-medium text-[#4A504E] bg-[#FEF5EA] border border-[#FFC37B] rounded-xl px-2.5 py-1 hover:bg-[#FDE8CD] transition-colors"
                 >
                   {item.filename ?? "Attachment"}
                 </a>
