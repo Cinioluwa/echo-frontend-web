@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { usePageTitle } from "../hooks/usePageTitle";
 import { useAuthStore } from "../stores";
 import {
@@ -72,6 +72,7 @@ const PasswordIcon = () => (
  */
 const Login = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const login = useAuthStore((state) => state.login);
   const { isOffline } = useNetworkStatus();
 
@@ -140,10 +141,15 @@ const Login = () => {
       return;
     }
 
-    // Active user with organization - go to main feed
+    // Active user with organization - go to main feed (or from location)
     if (user.status === "ACTIVE" && user.organizationId) {
       console.log("→ Redirecting to /feed (ACTIVE user)");
-      navigate("/feed");
+      const from = location.state?.from?.pathname + (location.state?.from?.search || "");
+      if (from && from !== "/login") {
+        navigate(from);
+      } else {
+        navigate("/feed");
+      }
       return;
     }
 

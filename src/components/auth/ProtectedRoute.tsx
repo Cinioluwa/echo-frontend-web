@@ -1,4 +1,4 @@
-import { Navigate } from "react-router-dom";
+import { Navigate, useLocation } from "react-router-dom";
 import { useAuthStore } from "../../stores";
 import LoadingFallback from "./LoadingFallback";
 
@@ -17,6 +17,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
     requireAuth = true
 }) => {
     const { isAuthenticated, isLoading, user } = useAuthStore();
+    const location = useLocation();
 
     // Show loading state while checking auth
     if (isLoading) {
@@ -25,12 +26,12 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
 
     // Redirect to login if authentication is required and user is not authenticated
     if (requireAuth && !isAuthenticated) {
-        return <Navigate to="/login" replace />;
+        return <Navigate to="/login" state={{ from: location }} replace />;
     }
 
     // Redirect to login if user data is missing
     if (requireAuth && !user) {
-        return <Navigate to="/login" replace />;
+        return <Navigate to="/login" state={{ from: location }} replace />;
     }
 
     if (requireAuth && user) {

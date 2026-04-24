@@ -1,4 +1,4 @@
-import { Navigate } from "react-router-dom";
+import { Navigate, useLocation } from "react-router-dom";
 import { useAuthStore } from "../../stores";
 import LoadingFallback from "./LoadingFallback";
 
@@ -13,6 +13,7 @@ interface AdminRouteProps {
  */
 const AdminRoute: React.FC<AdminRouteProps> = ({ children }) => {
     const { isAuthenticated, isLoading, user } = useAuthStore();
+    const location = useLocation();
 
     // Show loading state while checking auth
     if (isLoading) {
@@ -22,7 +23,7 @@ const AdminRoute: React.FC<AdminRouteProps> = ({ children }) => {
     // Redirect to login if not authenticated
     if (!isAuthenticated || !user) {
         console.warn("AdminRoute: User not authenticated, redirecting to login");
-        return <Navigate to="/login" replace />;
+        return <Navigate to="/login" state={{ from: location }} replace />;
     }
 
     // Check if user has admin role
