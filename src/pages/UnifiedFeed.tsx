@@ -14,7 +14,7 @@
  */
 
 import { useCallback, useEffect, useState } from "react";
-import { useOutletContext } from "react-router-dom";
+import { useOutletContext, useSearchParams, useNavigate } from "react-router-dom";
 import { useShallow } from "zustand/react/shallow";
 import { publicService } from "../api/services";
 import { getSocket } from "../api/socket";
@@ -32,6 +32,19 @@ import UnifiedFeedSkeleton from "../components/skeletons/UnifiedFeedSkeleton";
 
 const UnifiedFeed = () => {
   const { announcement = null, top3 = [] } = useOutletContext<{ announcement: Announcement | null, top3: Ping[] }>() || {};
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
+
+  // Redirect legacy ?ping= query to the new path, preserving other params (like ?wave= or ?comment=)
+  useEffect(() => {
+    const pingId = searchParams.get("ping");
+    if (pingId) {
+      const newParams = new URLSearchParams(searchParams);
+      newParams.delete("ping");
+      const searchString = newParams.toString();
+      navigate(`/feed/${pingId}${searchString ? `?${searchString}` : ""}`, { replace: true });
+    }
+  }, [searchParams, navigate]);
 
   // ── Pings store ────────────────────────────────────────────────────────────
   const { pings, isLoading, error, fetchPings, fetchNextPage, hasNextPage } =

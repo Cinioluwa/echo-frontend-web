@@ -86,7 +86,11 @@ function generateOGPage(
 ): string {
   const title = escapeHtml(data.title);
   const description = escapeHtml(data.description);
-  const image = data.imageUrl ? escapeHtml(data.imageUrl) : "";
+  let image = "";
+  if (data.imageUrl) {
+    image = data.imageUrl.startsWith("http") ? data.imageUrl : `${webBase}${data.imageUrl}`;
+    image = escapeHtml(image);
+  }
 
   return `<!DOCTYPE html>
 <html lang="en">
@@ -115,7 +119,9 @@ function generateOGPage(
   <link rel="canonical" href="${escapeHtml(absoluteCanonical)}" />
   
   <!-- Redirect to app -->
-  <meta http-equiv="refresh" content="0;url=${escapeHtml(absoluteCanonical)}" />
+  <script>
+    window.location.replace("${absoluteCanonical}");
+  </script>
   
   <style>
     body {
