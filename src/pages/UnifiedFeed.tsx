@@ -35,11 +35,14 @@ const UnifiedFeed = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
 
-  // Redirect legacy ?ping= query to the new path
+  // Redirect legacy ?ping= query to the new path, preserving other params (like ?wave= or ?comment=)
   useEffect(() => {
     const pingId = searchParams.get("ping");
     if (pingId) {
-      navigate(`/feed/${pingId}`, { replace: true });
+      const newParams = new URLSearchParams(searchParams);
+      newParams.delete("ping");
+      const searchString = newParams.toString();
+      navigate(`/feed/${pingId}${searchString ? `?${searchString}` : ""}`, { replace: true });
     }
   }, [searchParams, navigate]);
 
