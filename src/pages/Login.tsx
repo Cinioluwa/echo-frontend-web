@@ -144,7 +144,10 @@ const Login = () => {
     // Active user with organization - go to main feed (or from location)
     if (user.status === "ACTIVE" && user.organizationId) {
       console.log("→ Redirecting to /feed (ACTIVE user)");
-      const from = location.state?.from?.pathname + (location.state?.from?.search || "");
+      const fromPathname = location.state?.from?.pathname;
+      const fromSearch = location.state?.from?.search || "";
+      const from = fromPathname ? fromPathname + fromSearch : null;
+      
       if (from && from !== "/login") {
         navigate(from);
       } else {
