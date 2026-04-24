@@ -60,9 +60,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const absoluteCanonical = data.canonicalUrl.startsWith("http")
       ? data.canonicalUrl
       : `${webBase}${data.canonicalUrl}`;
+    const shareUrl = `${webBase}/share/${entityStr}/${idStr}`;
 
     // Generate and return HTML with OG tags
-    const html = generateOGPage(data, absoluteCanonical, webBase);
+    const html = generateOGPage(data, absoluteCanonical, shareUrl, webBase);
 
     res.setHeader("Content-Type", "text/html; charset=utf-8");
     res.setHeader(
@@ -80,6 +81,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 function generateOGPage(
   data: ShareMetadata,
   absoluteCanonical: string,
+  shareUrl: string,
   webBase: string,
 ): string {
   const title = escapeHtml(data.title);
@@ -97,7 +99,7 @@ function generateOGPage(
   <meta property="og:type" content="article" />
   <meta property="og:title" content="${title}" />
   <meta property="og:description" content="${description}" />
-  <meta property="og:url" content="${escapeHtml(absoluteCanonical)}" />
+  <meta property="og:url" content="${escapeHtml(shareUrl)}" />
   <meta property="og:site_name" content="Echo" />
   ${image ? `<meta property="og:image" content="${image}" />` : ""}
   ${image ? `<meta property="og:image:type" content="image/jpeg" />` : ""}

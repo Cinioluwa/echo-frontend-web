@@ -1,4 +1,4 @@
-import { Navigate } from "react-router-dom";
+import { Navigate, useLocation } from "react-router-dom";
 import { useAuthStore } from "../../stores";
 import LoadingFallback from "./LoadingFallback";
 
@@ -10,6 +10,7 @@ import LoadingFallback from "./LoadingFallback";
  */
 const ProfileRedirect: React.FC = () => {
     const { isAuthenticated, isLoading, user } = useAuthStore();
+    const location = useLocation();
 
     // Show loading state while checking auth
     if (isLoading) {
@@ -18,7 +19,7 @@ const ProfileRedirect: React.FC = () => {
 
     // Redirect to login if not authenticated
     if (!isAuthenticated || !user) {
-        return <Navigate to="/login" replace />;
+        return <Navigate to="/login" state={{ from: location }} replace />;
     }
 
     // Check if user has admin role
