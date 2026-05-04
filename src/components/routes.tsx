@@ -78,6 +78,7 @@ const ResetPassword = lazyWithRetry(() => import("../pages/auth/ResetPassword"))
 const UnifiedFeed = lazyWithRetry(() => import("../pages/UnifiedFeed"));
 const PingDetail = lazyWithRetry(() => import("../pages/PingDetail"));
 const History = lazyWithRetry(() => import("../pages/History"));
+const Notifications = lazyWithRetry(() => import("../pages/Notifications"));
 
 // Lazy load admin pages
 const Feed = lazyWithRetry(() => import("../pages/admin/AdminFeed"));
@@ -200,6 +201,10 @@ const router = createBrowserRouter([
       {
         path: "history/:tab",
         element: withSuspense(History),
+      },
+      {
+        path: "notifications",
+        element: withSuspense(Notifications),
       },
     ],
   },

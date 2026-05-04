@@ -8,7 +8,9 @@ import { commentService } from "../../api/services";
 import DeleteConfirmationModal from "../DeleteConfirmationModal";
 import CommentActionsDropdown from "./CommentActionsDropdown";
 import { getErrorMessage } from "../../utils/networkUtils";
-
+import { useEditWindow } from "../../hooks";
+import { getEditErrorMessage } from "../../utils/editErrors";
+import { EditedLabel } from "../../utils/editedLabel";
 interface Props {
     comment: Comment;
     onRefresh?: () => void;
@@ -79,9 +81,41 @@ const CommentItem = ({ comment, onRefresh: _onRefresh, pingId }: Props) => {
     const isOwner = comment.isAnonymous
         ? (comment.isOwner ?? false)
         : (user?.id === (typeof comment.author === "object" ? comment.author?.id : undefined));
-    // Anonymous comments cannot be deleted, even by their author
+
+    const { isEditable, countdownLabel } = useEditWindow(comment.createdAt);
+    const canEdit = isOwner && !comment.isAnonymous && isEditable;
     const canDelete = isOwner && !comment.isAnonymous;
     const authorName = getAuthorName(comment);
+
+    const [isEditing, setIsEditing] = useState(false);
+    const [editInput, setEditInput] = useState(comment.content);
+    const [isSavingEdit, setIsSavingEdit] = useState(false);
+
+    const handleSaveEdit = async () => {
+        const trimmed = editInput.trim();
+        if (!trimmed || trimmed === comment.content) {
+            setIsEditing(false);
+            return;
+        }
+
+        setIsSavingEdit(true);
+        setActionError(null);
+        try {
+            await commentService.updateComment(String(comment.id), { content: trimmed });
+            setIsEditing(false);
+            _onRefresh?.();
+        } catch (err) {
+            setActionError(getEditErrorMessage(err));
+        } finally {
+            setIsSavingEdit(false);
+        }
+    };
+
+    const handleCancelEdit = () => {
+        setIsEditing(false);
+        setEditInput(comment.content);
+        setActionError(null);
+    };
 
     const handleSurge = async () => {
         if (isToggling) return;
@@ -233,15 +267,54 @@ const CommentItem = ({ comment, onRefresh: _onRefresh, pingId }: Props) => {
                             <CommentActionsDropdown
                                 commentId={comment.id}
                                 isOwner={canDelete}
+                                canEdit={canEdit}
+                                onEdit={() => setIsEditing(true)}
                                 onDelete={handleShowDeleteModal}
                             />
                         </div>
 
                         {/* Body */}
                         <div className="flex flex-col gap-[5px] w-full">
-                            <p className="text-[12px] font-['Poppins',sans-serif] font-normal text-black leading-normal break-words">
-                                {comment.content}
-                            </p>
+                            {isEditing ? (
+                                <div className="flex flex-col gap-2 w-full mt-1">
+                                    <textarea
+                                        value={editInput}
+                                        onChange={(e) => setEditInput(e.target.value)}
+                                        disabled={isSavingEdit}
+                                        className="w-full text-[12px] font-['Poppins',sans-serif] p-2 border border-gray-300 rounded-md focus:outline-none focus:border-[#f49b31] resize-none"
+                                        rows={2}
+                                        autoFocus
+                                    />
+                                    <div className="flex justify-between items-center">
+                                        <span className="text-[10px] text-gray-500">
+                                            {countdownLabel ? `Edit window closes in ${countdownLabel}` : "Edit window closed"}
+                                        </span>
+                                        <div className="flex gap-2">
+                                            <button
+                                                type="button"
+                                                onClick={handleCancelEdit}
+                                                disabled={isSavingEdit}
+                                                className="text-[10px] px-2 py-1 border border-gray-300 rounded-md hover:bg-gray-50"
+                                            >
+                                                Cancel
+                                            </button>
+                                            <button
+                                                type="button"
+                                                onClick={handleSaveEdit}
+                                                disabled={isSavingEdit || !editInput.trim()}
+                                                className="text-[10px] px-2 py-1 bg-[#f49b31] text-white rounded-md disabled:opacity-50"
+                                            >
+                                                {isSavingEdit ? "Saving..." : "Save"}
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            ) : (
+                                <p className="text-[12px] font-['Poppins',sans-serif] font-normal text-black leading-normal break-words">
+                                    {comment.content}
+                                    {comment.isEdited && <EditedLabel />}
+                                </p>
+                            )}
 
                             {/* Surge and Comment buttons */}
                             <div className="flex gap-[5px] items-center">
@@ -433,6 +506,7 @@ const ReplyItem = ({ reply }: ReplyItemProps) => {
 
                 <p className="text-[12px] font-['Poppins',sans-serif] font-normal text-black leading-normal break-words w-full">
                     {reply.content}
+                    {reply.isEdited && <EditedLabel />}
                 </p>
 
                 {/* Reply Surge button only (no reply button - one level deep) */}

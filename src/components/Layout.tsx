@@ -15,6 +15,8 @@
 import { useState, useEffect, useCallback } from "react";
 import { Outlet, useLocation } from "react-router-dom";
 import { usePageTitle } from "../hooks/usePageTitle";
+import { useNotificationSocket } from "../hooks/useNotificationSocket";
+import { usePushNotifications } from "../hooks/usePushNotifications";
 import NavBar from "./NavBar";
 import SideBar from "./SideBar";
 import MobileHeader from "./MobileHeader";
@@ -22,6 +24,7 @@ import AnnouncementWidget from "./UnifiedFeed/AnnouncementWidget";
 import Top3Widget from "./UnifiedFeed/Top3Widget";
 import CommentsPanel from "./CommentsPanel";
 import PingFormModal from "./PingFormModal";
+import ToastNotification from "./ToastNotification";
 import { PingCreatorProvider } from "../contexts/PingCreatorContext";
 import {
   announcementService,
@@ -43,6 +46,21 @@ const Layout = () => {
 
   const currentUser = useAuthStore((state) => state.user);
   const updatePingStore = usePingsStore((state) => state.updatePing);
+
+  // ── Notification hooks ────────────────────────────────────────────────────
+  // Listens for socket `notification:new` events → updates badge + toast queue
+  useNotificationSocket();
+
+  // Request push permission and subscribe once the user is confirmed logged in
+  const { subscribe } = usePushNotifications();
+  useEffect(() => {
+    if (currentUser) {
+      subscribe();
+    }
+    // Only re-run when the logged-in user changes (e.g. after login/logout)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentUser?.id]);
+  // ─────────────────────────────────────────────────────────────────────────
 
   const [announcement, setAnnouncement] = useState<Announcement | null>(null);
   const [top3, setTop3] = useState<Ping[]>([]);
@@ -200,6 +218,9 @@ const Layout = () => {
           onPingCreated={() => setShowPingFormModal(false)}
         />
       )}
+
+      {/* Floating toast notifications (bottom-right) */}
+      <ToastNotification />
     </div>
   );
 };
