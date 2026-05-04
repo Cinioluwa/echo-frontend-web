@@ -367,7 +367,11 @@ export const useAuthStore = create<AuthState>()(
 
             set((state) => {
               if (state.user) {
-                state.user.userPreference = updatedPreference;
+                // Ensure we don't lose the flag if the backend doesn't return it
+                state.user.userPreference = {
+                  ...updatedPreference,
+                  hasCompletedOnboarding: true,
+                };
               }
             });
           } catch (error) {

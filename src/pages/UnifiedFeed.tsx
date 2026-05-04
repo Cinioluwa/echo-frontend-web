@@ -134,9 +134,15 @@ const UnifiedFeed = () => {
 
   useEffect(() => {
     if (!user) return;
+    
+    // Prevent showing multiple times in the same session, even if state fluctuates
+    if (sessionStorage.getItem("echo:onboarding-shown") === "1") {
+      return;
+    }
 
     if (shouldAutoShowOnboarding(user)) {
       setOpenOnboarding(true);
+      sessionStorage.setItem("echo:onboarding-shown", "1");
     }
   }, [user, shouldAutoShowOnboarding]);
 
