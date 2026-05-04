@@ -2,7 +2,7 @@ const logo = "/assets/images/onboard.svg";
 
 const Welcome = () => {
   return (
-    <div className="flex w-full items-center justify-center min-h-screen bg-black/60 p-4">
+    <div>
       {/* Main Container */}
       <div className="relative w-full max-w-4xl aspect-16/10 bg-white rounded-2xl shadow-2xl  border border-purple-100 flex gap-10 flex-col items-center justify-between p-8 md:p-12">
         {/* Top/Center Section: Branding/Logo */}
