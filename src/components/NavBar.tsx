@@ -4,6 +4,7 @@
  * Phase: 1
  */
 import ProfileDropdown from "./ProfileDropdown";
+import NotificationBell from "./NotificationBell";
 import { useNavigate } from "react-router-dom";
 
 const logo = "/assets/images/Echo Logo_black.svg";
@@ -26,8 +27,11 @@ const NavBar = () => {
         </span>
       </div>
 
-      {/* User profile + dropdown */}
-      <ProfileDropdown />
+      {/* Notification bell + User profile + dropdown */}
+      <div className="flex items-center gap-1.5">
+        <NotificationBell />
+        <ProfileDropdown />
+      </div>
     </div>
   );
 };

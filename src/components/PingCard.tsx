@@ -11,6 +11,11 @@ import { calculatePingBadge } from "../utils/badgeUtils";
 import PingActionsDropdown from "./UnifiedFeed/PingActionsDropdown";
 import ImageCarousel from "./shared/ImageCarousel";
 import type { Ping, CategoryData } from "../api/types";
+import { useEditWindow } from "../hooks";
+import { getEditErrorMessage } from "../utils/editErrors";
+import { EditedLabel } from "../utils/editedLabel";
+import { useState } from "react";
+import { pingService } from "../api/services";
 
 interface PingCardProps {
     ping: Ping;
@@ -25,6 +30,7 @@ interface PingCardProps {
     onSurge: (e: React.MouseEvent) => void;
     onCommentClick: () => void;
     onDelete: (e: React.MouseEvent) => void;
+    onRefresh?: () => void;
 }
 
 const waveIcon = "/assets/icon/wave.svg";
@@ -76,6 +82,7 @@ const PingCard = ({
     onSurge,
     onCommentClick,
     onDelete,
+    onRefresh,
 }: PingCardProps) => {
     const authorName = getAuthorName(ping);
     const categoryName =
@@ -89,6 +96,40 @@ const PingCard = ({
         0,
         surgeCount + (hasSurged ? 1 : 0) - (initialHasSurged ? 1 : 0),
     );
+
+    const { isEditable, countdownLabel } = useEditWindow(ping.createdAt);
+    const canEdit = isOwner && !ping.isAnonymous && isEditable;
+
+    const [isEditing, setIsEditing] = useState(false);
+    const [editInput, setEditInput] = useState(ping.content || "");
+    const [isSavingEdit, setIsSavingEdit] = useState(false);
+    const [actionError, setActionError] = useState<string | null>(null);
+
+    const handleSaveEdit = async () => {
+        const trimmed = editInput.trim();
+        if (!trimmed || trimmed === ping.content) {
+            setIsEditing(false);
+            return;
+        }
+
+        setIsSavingEdit(true);
+        setActionError(null);
+        try {
+            await pingService.updatePing(String(ping.id), { content: trimmed });
+            setIsEditing(false);
+            onRefresh?.();
+        } catch (err) {
+            setActionError(getEditErrorMessage(err));
+        } finally {
+            setIsSavingEdit(false);
+        }
+    };
+
+    const handleCancelEdit = () => {
+        setIsEditing(false);
+        setEditInput(ping.content || "");
+        setActionError(null);
+    };
 
     if (isLoading) return null;
 
@@ -149,6 +190,8 @@ const PingCard = ({
                     <PingActionsDropdown
                         pingId={ping.id}
                         isOwner={isOwner}
+                        canEdit={canEdit}
+                        onEdit={() => setIsEditing(true)}
                         onDelete={onDelete}
                     />
                 </div>
@@ -173,6 +216,7 @@ const PingCard = ({
             {/* Title */}
             <h1 className="font-['Poppins',sans-serif] font-semibold text-[20px] text-black">
                 {ping.title}
+                {ping.isEdited && <EditedLabel />}
             </h1>
 
             {/* Ping image */}
@@ -191,9 +235,45 @@ const PingCard = ({
 
             {/* Description */}
             {ping.content && (
-                <p className="font-['Poppins',sans-serif] font-medium  text-[14px] text-[#626665] text-justify leading-relaxed whitespace-pre-wrap">
-                    {ping.content}
-                </p>
+                isEditing ? (
+                    <div className="flex flex-col gap-2 w-full mt-1">
+                        <textarea
+                            value={editInput}
+                            onChange={(e) => setEditInput(e.target.value)}
+                            disabled={isSavingEdit}
+                            className="w-full text-[14px] font-['Poppins',sans-serif] font-medium p-3 border border-gray-300 rounded-md focus:outline-none focus:border-[#f49b31] resize-y min-h-[100px]"
+                            autoFocus
+                        />
+                        {actionError && <p className="text-red-500 text-sm">{actionError}</p>}
+                        <div className="flex justify-between items-center">
+                            <span className="text-[12px] text-gray-500">
+                                {countdownLabel ? `Edit window closes in ${countdownLabel}` : "Edit window closed"}
+                            </span>
+                            <div className="flex gap-2">
+                                <button
+                                    type="button"
+                                    onClick={handleCancelEdit}
+                                    disabled={isSavingEdit}
+                                    className="text-[12px] px-3 py-1.5 border border-gray-300 rounded-md hover:bg-gray-50"
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={handleSaveEdit}
+                                    disabled={isSavingEdit || !editInput.trim()}
+                                    className="text-[12px] px-3 py-1.5 bg-[#f49b31] text-white rounded-md disabled:opacity-50"
+                                >
+                                    {isSavingEdit ? "Saving..." : "Save"}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                ) : (
+                    <p className="font-['Poppins',sans-serif] font-medium  text-[14px] text-[#626665] text-justify leading-relaxed whitespace-pre-wrap">
+                        {ping.content}
+                    </p>
+                )
             )}
 
             {/* Stats: surge + comments + waves */}

@@ -156,6 +156,7 @@ export interface Ping {
   anonymousAlias?: string | null; // Custom name for anonymous posts
   anonymousProfilePicture?: string | null; // Avatar URL for anonymous posts
   resolvedAt?: string; // Timestamp when ping was marked as resolved
+  isEdited?: boolean; // true if content was edited after original creation
   createdAt: string;
   updatedAt?: string;
   waves?: Wave[];
@@ -180,10 +181,10 @@ export interface CreatePingRequest {
 
 export interface UpdatePingRequest {
   title?: string;
-  description?: string;
-  category?: CategoryData;
-  hashtags?: string[];
-  status?: "active" | "resolved" | "archived";
+  content?: string;
+  categoryId?: number;
+  hashtag?: string;
+  isAnonymous?: boolean;
 }
 
 // ==================== Wave Types ====================
@@ -229,6 +230,7 @@ export interface Wave {
   anonymousAlias?: string | null; // Custom name for anonymous posts
   anonymousProfilePicture?: string | null; // Avatar URL for anonymous posts
   rank?: number; // Top ranking (1-3 for top waves)
+  isEdited?: boolean; // true if solution was edited after original creation
   status:
     | "POSTED"
     | "UNDER_REVIEW"
@@ -254,11 +256,8 @@ export interface CreateWaveRequest {
 }
 
 export interface UpdateWaveRequest {
-  title?: string;
-  description?: string;
+  /** Only the solution field is editable within the 5-minute window */
   solution?: string;
-  category?: CategoryData;
-  status?: "POSTED" | "UNDER_REVIEW" | "APPROVED" | "REJECTED";
 }
 
 export interface ProposeWaveRequest {
@@ -310,6 +309,7 @@ export interface Comment {
   anonymousProfilePicture?: string | null; // Avatar URL for anonymous posts
   isOwner: boolean; // Whether the current user is the author
   hasSurged?: boolean; // Whether the current user has surged this comment
+  isEdited?: boolean; // true if comment content was edited after original creation
 }
 
 export interface CreateCommentRequest {
@@ -495,4 +495,30 @@ export interface UserPreference {
   onboardingCompletedAt?: string; // Timestamp of onboarding completion
   createdAt?: string;
   updatedAt?: string;
+}
+
+// ==================== Notification Types ====================
+
+/**
+ * All notification event types the backend can emit.
+ * Used for icon mapping in ToastNotification and UserNotification page.
+ */
+export type NotificationType =
+  | 'NEW_WAVE_ON_PING'
+  | 'NEW_COMMENT_ON_POST'
+  | 'PING_SURGED_MILESTONE'
+  | 'COMMENT_REPLY'
+  | 'WAVE_STATUS_UPDATED'
+  | 'OFFICIAL_RESPONSE'
+  | 'ANNOUNCEMENT';
+
+export interface AppNotification {
+  id: number | string;
+  type: NotificationType;
+  title: string;
+  body: string;
+  /** Optional deep-link URL the user should be taken to on click */
+  url?: string;
+  isRead: boolean;
+  createdAt: string;
 }

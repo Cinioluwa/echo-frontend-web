@@ -1,4 +1,4 @@
-import logo from "../../../public/assets/images/onboard.svg";
+const logo = "/assets/images/onboard.svg";
 
 const Welcome = () => {
   return (

@@ -20,6 +20,7 @@ export * from "./data/useResolutionsStore";
 export * from "./data/useCategoriesStore";
 export * from "./data/useOrganizationStore";
 export * from "./adminStore";
+export * from "./ui/useNotificationStore";
 
 // Re-export types
 export * from "./types";

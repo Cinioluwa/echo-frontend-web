@@ -16,12 +16,16 @@ import { buildWaveShareUrl } from "../utils/shareUrl";
 interface WaveActionsDropdownProps {
     waveId: number;
     isOwner: boolean;
+    canEdit?: boolean;
+    onEdit?: (e: React.MouseEvent) => void;
     onDelete: (e: React.MouseEvent) => void;
 }
 
 const WaveActionsDropdown = ({
     waveId,
     isOwner,
+    canEdit,
+    onEdit,
     onDelete,
 }: WaveActionsDropdownProps) => {
     const [isOpen, setIsOpen] = useState(false);
@@ -142,6 +146,36 @@ const WaveActionsDropdown = ({
                                 Report
                             </span>
                         </button>
+
+                        {/* Edit - if within time window */}
+                        {canEdit && onEdit && (
+                            <button
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    onEdit(e);
+                                    setIsOpen(false);
+                                }}
+                                className={`${menuItemClass} mt-1`}
+                            >
+                                <svg
+                                    width="17"
+                                    height="17"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    strokeWidth="2"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    className="text-black shrink-0"
+                                >
+                                    <path d="M12 20h9" />
+                                    <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+                                </svg>
+                                <span className={menuLabelClass}>
+                                    Edit
+                                </span>
+                            </button>
+                        )}
 
                         {/* Delete - only if owner */}
                         {isOwner && (

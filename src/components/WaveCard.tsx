@@ -18,12 +18,17 @@ import { calculateWaveBadge } from "../utils/badgeUtils";
 import type { Wave, Media } from "../api/types";
 import { Tooltip } from "./Tooltip";
 import ImageLightbox from "./shared/ImageLightbox";
+import { useEditWindow } from "../hooks";
+import { getEditErrorMessage } from "../utils/editErrors";
+import { EditedLabel } from "../utils/editedLabel";
+import { waveService } from "../api/services";
 
 interface WaveCardProps {
   wave: Wave;
   isOwner: boolean;
   onDelete?: (id: number) => void;
   allWavesForPing?: Wave[]; // All waves for the parent Ping (needed for Community Pick calculation)
+  onRefresh?: () => void;
 }
 
 // ─── Helper Functions (Module-level for performance) ───────────────────────
@@ -75,7 +80,7 @@ const getWaveMedia = (wave: Wave): Media[] => {
 // ─── WaveCard Component ─────────────────────────────────────────────────────
 
 const WaveCard = React.memo(
-  ({ wave, isOwner, onDelete, allWavesForPing = [] }: WaveCardProps) => {
+  ({ wave, isOwner, onDelete, allWavesForPing = [], onRefresh }: WaveCardProps) => {
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
     const [lightboxSrc, setLightboxSrc] = useState<string | null>(null);
@@ -117,6 +122,40 @@ const WaveCard = React.memo(
       0,
       waveMedia.length - (previewMedia ? 1 : 0),
     );
+
+    const { isEditable, countdownLabel } = useEditWindow(wave.createdAt);
+    const canEdit = isOwner && !wave.isAnonymous && isEditable;
+
+    const [isEditing, setIsEditing] = useState(false);
+    const [editInput, setEditInput] = useState(currentWave.solution || "");
+    const [isSavingEdit, setIsSavingEdit] = useState(false);
+    const [actionError, setActionError] = useState<string | null>(null);
+
+    const handleSaveEdit = async () => {
+        const trimmed = editInput.trim();
+        if (!trimmed || trimmed === currentWave.solution) {
+            setIsEditing(false);
+            return;
+        }
+
+        setIsSavingEdit(true);
+        setActionError(null);
+        try {
+            await waveService.updateWave(String(wave.id), { solution: trimmed });
+            setIsEditing(false);
+            onRefresh?.();
+        } catch (err) {
+            setActionError(getEditErrorMessage(err));
+        } finally {
+            setIsSavingEdit(false);
+        }
+    };
+
+    const handleCancelEdit = () => {
+        setIsEditing(false);
+        setEditInput(currentWave.solution || "");
+        setActionError(null);
+    };
 
     const handleSurge = async (e: React.MouseEvent) => {
       e.stopPropagation();
@@ -200,6 +239,8 @@ const WaveCard = React.memo(
                 <WaveActionsDropdown
                   waveId={wave.id}
                   isOwner={isOwner}
+                  canEdit={canEdit}
+                  onEdit={() => setIsEditing(true)}
                   onDelete={handleDeleteClick}
                 />
               )}
@@ -208,9 +249,48 @@ const WaveCard = React.memo(
 
           {/* Body: solution text + surge */}
           <div className="flex items-start justify-between gap-2.5">
-            <p className="flex-1 font-['Poppins',sans-serif] font-medium text-[12px] text-black leading-relaxed">
-              {currentWave.solution}
-            </p>
+            <div className="flex-1">
+              {isEditing ? (
+                  <div className="flex flex-col gap-2 w-full mt-1">
+                      <textarea
+                          value={editInput}
+                          onChange={(e) => setEditInput(e.target.value)}
+                          disabled={isSavingEdit}
+                          className="w-full text-[12px] font-['Poppins',sans-serif] font-medium p-3 border border-gray-300 rounded-md focus:outline-none focus:border-[#f49b31] resize-y min-h-[100px]"
+                          autoFocus
+                      />
+                      {actionError && <p className="text-red-500 text-sm">{actionError}</p>}
+                      <div className="flex justify-between items-center">
+                          <span className="text-[12px] text-gray-500">
+                              {countdownLabel ? `Edit window closes in ${countdownLabel}` : "Edit window closed"}
+                          </span>
+                          <div className="flex gap-2">
+                              <button
+                                  type="button"
+                                  onClick={handleCancelEdit}
+                                  disabled={isSavingEdit}
+                                  className="text-[12px] px-3 py-1.5 border border-gray-300 rounded-md hover:bg-gray-50"
+                              >
+                                  Cancel
+                              </button>
+                              <button
+                                  type="button"
+                                  onClick={handleSaveEdit}
+                                  disabled={isSavingEdit || !editInput.trim()}
+                                  className="text-[12px] px-3 py-1.5 bg-[#f49b31] text-white rounded-md disabled:opacity-50"
+                              >
+                                  {isSavingEdit ? "Saving..." : "Save"}
+                              </button>
+                          </div>
+                      </div>
+                  </div>
+              ) : (
+                <p className="font-['Poppins',sans-serif] font-medium text-[12px] text-black leading-relaxed">
+                  {currentWave.solution}
+                  {currentWave.isEdited && <EditedLabel />}
+                </p>
+              )}
+            </div>
 
             <div className="flex flex-col items-center gap-2 shrink-0">
               <Tooltip

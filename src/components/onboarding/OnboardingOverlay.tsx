@@ -84,12 +84,22 @@ const OnboardingOverlay = ({ onFinish }: { onFinish?: () => void }) => {
                 {/* Next */}
                 <button
                   onClick={next}
-                  className="flex items-center gap-2 bg-white px-4 py-2 rounded-lg shadow"
+                  className="flex items-center gap-2 bg-white px-4 py-2 rounded-lg shadow font-medium"
                 >
                   {step === steps.length - 1 ? "Finish" : "Next"}
                   <FiArrowRight />
                 </button>
               </div>
+              
+              {/* Skip Tutorial explicit button */}
+              {step < steps.length - 1 && (
+                <button 
+                  onClick={onFinish}
+                  className="absolute bottom-6 text-white/70 hover:text-white font-medium text-sm transition-colors"
+                >
+                  Skip Tutorial (Don't show again)
+                </button>
+              )}
             </motion.div>
           </AnimatePresence>
           {/* Navigation */}

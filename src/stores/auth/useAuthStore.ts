@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
-import { authService, userService } from "../../api/services";
+import { authService, userService, notificationService } from "../../api/services";
 import { useSurgeStore } from "../interactions/useSurgeStore";
 import { connectSocket, disconnectSocket } from "../../api/socket";
 import type {
@@ -288,6 +288,22 @@ export const useAuthStore = create<AuthState>()(
         },
 
         logout: () => {
+          // Unsubscribe from push notifications (fire and forget to not block logout)
+          try {
+            if ("serviceWorker" in navigator) {
+              navigator.serviceWorker.ready.then((reg) => {
+                reg.pushManager.getSubscription().then((sub) => {
+                  if (sub) {
+                    notificationService.unsubscribePush(sub.endpoint).catch(console.error);
+                    sub.unsubscribe().catch(console.error);
+                  }
+                }).catch(console.error);
+              }).catch(console.error);
+            }
+          } catch (e) {
+            console.error("Failed to unsubscribe from push notifications", e);
+          }
+
           set((state) => {
             state.user = null;
             state.token = null;
@@ -351,7 +367,11 @@ export const useAuthStore = create<AuthState>()(
 
             set((state) => {
               if (state.user) {
-                state.user.userPreference = updatedPreference;
+                // Ensure we don't lose the flag if the backend doesn't return it
+                state.user.userPreference = {
+                  ...updatedPreference,
+                  hasCompletedOnboarding: true,
+                };
               }
             });
           } catch (error) {

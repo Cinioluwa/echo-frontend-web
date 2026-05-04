@@ -1,6 +1,6 @@
 import React from "react";
 import SkipLink from "./SkipLink";
-import background from "../../../public/assets/images/Log in Page Background.svg";
+const background = "/assets/images/Log in Page Background.svg";
 
 interface AuthLayoutProps {
   children: React.ReactNode;
