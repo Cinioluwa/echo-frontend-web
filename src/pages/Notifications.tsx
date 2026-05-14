@@ -8,7 +8,6 @@ import { useNavigate } from 'react-router-dom';
 import { Bell, CheckCheck, ArrowLeft } from 'lucide-react';
 import { useNotificationStore } from '../stores/ui/useNotificationStore';
 import type { NotificationType } from '../api/types';
-import NavBar from '../components/NavBar';
 
 // ── Icon / label map for each notification type ────────────────────────────
 const TYPE_META: Record<NotificationType, { emoji: string; label: string }> = {
@@ -49,12 +48,6 @@ const Notifications = () => {
 
   return (
     <div className="min-h-screen bg-[#FFFBF6]">
-      {/* Reuse the top nav so the bell badge stays visible */}
-      <header className="z-20 sticky top-0 w-full">
-        <nav>
-          <NavBar />
-        </nav>
-      </header>
 
       <main className="max-w-2xl mx-auto px-4 py-6">
         {/* ── Page header ─────────────────────────────────────── */}
