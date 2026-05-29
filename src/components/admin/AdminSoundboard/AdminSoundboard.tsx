@@ -146,31 +146,31 @@ const AdminSoundboard: React.FC<AdminSoundboardProps> = ({
             {/* Main Content */}
             <div className="flex-1 flex flex-col">
                 {/* Top Bar */}
-                <div className="bg-white border-b border-[rgba(244,155,49,0.3)] px-5 pt-[30px] pb-5">
-                    <div className="flex items-start justify-between">
+                <div className="bg-white border-b border-[rgba(244,155,49,0.3)] px-3 sm:px-5 pt-5 sm:pt-[30px] pb-3 sm:pb-5">
+                    <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 sm:gap-0">
                         {/* Title Section */}
-                        <div className="flex flex-col gap-2">
-                            <h1 className="text-[#212121] font-semibold text-[28px] leading-[30.8px] tracking-[-0.5px]">
+                        <div className="flex flex-col gap-1 sm:gap-2">
+                            <h1 className="text-[#212121] font-semibold text-[24px] sm:text-[28px] leading-[26px] sm:leading-[30.8px] tracking-[-0.5px]">
                                 Soundboard
                             </h1>
-                            <p className="text-[#5e5c58] font-medium text-[15px] leading-[18px]">
+                            <p className="text-[#5e5c58] font-medium text-[13px] sm:text-[15px] leading-4 sm:leading-[18px]">
                                 Covenant University · Week of July 15  21, 2024
                             </p>
                         </div>
 
                         {/* Action Buttons */}
-                        <div className="flex gap-2">
+                        <div className="flex gap-2 flex-wrap sm:flex-nowrap">
                             {/* Export Button */}
                             <button
                                 onClick={onExport}
-                                className="border border-[#f49b31] rounded-2 px-[15px] py-[9px] flex items-center gap-2 hover:bg-[#fef5ea] transition-colors"
+                                className="border border-[#f49b31] rounded-2 px-3 sm:px-[15px] py-2 sm:py-[9px] flex items-center gap-1 sm:gap-2 hover:bg-[#fef5ea] transition-colors text-xs sm:text-[12px]"
                             >
                                 <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                                     <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" strokeWidth="2" strokeLinecap="round" />
                                     <polyline points="7 10 12 15 17 10" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                                     <line x1="12" y1="15" x2="12" y2="3" strokeWidth="2" strokeLinecap="round" />
                                 </svg>
-                                <span className="text-[#f49b31] font-medium text-[12px] leading-[normal]">
+                                <span className="text-[#f49b31] font-medium hidden sm:inline">
                                     Export
                                 </span>
                             </button>
@@ -178,14 +178,14 @@ const AdminSoundboard: React.FC<AdminSoundboardProps> = ({
                             {/* Publish Announcement Button */}
                             <button
                                 onClick={onPublishAnnouncement}
-                                className="bg-[#ffc37b] hover:bg-[#ffb347] border border-[#f49b31] rounded-2 px-[15px] py-[9px] flex items-center gap-2 transition-colors"
+                                className="bg-[#ffc37b] hover:bg-[#ffb347] border border-[#f49b31] rounded-2 px-3 sm:px-[15px] py-2 sm:py-[9px] flex items-center gap-1 sm:gap-2 transition-colors text-xs sm:text-[12px]"
                             >
                                 <svg className="w-[13px] h-[13px]" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                                     <circle cx="12" cy="12" r="1" />
                                     <circle cx="19" cy="12" r="1" />
                                     <circle cx="5" cy="12" r="1" />
                                 </svg>
-                                <span className="text-[#212121] font-medium text-[12px] leading-[normal]">
+                                <span className="text-[#212121] font-medium hidden sm:inline">
                                     Publish Announcement
                                 </span>
                             </button>
@@ -194,7 +194,7 @@ const AdminSoundboard: React.FC<AdminSoundboardProps> = ({
                 </div>
 
                 {/* Scrollable Content Area */}
-                <div className="flex-1 overflow-y-auto px-5 py-[30px]">
+                <div className="flex-1 overflow-y-auto px-3 sm:px-5 py-5 sm:py-[30px]">
                     <div className="flex flex-col gap-[30px] max-w-[1200px]">
                         {/* Critical Section - Surge Alert and Follow-up Queue */}
                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">

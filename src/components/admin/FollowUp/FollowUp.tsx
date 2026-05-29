@@ -104,13 +104,13 @@ const FollowUp: React.FC<FollowUpProps> = () => {
     };
 
     return (
-        <div className="flex flex-col gap-6 items-start px-6 py-8 relative w-full">
+        <div className="flex flex-col gap-4 sm:gap-6 items-start px-3 sm:px-6 py-6 sm:py-8 relative w-full">
             {/* Header */}
-            <div className="flex flex-col gap-2 items-start relative w-full">
-                <h1 className="font-poppins font-bold text-[32px] leading-normal text-black">
+            <div className="flex flex-col gap-1 sm:gap-2 items-start relative w-full">
+                <h1 className="font-poppins font-bold text-[24px] sm:text-[32px] leading-normal text-black">
                     Follow Up
                 </h1>
-                <p className="font-poppins font-medium text-[16px] leading-normal text-[#8b8e8d]">
+                <p className="font-poppins font-medium text-[13px] sm:text-[16px] leading-normal text-[#8b8e8d]">
                     Tasks that need your attention to keep the community moving forward
                 </p>
             </div>
