@@ -82,8 +82,9 @@ const Notifications = lazyWithRetry(() => import("../pages/Notifications"));
 
 // Lazy load admin pages
 const Feed = lazyWithRetry(() => import("../pages/admin/AdminFeed"));
-const FollowUp = lazyWithRetry(() => import("../pages/admin/FollowUp"));
+const FollowUpPage = lazyWithRetry(() => import("../pages/admin/FollowUpPage"));
 const Overview = lazyWithRetry(() => import("../pages/admin/Overview"));
+const AdminSoundboardPage = lazyWithRetry(() => import("../pages/admin/AdminSoundboardPage"));
 
 // Lazy load admin components
 const PostDetails = lazyWithRetry(() => import("./admin/PostDetails"));
@@ -268,6 +269,14 @@ const router = createBrowserRouter([
         element: withSuspense(AdminNotification),
       },
       {
+        path: "soundboard",
+        element: (
+          <AdminRoute>
+            {withSuspense(AdminSoundboardPage)}
+          </AdminRoute>
+        ),
+      },
+      {
         path: "feed",
         element: (
           <AdminRoute>
@@ -291,7 +300,7 @@ const router = createBrowserRouter([
         path: "followUp",
         element: (
           <AdminRoute>
-            {withSuspense(FollowUp)}
+            {withSuspense(FollowUpPage)}
           </AdminRoute>
         ),
       },
