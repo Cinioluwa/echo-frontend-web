@@ -1,6 +1,5 @@
 import React from "react";
 import { Link } from "react-router-dom";
-
 interface AdminSoundboardSidebarProps {
     userAvatar?: string;
     userName?: string;
@@ -24,35 +23,23 @@ const AdminSoundboardSidebar: React.FC<AdminSoundboardSidebarProps> = ({
 }) => {
     // SVG Icons
     const SoundboardIcon = () => (
-        <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-            <circle cx="12" cy="12" r="1" />
-            <circle cx="19" cy="12" r="1" />
-            <circle cx="5" cy="12" r="1" />
-        </svg>
+        <img src="/assets/icon/admin-soundboard.svg" alt="Soundboard Icon" className="w-5 h-5" />
     );
 
     const FollowUpIcon = () => (
-        <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-            <path d="M3 12h18M12 3v18" strokeWidth="2" strokeLinecap="round" />
-        </svg>
+        <img src="/assets/icon/followup.svg" alt="Follow-up Icon" className="w-5 h-5" />
     );
 
     const ModerationIcon = () => (
-        <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-            <path d="M12 1L2 6v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V6l-10-5z" strokeWidth="2" />
-        </svg>
+        <img src="/assets/icon/moderation.svg" alt="Moderation Icon" className="w-5 h-5" />
     );
 
     const AdminIcon = () => (
-        <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
-        </svg>
+        <img src="/assets/icon/admin-settings.svg" alt="Admin Settings Icon" className="w-5 h-5" />
     );
 
     const CollapseIcon = () => (
-        <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-            <path d="M9 6l6 6-6 6" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-        </svg>
+        <img src="/assets/icon/expand.svg" alt="Collapse Icon" className="w-4 h-4" />
     );
 
     return (
@@ -64,12 +51,7 @@ const AdminSoundboardSidebar: React.FC<AdminSoundboardSidebarProps> = ({
             <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                     <div className="w-[25px] h-[27px] flex items-center justify-center">
-                        <svg className="w-full h-full" viewBox="0 0 25 27" fill="none">
-                            <path
-                                d="M12.5 2C6.7 2 2 6.7 2 12.5s4.7 10.5 10.5 10.5 10.5-4.7 10.5-10.5S18.3 2 12.5 2zm0 19C7.8 21 4 17.2 4 12.5S7.8 4 12.5 4 21 7.8 21 12.5 17.2 21 12.5 21z"
-                                fill="#212121"
-                            />
-                        </svg>
+                        <img src="/assets/images/Echo Logo_black.svg" alt="Echo Logo" className="w-full h-full" />
                     </div>
                     <h1 className="text-[#212121] font-bold text-[20px] leading-[normal] whitespace-nowrap">
                         Echo
@@ -152,9 +134,7 @@ const AdminSoundboardSidebar: React.FC<AdminSoundboardSidebarProps> = ({
                         {userName}
                     </p>
                     <div className="flex items-center gap-[5px] mt-[5px]">
-                        <svg className="w-5 h-5 text-[#926b3d] shrink-0" viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M12 0c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm-1.959 17l-4.5-4.319 1.395-1.435 3.08 2.937 7.021-7.183 1.422 1.409-8.418 8.591z" />
-                        </svg>
+                        <img src="/assets/icon/badge-check.svg" alt="Echo Badge" className="w-[15px] h-[15px]" />
                         <span className="text-[#926b3d] font-medium text-[12px] leading-[normal]">
                             {userBadge}
                         </span>

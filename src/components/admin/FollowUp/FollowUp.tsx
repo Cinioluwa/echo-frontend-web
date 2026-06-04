@@ -73,7 +73,7 @@ const mockFollowUpItems: FollowUpItemType[] = [
         },
         description:
             "Use WIFI boosters to increase the bandwidth and frequency of the wave being transmitted so that more users can easily connect to the network.",
-        status: "approved",
+        status: "implementing",
         waveCount: 192,
         actions: {
             primary: {
@@ -81,9 +81,42 @@ const mockFollowUpItems: FollowUpItemType[] = [
                 onClick: () => console.log("Mark as completed"),
                 variant: "orange",
             },
+        },
+    },
+    {
+        id: "4",
+        title: "The wifi is too slow in library",
+        category: "General",
+        author: {
+            name: "Temiloluwa Anokoya",
+            avatar:
+                "https://api.dicebear.com/7.x/avataaars/svg?seed=Temiloluwa4",
+            timestamp: "Feb 28, 10:24 pm",
+        },
+        description:
+            "Use WIFI boosters to increase the bandwidth and frequency of the wave being transmitted so that more users can easily connect to the network.",
+        status: "acknowledged",
+        waveCount: 192,
+        pingAuthor: {
+            name: "Felix Oluwapelumi",
+            avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Felix",
+            timestamp: "2mo ago",
+        },
+        surgeCount: 207,
+        actions: {
+            primary: {
+                label: "Approve",
+                onClick: () => console.log("Approve"),
+                variant: "orange",
+            },
             secondary: {
-                label: "Mark as Implementing",
-                onClick: () => console.log("Mark as implementing"),
+                label: "Reject",
+                onClick: () => console.log("Reject"),
+                variant: "red",
+            },
+            tertiary: {
+                label: "Review",
+                onClick: () => console.log("Review"),
                 variant: "outline-orange",
             },
         },
@@ -104,7 +137,7 @@ const FollowUp: React.FC<FollowUpProps> = () => {
     };
 
     return (
-        <div className="flex flex-col gap-4 sm:gap-6 items-start px-3 sm:px-6 py-6 sm:py-8 relative w-full">
+        <div className="m-0 md:ms-[230px] flex flex-col gap-4 sm:gap-6 items-start px-3 sm:px-6 py-6 sm:py-8 relative">
             {/* Header */}
             <div className="flex flex-col gap-1 sm:gap-2 items-start relative w-full">
                 <h1 className="font-poppins font-bold text-[24px] sm:text-[32px] leading-normal text-black">

@@ -38,7 +38,7 @@ const mockModerationItems: ModerationItemType[] = [
     },
     {
         id: "3",
-        type: "comment",
+        type: "ping",
         subject: "Campus Facilities",
         category: "General",
         author: {
@@ -67,7 +67,7 @@ const Moderation: React.FC<ModerationProps> = () => {
     };
 
     return (
-        <div className="flex flex-col gap-4 sm:gap-6 items-start px-3 sm:px-6 py-6 sm:py-8 relative w-full">
+        <div className="m-0 md:ms-[230px] flex flex-col gap-4 sm:gap-6 items-start px-3 sm:px-6 py-6 sm:py-8 relative">
             {/* Header */}
             <div className="flex flex-col gap-1 sm:gap-2 items-start relative w-full">
                 <h1 className="font-poppins font-semibold text-[24px] sm:text-[28px] leading-normal text-black">
@@ -98,22 +98,22 @@ const Moderation: React.FC<ModerationProps> = () => {
             </div>
 
             {/* Filter and controls */}
-            <div className="flex items-center justify-end w-full gap-2">
+            <div className="flex items-center justify-end self-end p-1.5 w-fit gap-1.5 border border-[#f49b31] rounded-lg ">
                 <button
                     onClick={handleFilterChange}
-                    className="flex items-center gap-2 bg-white border border-[#f49b31] rounded-lg px-3 sm:px-4 py-2 hover:bg-[#fef5ea] transition-colors"
+                    className="flex items-center gap-2 rounded-lg px-3 sm:px-4 py-2 hover:bg-[#fef5ea] transition-colors"
                 >
-                    <span className="text-[14px]">🔍</span>
+                    <img src="/assets/images/filters.svg" alt="filter" className="w-[16px] h-[16px]" />
                     <p className="font-poppins font-medium text-[12px] sm:text-[14px] text-[#b29494] hidden sm:block">
                         Filter
                     </p>
                 </button>
-                <div className="bg-[#ffd7d7] rounded-xl px-3 py-1 flex items-center gap-2">
-                    <span className="text-[12px]">👁️</span>
+                {/* <div className="bg-[#ffd7d7] rounded-full px-3 py-1.5 flex items-center gap-2">
+                    <img src="/assets/icon/eye-off.svg" alt="eye-off" className="w-[16px] h-[16px]" />
                     <p className="font-poppins font-medium text-[10px] sm:text-[12px] text-[#b01212]">
                         Inappropriate content
                     </p>
-                </div>
+                </div> */}
             </div>
 
             {/* Moderation items list */}

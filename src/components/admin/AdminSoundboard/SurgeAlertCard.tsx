@@ -37,7 +37,7 @@ const SurgeAlertCard: React.FC<SurgeAlertCardProps> = ({
                     <a
                         key={item.id || index}
                         onClick={item.onClick}
-                        className="bg-[#fef5ea] rounded-lg px-3 py-2 flex items-center justify-between cursor-pointer hover:bg-opacity-90 transition-all"
+                        className="bg-[#fef5ea] rounded-lg px-3 py-5 flex items-center justify-between cursor-pointer hover:bg-opacity-90 transition-all"
                     >
                         {/* Title */}
                         <div className="flex-1">

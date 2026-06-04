@@ -6,7 +6,8 @@ export type FollowUpStatus =
   | "approved"
   | "under-review"
   | "completed"
-  | "implementing";
+  | "implementing"
+  | "acknowledged";
 export type FilterType =
   | "all"
   | "approved-waves"
@@ -27,6 +28,12 @@ export interface FollowUpItem {
   description: string;
   status: FollowUpStatus;
   waveCount: number;
+  pingAuthor?: {
+    name: string;
+    avatar: string;
+    timestamp: string;
+  };
+  surgeCount?: number;
   actions: {
     primary?: {
       label: string;
@@ -34,6 +41,11 @@ export interface FollowUpItem {
       variant?: "orange" | "outline-orange" | "red";
     };
     secondary?: {
+      label: string;
+      onClick: () => void;
+      variant?: "orange" | "outline-orange" | "red";
+    };
+    tertiary?: {
       label: string;
       onClick: () => void;
       variant?: "orange" | "outline-orange" | "red";

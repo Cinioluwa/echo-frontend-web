@@ -9,7 +9,7 @@ export interface CategoryIssue {
 
 export interface CategoryData {
     name: string;
-    icon?: React.ReactNode;
+    icon?: string; // URL to icon image
     resolved: number; // percentage
     openCount: number;
     issues: CategoryIssue[];
@@ -37,12 +37,12 @@ const IssuesByCategoryCard: React.FC<IssuesByCategoryCardProps> = ({
             {/* Categories Grid */}
             <div className="grid grid-cols-2 gap-5">
                 {categories.map((category, index) => (
-                    <div key={index} className="flex flex-col gap-3">
+                    <div key={index} className="flex flex-col gap-3 bg-[#FEF5EA] p-4 border-[0.5px] border-[#F49B31] rounded-xl">
                         {/* Category Header */}
                         <div className="flex items-center gap-3">
                             {category.icon && (
                                 <div className="w-6 h-6 flex items-center justify-center">
-                                    {category.icon}
+                                    <img src={category.icon} alt={category.name} className="w-full h-full object-contain" />
                                 </div>
                             )}
                             <div className="flex-1">
@@ -53,6 +53,13 @@ const IssuesByCategoryCard: React.FC<IssuesByCategoryCardProps> = ({
                                     {category.openCount} open
                                 </p>
                             </div>
+                            {/* Resolved Percentage */}
+                            <p className="text-[#212121] font-bold text-[24px] leading-[normal]">
+                                {category.resolved}%
+                                <span className="text-[#5e5c58] font-medium text-[11px] leading-4 block">
+                                    resolved
+                                </span>
+                            </p>
                         </div>
 
                         {/* Progress Bar */}
@@ -63,18 +70,10 @@ const IssuesByCategoryCard: React.FC<IssuesByCategoryCardProps> = ({
                             />
                         </div>
 
-                        {/* Resolved Percentage */}
-                        <p className="text-[#212121] font-bold text-[24px] leading-[normal]">
-                            {category.resolved}%
-                            <span className="text-[#5e5c58] font-medium text-[11px] leading-4 block">
-                                resolved
-                            </span>
-                        </p>
-
                         {/* Issues List */}
                         <div className="flex flex-col gap-2">
                             {category.issues.slice(0, 2).map((issue) => (
-                                <div key={issue.id} className="flex items-start justify-between">
+                                <div key={issue.id} className="flex items-start justify-between p-2">
                                     <div className="flex-1">
                                         <p className="text-[#212121] font-medium text-[12px] leading-4">
                                             {issue.title}

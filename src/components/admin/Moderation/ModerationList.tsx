@@ -32,7 +32,7 @@ const ModerationList: React.FC<ModerationListProps> = ({ items, isLoading = fals
     }
 
     return (
-        <div className="flex flex-col gap-4 sm:gap-6 w-full max-h-[600px] overflow-y-auto pr-2">
+        <div className="flex flex-col gap-4 sm:gap-6 w-full overflow-y-auto pr-2">
             {items.map((item) => (
                 <ModerationItem key={item.id} item={item} />
             ))}

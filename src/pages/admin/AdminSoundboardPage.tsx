@@ -1,6 +1,7 @@
 import React, { useState } from "react";
-import { AdminSoundboard } from "../../components/admin/AdminSoundboard";
+import AdminLayout from "../../components/admin/AdminLayout";
 import AnnouncementModal from "../../components/admin/AnnouncementModal";
+import { AdminSoundboard } from "../../components/admin/AdminSoundboard";
 
 /**
  * AdminSoundboardPage
@@ -8,6 +9,7 @@ import AnnouncementModal from "../../components/admin/AnnouncementModal";
  */
 const AdminSoundboardPage: React.FC = () => {
     const [showAnnouncementModal, setShowAnnouncementModal] = useState(false);
+
 
     const handlePublishAnnouncement = () => {
         setShowAnnouncementModal(true);
@@ -19,15 +21,19 @@ const AdminSoundboardPage: React.FC = () => {
     };
 
     return (
-        <>
+        <div className="min-h-full w-screen">
+            <AdminLayout />
+
             <AdminSoundboard
                 onPublishAnnouncement={handlePublishAnnouncement}
                 onExport={handleExport}
             />
+
+
             {showAnnouncementModal && (
                 <AnnouncementModal setAnnouncementModal={setShowAnnouncementModal} />
             )}
-        </>
+        </div>
     );
 };
 

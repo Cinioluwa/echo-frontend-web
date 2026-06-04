@@ -15,27 +15,28 @@ const ModerationItem: React.FC<ModerationItemProps> = ({ item }) => {
         console.log("Dismiss", item.id);
     };
 
-    const headerText = item.type === "comment" ? "Comment on:" : "Wave on:";
+    const headerText = item.type === "comment" ? "Comment on:" : item.type === "wave" ? "Wave on:" : null;
 
     return (
-        <div className="flex flex-col items-start w-full rounded-xl overflow-hidden">
+        <div className="flex flex-col items-start w-full">
             {/* Header - Orange background */}
-            <div className="bg-[#ffc37b] border border-[#f49b31] border-b-2 w-full px-5 sm:px-[21px] py-2 sm:py-2.5 flex items-center justify-start">
-                <p className="font-poppins font-bold text-[14px] sm:text-[16px] text-white whitespace-nowrap">
-                    {headerText}&nbsp;
-                </p>
-                <p className="font-poppins font-semibold text-[14px] sm:text-[16px] text-black truncate">
-                    {item.subject}
-                </p>
-                <div className="bg-white border border-[#f49b31] rounded-[20px] px-2 py-0.5 ml-2 shrink-0">
-                    <p className="font-poppins font-semibold text-[10px] sm:text-[11px] text-[#f49b31] whitespace-nowrap">
-                        {item.category}
+            {headerText ? (
+                <div className="bg-[#ffc37b] border border-[#f49b31] border-b-2 w-full px-5 sm:px-[21px] py-2 sm:py-2.5 flex items-center justify-start rounded-t-xl">
+                    <p className="font-poppins font-bold text-[14px] sm:text-[16px] text-white whitespace-nowrap">
+                        {headerText}&nbsp;
                     </p>
-                </div>
-            </div>
+                    <p className="font-poppins font-semibold text-[14px] sm:text-[16px] text-black truncate">
+                        {item.subject}
+                    </p>
+                    <div className="bg-white border border-[#f49b31] rounded-[20px] px-2 py-0.5 ml-2 shrink-0">
+                        <p className="font-poppins font-semibold text-[10px] sm:text-[11px] text-[#f49b31] whitespace-nowrap">
+                            {item.category}
+                        </p>
+                    </div>
+                </div>) : null}
 
             {/* Content - White background */}
-            <div className="bg-white w-full px-3 sm:px-[27.5px] py-3 sm:py-5 flex flex-col gap-3 sm:gap-[17px]">
+            <div className={`bg-white w-full px-3 sm:px-[27.5px] py-3 sm:py-5 flex flex-col gap-3 sm:gap-[17px] rounded-b-xl ${headerText ? "" : "rounded-t-xl"}`}>
                 {/* Author info */}
                 <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center sm:justify-between w-full">
                     <div className="flex gap-3 items-center">

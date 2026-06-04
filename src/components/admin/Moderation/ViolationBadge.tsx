@@ -13,28 +13,28 @@ const ViolationBadge: React.FC<ViolationBadgeProps> = ({ type, className = "" })
                 return {
                     bg: "bg-[#ffd7d7]",
                     text: "text-[#b01212]",
-                    icon: "👁️",
+                    iconSrc: "/assets/icon/eye-off.svg",
                     label: "Inappropriate content",
                 };
             case "threats":
                 return {
                     bg: "bg-[#ffd7d7]",
                     text: "text-[#b01212]",
-                    icon: "⚠️",
+                    iconSrc: "/assets/icon/alert.svg",
                     label: "Threats",
                 };
             case "misinformation":
                 return {
                     bg: "bg-[#ffd6a5]",
                     text: "text-[#a3651e]",
-                    icon: "❌",
+                    iconSrc: "/assets/icon/x-circle.svg",
                     label: "Misinformation",
                 };
             default:
                 return {
                     bg: "bg-[#ffd7d7]",
                     text: "text-[#b01212]",
-                    icon: "👁️",
+                    icon: "/assets/icon/eye-off.svg",
                     label: "Inappropriate content",
                 };
         }
@@ -44,7 +44,7 @@ const ViolationBadge: React.FC<ViolationBadgeProps> = ({ type, className = "" })
 
     return (
         <div className={`${styles.bg} ${className} rounded-[28.75px] px-[18.75px] py-[3px] flex gap-[7.5px] items-center justify-center`}>
-            <span className="text-[15px]">{styles.icon}</span>
+            {styles.iconSrc && <img src={styles.iconSrc} alt="" className="w-[20px] h-[20px]" />}
             <p className={`font-poppins font-medium text-[13.75px] ${styles.text} whitespace-nowrap`}>
                 {styles.label}
             </p>

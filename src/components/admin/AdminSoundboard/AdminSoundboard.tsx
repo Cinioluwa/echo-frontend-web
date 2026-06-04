@@ -1,10 +1,9 @@
-import React, { useState } from "react";
+import React from "react";
 import StatCard from "./StatCard";
 import SurgeAlertCard, { type SurgeItem } from "./SurgeAlertCard";
 import FollowUpQueueCard, { type FollowUpItem } from "./FollowUpQueueCard";
 import IssuesByCategoryCard, { type CategoryData } from "./IssuesByCategoryCard";
-import AdminSoundboardSidebar from "./AdminSoundboardSidebar";
-
+import { motion } from "framer-motion";
 interface AdminSoundboardProps {
     onPublishAnnouncement?: () => void;
     onExport?: () => void;
@@ -39,6 +38,7 @@ const mockFollowUpItems: FollowUpItem[] = [
         description: "7 approved waves require progression",
         count: 7,
         iconColor: "red",
+        icon: "/assets/icon/not-implemented.svg"
     },
     {
         id: "2",
@@ -46,6 +46,7 @@ const mockFollowUpItems: FollowUpItem[] = [
         description: "4 waves marked for review need a decision",
         count: 4,
         iconColor: "red",
+        icon: "/assets/icon/awaiting-approval.svg"
     },
     {
         id: "3",
@@ -53,6 +54,7 @@ const mockFollowUpItems: FollowUpItem[] = [
         description: "3 pings acknowledged, no update for 14+ days",
         count: 3,
         iconColor: "green",
+        icon: "/assets/icon/acknowledged-pings.svg"
     },
 ];
 
@@ -123,30 +125,30 @@ const mockCategories: CategoryData[] = [
     },
 ];
 
+const iconVariants = {
+    initial: {
+        filter: "grayscale(1) brightness(1)",
+        willChange: "filter"
+    },
+    hover: {
+        filter: "grayscale(1) brightness(1.5)",
+        transition: {
+            duration: 0.1,
+        }
+    }
+};
+
 const AdminSoundboard: React.FC<AdminSoundboardProps> = ({
     onPublishAnnouncement,
     onExport,
 }) => {
-    const [sidebarOpen, setSidebarOpen] = useState(true);
 
     return (
-        <div className="flex min-h-screen bg-[#fae9d4]" data-node-id="admin-soundboard-page">
-            {/* Sidebar */}
-            {sidebarOpen && (
-                <div className="hidden md:block">
-                    <AdminSoundboardSidebar
-                        userName="Osagumwenro Ugbo"
-                        userBadge="ADMIN.CU"
-                        onToggleSidebar={() => setSidebarOpen(false)}
-                        onSoundboardClick={() => { }}
-                    />
-                </div>
-            )}
-
+        <div className="flex min-h-screen bg-[#fae9d4] m-0 md:ms-[230px]" data-node-id="admin-soundboard-page">
             {/* Main Content */}
             <div className="flex-1 flex flex-col">
                 {/* Top Bar */}
-                <div className="bg-white border-b border-[rgba(244,155,49,0.3)] px-3 sm:px-5 pt-5 sm:pt-[30px] pb-3 sm:pb-5">
+                <div className="px-3 sm:px-5 pt-5 sm:pt-[30px] pb-3 sm:pb-5">
                     <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 sm:gap-0">
                         {/* Title Section */}
                         <div className="flex flex-col gap-1 sm:gap-2">
@@ -161,30 +163,23 @@ const AdminSoundboard: React.FC<AdminSoundboardProps> = ({
                         {/* Action Buttons */}
                         <div className="flex gap-2 flex-wrap sm:flex-nowrap">
                             {/* Export Button */}
-                            <button
+                            <motion.button
                                 onClick={onExport}
-                                className="border border-[#f49b31] rounded-2 px-3 sm:px-[15px] py-2 sm:py-[9px] flex items-center gap-1 sm:gap-2 hover:bg-[#fef5ea] transition-colors text-xs sm:text-[12px]"
+                                className="border border-[#f49b31] rounded-lg px-3 sm:px-[15px] py-2 sm:py-[9px] flex items-center gap-1 sm:gap-2 hover:bg-[#F49B31] text-[#f49b31] hover:text-white transition-colors text-xs sm:text-[12px]"
+                                whileHover="hover"
                             >
-                                <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" strokeWidth="2" strokeLinecap="round" />
-                                    <polyline points="7 10 12 15 17 10" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                                    <line x1="12" y1="15" x2="12" y2="3" strokeWidth="2" strokeLinecap="round" />
-                                </svg>
-                                <span className="text-[#f49b31] font-medium hidden sm:inline">
+                                <motion.img src="/assets/icon/Export.svg" alt="Export Icon" className="w-[13px] h-[13px]" variants={iconVariants} />
+                                <span className="font-medium hidden sm:inline">
                                     Export
                                 </span>
-                            </button>
+                            </motion.button>
 
                             {/* Publish Announcement Button */}
                             <button
                                 onClick={onPublishAnnouncement}
-                                className="bg-[#ffc37b] hover:bg-[#ffb347] border border-[#f49b31] rounded-2 px-3 sm:px-[15px] py-2 sm:py-[9px] flex items-center gap-1 sm:gap-2 transition-colors text-xs sm:text-[12px]"
+                                className="bg-[#ffc37b] hover:bg-[#ffb347] border border-[#f49b31] rounded-lg px-3 sm:px-[15px] py-2 sm:py-[9px] flex items-center gap-1 sm:gap-2 transition-colors text-xs sm:text-[12px]"
                             >
-                                <svg className="w-[13px] h-[13px]" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                    <circle cx="12" cy="12" r="1" />
-                                    <circle cx="19" cy="12" r="1" />
-                                    <circle cx="5" cy="12" r="1" />
-                                </svg>
+                                <img src="/assets/icon/cross.svg" alt="Announcement Icon" className="w-[13px] h-[13px]" />
                                 <span className="text-[#212121] font-medium hidden sm:inline">
                                     Publish Announcement
                                 </span>
@@ -211,7 +206,7 @@ const AdminSoundboard: React.FC<AdminSoundboardProps> = ({
                         </div>
 
                         {/* Stats Section */}
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+                        <div className="flex flex-wrap sm:flex-nowrap gap-5 ">
                             <StatCard
                                 title="Resolution Rate"
                                 value="64%"

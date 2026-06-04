@@ -6,7 +6,7 @@ export type ViolationType =
   | "inappropriate-content"
   | "misinformation"
   | "threats";
-export type ContentType = "comment" | "wave";
+export type ContentType = "comment" | "wave" | "ping";
 
 export interface Author {
   name: string;

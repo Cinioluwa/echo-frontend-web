@@ -26,7 +26,7 @@ const StatCard: React.FC<StatCardProps> = ({
 
     return (
         <div
-            className={`bg-white border border-[rgba(244,155,49,0.3)] rounded-xl p-6 flex flex-col gap-3 ${className}`}
+            className={`bg-white border border-[rgba(244,155,49,0.3)] rounded-xl p-6 flex flex-col justify-between min-w-[300px] md:w-4/12  w-full gap-2.5 ${className}`}
             data-node-id="stat-card"
         >
             {/* Title */}
@@ -35,24 +35,23 @@ const StatCard: React.FC<StatCardProps> = ({
             </div>
 
             {/* Value */}
-            <div className="flex items-baseline gap-2">
-                <div className="text-[#212121] font-bold text-[36px] leading-[normal]">
+            <div className="flex items-baseline justify-between gap-2">
+                <div className="text-[#212121] font-bold text-[36px] leading-[normal] text-nowrap">
                     {value}
                 </div>
+                {badge && (
+                    <div
+                        className={`rounded-full px-2 py-1 w-fit text-[11px] font-medium leading-[16.5px] text-nowrap truncate ${badgeColorClasses[badge.color]}`}
+                    >
+                        {badge.label}
+                    </div>
+                )}
             </div>
 
             {/* Subtitle or Badge */}
             {subtitle && (
                 <div className="text-[#5e5c58] font-medium text-[12px] leading-[18px]">
                     {subtitle}
-                </div>
-            )}
-
-            {badge && (
-                <div
-                    className={`rounded-full px-2 py-1 w-fit text-[11px] font-medium leading-[16.5px] ${badgeColorClasses[badge.color]}`}
-                >
-                    {badge.label}
                 </div>
             )}
         </div>

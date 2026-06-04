@@ -114,7 +114,7 @@ const Login = () => {
     // Admin users - go to admin feed
     if (user.role === "ADMIN" || user.role === "SUPER_ADMIN") {
       console.log("→ Redirecting to /admin/feed (ADMIN)");
-      navigate("/admin/feed");
+      navigate("/admin/soundboard");
       return;
     }
 
@@ -147,7 +147,7 @@ const Login = () => {
       const fromPathname = location.state?.from?.pathname;
       const fromSearch = location.state?.from?.search || "";
       const from = fromPathname ? fromPathname + fromSearch : null;
-      
+
       if (from && from !== "/login") {
         navigate(from);
       } else {
@@ -221,7 +221,7 @@ const Login = () => {
       if (status === 401) {
         setError("Invalid email or password. Please try again.");
       } else if (status === 403 && data?.code === "ACCOUNT_PENDING_VERIFICATION") {
-        navigate("/verification", { state: {email: formData.email}});
+        navigate("/verification", { state: { email: formData.email } });
       } else if (status === 400 && data?.code === "GOOGLE_AUTH_REQUIRED") {
         setError("This account uses Google Sign-In. Please use 'Continue with Google'.");
       } else if (status === 404 && data?.code === "ORG_NOT_FOUND") {

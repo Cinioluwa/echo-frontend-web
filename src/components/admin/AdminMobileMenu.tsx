@@ -38,8 +38,8 @@ const AdminMobileMenu = ({ setMenu, menu, pages, setActivePage }: Props) => {
               })
             }
             className={`flex items-center ${pages.feedActive
-                ? "bg-[#FFC37B] border-0"
-                : "bg-transparent border-2"
+              ? "bg-[#FFC37B] border-0"
+              : "bg-transparent border-2"
               }  gap-3 py-[9px] w-full transition  cursor-pointer  ease-in-out duration-700 text-[15px] border-[#F49B31] rounded-[25px]`}
           >
             <span className="ml-6">
@@ -58,8 +58,8 @@ const AdminMobileMenu = ({ setMenu, menu, pages, setActivePage }: Props) => {
               })
             }
             className={`flex items-center ${pages.overviewActive
-                ? "bg-[#FFC37B] border-0"
-                : "bg-transparent border-2"
+              ? "bg-[#FFC37B] border-0"
+              : "bg-transparent border-2"
               }  gap-3 py-[9px] text-[15px] transition w-full cursor-pointer  ease-in-out duration-700 border-[#F49B31] rounded-[25px]`}
           >
             <span className="ml-6">
@@ -78,8 +78,8 @@ const AdminMobileMenu = ({ setMenu, menu, pages, setActivePage }: Props) => {
               })
             }
             className={`flex items-center ${pages.followUpActive
-                ? "bg-[#FFC37B] border-0"
-                : "bg-transparent border-2"
+              ? "bg-[#FFC37B] border-0"
+              : "bg-transparent border-2"
               }  gap-3 py-[9px] w-full transition cursor-pointer ease-in-out duration-700 text-[15px] border-[#F49B31] rounded-[25px]`}
           >
             <span className="ml-6">

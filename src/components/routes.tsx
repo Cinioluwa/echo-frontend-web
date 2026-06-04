@@ -81,16 +81,13 @@ const History = lazyWithRetry(() => import("../pages/History"));
 const Notifications = lazyWithRetry(() => import("../pages/Notifications"));
 
 // Lazy load admin pages
-const Feed = lazyWithRetry(() => import("../pages/admin/AdminFeed"));
 const FollowUpPage = lazyWithRetry(() => import("../pages/admin/FollowUpPage"));
 const ModerationPage = lazyWithRetry(() => import("../pages/admin/ModerationPage"));
+const AdminPingDetailPage = lazyWithRetry(() => import("../pages/admin/AdminPingDetailPage"));
 const Overview = lazyWithRetry(() => import("../pages/admin/Overview"));
 const AdminSoundboardPage = lazyWithRetry(() => import("../pages/admin/AdminSoundboardPage"));
 
 // Lazy load admin components
-const PostDetails = lazyWithRetry(() => import("./admin/PostDetails"));
-
-// Lazy load user pages
 const UserProfile = lazyWithRetry(() => import("../pages/UserProfile"));
 const UserPrivacy = lazyWithRetry(() => import("../pages/UserPrivacy"));
 const UserAccount = lazyWithRetry(() => import("../pages/UserAccount"));
@@ -278,16 +275,12 @@ const router = createBrowserRouter([
         ),
       },
       {
-        path: "feed",
+        path: "soundboard/:pingId",
         element: (
           <AdminRoute>
-            {withSuspense(Feed)}
+            {withSuspense(AdminPingDetailPage)}
           </AdminRoute>
         ),
-      },
-      {
-        path: "feed/details/:pingId",
-        element: withSuspense(PostDetails),
       },
       {
         path: "overview",
