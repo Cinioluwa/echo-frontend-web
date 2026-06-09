@@ -7,7 +7,7 @@ interface FollowUpItemProps {
 
 const getButtonStylesAndIcon = (label: string, variant?: string) => {
     const cleanLabel = label.toLowerCase().trim();
-    
+
     // Default fallback values
     let bgClass = "bg-[#f49b31] text-[#fef5ea] border-none hover:bg-[#e28a20]";
     let iconUrl = "http://localhost:3845/assets/0cb055c3c24b2a96bedce746e16115d77960a7ac.svg"; // checklist
@@ -87,32 +87,32 @@ const FollowUpItem: React.FC<FollowUpItemProps> = ({ item }) => {
             {/* Header section */}
             {item.status === "acknowledged" && item.pingAuthor ? (
                 /* Acknowledged Ping Detailed Header */
-                <div 
+                <div
                     className="bg-[#ffc37b] border-b border-l border-r border-[#f49b31] border-solid flex flex-col md:flex-row items-start md:items-center justify-between gap-3 md:gap-0 pb-[9px] pl-3 pr-3 md:pl-[21px] md:pr-[11px] pt-[8px] relative rounded-tl-[10px] rounded-tr-[10px] shrink-0 w-full"
                     data-node-id="5627:18000"
                 >
                     <div className="flex gap-[16px] items-center shrink-0 max-w-full">
-                        <img 
-                            src={item.pingAuthor.avatar} 
-                            alt={item.pingAuthor.name} 
+                        <img
+                            src={item.pingAuthor.avatar}
+                            alt={item.pingAuthor.name}
                             className="w-[45px] h-[45px] rounded-full object-cover shrink-0"
                             data-node-id="5627:18003"
                         />
                         <div className="flex flex-col items-start justify-center min-w-0">
-                            <span 
+                            <span
                                 className="font-poppins font-medium text-[13px] leading-normal text-[#fef5ea] truncate"
                                 data-node-id="5627:18005"
                             >
                                 {item.pingAuthor.name} · {item.pingAuthor.timestamp}
                             </span>
                             <div className="flex gap-[10px] items-center w-full flex-wrap">
-                                <h3 
+                                <h3
                                     className="font-poppins font-semibold text-[14px] sm:text-[16px] leading-[19.5px] text-black truncate"
                                     data-node-id="5627:18007"
                                 >
                                     {item.title}
                                 </h3>
-                                <span 
+                                <span
                                     className="bg-[#fef5ea] border border-[#f49b31] border-solid flex items-center justify-center px-2 py-0.5 rounded-[20px] shrink-0 text-xs font-semibold text-[#f49b31]"
                                     data-node-id="5627:18008"
                                 >
@@ -121,10 +121,10 @@ const FollowUpItem: React.FC<FollowUpItemProps> = ({ item }) => {
                             </div>
                             {item.surgeCount !== undefined && (
                                 <div className="flex gap-[2.5px] items-center w-full" data-node-id="5627:18010">
-                                    <img 
-                                        src="http://localhost:3845/assets/a09d358700a9d473614cda9b6e4b77f3efa7e435.svg" 
-                                        alt="surge" 
-                                        className="h-[10.6px] w-[8.1px] shrink-0" 
+                                    <img
+                                        src="http://localhost:3845/assets/a09d358700a9d473614cda9b6e4b77f3efa7e435.svg"
+                                        alt="surge"
+                                        className="h-[10.6px] w-[8.1px] shrink-0"
                                     />
                                     <span className="font-poppins font-medium text-[13px] leading-normal text-[#454545]">
                                         {item.surgeCount} surges
@@ -134,14 +134,14 @@ const FollowUpItem: React.FC<FollowUpItemProps> = ({ item }) => {
                         </div>
                     </div>
                     {/* Acknowledged Badge */}
-                    <div 
+                    <div
                         className="bg-[#fefefe] border-[#626665] border-[1.5px] border-solid flex gap-[9px] items-center justify-center px-[16.5px] py-[6px] relative rounded-[23px] shrink-0 self-end md:self-auto"
                         data-node-id="5627:18014"
                     >
-                        <img 
-                            src="http://localhost:3845/assets/e8ecd75796921f226b8fc98bbc9b6e96a8b57d1b.svg" 
-                            alt="" 
-                            className="w-[7.5px] h-[7.5px]" 
+                        <img
+                            src="http://localhost:3845/assets/e8ecd75796921f226b8fc98bbc9b6e96a8b57d1b.svg"
+                            alt=""
+                            className="w-[7.5px] h-[7.5px]"
                         />
                         <span className="font-poppins font-medium text-[13.5px] leading-normal text-black text-right whitespace-nowrap">
                             Acknowledged
@@ -150,18 +150,18 @@ const FollowUpItem: React.FC<FollowUpItemProps> = ({ item }) => {
                 </div>
             ) : (
                 /* Standard Header (Approved, In Progress, Under Review) */
-                <div 
+                <div
                     className="bg-[#ffc37b] border-b border-l border-r border-[#f49b31] border-solid flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-0 pb-2 sm:pb-[11px] pt-2 sm:pt-2.5 px-3 sm:px-[21px] relative rounded-tl-[10px] rounded-tr-[10px] shrink-0 w-full"
                     data-node-id="5701:15607"
                 >
                     <div className="flex gap-2 sm:gap-2.5 items-center flex-1 flex-wrap">
-                        <h3 
+                        <h3
                             className="font-poppins font-semibold text-[14px] sm:text-[16px] leading-[17px] sm:leading-[19.5px] text-black"
                             data-node-id="5701:15609"
                         >
                             {item.title}
                         </h3>
-                        <span 
+                        <span
                             className="bg-[#fef5ea] border border-[#f49b31] border-solid flex items-center justify-center px-1.5 sm:px-2 py-0.5 rounded-[20px] shrink-0 text-xs sm:text-sm"
                             data-node-id="5701:15610"
                         >
@@ -218,12 +218,8 @@ const FollowUpItem: React.FC<FollowUpItemProps> = ({ item }) => {
                 </div>
 
                 {/* Demarcator Line */}
-                <div className="h-px w-full relative shrink-0" data-node-id="5701:15623">
-                    <img 
-                        src="http://localhost:3845/assets/6082f1429a56a3b7509ad74c423b473af665d5b2.svg" 
-                        alt="" 
-                        className="w-full h-px opacity-30 object-cover" 
-                    />
+                <div className="h-px w-full relative shrink-0 bg-[#e8e8e8]" data-node-id="5701:15623">
+
                 </div>
 
                 {/* Bottom section: Action buttons and wave count */}
@@ -267,15 +263,15 @@ const FollowUpItem: React.FC<FollowUpItemProps> = ({ item }) => {
                         })()}
                     </div>
 
-                    {/* Wave count */}
+                    {/* Surge count */}
                     <div className="flex items-center gap-[5px] self-end sm:self-auto" data-node-id="5701:15638">
-                        <img 
-                            src="http://localhost:3845/assets/0daa806674cfb6c05e40002d4183f7416853396d.svg" 
-                            alt="waves" 
-                            className="h-[26px] w-[20px] shrink-0" 
+                        <img
+                            src="/assets/images/surge.svg"
+                            alt="Surges"
+                            className="h-[26px] w-[20px] shrink-0"
                             data-node-id="5701:15639"
                         />
-                        <span 
+                        <span
                             className="font-poppins font-semibold text-[24px] leading-none text-[#f49b31]"
                             data-node-id="5701:15640"
                         >

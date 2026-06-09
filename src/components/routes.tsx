@@ -80,6 +80,9 @@ const PingDetail = lazyWithRetry(() => import("../pages/PingDetail"));
 const History = lazyWithRetry(() => import("../pages/History"));
 const Notifications = lazyWithRetry(() => import("../pages/Notifications"));
 
+// Lazy load guest pages
+const GuestPingDetail = lazyWithRetry(() => import("../pages/guest/GuestPingDetail"));
+
 // Lazy load admin pages
 const FollowUpPage = lazyWithRetry(() => import("../pages/admin/FollowUpPage"));
 const ModerationPage = lazyWithRetry(() => import("../pages/admin/ModerationPage"));
@@ -139,6 +142,10 @@ const router = createBrowserRouter([
   {
     path: "/find-institution",
     element: withSuspense(FindInstitution),
+  },
+  {
+    path: "/guest/feed/:pingId",
+    element: withSuspense(GuestPingDetail),
   },
   {
     path: "/find-institution-error",

@@ -18,6 +18,7 @@ export { default as uploadService } from "./upload.service";
 export { default as passwordService } from "./password.service";
 
 export { default as notificationService } from "./notification.service";
+export { default as guestService } from "./guest.service";
 
 // Re-export types for convenience
 export type * from "../types/index";

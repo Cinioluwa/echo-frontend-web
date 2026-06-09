@@ -26,11 +26,17 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
 
     // Redirect to login if authentication is required and user is not authenticated
     if (requireAuth && !isAuthenticated) {
+        if (location.pathname.startsWith("/feed/")) {
+            return <Navigate to={`/guest${location.pathname}`} replace />;
+        }
         return <Navigate to="/login" state={{ from: location }} replace />;
     }
 
     // Redirect to login if user data is missing
     if (requireAuth && !user) {
+        if (location.pathname.startsWith("/feed/")) {
+            return <Navigate to={`/guest${location.pathname}`} replace />;
+        }
         return <Navigate to="/login" state={{ from: location }} replace />;
     }
 
