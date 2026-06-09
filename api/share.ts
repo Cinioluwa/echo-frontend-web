@@ -7,6 +7,11 @@ interface ShareMetadata {
   description: string;
   imageUrl: string | null;
   canonicalUrl: string;
+  surgeCount?: number;
+  waveCount?: number;
+  category?: string;
+  orgName?: string;
+  orgLogoUrl?: string;
 }
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
@@ -54,9 +59,14 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     const data = (await metadataResponse.json()) as ShareMetadata;
 
-    // Build absolute canonical URL
-    const webBase =
-      process.env.NEXT_PUBLIC_APP_URL || "https://app.echo-ng.com";
+    // Dynamically detect tunnel/localhost hosts to support local testing, fallback to env/production base
+    const protocol = req.headers["x-forwarded-proto"] || "https";
+    const host = req.headers.host || "localhost:3000";
+    const isLocal = host.includes("localhost") || host.includes("127.0.0.1") || host.includes(".lhr.life") || host.includes(".loca.lt") || host.includes(".ngrok");
+    const webBase = isLocal 
+      ? `${protocol}://${host}`
+      : (process.env.NEXT_PUBLIC_APP_URL || "https://app.echo-ng.com");
+
     const absoluteCanonical = data.canonicalUrl.startsWith("http")
       ? data.canonicalUrl
       : `${webBase}${data.canonicalUrl}`;
@@ -84,13 +94,42 @@ function generateOGPage(
   shareUrl: string,
   webBase: string,
 ): string {
-  const title = escapeHtml(data.title);
-  const description = escapeHtml(data.description);
+  let title = escapeHtml(data.title);
+  let descriptionText = escapeHtml(data.description);
+  
+  if (data.type === "ping" && data.orgName) {
+    const stats = [];
+    if (data.surgeCount !== undefined) stats.push(`${data.surgeCount} Surges`);
+    if (data.waveCount !== undefined) stats.push(`${data.waveCount} Waves`);
+    
+    const context = [
+      data.category ? `in ${data.category}` : "",
+      data.orgName ? `from ${data.orgName}` : ""
+    ].filter(Boolean).join(" ");
+    
+    if (context || stats.length > 0) {
+      const statsStr = stats.length > 0 ? ` • ${stats.join(" • ")}` : "";
+      descriptionText = `A ping ${context}${statsStr} — ${descriptionText}`;
+    }
+  }
+
+  // Trim the final description to 150 characters so it fits social previews cleanly
+  const maxDescLength = 150;
+  const finalDescription = descriptionText.length > maxDescLength
+    ? `${descriptionText.slice(0, maxDescLength - 1).trimEnd()}…`
+    : descriptionText;
+
   let image = "";
   if (data.imageUrl) {
     image = data.imageUrl.startsWith("http") ? data.imageUrl : `${webBase}${data.imageUrl}`;
-    image = escapeHtml(image);
+  } else {
+    // Fallback to Echo Brand Logo
+    image = `${webBase}/assets/images/Echo Logo.png`;
   }
+  image = escapeHtml(image);
+
+  // Always use summary_large_image for rich media display
+  const twitterCard = "summary_large_image";
 
   return `<!DOCTYPE html>
 <html lang="en">
@@ -102,20 +141,27 @@ function generateOGPage(
   <!-- Open Graph Meta Tags -->
   <meta property="og:type" content="article" />
   <meta property="og:title" content="${title}" />
-  <meta property="og:description" content="${description}" />
+  <meta property="og:description" content="${finalDescription}" />
   <meta property="og:url" content="${escapeHtml(shareUrl)}" />
-  <meta property="og:site_name" content="Echo" />
+  <meta property="og:site_name" content="${data.orgName ? escapeHtml(data.orgName) : 'Echo'}" />
   ${image ? `<meta property="og:image" content="${image}" />` : ""}
-  ${image ? `<meta property="og:image:type" content="image/jpeg" />` : ""}
+  ${image ? `<meta property="og:image:width" content="1200" />` : ""}
+  ${image ? `<meta property="og:image:height" content="630" />` : ""}
   
   <!-- Twitter Card Meta Tags -->
-  <meta name="twitter:card" content="${image ? "summary_large_image" : "summary"}" />
+  <meta name="twitter:card" content="${twitterCard}" />
   <meta name="twitter:title" content="${title}" />
-  <meta name="twitter:description" content="${description}" />
+  <meta name="twitter:description" content="${finalDescription}" />
   ${image ? `<meta name="twitter:image" content="${image}" />` : ""}
   
+  <!-- Native App Rich Data -->
+  ${data.surgeCount !== undefined ? `<meta name="twitter:label1" content="Surges" />` : ""}
+  ${data.surgeCount !== undefined ? `<meta name="twitter:data1" content="${data.surgeCount}" />` : ""}
+  ${data.waveCount !== undefined ? `<meta name="twitter:label2" content="Waves" />` : ""}
+  ${data.waveCount !== undefined ? `<meta name="twitter:data2" content="${data.waveCount}" />` : ""}
+  
   <!-- Additional Meta Tags -->
-  <meta name="description" content="${description}" />
+  <meta name="description" content="${finalDescription}" />
   <link rel="canonical" href="${escapeHtml(absoluteCanonical)}" />
   
   <!-- Redirect to app -->

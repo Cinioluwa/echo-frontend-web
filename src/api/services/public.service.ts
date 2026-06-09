@@ -18,6 +18,20 @@ export interface ResolutionLogParams extends PaginationParams {
   days?: number | "all";
 }
 
+export interface ShareMetadata {
+  type: "ping" | "wave" | "comment" | "feed";
+  id: number;
+  title: string;
+  description: string;
+  imageUrl?: string | null;
+  canonicalUrl: string;
+  surgeCount?: number;
+  waveCount?: number;
+  category?: string;
+  orgName?: string;
+  orgLogoUrl?: string;
+}
+
 /**
  * Public Feed Service
  * Handles public soundboard and stream feeds
@@ -61,6 +75,19 @@ const publicService = {
       "/public/resolution-log",
       { params }
     );
+    return response.data;
+  },
+
+  /**
+   * Get public metadata for a shared entity
+   * @param entity The entity type (e.g. ping, wave, comment)
+   * @param id The entity ID
+   */
+  getShareMetadata: async (
+    entity: "ping" | "wave" | "comment" | "feed",
+    id: number
+  ): Promise<ShareMetadata> => {
+    const response = await api.get<ShareMetadata>(`/public/share/${entity}/${id}`);
     return response.data;
   },
 };
