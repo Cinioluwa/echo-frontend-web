@@ -124,7 +124,7 @@ function generateOGPage(
     image = data.imageUrl.startsWith("http") ? data.imageUrl : `${webBase}${data.imageUrl}`;
   } else {
     // Fallback to Echo Brand Logo
-    image = `${webBase}/assets/images/Echo Logo.png`;
+    image = `${webBase}/assets/images/Echo%20Logo.png`;
   }
   image = escapeHtml(image);
 
@@ -162,7 +162,7 @@ function generateOGPage(
   
   <!-- Additional Meta Tags -->
   <meta name="description" content="${finalDescription}" />
-  <link rel="canonical" href="${escapeHtml(absoluteCanonical)}" />
+  <link rel="canonical" href="${escapeHtml(shareUrl)}" />
   
   <!-- Redirect to app -->
   <script>
