@@ -1,6 +1,8 @@
 import React, { useState, Suspense } from "react";
 import FollowUpFilterTabs from "./FollowUpFilterTabs";
 import FollowUpList from "./FollowUpList";
+import AdminHeader from "../AdminHeader";
+import AdminMobileMenu from "../AdminMobileMenu";
 import type { FollowUpItem as FollowUpItemType, FilterType } from "./types";
 
 interface FollowUpProps { }
@@ -126,6 +128,7 @@ const mockFollowUpItems: FollowUpItemType[] = [
 const FollowUp: React.FC<FollowUpProps> = () => {
     const [activeFilter, setActiveFilter] = useState<FilterType>("all");
     const [isLoading, setIsLoading] = useState(false);
+    const [openMenu, setOpenMenu] = useState(false);
 
     const handleFilterChange = (filter: FilterType) => {
         setActiveFilter(filter);
@@ -137,41 +140,45 @@ const FollowUp: React.FC<FollowUpProps> = () => {
     };
 
     return (
-        <div className="m-0 md:ms-[230px] flex flex-col gap-4 sm:gap-6 items-start px-3 sm:px-6 py-6 sm:py-8 relative">
-            {/* Header */}
-            <div className="flex flex-col gap-1 sm:gap-2 items-start relative w-full">
-                <h1 className="font-poppins font-bold text-[24px] sm:text-[32px] leading-normal text-black">
-                    Follow Up
-                </h1>
-                <p className="font-poppins font-medium text-[13px] sm:text-[16px] leading-normal text-[#8b8e8d]">
-                    Tasks that need your attention to keep the community moving forward
-                </p>
-            </div>
-
-            {/* Filter tabs */}
-            <div className="w-full">
-                <FollowUpFilterTabs
-                    activeFilter={activeFilter}
-                    onFilterChange={handleFilterChange}
-                />
-            </div>
-
-            {/* Follow-up list */}
-            <Suspense
-                fallback={
-                    <div className="flex items-center justify-center w-full h-[500px]">
-                        <div className="text-center">
-                            <div className="animate-spin w-12 h-12 border-4 border-[#f49b31] border-t-transparent rounded-full mx-auto mb-4" />
-                            <p className="text-[#8b8e8d] font-medium">Loading...</p>
-                        </div>
-                    </div>
-                }
-            >
-                <div className="w-full">
-                    <FollowUpList items={mockFollowUpItems} isLoading={isLoading} />
+        <>
+            <div className="m-0 md:ms-[230px] flex flex-col gap-4 sm:gap-6 items-start px-3 sm:px-6 py-6 sm:py-8 relative">
+                {/* Header */}
+                <div className="flex flex-col gap-1 sm:gap-2 items-start relative w-full">
+                    <h1 className="hidden md:block font-poppins font-bold text-[24px] sm:text-[32px] leading-normal text-black">
+                        Follow Up
+                    </h1>
+                    <AdminHeader title="Follow Up" setOpenMenu={setOpenMenu} openMenu={openMenu} />
+                    <p className="font-poppins font-medium text-[13px] sm:text-[16px] leading-normal text-[#8b8e8d]">
+                        Tasks that need your attention to keep the community moving forward
+                    </p>
                 </div>
-            </Suspense>
-        </div>
+
+                {/* Filter tabs */}
+                <div className="w-full">
+                    <FollowUpFilterTabs
+                        activeFilter={activeFilter}
+                        onFilterChange={handleFilterChange}
+                    />
+                </div>
+
+                {/* Follow-up list */}
+                <Suspense
+                    fallback={
+                        <div className="flex items-center justify-center w-full h-[500px]">
+                            <div className="text-center">
+                                <div className="animate-spin w-12 h-12 border-4 border-[#f49b31] border-t-transparent rounded-full mx-auto mb-4" />
+                                <p className="text-[#8b8e8d] font-medium">Loading...</p>
+                            </div>
+                        </div>
+                    }
+                >
+                    <div className="w-full">
+                        <FollowUpList items={mockFollowUpItems} isLoading={isLoading} />
+                    </div>
+                </Suspense>
+            </div>
+            <AdminMobileMenu setMenu={setOpenMenu} menu={openMenu} />
+        </>
     );
 };
 

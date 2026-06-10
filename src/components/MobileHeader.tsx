@@ -14,7 +14,6 @@ import { FaPlus } from "react-icons/fa6";
 import MobileCategoryDropdown from "./MobileCategoryDropdown";
 import MobileOptionsDropdown from "./MobileOptionsDropdown";
 import PingFormModal from "./PingFormModal";
-import NotificationBell from "./NotificationBell";
 
 const menuBar = "/assets/images/menu-hotdog.svg";
 
@@ -98,10 +97,9 @@ const MobileHeader = () => {
 
             {/* Right side: Notification Bell + Create Ping button (feed only) */}
             {isFeedPage ? (
-                <NotificationBell />
+                null
             ) : (
                 <div className="flex items-center gap-2">
-                    <NotificationBell />
                     <button
                         onClick={() => setShowPingForm(true)}
                         className="flex items-center justify-center gap-2 bg-[#F49B31] hover:bg-[#d88429] transition-colors rounded-[25px] px-3 py-2 cursor-pointer"

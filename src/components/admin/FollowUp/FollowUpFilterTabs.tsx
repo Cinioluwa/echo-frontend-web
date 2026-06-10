@@ -18,35 +18,35 @@ const mockFilters: FilterTab[] = [
     { 
         id: "all", 
         label: "All", 
-        icon: "http://localhost:3845/assets/ae8d96212d4dba32dee3f3b72b843022b14246e7.png", 
+        icon: "/assets/icon/wave.svg", 
         count: 16,
         nodeId: "5627:16786"
     },
     { 
         id: "approved-waves", 
         label: "Approved Waves", 
-        icon: "http://localhost:3845/assets/d61aae58ad49fc342a6e2b747c0c86e188d53124.svg", 
+        icon: "/assets/icon/badge-check.svg", 
         count: 7,
         nodeId: "5627:16795"
     },
     { 
         id: "under-review", 
         label: "Waves Under Review", 
-        icon: "http://localhost:3845/assets/04d200b9dc6f5385c8c325c021e0ea0f7919539a.svg", 
+        icon: "/assets/icon/awaiting-approval.svg", 
         count: 4,
         nodeId: "5627:16805"
     },
     { 
         id: "acknowledged-pings", 
         label: "Acknowledged Pings", 
-        icon: "http://localhost:3845/assets/dbdad5cf7d3529d04d1d3ee73433487d4eead9ad.svg", 
+        icon: "/assets/icon/acknowledged-pings.svg", 
         count: 3,
         nodeId: "5627:16819"
     },
     { 
         id: "in-progress", 
         label: "Waves in Progress", 
-        icon: "http://localhost:3845/assets/cafd43beec1ff0aeea2b8e110d80c9ff6e84d014.svg", 
+        icon: "/assets/icon/time-alert.svg", 
         count: 2,
         nodeId: "5627:16828"
     },

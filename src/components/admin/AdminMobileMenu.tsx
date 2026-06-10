@@ -1,18 +1,20 @@
 import React from "react";
 import { Link } from "react-router-dom";
-const feed = "/assets/images/History Logo.svg";
-const overview = "/assets/images/overview.svg";
-const followUp = "/assets/images/followUp.svg";
-import type { AdminPages } from "./AdminSideBar";
+import { useAdminPage } from "../../contexts/AdminPageContext";
 
+const soundboard = "/assets/icon/admin-soundboard.svg";
+const moderation = "/assets/icon/moderation.svg";
+const followUp = "/assets/icon/followup.svg";
+const setting = "/assets/icon/admin-settings.svg";
+const profile = "/assets/icon/gear.svg";
 interface Props {
-  setActivePage: React.Dispatch<React.SetStateAction<AdminPages>>;
   setMenu: React.Dispatch<React.SetStateAction<boolean>>;
-  pages: AdminPages;
   menu: boolean;
 }
 
-const AdminMobileMenu = ({ setMenu, menu, pages, setActivePage }: Props) => {
+const AdminMobileMenu = ({ setMenu, menu }: Props) => {
+  const { pages, setCurrentPage } = useAdminPage();
+
   function handleClick() {
     setMenu(false);
   }
@@ -28,64 +30,89 @@ const AdminMobileMenu = ({ setMenu, menu, pages, setActivePage }: Props) => {
         className={`${menu ? "translate-x-0" : "-translate-x-full"
           } transition-transform transform duration-300 ease-in-out w-[190px] top-[100px] flex flex-col gap-[15px] bg-white p-2 rounded-r-xl absolute left-0  py-[15px]`}
       >
-        <Link to={"/admin/feed"}>
+        <Link to={"/admin/soundboard"}>
           <button
-            onClick={() =>
-              setActivePage({
-                feedActive: true,
-                overviewActive: false,
-                followUpActive: false,
-              })
-            }
-            className={`flex items-center ${pages.feedActive
+            onClick={() => {
+              setCurrentPage("soundboard");
+              handleClick();
+            }}
+            className={`flex items-center ${pages.soundboard
               ? "bg-[#FFC37B] border-0"
               : "bg-transparent border-2"
               }  gap-3 py-[9px] w-full transition  cursor-pointer  ease-in-out duration-700 text-[15px] border-[#F49B31] rounded-[25px]`}
           >
             <span className="ml-6">
-              <img src={feed} alt="" />
+              <img src={soundboard} alt="" />
             </span>
-            Feed
+            Soundboard
           </button>
         </Link>
-        <Link to={"/admin/overview"}>
+        <Link to={"/admin/followup"}>
           <button
-            onClick={() =>
-              setActivePage({
-                feedActive: false,
-                overviewActive: true,
-                followUpActive: false,
-              })
-            }
-            className={`flex items-center ${pages.overviewActive
+            onClick={() => {
+              setCurrentPage("followUp");
+              handleClick();
+            }}
+            className={`flex items-center ${pages.followUp
               ? "bg-[#FFC37B] border-0"
               : "bg-transparent border-2"
               }  gap-3 py-[9px] text-[15px] transition w-full cursor-pointer  ease-in-out duration-700 border-[#F49B31] rounded-[25px]`}
           >
             <span className="ml-6">
-              <img src={overview} alt="" />
+              <img src={followUp} alt="" />
             </span>
-            History
+            Follow Up
           </button>
         </Link>
-        <Link to={"/admin/followUp"}>
+        <Link to={"/admin/moderation"}>
           <button
-            onClick={() =>
-              setActivePage({
-                feedActive: false,
-                overviewActive: false,
-                followUpActive: true,
-              })
-            }
-            className={`flex items-center ${pages.followUpActive
+            onClick={() => {
+              setCurrentPage("moderation");
+              handleClick();
+            }}
+            className={`flex items-center ${pages.moderation
               ? "bg-[#FFC37B] border-0"
               : "bg-transparent border-2"
               }  gap-3 py-[9px] w-full transition cursor-pointer ease-in-out duration-700 text-[15px] border-[#F49B31] rounded-[25px]`}
           >
             <span className="ml-6">
-              <img src={followUp} alt="" />
+              <img src={moderation} alt="" />
             </span>
-            Follow Up
+            Moderation
+          </button>
+        </Link>
+        <Link to={"/admin/settings"}>
+          <button
+            onClick={() => {
+              setCurrentPage("settings");
+              handleClick();
+            }}
+            className={`flex items-center ${pages.settings
+              ? "bg-[#FFC37B] border-0"
+              : "bg-transparent border-2"
+              }  gap-3 py-[9px] w-full transition cursor-pointer ease-in-out duration-700 text-[15px] border-[#F49B31] rounded-[25px]`}
+          >
+            <span className="ml-6">
+              <img src={setting} alt="" />
+            </span>
+            Settings
+          </button>
+        </Link>
+        <Link to={"/admin/profile"}>
+          <button
+            onClick={() => {
+              setCurrentPage("profile");
+              handleClick();
+            }}
+            className={`flex items-center ${pages.profile
+              ? "bg-[#FFC37B] border-0"
+              : "bg-transparent border-2"
+              }  gap-3 py-[9px] w-full transition cursor-pointer ease-in-out duration-700 text-[15px] border-[#F49B31] rounded-[25px]`}
+          >
+            <span className="ml-6">
+              <img src={profile} alt="" />
+            </span>
+            Profile
           </button>
         </Link>
       </div>

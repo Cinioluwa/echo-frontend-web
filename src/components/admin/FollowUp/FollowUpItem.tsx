@@ -10,30 +10,30 @@ const getButtonStylesAndIcon = (label: string, variant?: string) => {
 
     // Default fallback values
     let bgClass = "bg-[#f49b31] text-[#fef5ea] border-none hover:bg-[#e28a20]";
-    let iconUrl = "http://localhost:3845/assets/0cb055c3c24b2a96bedce746e16115d77960a7ac.svg"; // checklist
+    let iconUrl = "/assets/images/approve.svg"; // checklist
     let iconSizeClass = "w-[20px] h-[20px]";
 
     if (cleanLabel.includes("completed") || cleanLabel.includes("approve")) {
         bgClass = "bg-[#f49b31] text-[#fef5ea] border-none hover:bg-[#e28a20]";
-        iconUrl = "http://localhost:3845/assets/0cb055c3c24b2a96bedce746e16115d77960a7ac.svg";
+        iconUrl = "/assets/images/approve.svg";
     } else if (cleanLabel.includes("implementing")) {
         bgClass = "bg-[#fef5ea] border border-[#f49b31] text-[#f49b31] hover:bg-[#fdecd8]";
-        iconUrl = "http://localhost:3845/assets/f4151cf839767ae1239407890b59a6e69b8afb6d.svg"; // gear
+        iconUrl = "/assets/icon/gear.svg"; // gear
         iconSizeClass = "w-[18.75px] h-[18.75px]";
     } else if (cleanLabel.includes("reject")) {
         bgClass = "bg-[rgba(255,132,132,0.15)] border border-[#eb5050] text-[#eb5050] hover:bg-[rgba(255,132,132,0.25)]";
-        iconUrl = "http://localhost:3845/assets/97d9527743ac955f498d617d2b114f5a8ccf4e0b.svg"; // reject
+        iconUrl = "/assets/images/reject.svg"; // reject
     } else if (cleanLabel.includes("review")) {
         bgClass = "bg-[#fef5ea] border border-[#f49b31] text-[#f49b31] hover:bg-[#fdecd8]";
-        iconUrl = "http://localhost:3845/assets/89183796c9b3b9f342a65d60580ae6d214b07610.svg"; // review
+        iconUrl = "/assets/icon/review.svg"; // review
         iconSizeClass = "w-[20.3px] h-[19.1px]";
     } else {
         if (variant === "red") {
             bgClass = "bg-[rgba(255,132,132,0.15)] border border-[#eb5050] text-[#eb5050] hover:bg-[rgba(255,132,132,0.25)]";
-            iconUrl = "http://localhost:3845/assets/97d9527743ac955f498d617d2b114f5a8ccf4e0b.svg";
+            iconUrl = "/assets/images/reject.svg";
         } else if (variant === "outline-orange") {
             bgClass = "bg-[#fef5ea] border border-[#f49b31] text-[#f49b31] hover:bg-[#fdecd8]";
-            iconUrl = "http://localhost:3845/assets/f4151cf839767ae1239407890b59a6e69b8afb6d.svg";
+            iconUrl = "/assets/icon/gear.svg";
             iconSizeClass = "w-[18.75px] h-[18.75px]";
         }
     }
@@ -46,32 +46,32 @@ const getStatusBadgeConfig = (status: string) => {
         case "approved":
             return {
                 label: "Approved",
-                dotUrl: "http://localhost:3845/assets/d86163f4316e2cbdaa2e8d1a26f930d3da34d241.svg",
+                dotUrl: "/assets/icon/dot-green.svg",
             };
         case "under-review":
             return {
                 label: "Under Review",
-                dotUrl: "http://localhost:3845/assets/e8ecd75796921f226b8fc98bbc9b6e96a8b57d1b.svg",
+                dotUrl: "/assets/icon/dot-yellow.svg",
             };
         case "implementing":
             return {
                 label: "In Progress",
-                dotUrl: "http://localhost:3845/assets/fec48d01d24ac4a6a9f3cf985caefdcadf20d397.svg",
+                dotUrl: "/assets/icon/dot-blue.svg",
             };
         case "acknowledged":
             return {
                 label: "Community Pick",
-                dotUrl: "http://localhost:3845/assets/50ef0c75760e4bdf69002bec4b0a81453d3af11f.svg",
+                dotUrl: "/assets/icon/dot-purple.svg",
             };
         case "completed":
             return {
                 label: "Completed",
-                dotUrl: "http://localhost:3845/assets/d86163f4316e2cbdaa2e8d1a26f930d3da34d241.svg",
+                dotUrl: "/assets/icon/dot-green.svg",
             };
         default:
             return {
                 label: status,
-                dotUrl: "http://localhost:3845/assets/d86163f4316e2cbdaa2e8d1a26f930d3da34d241.svg",
+                dotUrl: "/assets/icon/dot-green.svg",
             };
     }
 };
@@ -122,7 +122,7 @@ const FollowUpItem: React.FC<FollowUpItemProps> = ({ item }) => {
                             {item.surgeCount !== undefined && (
                                 <div className="flex gap-[2.5px] items-center w-full" data-node-id="5627:18010">
                                     <img
-                                        src="http://localhost:3845/assets/a09d358700a9d473614cda9b6e4b77f3efa7e435.svg"
+                                        src="/assets/icon/red-surge.svg"
                                         alt="surge"
                                         className="h-[10.6px] w-[8.1px] shrink-0"
                                     />
@@ -139,7 +139,7 @@ const FollowUpItem: React.FC<FollowUpItemProps> = ({ item }) => {
                         data-node-id="5627:18014"
                     >
                         <img
-                            src="http://localhost:3845/assets/e8ecd75796921f226b8fc98bbc9b6e96a8b57d1b.svg"
+                            src="/assets/icon/dot-yellow.svg"
                             alt=""
                             className="w-[7.5px] h-[7.5px]"
                         />

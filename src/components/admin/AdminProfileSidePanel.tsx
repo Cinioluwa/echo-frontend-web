@@ -54,7 +54,7 @@ const AdminProfileSidePanel = ({ pages }: Pages) => {
                 account: false,
                 notification: true,
               });
-              navigate("/admin/notification");
+              navigate("/admin/notification-settings");
             } else if (item.label === "Account") {
               setActiveItem({
                 profile: false,
@@ -64,11 +64,10 @@ const AdminProfileSidePanel = ({ pages }: Pages) => {
               navigate("/admin/account");
             }
           }}
-          className={`flex items-center md:my-1 gap-5 px-7 py-3 rounded-xl whitespace-nowrap transition-all shrink-0 ${
-            item.active
+          className={`flex items-center md:my-1 gap-5 px-7 py-3 rounded-xl whitespace-nowrap transition-all shrink-0 ${item.active
               ? "bg-[#E8A355] text-white shadow-lg shadow-orange-200"
               : "bg-[#FEF5EA] hover:bg-orange-100"
-          }`}
+            }`}
         >
           {item.icon}
           <span className="text-sm">{item.label}</span>
