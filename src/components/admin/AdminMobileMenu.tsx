@@ -15,6 +15,9 @@ interface Props {
 const AdminMobileMenu = ({ setMenu, menu }: Props) => {
   const { pages, setCurrentPage } = useAdminPage();
 
+  const iconClass = (active: boolean) =>
+    `w-5 h-5 ${active ? "brightness-0 invert" : ""}`;
+
   function handleClick() {
     setMenu(false);
   }
@@ -42,7 +45,7 @@ const AdminMobileMenu = ({ setMenu, menu }: Props) => {
               }  gap-3 py-[9px] w-full transition  cursor-pointer  ease-in-out duration-700 text-[15px] border-[#F49B31] rounded-[25px]`}
           >
             <span className="ml-6">
-              <img src={soundboard} alt="" />
+              <img src={soundboard} alt="" className={iconClass(pages.soundboard)} />
             </span>
             Soundboard
           </button>
@@ -59,7 +62,7 @@ const AdminMobileMenu = ({ setMenu, menu }: Props) => {
               }  gap-3 py-[9px] text-[15px] transition w-full cursor-pointer  ease-in-out duration-700 border-[#F49B31] rounded-[25px]`}
           >
             <span className="ml-6">
-              <img src={followUp} alt="" />
+              <img src={followUp} alt="" className={iconClass(pages.followUp)} />
             </span>
             Follow Up
           </button>
@@ -76,7 +79,7 @@ const AdminMobileMenu = ({ setMenu, menu }: Props) => {
               }  gap-3 py-[9px] w-full transition cursor-pointer ease-in-out duration-700 text-[15px] border-[#F49B31] rounded-[25px]`}
           >
             <span className="ml-6">
-              <img src={moderation} alt="" />
+              <img src={moderation} alt="" className={iconClass(pages.moderation)} />
             </span>
             Moderation
           </button>
@@ -93,7 +96,7 @@ const AdminMobileMenu = ({ setMenu, menu }: Props) => {
               }  gap-3 py-[9px] w-full transition cursor-pointer ease-in-out duration-700 text-[15px] border-[#F49B31] rounded-[25px]`}
           >
             <span className="ml-6">
-              <img src={setting} alt="" />
+              <img src={setting} alt="" className={iconClass(pages.settings)} />
             </span>
             Settings
           </button>
@@ -110,7 +113,7 @@ const AdminMobileMenu = ({ setMenu, menu }: Props) => {
               }  gap-3 py-[9px] w-full transition cursor-pointer ease-in-out duration-700 text-[15px] border-[#F49B31] rounded-[25px]`}
           >
             <span className="ml-6">
-              <img src={profile} alt="" />
+              <img src={profile} alt="" className={iconClass(pages.profile)} />
             </span>
             Profile
           </button>
