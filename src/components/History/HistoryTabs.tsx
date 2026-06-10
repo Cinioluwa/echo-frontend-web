@@ -8,7 +8,7 @@
  * - Active: bg-[#F49B31] filled background, white text
  * - Inactive: bg-[#FFC37B] with border, dark text
  * - Desktop: text-[20px], px-[20px] py-[5px], gap-[15px], p-[5px]
- * - Mobile: text-[9px], px-[10px] py-[5px], gap-[10px]
+ * - Mobile: text-[9px], px-2.5 py-[5px], gap-[10px]
  * Tab selection updates URL param: /history/pings, /history/waves, etc.
  */
 

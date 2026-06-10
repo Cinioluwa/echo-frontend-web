@@ -1,40 +1,18 @@
-import React from "react";
-import NavBar from "../NavBar";
-import type { AdminPages } from "./AdminSideBar";
+import { useState } from "react";
 import AdminSideBar from "./AdminSideBar";
-import AdminPageTitleBar from "./AdminPageTitleBar";
 
-interface LayoutProps {
-  setActivePage: React.Dispatch<React.SetStateAction<AdminPages>>;
-  setAnnouncementModal: React.Dispatch<React.SetStateAction<boolean>>;
-  activePage: AdminPages;
-  heading: string;
-}
 
-const AdminLayout = ({
-  setActivePage,
-  activePage,
-  heading,
-  setAnnouncementModal,
-}: LayoutProps) => {
+
+const AdminLayout = () => {
+  const [sidebarOpen, setSidebarOpen] = useState(true);
   return (
-    <div>
-      <header className="z-20 md:fixed md:top-0 w-full">
-        <nav>
-          <NavBar />
-        </nav>
-        <AdminPageTitleBar
-          pages={activePage}
-          setActivePage={setActivePage}
-          heading={heading}
-        >
-          <button onClick={() => setAnnouncementModal(true)} className="bg-[#FEF5EA] hidden sm:block text-[13px] rounded-[20px] px-4 border border-[#F49B31] py-2.5">
-            Publish Announcement
-          </button>
-        </AdminPageTitleBar>
-      </header>
-      <aside className="hidden md:block [scrollbar-width:none]  overflow-y-auto   px-10 fixed h-[calc(100vh-155px)] w-[350px] left-0 bottom-0 whitespace-nowrap ">
-        <AdminSideBar pages={activePage} setActivePage={setActivePage} />
+    <div className="fixed">
+      <aside className="">
+        <AdminSideBar
+          userName="Osagumwenro Ugbo"
+          userBadge="ADMIN.CU"
+          onToggleSidebar={() => setSidebarOpen(false)}
+          onSoundboardClick={() => { }} />
       </aside>
     </div>
   );

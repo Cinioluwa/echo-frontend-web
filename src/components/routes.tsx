@@ -84,14 +84,13 @@ const Notifications = lazyWithRetry(() => import("../pages/Notifications"));
 const GuestPingDetail = lazyWithRetry(() => import("../pages/guest/GuestPingDetail"));
 
 // Lazy load admin pages
-const Feed = lazyWithRetry(() => import("../pages/admin/AdminFeed"));
-const FollowUp = lazyWithRetry(() => import("../pages/admin/FollowUp"));
+const FollowUpPage = lazyWithRetry(() => import("../pages/admin/FollowUpPage"));
+const ModerationPage = lazyWithRetry(() => import("../pages/admin/ModerationPage"));
+const AdminPingDetailPage = lazyWithRetry(() => import("../pages/admin/AdminPingDetailPage"));
 const Overview = lazyWithRetry(() => import("../pages/admin/Overview"));
+const AdminSoundboardPage = lazyWithRetry(() => import("../pages/admin/AdminSoundboardPage"));
 
 // Lazy load admin components
-const PostDetails = lazyWithRetry(() => import("./admin/PostDetails"));
-
-// Lazy load user pages
 const UserProfile = lazyWithRetry(() => import("../pages/UserProfile"));
 const UserPrivacy = lazyWithRetry(() => import("../pages/UserPrivacy"));
 const UserAccount = lazyWithRetry(() => import("../pages/UserAccount"));
@@ -275,16 +274,20 @@ const router = createBrowserRouter([
         element: withSuspense(AdminNotification),
       },
       {
-        path: "feed",
+        path: "soundboard",
         element: (
           <AdminRoute>
-            {withSuspense(Feed)}
+            {withSuspense(AdminSoundboardPage)}
           </AdminRoute>
         ),
       },
       {
-        path: "feed/details/:pingId",
-        element: withSuspense(PostDetails),
+        path: "soundboard/:pingId",
+        element: (
+          <AdminRoute>
+            {withSuspense(AdminPingDetailPage)}
+          </AdminRoute>
+        ),
       },
       {
         path: "overview",
@@ -298,7 +301,15 @@ const router = createBrowserRouter([
         path: "followUp",
         element: (
           <AdminRoute>
-            {withSuspense(FollowUp)}
+            {withSuspense(FollowUpPage)}
+          </AdminRoute>
+        ),
+      },
+      {
+        path: "moderation",
+        element: (
+          <AdminRoute>
+            {withSuspense(ModerationPage)}
           </AdminRoute>
         ),
       },
