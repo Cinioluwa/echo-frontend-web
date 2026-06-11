@@ -1,5 +1,10 @@
-import React from "react";
-import { Link, useLocation } from "react-router-dom";
+import React, { useState, useRef, useEffect } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useAuthStore } from "../../stores";
+import { LogOut, Settings, HelpCircle } from "lucide-react";
+import UserAvatar from "../UserAvatar";
+import OnboardingOverlay from "../onboarding/OnboardingOverlay";
+
 interface AdminSidebarProps {
   userAvatar?: string;
   userName?: string;
@@ -22,6 +27,50 @@ const AdminSideBar: React.FC<AdminSidebarProps> = ({
   onAdminSettingsClick,
 }) => {
   const location = useLocation();
+  const navigate = useNavigate();
+  const user = useAuthStore((state) => state.user);
+  const logout = useAuthStore((state) => state.logout);
+  const markOnboardingComplete = useAuthStore(
+    (state) => state.markOnboardingComplete,
+  );
+
+  const [isOpen, setIsOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+  const [openOnboarding, setOpenOnboarding] = useState(false);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
+        setIsOpen(false);
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isOpen]);
+
+  const handleLogout = () => {
+    logout();
+    setIsOpen(false);
+    navigate("/login");
+  };
+
+  const handleProfileSettings = () => {
+    setIsOpen(false);
+    navigate("/profile");
+  };
+
+  const displayFullName = user ? `${user.firstName} ${user.lastName}` : userName;
+  const displayEmail = user?.email || "";
+
 
   const getCurrentPage = () => {
     const path = location.pathname;
@@ -29,7 +78,6 @@ const AdminSideBar: React.FC<AdminSidebarProps> = ({
     if (path.includes("/admin/followUp") || path.includes("/admin/followup")) return "followUp";
     if (path.includes("/admin/moderation")) return "moderation";
     if (path.includes("/admin/settings")) return "settings";
-    if (path.includes("/admin/profile")) return "profile";
     return "soundboard";
   };
 
@@ -140,33 +188,102 @@ const AdminSideBar: React.FC<AdminSidebarProps> = ({
       </div>
 
       {/* User Profile Section */}
-      <button className="w-full bg-transparent border border-[#f49b31] rounded-[15px] p-2.5 flex items-start gap-2.5 hover:bg-[#fef5ea] transition-colors">
-        {/* Avatar */}
-        {userAvatar ? (
-          <img
-            src={userAvatar}
-            alt={userName}
-            className="w-[45px] h-[45px] rounded-full object-cover shrink-0"
-          />
-        ) : (
-          <div className="w-[45px] h-[45px] rounded-full bg-[#f49b31] flex items-center justify-center shrink-0 text-[#fef5ea] font-bold text-[18px]">
-            {userName?.charAt(0).toUpperCase()}
+      <div className="relative w-full" ref={dropdownRef}>
+        <button
+          onClick={() => setIsOpen(!isOpen)}
+          className="w-full bg-transparent border border-[#f49b31] rounded-[15px] p-2.5 flex items-start gap-2.5 hover:bg-[#fef5ea] transition-colors"
+        >
+          {/* Avatar */}
+          {userAvatar ? (
+            <img
+              src={userAvatar}
+              alt={userName}
+              className="w-[45px] h-[45px] rounded-full object-cover shrink-0"
+            />
+          ) : (
+            <div className="w-[45px] h-[45px] rounded-full bg-[#f49b31] flex items-center justify-center shrink-0 text-[#fef5ea] font-bold text-[18px]">
+              {userName?.charAt(0).toUpperCase()}
+            </div>
+          )}
+
+          {/* User Info */}
+          <div className="flex-1 min-w-0">
+            <p className="text-[#212121] font-medium text-[14px] leading-[normal] text-left truncate">
+              {userName}
+            </p>
+            <div className="flex items-center gap-[5px] mt-[5px]">
+              <img src="/assets/icon/badge-check.svg" alt="Echo Badge" className="w-[15px] h-[15px]" />
+              <span className="text-[#926b3d] font-medium text-[12px] leading-[normal]">
+                {userBadge}
+              </span>
+            </div>
+          </div>
+        </button>
+
+        {/* Dropdown Menu */}
+        {isOpen && (
+          <div className="absolute -bottom-[200px] left-[calc(100%+8px)] bg-white rounded-lg shadow-lg border border-[#CECECE] z-50 w-[220px] md:w-[204px] overflow-hidden">
+            {/* User Profile Section */}
+            <div className="border-b border-[#CECECE] p-3 md:p-4 flex items-center gap-2.5 md:gap-3">
+              <UserAvatar user={user} size="md" bgColor="bg-[#f49b31]" pictureUrl={userAvatar || undefined} />
+              <div className="flex flex-col gap-0.5 flex-1 min-w-0">
+                <p className="font-medium text-[14px] md:text-[16px] text-black truncate tracking-[-0.14px] md:tracking-[-0.16px] text-left">
+                  {displayFullName}
+                </p>
+                {displayEmail && (
+                  <p className="font-medium text-[12px] md:text-[14px] text-[#999999] truncate tracking-[-0.12px] md:tracking-[-0.14px] text-left">
+                    {displayEmail}
+                  </p>
+                )}
+              </div>
+            </div>
+
+            {/* Profile Settings */}
+            <button
+              onClick={handleProfileSettings}
+              className="w-full px-3.5 md:px-4 py-2.5 md:py-3 flex items-center gap-2.5 md:gap-3 hover:bg-gray-50 transition-colors text-left"
+            >
+              <Settings className="w-[18px] h-[18px] md:w-5 md:h-5 text-gray-600" />
+              <span className="font-medium text-[13px] md:text-[15px] text-black">
+                Profile Settings
+              </span>
+            </button>
+
+            {/* Help */}
+            <button
+              onClick={() => {
+                setIsOpen(false);
+                setOpenOnboarding(true);
+              }}
+              className="w-full px-3.5 md:px-4 py-2.5 md:py-3 flex items-center gap-2.5 md:gap-3 hover:bg-gray-50 transition-colors text-left"
+            >
+              <HelpCircle className="w-[18px] h-[18px] md:w-5 md:h-5 text-gray-600" />
+              <span className="font-medium text-[13px] md:text-[15px] text-black">Help</span>
+            </button>
+
+            {/* Divider */}
+            <div className="border-t border-[#CECECE] mx-4" />
+
+            {/* Sign Out */}
+            <button
+              onClick={handleLogout}
+              className="w-full px-3.5 md:px-4 py-2.5 md:py-3 flex items-center gap-2.5 md:gap-3 hover:bg-gray-50 transition-colors text-left"
+            >
+              <LogOut className="w-[18px] h-[18px] md:w-5 md:h-5 text-gray-600" />
+              <span className="font-medium text-[13px] md:text-[15px] text-black">Sign Out</span>
+            </button>
           </div>
         )}
+      </div>
 
-        {/* User Info */}
-        <div className="flex-1 min-w-0">
-          <p className="text-[#212121] font-medium text-[14px] leading-[normal] text-left truncate">
-            {userName}
-          </p>
-          <div className="flex items-center gap-[5px] mt-[5px]">
-            <img src="/assets/icon/badge-check.svg" alt="Echo Badge" className="w-[15px] h-[15px]" />
-            <span className="text-[#926b3d] font-medium text-[12px] leading-[normal]">
-              {userBadge}
-            </span>
-          </div>
-        </div>
-      </button>
+      {openOnboarding && (
+        <OnboardingOverlay
+          onFinish={() => {
+            void markOnboardingComplete();
+            setOpenOnboarding(false);
+          }}
+        />
+      )}
     </div>
   );
 };
