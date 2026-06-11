@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import PingFormModal from "./PingFormModal";
 
-const ProfileLayout = ({ feedPath = "/feed" }: { feedPath?: string } = {}) => {
+const ProfileLayout = () => {
   const navigate = useNavigate();
   const [showPingModal, setShowPingModal] = useState(false);
 
@@ -19,8 +19,8 @@ const ProfileLayout = ({ feedPath = "/feed" }: { feedPath?: string } = {}) => {
 
       <div className="flex justify-between items-center my-4 mx-8">
         <button
-          className="flex items-center gap-2 bg-white px-4 py-2 rounded-full border border-orange-100 text-sm font-semibold shadow-sm hover:bg-orange-50 transition"
-          onClick={() => navigate(feedPath)}
+          className="flex items-center gap-2 bg-white  p-2 md:px-4 md:py-2 rounded-full border border-orange-100 text-sm font-semibold shadow-sm hover:bg-orange-50 transition"
+          onClick={() => navigate("/admin/soundboard")}
         >
           <HiChevronLeft size={18} />
           Go back to feed

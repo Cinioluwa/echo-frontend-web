@@ -87,7 +87,6 @@ const GuestPingDetail = lazyWithRetry(() => import("../pages/guest/GuestPingDeta
 const FollowUpPage = lazyWithRetry(() => import("../pages/admin/FollowUpPage"));
 const ModerationPage = lazyWithRetry(() => import("../pages/admin/ModerationPage"));
 const AdminPingDetailPage = lazyWithRetry(() => import("../pages/admin/AdminPingDetailPage"));
-const Overview = lazyWithRetry(() => import("../pages/admin/Overview"));
 const AdminSoundboardPage = lazyWithRetry(() => import("../pages/admin/AdminSoundboardPage"));
 
 // Lazy load admin components
@@ -270,7 +269,7 @@ const router = createBrowserRouter([
         element: withSuspense(AdminAccount),
       },
       {
-        path: 'notification',
+        path: 'notification-settings',
         element: withSuspense(AdminNotification),
       },
       {
@@ -286,14 +285,6 @@ const router = createBrowserRouter([
         element: (
           <AdminRoute>
             {withSuspense(AdminPingDetailPage)}
-          </AdminRoute>
-        ),
-      },
-      {
-        path: "overview",
-        element: (
-          <AdminRoute>
-            {withSuspense(Overview)}
           </AdminRoute>
         ),
       },

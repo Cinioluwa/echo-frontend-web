@@ -1,5 +1,5 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 interface AdminSidebarProps {
   userAvatar?: string;
   userName?: string;
@@ -21,21 +21,51 @@ const AdminSideBar: React.FC<AdminSidebarProps> = ({
   onModerationClick,
   onAdminSettingsClick,
 }) => {
+  const location = useLocation();
+
+  const getCurrentPage = () => {
+    const path = location.pathname;
+    if (path.includes("/admin/soundboard")) return "soundboard";
+    if (path.includes("/admin/followUp") || path.includes("/admin/followup")) return "followUp";
+    if (path.includes("/admin/moderation")) return "moderation";
+    if (path.includes("/admin/settings")) return "settings";
+    if (path.includes("/admin/profile")) return "profile";
+    return "soundboard";
+  };
+
+  const currentPage = getCurrentPage();
+
+  const navButtonClass = (isActive: boolean) =>
+    `w-full rounded-[15px] px-5 py-3 flex items-center gap-3 transition-colors border ${isActive
+      ? "bg-[#f49b31] border-[#f49b31]"
+      : "bg-transparent border-[#f49b31] hover:bg-[#fef5ea]"
+    }`;
+
+  const navTextClass = (isActive: boolean) =>
+    `font-semibold text-[15px] leading-[normal] whitespace-nowrap ${isActive ? "text-[#fef5ea]" : "text-[#212121]"
+    }`;
+
+  const navIconClass = (isActive: boolean) =>
+    `w-5 h-5 ${isActive ? "brightness-0 invert" : "brightness-90"}`;
+
+  const navIconWrapperClass = (isActive: boolean) =>
+    `shrink-0 ${isActive ? "brightness-0 invert" : ""}`;
+
   // SVG Icons
   const SoundboardIcon = () => (
-    <img src="/assets/icon/admin-soundboard.svg" alt="Soundboard Icon" className="w-5 h-5" />
+    <img src="/assets/icon/admin-soundboard.svg" alt="Soundboard Icon" className={navIconClass(currentPage === "soundboard")} />
   );
 
   const FollowUpIcon = () => (
-    <img src="/assets/icon/followup.svg" alt="Follow-up Icon" className="w-5 h-5" />
+    <img src="/assets/icon/followup.svg" alt="Follow-up Icon" className={navIconClass(currentPage === "followUp")} />
   );
 
   const ModerationIcon = () => (
-    <img src="/assets/icon/moderation.svg" alt="Moderation Icon" className="w-5 h-5" />
+    <img src="/assets/icon/moderation.svg" alt="Moderation Icon" className={navIconClass(currentPage === "moderation")} />
   );
 
   const AdminIcon = () => (
-    <img src="/assets/icon/admin-settings.svg" alt="Admin Settings Icon" className="w-5 h-5" />
+    <img src="/assets/icon/admin-settings.svg" alt="Admin Settings Icon" className={navIconClass(currentPage === "settings")} />
   );
 
   const CollapseIcon = () => (
@@ -68,45 +98,41 @@ const AdminSideBar: React.FC<AdminSidebarProps> = ({
 
       {/* Navigation Options */}
       <div className="flex flex-col gap-3.5">
-        {/* Soundboard Button - Active */}
         <Link to="/admin/soundboard" onClick={onSoundboardClick}>
-          <button className="w-full bg-[#f49b31] hover:bg-[#e88a20] border border-[#f49b31] rounded-[15px] px-5 py-3 flex items-center gap-3 transition-colors">
+          <button className={navButtonClass(currentPage === "soundboard")}>
             <SoundboardIcon />
-            <span className="text-[#fef5ea] font-semibold text-[15px] leading-[normal] whitespace-nowrap">
+            <span className={navTextClass(currentPage === "soundboard")}>
               Soundboard
             </span>
           </button>
         </Link>
 
-        {/* Follow up Button */}
         <Link to="/admin/followUp" onClick={onFollowUpClick}>
-          <button className="w-full bg-transparent border border-[#f49b31] rounded-[15px] px-6 py-3 h-12 flex items-center gap-3 hover:bg-[#fef5ea] transition-colors">
+          <button className={navButtonClass(currentPage === "followUp")}>
             <FollowUpIcon />
-            <span className="text-[#212121] font-semibold text-[15px] leading-[normal] whitespace-nowrap">
+            <span className={navTextClass(currentPage === "followUp")}>
               Follow up
             </span>
           </button>
         </Link>
 
-        {/* Moderation Button */}
         <Link to="/admin/moderation" onClick={onModerationClick}>
-          <button className="w-full bg-transparent border border-[#f49b31] rounded-[15px] pl-5 pr-6 py-3 flex items-center gap-3 hover:bg-[#fef5ea] transition-colors">
-            <div className="shrink-0">
+          <button className={navButtonClass(currentPage === "moderation")}>
+            <div className={navIconWrapperClass(currentPage === "moderation")}>
               <ModerationIcon />
             </div>
-            <span className="text-[#212121] font-semibold text-[15px] leading-[normal] whitespace-nowrap">
+            <span className={navTextClass(currentPage === "moderation")}>
               Moderation
             </span>
           </button>
         </Link>
 
-        {/* Admin Settings Button */}
         <Link to="/admin/settings" onClick={onAdminSettingsClick}>
-          <button className="w-full bg-transparent border border-[#f49b31] rounded-[15px] pl-[22px] pr-5 py-[13px] flex items-center gap-3 hover:bg-[#fef5ea] transition-colors">
-            <div className="shrink-0">
+          <button className={navButtonClass(currentPage === "settings")}>
+            <div className={navIconWrapperClass(currentPage === "settings")}>
               <AdminIcon />
             </div>
-            <span className="text-[#212121] font-semibold text-[15px] leading-[normal] whitespace-nowrap">
+            <span className={navTextClass(currentPage === "settings")}>
               Admin Settings
             </span>
           </button>

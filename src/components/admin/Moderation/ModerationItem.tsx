@@ -83,7 +83,7 @@ const ModerationItem: React.FC<ModerationItemProps> = ({ item }) => {
                             onClick={handleTakeAction}
                             className="bg-[#f49b31] hover:bg-[#e68a1f] text-white font-poppins font-semibold text-[11px] sm:text-[13px] px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl flex items-center justify-center gap-2 transition-colors whitespace-nowrap"
                         >
-                            <span>⚖️</span>
+                            <img src='/assets/icon/take-action.svg' alt='judge' className="w-[28px] h-[28px]" />
                             TAKE ACTION
                         </button>
                         <button
