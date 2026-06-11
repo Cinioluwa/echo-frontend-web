@@ -40,7 +40,6 @@ const GuestPingDetail = () => {
     setIsLoading(true);
     publicService.getShareMetadata("ping", Number(pingId))
       .then((data) => {
-        // publicService returns ShareMetadata object
         setPingData({
           id: data.id,
           title: data.title,
@@ -64,7 +63,6 @@ const GuestPingDetail = () => {
     if (hasSurged) return;
 
     if (guestToken && isTokenValid()) {
-      // User already has a valid guest session for this org
       setIsSurging(true);
       try {
         const result = await guestService.guestSurgePing(Number(pingId), guestToken);
@@ -72,15 +70,14 @@ const GuestPingDetail = () => {
         setHasSurged(true);
       } catch (err: any) {
         console.error("Failed to surge with existing token", err);
-        // If token is invalid or expired backend-side, open the modal to get a new one
-        if (err.response?.status === 401 || err.response?.status === 403) {
+        // Prompt for modal if token is invalid or if account exists (409)
+        if (err.response?.status === 401 || err.response?.status === 403 || err.response?.status === 409) {
           setShowModal(true);
         }
       } finally {
         setIsSurging(false);
       }
     } else {
-      // No token, prompt for OTP
       setShowModal(true);
     }
   };
@@ -145,6 +142,17 @@ const GuestPingDetail = () => {
 
         {/* Ping Card */}
         <div className="bg-white rounded-[20px] shadow-sm border border-gray-100 overflow-hidden">
+          {/* Image Attachment (if any and different from org logo) */}
+          {pingData.imageUrl && pingData.imageUrl !== pingData.orgLogoUrl && (
+            <div className="w-full bg-gray-100 border-b border-gray-100">
+              <img 
+                src={pingData.imageUrl} 
+                alt="Attachment" 
+                className="w-full aspect-video md:aspect-[2/1] object-cover"
+              />
+            </div>
+          )}
+
           {/* Org Header */}
           <div className="p-4 md:p-6 border-b border-gray-50 flex items-center gap-3">
             {pingData.orgLogoUrl ? (
@@ -169,17 +177,6 @@ const GuestPingDetail = () => {
               {pingData.description}
             </p>
           </div>
-
-          {/* Image Attachment (if any and different from org logo) */}
-          {pingData.imageUrl && pingData.imageUrl !== pingData.orgLogoUrl && (
-            <div className="px-4 md:px-6 pb-4">
-              <img 
-                src={pingData.imageUrl} 
-                alt="Attachment" 
-                className="w-full max-h-96 object-cover rounded-xl border border-gray-100"
-              />
-            </div>
-          )}
 
           {/* Stats & Actions */}
           <div className="p-4 md:p-6 bg-gray-50/50 flex flex-col sm:flex-row items-center justify-between gap-4">
