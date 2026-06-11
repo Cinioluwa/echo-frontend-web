@@ -88,6 +88,7 @@ const FollowUpPage = lazyWithRetry(() => import("../pages/admin/FollowUpPage"));
 const ModerationPage = lazyWithRetry(() => import("../pages/admin/ModerationPage"));
 const AdminPingDetailPage = lazyWithRetry(() => import("../pages/admin/AdminPingDetailPage"));
 const AdminSoundboardPage = lazyWithRetry(() => import("../pages/admin/AdminSoundboardPage"));
+const AdminSettingsPage = lazyWithRetry(() => import("../pages/admin/AdminSettingsPage"));
 
 // Lazy load admin components
 const UserProfile = lazyWithRetry(() => import("../pages/UserProfile"));
@@ -301,6 +302,14 @@ const router = createBrowserRouter([
         element: (
           <AdminRoute>
             {withSuspense(ModerationPage)}
+          </AdminRoute>
+        ),
+      },
+      {
+        path: "settings",
+        element: (
+          <AdminRoute>
+            {withSuspense(AdminSettingsPage)}
           </AdminRoute>
         ),
       },
