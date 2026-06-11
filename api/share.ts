@@ -9,6 +9,7 @@ interface ShareMetadata {
   canonicalUrl: string;
   surgeCount?: number;
   waveCount?: number;
+  commentCount?: number;
   category?: string;
   orgName?: string;
   orgLogoUrl?: string;
@@ -97,21 +98,26 @@ function generateOGPage(
   let title = escapeHtml(data.title);
   let descriptionText = escapeHtml(data.description);
   
-  if (data.type === "ping" && data.orgName) {
-    const stats = [];
-    if (data.surgeCount !== undefined) stats.push(`${data.surgeCount} Surges`);
-    if (data.waveCount !== undefined) stats.push(`${data.waveCount} Waves`);
-    
-    const context = [
-      data.category ? `in ${data.category}` : "",
-      data.orgName ? `from ${data.orgName}` : ""
-    ].filter(Boolean).join(" ");
-    
-    if (context || stats.length > 0) {
-      const statsStr = stats.length > 0 ? ` • ${stats.join(" • ")}` : "";
-      descriptionText = `A ping ${context}${statsStr} — ${descriptionText}`;
-    }
+  const stats = [];
+  if (data.surgeCount !== undefined) stats.push(`${data.surgeCount} ${data.surgeCount === 1 ? 'Surge' : 'Surges'}`);
+  if (data.waveCount !== undefined) stats.push(`${data.waveCount} ${data.waveCount === 1 ? 'Wave' : 'Waves'}`);
+  if (data.commentCount !== undefined) stats.push(`${data.commentCount} ${data.commentCount === 1 ? 'Comment' : 'Comments'}`);
+  
+  let entityLabel = data.type; // "ping", "wave", "comment", "feed"
+  entityLabel = entityLabel.charAt(0).toUpperCase() + entityLabel.slice(1);
+
+  const context = [
+    data.category ? `in ${data.category}` : "",
+    data.orgName ? `from ${data.orgName}` : ""
+  ].filter(Boolean).join(" ");
+  
+  const statsStr = stats.length > 0 ? ` • ${stats.join(" • ")}` : "";
+  const prefix = context ? `${entityLabel} ${context}${statsStr}` : `${entityLabel}${statsStr}`;
+  
+  if (prefix) {
+    descriptionText = `${prefix} — ${descriptionText}`;
   }
+
 
   // Trim the final description to 150 characters so it fits social previews cleanly
   const maxDescLength = 150;
