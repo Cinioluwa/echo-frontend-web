@@ -177,7 +177,7 @@ export function calculatePingBadge(
   }
 
   // Priority 3: Resolved (Amber)
-  if (ping.progressStatus === "RESOLVED") {
+  if (ping.progressStatus === "RESOLVED" || !!ping.resolvedAt) {
     return {
       type: "RESOLVED",
       label: "Resolved",
