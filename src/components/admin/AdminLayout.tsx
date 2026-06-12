@@ -3,7 +3,7 @@ import NavBar from "../NavBar";
 
 const AdminLayout = () => {
   return (
-    <div className="block md:fixed">
+    <div className="relative md:fixed z-50">
       {/* Top NavBar — fixed on desktop, static on mobile */}
       <header className="z-20 md:hidden w-screen ">
         <nav>
