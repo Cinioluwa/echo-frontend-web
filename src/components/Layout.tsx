@@ -103,7 +103,7 @@ const Layout = () => {
 
     // Optimistic update: store previous state in case we need to revert
     const previousPing = ping;
-    const optimisticPing = { ...ping, resolvedAt: new Date().toISOString() };
+    const optimisticPing = { ...ping, resolvedAt: new Date().toISOString(), progressStatus: "RESOLVED" as const };
 
     setIsResolvingPing(true);
     setResolveError(null);
