@@ -45,7 +45,7 @@ const ClaimSpaceBanner = ({
     <div className="bg-[#FEF5EA] rounded-[13px] w-full relative">
       {/* ── Mobile layout (column: text → buttons row) ── */}
       {/* Figma ref: 4175:12497 — 367×92px, text at top, two buttons side-by-side, X at top-right */}
-      <div className="flex md:hidden  px-5 py-[25px] gap-[13px]">
+      <div className="flex flex-col md:hidden  px-5 py-[25px] gap-[13px]">
         {/* X dismiss — absolute top-right */}
         <button
           onClick={handleDismiss}

@@ -13,6 +13,7 @@ import { lazy, Suspense, type ComponentType } from "react";
 import { createBrowserRouter, Navigate } from "react-router-dom";
 import LoadingFallback from "./auth/LoadingFallback";
 import AdminRoute from "./auth/AdminRoute";
+import SuperAdminRoute from "./auth/SuperAdminRoute";
 import ProtectedRoute from "./auth/ProtectedRoute";
 import ProfileRedirect from "./auth/ProfileRedirect";
 import Layout from "./Layout";
@@ -100,6 +101,14 @@ const UserNotification = lazyWithRetry(() => import("../pages/UserNotification")
 const AdminProfile = lazyWithRetry(() => import("../pages/admin/AdminProfile"));
 const AdminAccount = lazyWithRetry(() => import("../pages/admin/AdminAccount"));
 const AdminNotification = lazyWithRetry(() => import("../pages/admin/AdminNotification"));
+
+// Lazy load Super Admin pages
+const SuperAdminLayout = lazyWithRetry(() => import("./super-admin/SuperAdminLayout"));
+const SuperAdminDashboard = lazyWithRetry(() => import("../pages/super-admin/SuperAdminDashboard"));
+const SuperAdminOrganizations = lazyWithRetry(() => import("../pages/super-admin/SuperAdminOrganizations"));
+const SuperAdminUsers = lazyWithRetry(() => import("../pages/super-admin/SuperAdminUsers"));
+const SuperAdminMaintenance = lazyWithRetry(() => import("../pages/super-admin/SuperAdminMaintenance"));
+
 
 // Lazy load error page
 const ErrorPage = lazyWithRetry(() => import("../pages/ErrorPage"));
@@ -315,6 +324,39 @@ const router = createBrowserRouter([
       },
     ],
   },
+
+  // Super Admin routes
+  {
+    path: "/super-admin",
+    element: (
+      <SuperAdminRoute>
+        {withSuspense(SuperAdminLayout)}
+      </SuperAdminRoute>
+    ),
+    children: [
+      {
+        path: "dashboard",
+        element: withSuspense(SuperAdminDashboard),
+      },
+      {
+        path: "organizations",
+        element: withSuspense(SuperAdminOrganizations),
+      },
+      {
+        path: "users",
+        element: withSuspense(SuperAdminUsers),
+      },
+      {
+        path: "maintenance",
+        element: withSuspense(SuperAdminMaintenance),
+      },
+      {
+        path: "",
+        element: <Navigate to="dashboard" replace />,
+      },
+    ],
+  },
+
 
   // Catch-all route for 404 and unmatched paths
   {
