@@ -1,42 +1,127 @@
-import React from "react";
-import { Search, ChevronDown, ChevronRight, ChevronLeft } from "lucide-react";
-
-const MOCK_USERS = [
-  { id: 1, name: "Emmanuel Smith", email: "e.smith@covenantuniversity.edu.ng", institution: "Covenant University", role: "STUDENT", verified: true, joinDate: "24/10/2023" },
-  { id: 2, name: "Sarah Johnson", email: "s.johnson@babcock.edu.ng", institution: "Babcock University", role: "LEADER", verified: true, joinDate: "25/10/2023" },
-  { id: 3, name: "Michael Obi", email: "m.obi@unilag.edu.ng", institution: "University of Lagos", role: "STUDENT", verified: false, joinDate: "26/10/2023" },
-  { id: 4, name: "Jessica Adeleke", email: "j.adeleke@oauife.edu.ng", institution: "Obafemi Awolowo", role: "ADMIN", verified: true, joinDate: "20/10/2023" },
-  { id: 5, name: "David Ojo", email: "d.ojo@abu.edu.ng", institution: "Ahmadu Bello Univ.", role: "STUDENT", verified: true, joinDate: "21/10/2023" },
-  { id: 6, name: "Blessing Okafor", email: "b.okafor@ui.edu.ng", institution: "University of Ibadan", role: "LEADER", verified: true, joinDate: "22/10/2023" },
-];
+import React, { useState, useEffect, useCallback } from "react";
+import { Search, ChevronRight, ChevronLeft } from "lucide-react";
+import { superAdminService } from "../../api/services/super-admin.service";
+import type { SuperAdminUser } from "../../api/types/admin.types";
 
 const SuperAdminUsers: React.FC = () => {
+  const [users, setUsers] = useState<SuperAdminUser[]>([]);
+  const [total, setTotal] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
+  const [search, setSearch] = useState("");
+  const [roleFilter, setRoleFilter] = useState<string>("");
+  const [statusFilter, setStatusFilter] = useState<string>("");
+  const [actionLoading, setActionLoading] = useState<number | null>(null);
+
+  const fetchUsers = useCallback(async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const result = await superAdminService.getUsers({
+        page,
+        limit,
+        search: search || undefined,
+        role: roleFilter || undefined,
+        status: statusFilter || undefined,
+      });
+      setUsers(result.users);
+      setTotal(result.total);
+    } catch (err: any) {
+      setError(err?.response?.data?.error || err.message || "Failed to load users");
+    } finally {
+      setLoading(false);
+    }
+  }, [page, limit, search, roleFilter, statusFilter]);
+
+  useEffect(() => {
+    fetchUsers();
+  }, [fetchUsers]);
+
+  const handleBan = async (id: number) => {
+    try {
+      setActionLoading(id);
+      await superAdminService.updateUserStatus(id, "PENDING");
+      await fetchUsers();
+    } catch (err: any) {
+      setError(err?.response?.data?.error || "Failed to update user status");
+    } finally {
+      setActionLoading(null);
+    }
+  };
+
+  const handleUnban = async (id: number) => {
+    try {
+      setActionLoading(id);
+      await superAdminService.updateUserStatus(id, "ACTIVE");
+      await fetchUsers();
+    } catch (err: any) {
+      setError(err?.response?.data?.error || "Failed to update user status");
+    } finally {
+      setActionLoading(null);
+    }
+  };
+
+  const handleRoleChange = async (id: number) => {
+    const newRole = prompt("Enter new role (USER, REPRESENTATIVE, ADMIN, SUPER_ADMIN):");
+    if (!newRole || !["USER", "REPRESENTATIVE", "ADMIN", "SUPER_ADMIN"].includes(newRole)) return;
+    try {
+      setActionLoading(id);
+      await superAdminService.updateUserRole(id, newRole as any);
+      await fetchUsers();
+    } catch (err: any) {
+      setError(err?.response?.data?.error || "Failed to update role");
+    } finally {
+      setActionLoading(null);
+    }
+  };
+
+  const totalPages = Math.ceil(total / limit);
+
   return (
     <div className="bg-white rounded-2xl shadow-sm border border-gray-100 flex flex-col h-full overflow-hidden">
-      {/* Header Filters */}
-      <div className="p-6 border-b border-gray-100 flex items-center justify-between gap-4">
+      <div className="p-6 border-b border-gray-100 flex items-center justify-between gap-4 flex-wrap">
         <div className="flex-1 max-w-md relative">
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
           <input
             type="text"
             placeholder="Search Users"
+            value={search}
+            onChange={(e) => { setSearch(e.target.value); setPage(1); }}
             className="w-full pl-10 pr-4 py-2 bg-gray-50 border border-gray-200 rounded-lg outline-none focus:border-[#f49b31] transition-colors"
           />
         </div>
-        <div className="flex items-center gap-4">
-          <button className="flex items-center gap-2 px-4 py-2 border border-gray-200 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">
-            Role <ChevronDown size={16} />
-          </button>
-          <button className="flex items-center gap-2 px-4 py-2 border border-gray-200 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">
-            Institution <ChevronDown size={16} />
-          </button>
-          <button className="flex items-center gap-2 px-4 py-2 border border-gray-200 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">
-            Status <ChevronDown size={16} />
-          </button>
+        <div className="flex items-center gap-4 flex-wrap">
+          <select
+            value={roleFilter}
+            onChange={(e) => { setRoleFilter(e.target.value); setPage(1); }}
+            className="px-4 py-2 border border-gray-200 rounded-lg text-sm outline-none"
+          >
+            <option value="">All Roles</option>
+            <option value="USER">User</option>
+            <option value="REPRESENTATIVE">Representative</option>
+            <option value="ADMIN">Admin</option>
+            <option value="SUPER_ADMIN">Super Admin</option>
+          </select>
+          <select
+            value={statusFilter}
+            onChange={(e) => { setStatusFilter(e.target.value); setPage(1); }}
+            className="px-4 py-2 border border-gray-200 rounded-lg text-sm outline-none"
+          >
+            <option value="">All Status</option>
+            <option value="ACTIVE">Active</option>
+            <option value="PENDING">Pending</option>
+          </select>
         </div>
       </div>
 
-      {/* Table */}
+      {error && (
+        <div className="p-3 mx-6 mt-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
+          {error}
+        </div>
+      )}
+
       <div className="flex-1 overflow-auto">
         <table className="w-full text-left border-collapse">
           <thead>
@@ -45,46 +130,73 @@ const SuperAdminUsers: React.FC = () => {
               <th className="px-6 py-4 font-semibold">Email</th>
               <th className="px-6 py-4 font-semibold">Institution</th>
               <th className="px-6 py-4 font-semibold">Role</th>
-              <th className="px-6 py-4 font-semibold text-center">Verified Status</th>
+              <th className="px-6 py-4 font-semibold text-center">Status</th>
               <th className="px-6 py-4 font-semibold">Join Date</th>
               <th className="px-6 py-4 font-semibold text-center">Action</th>
             </tr>
           </thead>
           <tbody className="text-sm">
-            {MOCK_USERS.map((user) => (
+            {loading ? (
+              <tr>
+                <td colSpan={7} className="px-6 py-12 text-center text-gray-400">Loading...</td>
+              </tr>
+            ) : users.length === 0 ? (
+              <tr>
+                <td colSpan={7} className="px-6 py-12 text-center text-gray-400">No users found</td>
+              </tr>
+            ) : users.map((user) => (
               <tr key={user.id} className="border-b border-gray-50 hover:bg-gray-50 transition-colors">
                 <td className="px-6 py-4 flex items-center gap-3">
                   <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center overflow-hidden border border-gray-200">
-                    <img src={`https://ui-avatars.com/api/?name=${user.name}&background=random`} alt={user.name} className="w-full h-full object-cover" />
+                    <img src={`https://ui-avatars.com/api/?name=${user.firstName}+${user.lastName}&background=random`} alt={user.firstName} className="w-full h-full object-cover" />
                   </div>
-                  <span className="font-semibold text-gray-900">{user.name}</span>
+                  <span className="font-semibold text-gray-900">{user.firstName} {user.lastName}</span>
                 </td>
                 <td className="px-6 py-4 text-gray-600">{user.email}</td>
-                <td className="px-6 py-4 text-gray-600">{user.institution}</td>
+                <td className="px-6 py-4 text-gray-600">{user.organization?.name || "—"}</td>
                 <td className="px-6 py-4">
-                  <span className={`px-4 py-1.5 rounded-full block w-[88px] text-center text-xs font-semibold ${user.role === 'LEADER' ? 'bg-[#f49b31] text-white' :
+                  <span className={`px-4 py-1.5 rounded-full block w-[88px] text-center text-xs font-semibold ${
                     user.role === 'ADMIN' ? 'bg-[#fef5ea] border border-[#f49b31] text-black' :
-                      'bg-[#FCDCAE] text-black'
-                    }`}>
-                    {user.role === 'STUDENT' ? 'Student' : user.role === 'LEADER' ? 'Leader' : 'Admin'}
+                    user.role === 'SUPER_ADMIN' ? 'bg-purple-100 text-purple-700 border border-purple-300' :
+                    'bg-[#FCDCAE] text-black'
+                  }`}>
+                    {user.role === 'SUPER_ADMIN' ? 'Super Admin' : user.role.charAt(0) + user.role.slice(1).toLowerCase()}
                   </span>
                 </td>
-                <td className="px-6 py-4">
-                  <div className="flex items-center justify-center">
-                    {user.verified ? (
-                      <span className=" rounded-full flex items-center justify-center ">Yes</span>
-                    ) : (
-                      <span className=" rounded-full flex items-center justify-center">No</span>
-                    )}
-                  </div>
+                <td className="px-6 py-4 text-center">
+                  <span className={`px-2 py-0.5 rounded text-xs font-semibold ${
+                    user.status === 'ACTIVE' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'
+                  }`}>
+                    {user.status}
+                  </span>
                 </td>
-                <td className="px-6 py-4 text-gray-600">{user.joinDate}</td>
+                <td className="px-6 py-4 text-gray-600">
+                  {new Date(user.createdAt).toLocaleDateString()}
+                </td>
                 <td className="px-6 py-4">
                   <div className="flex items-center justify-center gap-2">
-                    <button className="px-4 py-1.5 text-xs font-semibold text-white bg-[#B91C1C] rounded-[8px] hover:bg-red-800 transition-colors">
-                      Ban
-                    </button>
-                    <button className="px-4 py-1.5 text-xs font-semibold text-black bg-[#FEF5EA] border border-[#FCA5A5] rounded-[8px] hover:bg-[#FDE8D1] transition-colors whitespace-nowrap">
+                    {user.status !== 'PENDING' ? (
+                      <button
+                        onClick={() => handleBan(user.id)}
+                        disabled={actionLoading === user.id}
+                        className="px-4 py-1.5 text-xs font-semibold text-white bg-[#B91C1C] rounded-[8px] hover:bg-red-800 transition-colors disabled:opacity-50"
+                      >
+                        Ban
+                      </button>
+                    ) : (
+                      <button
+                        onClick={() => handleUnban(user.id)}
+                        disabled={actionLoading === user.id}
+                        className="px-4 py-1.5 text-xs font-semibold text-white bg-green-600 rounded-[8px] hover:bg-green-700 transition-colors disabled:opacity-50"
+                      >
+                        Activate
+                      </button>
+                    )}
+                    <button
+                      onClick={() => handleRoleChange(user.id)}
+                      disabled={actionLoading === user.id}
+                      className="px-4 py-1.5 text-xs font-semibold text-black bg-[#FEF5EA] border border-[#FCA5A5] rounded-[8px] hover:bg-[#FDE8D1] transition-colors whitespace-nowrap disabled:opacity-50"
+                    >
                       Change Role
                     </button>
                   </div>
@@ -95,24 +207,49 @@ const SuperAdminUsers: React.FC = () => {
         </table>
       </div>
 
-      {/* Pagination */}
       <div className="p-4 border-t border-gray-100 flex items-center justify-between text-sm text-gray-500">
         <div className="flex items-center gap-2">
           <span>Showing</span>
-          <select className="border border-gray-200 rounded px-2 py-1 outline-none">
-            <option>10</option>
-            <option>20</option>
-            <option>50</option>
+          <select
+            value={limit}
+            onChange={(e) => { setLimit(Number(e.target.value)); setPage(1); }}
+            className="border border-gray-200 rounded px-2 py-1 outline-none"
+          >
+            <option value={10}>10</option>
+            <option value={20}>20</option>
+            <option value={50}>50</option>
           </select>
         </div>
-        <span>Showing 1 to 6 of 1,335 entries</span>
+        <span>Showing {Math.min((page - 1) * limit + 1, total)} to {Math.min(page * limit, total)} of {total} entries</span>
         <div className="flex items-center gap-2">
-          <button className="p-1 border border-gray-200 rounded text-gray-400 hover:text-gray-600 disabled:opacity-50"><ChevronLeft size={16} /></button>
-          <button className="px-3 py-1 border border-[#f49b31] bg-[#f49b31] text-white rounded font-medium">1</button>
-          <button className="px-3 py-1 border border-gray-200 rounded text-gray-600 hover:bg-gray-50 font-medium">2</button>
-          <button className="px-3 py-1 border border-gray-200 rounded text-gray-600 hover:bg-gray-50 font-medium">3</button>
-          <span>...</span>
-          <button className="p-1 border border-gray-200 rounded text-gray-400 hover:text-gray-600"><ChevronRight size={16} /></button>
+          <button
+            disabled={page <= 1}
+            onClick={() => setPage(p => p - 1)}
+            className="p-1 border border-gray-200 rounded text-gray-400 hover:text-gray-600 disabled:opacity-50"
+          >
+            <ChevronLeft size={16} />
+          </button>
+          {Array.from({ length: Math.min(totalPages, 5) }, (_, i) => (
+            <button
+              key={i + 1}
+              onClick={() => setPage(i + 1)}
+              className={`px-3 py-1 border rounded font-medium ${
+                page === i + 1
+                  ? "border-[#f49b31] bg-[#f49b31] text-white"
+                  : "border-gray-200 text-gray-600 hover:bg-gray-50"
+              }`}
+            >
+              {i + 1}
+            </button>
+          ))}
+          {totalPages > 5 && <span>...</span>}
+          <button
+            disabled={page >= totalPages}
+            onClick={() => setPage(p => p + 1)}
+            className="p-1 border border-gray-200 rounded text-gray-400 hover:text-gray-600 disabled:opacity-50"
+          >
+            <ChevronRight size={16} />
+          </button>
         </div>
       </div>
     </div>

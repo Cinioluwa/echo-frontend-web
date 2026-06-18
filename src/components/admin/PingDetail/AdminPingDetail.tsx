@@ -1,13 +1,15 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useParams } from "react-router-dom";
 import { TrendingUp, MessageSquare, Radio, CheckCircle2, ArrowLeft, Send } from "lucide-react";
 import { categoryImages } from "../../CategoryImages";
 import KPICard from "./KPICard";
 import CommentsPanel from "./CommentsPanel";
 import StatusTimeline from "./StatusTimeline";
-import RelatedPings from "./RelatedPings";
-import type { Author, PingComment, StatusEvent, RelatedPing } from "./types";
+import type { PingComment, StatusEvent, RelatedPing } from "./types";
 import { motion } from "framer-motion";
+import pingService from "../../../api/services/ping.service";
+import { adminService } from "../../../api/services/admin.service";
+import type { Ping } from "../../../api/types/index";
 
 export type AdminBadgeType =
     | "SURGING_NOW"
@@ -74,10 +76,8 @@ interface PingDetailData {
     id: string;
     title: string;
     content: string;
-    category: {
-        name: string;
-    };
-    author: Author;
+    category: { name: string };
+    author: { name: string; avatar: string; timestamp: string };
     badges: string[];
     mediaUrl?: string;
     surgeCount: number;
@@ -87,310 +87,206 @@ interface PingDetailData {
     comments: PingComment[];
     statusEvents: StatusEvent[];
     relatedPings: RelatedPing[];
+    officialResponse?: { content: string; createdAt: string; author: { firstName: string; lastName: string } } | null;
 }
 
 interface AdminPingDetailProps {
     pingId?: string;
-    ping?: PingDetailData;
 }
 
-// Mock data registry indexable by pingId
-const mockPings: Record<string, PingDetailData> = {
-    "1": {
-        id: "1",
-        title: "The wifi is too slow in library",
-        content: "Many students struggle with poor WiFi connectivity in certain areas on campus, which hinders their ability to access online resources, complete assignments and participate in online discussions.",
-        category: { name: "General" },
-        author: {
-            name: "Felix Oluwapelumi",
-            avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Felix",
-            timestamp: "Feb 29, 09:30 pm",
-        },
-        badges: ["SURGING_NOW", "LONG_OVERDUE"],
-        mediaUrl: "https://images.unsplash.com/photo-1518895949257-7621c3c786d7?w=800&h=450&fit=crop",
-        surgeCount: 264,
-        surgeDelta: "+28 today",
-        surgeDeltaIcon: "↑",
-        unresolvedFor: "12 days",
-        comments: [
-            {
-                id: "1",
-                author: "Ikomo Israel",
-                avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Ikomo",
-                text: "This school just wants us to suffer abeg. Simple wifi they cannot provide...",
-                likes: 3,
-                replies: 1,
-            },
-            {
-                id: "2",
-                author: "Simon Ty",
-                avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Simon",
-                text: "Looks like we do quick connect...",
-                likes: 2,
-                replies: 4,
-            },
-        ],
-        statusEvents: [
-            {
-                status: "Ping Posted",
-                timestamp: "Feb 28, 10:24pm",
-            },
-            {
-                status: "First Wave Proposed",
-                timestamp: "Feb 28 - by Friday",
-            },
-            {
-                status: "Surges cross 500",
-                timestamp: "Feb 28 - 2 days after posting",
-            },
-            {
-                status: "Acknowledged by Admin",
-                timestamp: "Feb 28 - Pending Resolution",
-            },
-        ],
-        relatedPings: [
-            {
-                id: "1",
-                category: "Chapel",
-                title: "Chapel will is slow",
-                waveCount: 205,
-            },
-            {
-                id: "2",
-                category: "Hall",
-                title: "The wifi in hall is not working",
-                waveCount: 139,
-            },
-            {
-                id: "3",
-                category: "Academic",
-                title: "Wifi working in EB",
-                waveCount: 87,
-            },
-        ]
-    },
-    "2": {
-        id: "2",
-        title: "No water in the halls since Monday",
-        content: "Deborah Hall has been without running water for over three days now. It is getting extremely difficult for students to maintain basic hygiene and clean their rooms.",
-        category: { name: "Hall" },
-        author: {
-            name: "Felix Oluwapelumi",
-            avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Felix",
-            timestamp: "Feb 28, 08:15 am",
-        },
-        badges: ["RISING_QUICKLY", "NEEDS_ATTENTION"],
-        mediaUrl: "https://images.unsplash.com/photo-1584269600464-37b1b58a9fe7?w=800&h=450&fit=crop",
-        surgeCount: 187,
-        surgeDelta: "+15 today",
-        surgeDeltaIcon: "↑",
-        unresolvedFor: "3 days",
-        comments: [
-            {
-                id: "1",
-                author: "Deborah Alao",
-                avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Deborah",
-                text: "No water since Monday! This is unacceptable. How do we bath or flush?",
-                likes: 12,
-                replies: 2,
-            }
-        ],
-        statusEvents: [
-            {
-                status: "Ping Posted",
-                timestamp: "Feb 28, 08:15am",
-            },
-            {
-                status: "Assigned to Maintenance",
-                timestamp: "Feb 28, 02:00pm",
-            }
-        ],
-        relatedPings: [
-            {
-                id: "4",
-                category: "Hall",
-                title: "Leaking pipe in Daniel Hall",
-                waveCount: 45,
-            }
-        ]
-    },
-    "3": {
-        id: "3",
-        title: "Shuttles to EIE library",
-        content: "We need more shuttle buses running to the EIE building during peak hours. The lines are too long and students are missing classes.",
-        category: { name: "Welfare" },
-        author: {
-            name: "Felix Oluwapelumi",
-            avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Felix",
-            timestamp: "Feb 27, 02:45 pm",
-        },
-        badges: ["WIDESPREAD", "SOLUTION_READY"],
-        mediaUrl: "https://images.unsplash.com/photo-1557223562-6c77ef16210f?w=800&h=450&fit=crop",
-        surgeCount: 95,
-        surgeDelta: "+5 today",
-        surgeDeltaIcon: "↑",
-        unresolvedFor: "5 days",
-        comments: [
-            {
-                id: "1",
-                author: "Joshua Daniels",
-                avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Joshua",
-                text: "Yes please, the sun is too hot to stand in that shuttle line for 30 minutes.",
-                likes: 8,
-                replies: 0,
-            }
-        ],
-        statusEvents: [
-            {
-                status: "Ping Posted",
-                timestamp: "Feb 27, 02:45pm",
-            },
-            {
-                status: "Solution Proposed",
-                timestamp: "Feb 28, 10:00am",
-            }
-        ],
-        relatedPings: [
-            {
-                id: "5",
-                category: "Welfare",
-                title: "Shuttle bus fares increase",
-                waveCount: 120,
-            }
-        ]
-    }
-};
-
 const iconVariants = {
-    initial: {
-        filter: "grayscale(1) brightness(1)",
-        willChange: "filter"
-    },
+    initial: { filter: "grayscale(1) brightness(1)", willChange: "filter" },
     hover: {
         filter: "grayscale(1) brightness(1.5)",
-        transition: {
-            duration: 0.1,
-        }
+        transition: { duration: 0.1 }
     }
 };
 
 const responseVariants = {
-    initial: {
-        height: 50,
-    },
+    initial: { height: 50 },
     active: {
         height: 90,
-        transition: {
-            duration: 0.1,
-        },
+        transition: { duration: 0.1 }
     }
 };
 
 const resposeButtonVariants = {
-    initial: {
-        opacity: 0,
-        scale: 0.95,
-        pointerEvents: 'none'
-    },
+    initial: { opacity: 0, scale: 0.95, pointerEvents: 'none' },
     active: {
         opacity: 1,
         scale: 1,
         pointerEvents: 'auto',
-        transition: {
-            duration: 0.1,
-            delay: 0.05
-        }
+        transition: { duration: 0.1, delay: 0.05 }
     }
 };
-const AdminPingDetail: React.FC<AdminPingDetailProps> = ({ pingId: propPingId, ping: propPing }) => {
+
+const AdminPingDetail: React.FC<AdminPingDetailProps> = ({ pingId: propPingId }) => {
     const routeParams = useParams<{ pingId: string }>();
     const pingId = propPingId || routeParams.pingId;
 
+    const [pingData, setPingData] = useState<Ping | null>(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
     const [isResponseActive, setIsResponseActive] = useState(false);
+    const [responseText, setResponseText] = useState("");
+    const [postingResponse, setPostingResponse] = useState(false);
 
-    // Resolve ping data dynamically
-    const pingData = propPing || (pingId ? mockPings[pingId] : null) || mockPings["1"];
+    const fetchPing = useCallback(async () => {
+        if (!pingId) return;
+        try {
+            setLoading(true);
+            const data = await pingService.getPingById(pingId);
+            setPingData(data);
+        } catch (err: any) {
+            setError(err?.response?.data?.error || err.message || "Failed to load ping");
+        } finally {
+            setLoading(false);
+        }
+    }, [pingId]);
+
+    useEffect(() => {
+        fetchPing();
+    }, [fetchPing]);
+
+    const mapPingToDetailData = (ping: Ping): PingDetailData => {
+        const ageMs = Date.now() - new Date(ping.createdAt).getTime();
+        const ageDays = Math.floor(ageMs / (1000 * 60 * 60 * 24));
+        const diff = ping.surgeCount - (ping._count?.surges ?? 0);
+
+        return {
+            id: ping.id.toString(),
+            title: ping.title,
+            content: ping.content,
+            category: { name: ping.category?.name || "General" },
+            author: {
+                name: ping.author ? `${ping.author.firstName} ${ping.author.lastName}` : (ping.anonymousAlias || "Anonymous"),
+                avatar: ping.author?.profilePicture || `https://ui-avatars.com/api/?name=${ping.author?.firstName || "A"}+${ping.author?.lastName || "U"}&background=random`,
+                timestamp: new Date(ping.createdAt).toLocaleDateString(),
+            },
+            badges: ping.surgeCount > 100 ? ["SURGING_NOW"] : [],
+            mediaUrl: ping.media?.[0]?.url,
+            surgeCount: ping.surgeCount,
+            surgeDelta: diff > 0 ? `+${diff} today` : undefined,
+            surgeDeltaIcon: diff > 0 ? "↑" : undefined,
+            unresolvedFor: `${ageDays} day${ageDays !== 1 ? 's' : ''}`,
+            comments: (ping.comments || []).map((c: any) => ({
+                id: c.id?.toString() || Math.random().toString(),
+                author: c.author ? `${c.author.firstName} ${c.author.lastName}` : "Anonymous",
+                avatar: c.author?.profilePicture || `https://ui-avatars.com/api/?name=${c.author?.firstName || "A"}+${c.author?.lastName || "U"}&background=random`,
+                text: c.content || "",
+                likes: c.surgeCount || 0,
+                replies: c.replyCount || 0,
+            })),
+            statusEvents: [
+                { status: "Ping Posted", timestamp: new Date(ping.createdAt).toLocaleString() },
+                ...((ping as any).acknowledgedAt ? [{ status: "Acknowledged by Admin", timestamp: new Date((ping as any).acknowledgedAt).toLocaleString() }] : []),
+                ...(ping.resolvedAt ? [{ status: "Resolved", timestamp: new Date(ping.resolvedAt).toLocaleString() }] : []),
+            ],
+            relatedPings: [],
+            officialResponse: (ping as any).officialResponse ? {
+                content: (ping as any).officialResponse.content,
+                createdAt: (ping as any).officialResponse.createdAt,
+                author: (ping as any).officialResponse.author,
+            } : null,
+        };
+    };
 
     const handleGoBack = () => {
         window.history.back();
     };
 
-    // Category name and icon lookup
-    const categoryName = pingData.category?.name || "General";
-    const categoryIcon = categoryImages[categoryName] || categoryImages.General;
+    const handlePostResponse = async () => {
+        if (!responseText.trim() || !pingId) return;
+        try {
+            setPostingResponse(true);
+            await adminService.createOfficialResponse(parseInt(pingId), {
+                content: responseText.trim(),
+            });
+            setResponseText("");
+            setIsResponseActive(false);
+            await fetchPing();
+        } catch (err: any) {
+            setError(err?.response?.data?.error || "Failed to post response");
+        } finally {
+            setPostingResponse(false);
+        }
+    };
 
-    const handleResponseHover = () => {
-        setIsResponseActive(true);
-    };
-    const handleResponseLeave = (e: MouseEvent) => {
-        if (!e.target) return setIsResponseActive(true)
-        if (e.target === document.activeElement) return
-        setIsResponseActive(false)
-    };
+    if (loading) {
+        return (
+            <div className="m-0 md:ms-[230px] flex items-center justify-center h-[400px]">
+                <div className="animate-spin w-12 h-12 border-4 border-[#f49b31] border-t-transparent rounded-full" />
+            </div>
+        );
+    }
 
-    const handleResponseFocus = () => {
-        setIsResponseActive(true);
-    };
+    if (error) {
+        return (
+            <div className="m-0 md:ms-[230px] p-6">
+                <div className="p-4 bg-red-50 border border-red-200 rounded-lg text-red-700">
+                    {error}
+                    <button onClick={fetchPing} className="ml-2 underline">Retry</button>
+                </div>
+            </div>
+        );
+    }
 
-    const handleResponseFocusOut = () => {
-        setIsResponseActive(false);
-    };
+    if (!pingData) {
+        return (
+            <div className="m-0 md:ms-[230px] p-6">
+                <div className="p-4 bg-gray-50 border border-gray-200 rounded-lg text-gray-500">Ping not found</div>
+            </div>
+        );
+    }
+
+    const detail = mapPingToDetailData(pingData);
+    const categoryName = detail.category?.name || "General";
+    const categoryIcon = (categoryImages as Record<string, string>)[categoryName] || (categoryImages as Record<string, string>).General;
 
     return (
         <div className="m-0 md:ms-[230px] flex flex-col gap-4 sm:gap-6 items-start px-3 sm:px-6 py-6 sm:py-8 relative">
-            {/* Header */}
             <div className="flex items-center justify-between w-full mb-2">
                 <h1 className="font-poppins font-semibold text-[24px] sm:text-[28px] leading-normal text-black">
                     Ping Details
                 </h1>
             </div>
 
-            {/* Main Content Area */}
             <div className="flex flex-col lg:flex-row gap-4 sm:gap-6 w-full">
-                {/* Left/Center Section - Feed */}
                 <div className="flex-1 flex flex-col gap-4 sm:gap-6">
-                    {/* Navigation Bar */}
                     <div className="flex items-center justify-between w-full">
                         <button
                             onClick={handleGoBack}
                             className="bg-white hover:bg-[#fef5ea] border border-[#e0e0e0] rounded-[20px] px-4 sm:px-5 py-2 sm:py-2.5 flex items-center gap-2 transition-colors"
                         >
                             <ArrowLeft color="black" size={20} />
-                            <p className="font-poppins font-semibold text-[12px] sm:text-[13px] text-black">
-                                Go back
-                            </p>
+                            <p className="font-poppins font-semibold text-[12px] sm:text-[13px] text-black">Go back</p>
                         </button>
-                        {/* Export Button */}
                         <motion.button
                             className="border border-[#f49b31] rounded-lg px-3 sm:px-[15px] py-2 sm:py-[9px] flex items-center gap-1 sm:gap-2 hover:bg-[#F49B31] text-[#f49b31] hover:text-white transition-colors text-xs sm:text-[12px]"
                             whileHover="hover"
                         >
                             <motion.img src="/assets/icon/Export.svg" alt="Export Icon" className="w-[13px] h-[13px]" variants={iconVariants} />
-                            <span className="font-medium hidden sm:inline">
-                                Export
-                            </span>
+                            <span className="font-medium hidden sm:inline">Export</span>
                         </motion.button>
                     </div>
 
-                    {/* Ping Card */}
                     <div className="bg-white rounded-[10px] p-4 sm:p-5 flex flex-col gap-3 sm:gap-4">
-                        {/* Header */}
                         <div className="flex flex-col sm:flex-row sm:items-start gap-3 sm:gap-4 pb-3 sm:pb-4 border-b border-[#e0e0e0]">
                             <img
-                                src={pingData.author.avatar}
-                                alt={pingData.author.name}
+                                src={detail.author.avatar}
+                                alt={detail.author.name}
                                 className="w-[45px] sm:w-[53px] h-[45px] sm:h-[53px] rounded-full object-cover shrink-0"
                             />
                             <div className="flex-1 flex flex-col gap-1">
                                 <p className="font-poppins font-semibold text-[13px] sm:text-[15px] text-black">
-                                    {pingData.author.name}
+                                    {detail.author.name}
                                 </p>
                                 <p className="font-poppins font-medium text-[11px] sm:text-[13px] text-[#8b8e8d]">
-                                    {pingData.author.timestamp}
+                                    {detail.author.timestamp}
                                 </p>
                             </div>
                             <div className="flex items-center gap-2 flex-wrap sm:flex-nowrap">
-                                {pingData.badges?.map((badgeKey: string) => {
+                                {detail.badges?.map((badgeKey: string) => {
                                     const badge = badgeConfigs[badgeKey as AdminBadgeType];
                                     if (!badge) return null;
                                     return (
@@ -406,90 +302,78 @@ const AdminPingDetail: React.FC<AdminPingDetailProps> = ({ pingId: propPingId, p
                             </div>
                         </div>
 
-                        {/* Category */}
                         <div className="flex items-center gap-2">
                             {categoryIcon ? (
-                                <img src={categoryIcon} alt={categoryName} className="w-[14px] h-[14px] object-contain" />
+                                <img src={categoryIcon} alt={categoryName} className="w-3.5 h-3.5 object-contain" />
                             ) : (
                                 <span>📁</span>
                             )}
-                            <p className="font-poppins font-medium text-[12px] sm:text-[14px] text-[#626665]">
-                                {categoryName}
-                            </p>
+                            <p className="font-poppins font-medium text-[12px] sm:text-[14px] text-[#626665]">{categoryName}</p>
                         </div>
 
-                        {/* Title */}
-                        <h2 className="font-poppins font-semibold text-[15px] sm:text-[16px] text-black">
-                            {pingData.title}
-                        </h2>
+                        <h2 className="font-poppins font-semibold text-[15px] sm:text-[16px] text-black">{detail.title}</h2>
+                        <p className="font-poppins font-medium text-[12px] sm:text-[14px] text-[#626665] text-justify leading-relaxed">{detail.content}</p>
 
-                        {/* Body */}
-                        <p className="font-poppins font-medium text-[12px] sm:text-[14px] text-[#626665] text-justify leading-relaxed">
-                            {pingData.content}
-                        </p>
-
-                        {/* Image */}
-                        {pingData.mediaUrl && (
+                        {detail.mediaUrl && (
                             <div className="bg-black rounded-lg overflow-hidden aspect-video">
-                                <img
-                                    src={pingData.mediaUrl}
-                                    alt="Ping content"
-                                    className="w-full h-full object-cover"
-                                />
+                                <img src={detail.mediaUrl} alt="Ping content" className="w-full h-full object-cover" />
                             </div>
                         )}
                     </div>
 
-                    {/* Official Response Section */}
                     <div className="bg-white rounded-[10px] p-4 sm:p-5 flex flex-col gap-3">
                         <h3 className="font-poppins font-semibold text-[14px] sm:text-[16px] text-black">
                             Official Response
                         </h3>
-                        <div
-                            className="relative flex flex-col gap-2 overflow-hidden "
-                        >
-                            <motion.textarea
-                                variants={responseVariants}
-                                onHoverStart={handleResponseHover}
-                                onHoverEnd={handleResponseLeave}
-                                onFocus={handleResponseFocus}
-                                onBlur={handleResponseFocusOut}
-                                animate={isResponseActive ? "active" : "initial"}
-                                placeholder="Post an update visible to all students"
-                                className="h-[50px] resize-none border border-[#ffc37b] rounded-[20px] ps-4 pe-[170px] py-3  font-poppins font-medium text-[12px] sm:text-[14px] placeholder-[#9e9e9e] "
-                            />
-                            <motion.button
-                                variants={resposeButtonVariants}
-                                animate={isResponseActive ? "active" : "initial"}
-                                className="absolute right-1 bottom-1 bg-[#fef5ea] hover:bg-[#fef0e0] border border-[#f49b31] rounded-[20px] px-4 py-2 flex items-center justify-center gap-2 font-poppins font-bold text-[11px] sm:text-[12px] uppercase text-[#f49b31]"
-                            >
-                                <Send /> Post response
-                            </motion.button>
-                        </div>
+
+                        {detail.officialResponse ? (
+                            <div className="bg-[#fef5ea] border border-[#f49b31] rounded-[10px] p-4">
+                                <div className="flex items-center gap-2 mb-2">
+                                    <span className="font-poppins font-semibold text-[13px] text-[#f49b31]">
+                                        {detail.officialResponse.author.firstName} {detail.officialResponse.author.lastName}
+                                    </span>
+                                    <span className="text-[#8b8e8d] text-[11px]">
+                                        {new Date(detail.officialResponse.createdAt).toLocaleDateString()}
+                                    </span>
+                                </div>
+                                <p className="font-poppins text-[13px] text-[#212121]">{detail.officialResponse.content}</p>
+                            </div>
+                        ) : (
+                            <div className="relative flex flex-col gap-2 overflow-hidden">
+                                <motion.textarea
+                                    variants={responseVariants}
+                                    onHoverStart={() => setIsResponseActive(true)}
+                                    onHoverEnd={() => !responseText && setIsResponseActive(false)}
+                                    onFocus={() => setIsResponseActive(true)}
+                                    onBlur={() => !responseText && setIsResponseActive(false)}
+                                    animate={isResponseActive ? "active" : "initial"}
+                                    value={responseText}
+                                    onChange={(e) => setResponseText(e.target.value)}
+                                    placeholder="Post an update visible to all students"
+                                    className="h-[50px] resize-none border border-[#ffc37b] rounded-[20px] ps-4 pe-[170px] py-3 font-poppins font-medium text-[12px] sm:text-[14px] placeholder-[#9e9e9e] outline-none focus:border-[#f49b31]"
+                                />
+                                <motion.button
+                                    variants={resposeButtonVariants}
+                                    animate={isResponseActive ? "active" : "initial"}
+                                    onClick={handlePostResponse}
+                                    disabled={postingResponse || !responseText.trim()}
+                                    className="absolute right-1 bottom-1 bg-[#fef5ea] hover:bg-[#fef0e0] border border-[#f49b31] rounded-[20px] px-4 py-2 flex items-center justify-center gap-2 font-poppins font-bold text-[11px] sm:text-[12px] uppercase text-[#f49b31] disabled:opacity-50"
+                                >
+                                    <Send /> {postingResponse ? "..." : "Post response"}
+                                </motion.button>
+                            </div>
+                        )}
                     </div>
 
-                    {/* KPI Cards */}
                     <div className="flex flex-col sm:flex-row gap-3 w-full">
-                        <KPICard
-                            icon="⚡"
-                            label="Surge count"
-                            value={pingData.surgeCount}
-                            delta={pingData.surgeDelta}
-                            deltaIcon={pingData.surgeDeltaIcon}
-                        />
-                        <KPICard
-                            icon=""
-                            label="Unresolved For"
-                            value={pingData.unresolvedFor}
-                        />
+                        <KPICard icon="⚡" label="Surge count" value={detail.surgeCount} delta={detail.surgeDelta} deltaIcon={detail.surgeDeltaIcon} />
+                        <KPICard icon="" label="Unresolved For" value={detail.unresolvedFor} />
                     </div>
                 </div>
 
-                {/* Right Section - Sidebar */}
                 <div className="w-full lg:w-[320px] sm:w-[300px] flex flex-col gap-3 sm:gap-4">
-                    <CommentsPanel comments={pingData.comments || []} />
-                    <StatusTimeline events={pingData.statusEvents || []} />
-                    <RelatedPings pings={pingData.relatedPings || []} />
+                    <CommentsPanel comments={detail.comments || []} />
+                    <StatusTimeline events={detail.statusEvents || []} />
                 </div>
             </div>
         </div>

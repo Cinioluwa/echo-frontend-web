@@ -56,12 +56,12 @@ const BADGE_COLORS = {
  *
  * Hierarchy (highest to lowest priority):
  * 1. Community Pick (Yellow) - if this wave has the highest surge count for its Ping
- * 2. Posted (Grey)
- * 3. Under Review (Green)
- * 4. Approved (Green)
- * 5. In Progress (Amber)
- * 6. Rejected (Red)
- * 7. Completed (Orange)
+ * 2. Rejected (Red)
+ * 3. Completed (Orange)
+ * 4. In Progress (Amber)
+ * 5. Approved (Green)
+ * 6. Under Review (Green)
+ * 7. Posted (Grey)
  *
  * @param wave - The Wave to calculate badge for
  * @param allWavesForPing - All waves for this wave's parent Ping (needed for Community Pick calculation)
@@ -91,34 +91,6 @@ export function calculateWaveBadge(
   // Priority 2-7: Status-based badges
   // Only one status can be active at a time, so return based on status
   switch (wave.status) {
-    case "POSTED":
-      return {
-        type: "POSTED",
-        label: "Posted",
-        color: BADGE_COLORS.GREY,
-      };
-
-    case "UNDER_REVIEW":
-      return {
-        type: "UNDER_REVIEW",
-        label: "Under Review",
-        color: BADGE_COLORS.GREEN,
-      };
-
-    case "APPROVED":
-      return {
-        type: "APPROVED",
-        label: "Approved",
-        color: BADGE_COLORS.GREEN,
-      };
-
-    case "IN_PROGRESS":
-      return {
-        type: "IN_PROGRESS",
-        label: "In Progress",
-        color: BADGE_COLORS.AMBER,
-      };
-
     case "REJECTED":
       return {
         type: "REJECTED",
@@ -133,6 +105,33 @@ export function calculateWaveBadge(
         color: BADGE_COLORS.ORANGE,
       };
 
+    case "IN_PROGRESS":
+      return {
+        type: "IN_PROGRESS",
+        label: "In Progress",
+        color: BADGE_COLORS.AMBER,
+      };
+
+    case "APPROVED":
+      return {
+        type: "APPROVED",
+        label: "Approved",
+        color: BADGE_COLORS.GREEN,
+      };
+
+    case "UNDER_REVIEW":
+      return {
+        type: "UNDER_REVIEW",
+        label: "Under Review",
+        color: BADGE_COLORS.GREEN,
+      };
+
+    case "POSTED":
+      return {
+        type: "POSTED",
+        label: "Posted",
+        color: BADGE_COLORS.GREY,
+      };
     // Unsupported status or "ON_HOLD"
     default:
       return null;

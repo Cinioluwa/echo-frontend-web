@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import StatCard from "./StatCard";
 import SurgeAlertCard, { type SurgeItem } from "./SurgeAlertCard";
 import FollowUpQueueCard, { type FollowUpItem } from "./FollowUpQueueCard";
@@ -6,127 +6,12 @@ import IssuesByCategoryCard, { type CategoryData } from "./IssuesByCategoryCard"
 import { motion } from "framer-motion";
 import AdminHeader from "../AdminHeader";
 import AdminMobileMenu from "../AdminMobileMenu";
+import { adminService } from "../../../api/services/admin.service";
 
 interface AdminSoundboardProps {
     onPublishAnnouncement?: () => void;
     onExport?: () => void;
 }
-
-// Mock data - replace with actual API calls
-const mockSurgeItems: SurgeItem[] = [
-    {
-        id: "1",
-        title: "The wifi is too slow in library",
-        velocity: "+42 surges/hr",
-        category: "General",
-    },
-    {
-        id: "2",
-        title: "No water in the halls since Monday",
-        velocity: "+29 surges/hr",
-        category: "Hall",
-    },
-    {
-        id: "3",
-        title: "Shuttles to EIE",
-        velocity: "+22 surges/hr",
-        category: "Welfare",
-    },
-];
-
-const mockFollowUpItems: FollowUpItem[] = [
-    {
-        id: "1",
-        title: "Approved waves not being implemented",
-        description: "7 approved waves require progression",
-        count: 7,
-        iconColor: "red",
-        icon: "/assets/icon/not-implemented.svg"
-    },
-    {
-        id: "2",
-        title: "Waves awaiting approval",
-        description: "4 waves marked for review need a decision",
-        count: 4,
-        iconColor: "red",
-        icon: "/assets/icon/awaiting-approval.svg"
-    },
-    {
-        id: "3",
-        title: "Acknowledged pings stalling",
-        description: "3 pings acknowledged, no update for 14+ days",
-        count: 3,
-        iconColor: "green",
-        icon: "/assets/icon/acknowledged-pings.svg"
-    },
-];
-
-const mockCategories: CategoryData[] = [
-    {
-        name: "General",
-        resolved: 79,
-        openCount: 14,
-        issues: [
-            {
-                id: "1",
-                title: "Wifi too slow across campus",
-                postedTime: "Posted 1d ago",
-                count: 1204,
-            },
-            {
-                id: "2",
-                title: "Bus schedule inconsistency",
-                postedTime: "Posted 1d ago",
-                count: 527,
-            },
-        ],
-    },
-    {
-        name: "Hall",
-        resolved: 30,
-        openCount: 23,
-        issues: [
-            {
-                id: "1",
-                title: "No water in Deborah Hall",
-                postedTime: "Posted 1d ago",
-                count: 842,
-            },
-            {
-                id: "2",
-                title: "Broken lockers in Daniel Hall",
-                postedTime: "Posted 1d ago",
-                count: 411,
-            },
-        ],
-    },
-    {
-        name: "Academics",
-        resolved: 67,
-        openCount: 9,
-        issues: [
-            {
-                id: "1",
-                title: "Library hours extended during finals",
-                postedTime: "Posted 1d ago",
-                count: 256,
-            },
-        ],
-    },
-    {
-        name: "Finance",
-        resolved: 85,
-        openCount: 3,
-        issues: [
-            {
-                id: "1",
-                title: "Student loan interest rate changes",
-                postedTime: "Posted 1d ago",
-                count: 345,
-            },
-        ],
-    },
-];
 
 const iconVariants = {
     initial: {
@@ -146,96 +31,245 @@ const AdminSoundboard: React.FC<AdminSoundboardProps> = ({
     onExport,
 }) => {
     const [openMenu, setOpenMenu] = useState(false);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+
+    // Data state
+    const [surgeItems, setSurgeItems] = useState<SurgeItem[]>([]);
+    const [surgeCount, setSurgeCount] = useState(0);
+    const [followUpItems, setFollowUpItems] = useState<FollowUpItem[]>([]);
+    const [pendingCount, setPendingCount] = useState(0);
+    const [categoryData, setCategoryData] = useState<CategoryData[]>([]);
+    const [resolutionRate, setResolutionRate] = useState({ value: "0%", badge: "" });
+    const [avgResolveTime, setAvgResolveTime] = useState({ value: "0 days", badge: "" });
+    const [overdue, setOverdue] = useState({ value: "0", badge: "" });
+
+    const fetchDashboardData = useCallback(async () => {
+        try {
+            setLoading(true);
+            setError(null);
+
+            const [overview, surging, priority, stalling, followUpQueue, issuesByCategory] = await Promise.all([
+                adminService.getOverview({ months: 1 }),
+                adminService.getSurgingIssues({ hours: 6, limit: 3 }),
+                adminService.getPriorityPings({ weeks: 1, limit: 3 }),
+                adminService.getStallingPings({ staleDays: 7, limit: 5 }),
+                adminService.getFollowUpQueue({ staleDays: 7 }).catch(() => null),
+                adminService.getIssuesByCategory().catch(() => null),
+            ]);
+
+            // Surge alerts
+            const surges: SurgeItem[] = surging.items.map((item) => ({
+                id: item.pingId.toString(),
+                title: item.title,
+                velocity: `+${item.currentRatePerHour}/hr`,
+                category: item.category?.name || "Uncategorized",
+            }));
+            setSurgeItems(surges);
+            setSurgeCount(surging.count);
+
+            // Follow-up queue (use dedicated endpoint if available, fallback to manual)
+            const followUps: FollowUpItem[] = [];
+            if (followUpQueue) {
+                if (followUpQueue.approvedWavesNotImplementing > 0) {
+                    followUps.push({
+                        id: "approved-waves",
+                        title: "Approved waves not being implemented",
+                        description: `${followUpQueue.approvedWavesNotImplementing} approved waves require progression`,
+                        count: followUpQueue.approvedWavesNotImplementing,
+                        iconColor: "green",
+                        icon: "/assets/icon/not-implemented.svg",
+                    });
+                }
+                if (followUpQueue.wavesAwaitingApproval > 0) {
+                    followUps.push({
+                        id: "awaiting-approval",
+                        title: "Waves awaiting approval",
+                        description: `${followUpQueue.wavesAwaitingApproval} waves need review`,
+                        count: followUpQueue.wavesAwaitingApproval,
+                        iconColor: "red",
+                        icon: "/assets/icon/awaiting-approval.svg",
+                    });
+                }
+                if (followUpQueue.acknowledgedPingsStalling > 0) {
+                    followUps.push({
+                        id: "acknowledged-stalling",
+                        title: "Acknowledged pings stalling",
+                        description: `${followUpQueue.acknowledgedPingsStalling} acknowledged pings need progression`,
+                        count: followUpQueue.acknowledgedPingsStalling,
+                        iconColor: "red",
+                        icon: "/assets/icon/acknowledged-pings.svg",
+                    });
+                }
+            } else {
+                if (priority.data.length > 0) {
+                    followUps.push({
+                        id: "priority",
+                        title: "High priority pings need attention",
+                        description: `${priority.data.length} pings with high engagement need review`,
+                        count: priority.data.length,
+                        iconColor: "red",
+                        icon: "/assets/icon/awaiting-approval.svg",
+                    });
+                }
+                if (stalling.count > 0) {
+                    followUps.push({
+                        id: "stalling",
+                        title: "In-progress pings stalling",
+                        description: `${stalling.count} pings not updated in ${stalling.staleDays}+ days`,
+                        count: stalling.count,
+                        iconColor: "red",
+                        icon: "/assets/icon/acknowledged-pings.svg",
+                    });
+                }
+                if (overview.stalledWavesCount > 0) {
+                    followUps.push({
+                        id: "stalled-waves",
+                        title: "Approved waves not being implemented",
+                        description: `${overview.stalledWavesCount} approved waves require progression`,
+                        count: overview.stalledWavesCount,
+                        iconColor: "green",
+                        icon: "/assets/icon/not-implemented.svg",
+                    });
+                }
+            }
+            setFollowUpItems(followUps);
+            setPendingCount(followUps.reduce((sum, i) => sum + i.count, 0));
+
+            // Category data (use dedicated endpoint if available, fallback to overview)
+            if (issuesByCategory) {
+                const cats: CategoryData[] = issuesByCategory.map((item) => ({
+                    name: item.categoryName,
+                    resolved: item.resolutionRate,
+                    openCount: item.openCount,
+                    issues: item.topPings.map((p) => ({
+                        id: p.id.toString(),
+                        title: p.title,
+                        postedTime: `Posted ${Math.floor((Date.now() - new Date(p.createdAt).getTime()) / 86400000)}d ago`,
+                        count: p.surgeCount,
+                    })),
+                }));
+                setCategoryData(cats);
+            } else {
+                const cats: CategoryData[] = overview.categoriesStats.map((stat) => ({
+                    name: stat.categoryName,
+                    resolved: stat.resolutionPercentage,
+                    openCount: stat.openCount,
+                    issues: [],
+                }));
+                setCategoryData(cats);
+            }
+
+            // Stat cards
+            setResolutionRate({
+                value: `${overview.summaryCards.resolutionRate.value}%`,
+                badge: `↑ ${overview.summaryCards.resolutionRate.deltaPercentagePoints}% this month`,
+            });
+            setAvgResolveTime({
+                value: `${overview.summaryCards.avgResolveTimeDays.value.toFixed(1)} days`,
+                badge: `↓ ${overview.summaryCards.avgResolveTimeDays.deltaDays.toFixed(1)}d improvement`,
+            });
+            setOverdue({
+                value: overview.summaryCards.unresolvedOlderThanDays.value.toString(),
+                badge: `↑ +${overview.summaryCards.unresolvedOlderThanDays.deltaAbsolute} this week`,
+            });
+
+        } catch (err: any) {
+            setError(err?.response?.data?.error || err.message || "Failed to load dashboard data");
+        } finally {
+            setLoading(false);
+        }
+    }, []);
+
+    useEffect(() => {
+        fetchDashboardData();
+    }, [fetchDashboardData]);
 
     return (
         <>
             <div className="flex min-h-screen bg-[#fae9d4] m-0 md:ms-[230px]" data-node-id="admin-soundboard-page">
-                {/* Main Content */}
                 <div className="flex-1 flex flex-col">
-                    {/* Top Bar */}
                     <div className="px-3 sm:px-5 pt-5 sm:pt-[30px] pb-3 sm:pb-5">
                         <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 sm:gap-0">
-                            {/* Title Section */}
                             <div className="flex flex-col gap-1 sm:gap-2">
                                 <h1 className="hidden md:block text-[#212121] font-semibold text-[24px] sm:text-[28px] leading-[26px] sm:leading-[30.8px] tracking-[-0.5px]">
                                     Soundboard
                                 </h1>
                                 <AdminHeader title="Soundboard" setOpenMenu={setOpenMenu} openMenu={openMenu} />
-                                <p className="text-[#5e5c58] font-medium text-[13px] sm:text-[15px] leading-4 sm:leading-[18px]">
-                                    Covenant University · Week of July 15  21, 2024
-                                </p>
                             </div>
 
-                            {/* Action Buttons */}
                             <div className="flex gap-2 flex-wrap sm:flex-nowrap">
-                                {/* Export Button */}
                                 <motion.button
                                     onClick={onExport}
                                     className="border border-[#f49b31] rounded-lg px-3 sm:px-[15px] py-2 sm:py-[9px] flex items-center gap-1 sm:gap-2 hover:bg-[#F49B31] text-[#f49b31] hover:text-white transition-colors text-xs sm:text-[12px]"
                                     whileHover="hover"
                                 >
                                     <motion.img src="/assets/icon/Export.svg" alt="Export Icon" className="w-[13px] h-[13px]" variants={iconVariants} />
-                                    <span className="font-medium hidden sm:inline">
-                                        Export
-                                    </span>
+                                    <span className="font-medium hidden sm:inline">Export</span>
                                 </motion.button>
 
-                                {/* Publish Announcement Button */}
                                 <button
                                     onClick={onPublishAnnouncement}
                                     className="bg-[#ffc37b] hover:bg-[#ffb347] border border-[#f49b31] rounded-lg px-3 sm:px-[15px] py-2 sm:py-[9px] flex items-center gap-1 sm:gap-2 transition-colors text-xs sm:text-[12px]"
                                 >
                                     <img src="/assets/icon/cross.svg" alt="Announcement Icon" className="w-[13px] h-[13px]" />
-                                    <span className="text-[#212121] font-medium hidden sm:inline">
-                                        Publish Announcement
-                                    </span>
+                                    <span className="text-[#212121] font-medium hidden sm:inline">Publish Announcement</span>
                                 </button>
                             </div>
                         </div>
                     </div>
 
-                    {/* Scrollable Content Area */}
                     <div className="flex-1 overflow-y-auto px-3 sm:px-5 py-5 sm:py-[30px]">
-                        <div className="flex flex-col gap-[30px] max-w-[1200px]">
-                            {/* Critical Section - Surge Alert and Follow-up Queue */}
-                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-                                <SurgeAlertCard
-                                    count={3}
-                                    items={mockSurgeItems}
-                                    className="lg:col-span-1"
-                                />
-                                <FollowUpQueueCard
-                                    items={mockFollowUpItems}
-                                    pendingCount={16}
-                                    className="lg:col-span-1"
-                                />
+                        {loading ? (
+                            <div className="flex items-center justify-center h-[400px]">
+                                <div className="animate-spin w-12 h-12 border-4 border-[#f49b31] border-t-transparent rounded-full" />
                             </div>
-
-                            {/* Stats Section */}
-                            <div className="flex flex-wrap sm:flex-nowrap gap-5 ">
-                                <StatCard
-                                    title="Resolution Rate"
-                                    value="64%"
-                                    subtitle="*Of pings resolved"
-                                    badge={{ label: "↑ 8% this month", color: "green" }}
-                                />
-                                <StatCard
-                                    title="Average Resolution Time"
-                                    value="3.2 days"
-                                    subtitle="*Days to resolve"
-                                    badge={{ label: "↓ 0.5d improvement", color: "green" }}
-                                />
-                                <StatCard
-                                    title="Overdue (>7D)"
-                                    value="38"
-                                    subtitle="*Need attention"
-                                    badge={{ label: "↑ +12 this week", color: "red" }}
-                                />
+                        ) : error ? (
+                            <div className="p-4 bg-red-50 border border-red-200 rounded-lg text-red-700 text-[13px]">
+                                {error}
+                                <button onClick={fetchDashboardData} className="ml-2 underline">Retry</button>
                             </div>
+                        ) : (
+                            <div className="flex flex-col gap-[30px] max-w-[1200px]">
+                                <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+                                    <SurgeAlertCard
+                                        count={surgeCount}
+                                        items={surgeItems}
+                                        className="lg:col-span-1"
+                                    />
+                                    <FollowUpQueueCard
+                                        items={followUpItems}
+                                        pendingCount={pendingCount}
+                                        className="lg:col-span-1"
+                                    />
+                                </div>
 
-                            {/* Issues by Category Section */}
-                            <IssuesByCategoryCard categories={mockCategories} />
-                        </div>
+                                <div className="flex flex-wrap sm:flex-nowrap gap-5">
+                                    <StatCard
+                                        title="Resolution Rate"
+                                        value={resolutionRate.value}
+                                        subtitle="*Of pings resolved"
+                                        badge={{ label: resolutionRate.badge, color: "green" }}
+                                    />
+                                    <StatCard
+                                        title="Average Resolution Time"
+                                        value={avgResolveTime.value}
+                                        subtitle="*Days to resolve"
+                                        badge={{ label: avgResolveTime.badge, color: "green" }}
+                                    />
+                                    <StatCard
+                                        title="Overdue (>7D)"
+                                        value={overdue.value}
+                                        subtitle="*Need attention"
+                                        badge={{ label: overdue.badge, color: "red" }}
+                                    />
+                                </div>
+
+                                {categoryData.length > 0 && (
+                                    <IssuesByCategoryCard categories={categoryData} />
+                                )}
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>

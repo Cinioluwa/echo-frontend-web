@@ -5,9 +5,12 @@ import type { ModerationItem as ModerationItemType } from "./types";
 interface ModerationListProps {
     items: ModerationItemType[];
     isLoading?: boolean;
+    onTakeAction?: (id: string) => void;
+    onDismiss?: (id: string) => void;
+    actionLoading?: boolean;
 }
 
-const ModerationList: React.FC<ModerationListProps> = ({ items, isLoading = false }) => {
+const ModerationList: React.FC<ModerationListProps> = ({ items, isLoading = false, onTakeAction, onDismiss, actionLoading }) => {
     if (isLoading) {
         return (
             <div className="flex items-center justify-center w-full h-[400px]">
@@ -34,7 +37,13 @@ const ModerationList: React.FC<ModerationListProps> = ({ items, isLoading = fals
     return (
         <div className="flex flex-col gap-4 sm:gap-6 w-full overflow-y-auto pr-2">
             {items.map((item) => (
-                <ModerationItem key={item.id} item={item} />
+                <ModerationItem
+                  key={item.id}
+                  item={item}
+                  onTakeAction={onTakeAction}
+                  onDismiss={onDismiss}
+                  actionLoading={actionLoading}
+                />
             ))}
         </div>
     );

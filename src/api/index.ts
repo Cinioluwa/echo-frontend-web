@@ -17,6 +17,7 @@ export { default as adminService } from "./services/admin.service";
 export { default as analyticsService } from "./services/analytics.service";
 export { default as representativeService } from "./services/representative.service";
 export { default as healthService } from "./services/health.service";
+export { default as superAdminService } from "./services/super-admin.service";
 
 // Types
 export * from "./types/index";

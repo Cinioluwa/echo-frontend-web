@@ -43,30 +43,45 @@ const getButtonStylesAndIcon = (label: string, variant?: string) => {
 
 const getStatusBadgeConfig = (status: string) => {
     switch (status) {
-        case "approved":
+        case "rejected":
             return {
-                label: "Approved",
-                dotUrl: "/assets/icon/dot-green.svg",
-            };
-        case "under-review":
-            return {
-                label: "Under Review",
+                label: "Rejected",
                 dotUrl: "/assets/icon/dot-yellow.svg",
-            };
-        case "implementing":
-            return {
-                label: "In Progress",
-                dotUrl: "/assets/icon/dot-blue.svg",
-            };
-        case "acknowledged":
-            return {
-                label: "Community Pick",
-                dotUrl: "/assets/icon/dot-purple.svg",
             };
         case "completed":
             return {
                 label: "Completed",
                 dotUrl: "/assets/icon/dot-green.svg",
+            };
+        case "in_progress":
+            return {
+                label: "In Progress",
+                dotUrl: "/assets/icon/dot-blue.svg",
+            };
+        case "approved":
+            return {
+                label: "Approved",
+                dotUrl: "/assets/icon/dot-green.svg",
+            };
+        case "under_review":
+            return {
+                label: "Under Review",
+                dotUrl: "/assets/icon/dot-green.svg",
+            };
+        case "posted":
+            return {
+                label: "Posted",
+                dotUrl: "/assets/icon/dot-yellow.svg",
+            };
+        case "acknowledged":
+            return {
+                label: "Acknowledged",
+                dotUrl: "/assets/icon/dot-green.svg",
+            };
+        case "resolved":
+            return {
+                label: "Resolved",
+                dotUrl: "/assets/icon/dot-blue.svg",
             };
         default:
             return {
@@ -88,10 +103,10 @@ const FollowUpItem: React.FC<FollowUpItemProps> = ({ item }) => {
             {item.status === "acknowledged" && item.pingAuthor ? (
                 /* Acknowledged Ping Detailed Header */
                 <div
-                    className="bg-[#ffc37b] border-b border-l border-r border-[#f49b31] border-solid flex flex-col md:flex-row items-start md:items-center justify-between gap-3 md:gap-0 pb-[9px] pl-3 pr-3 md:pl-[21px] md:pr-[11px] pt-[8px] relative rounded-tl-[10px] rounded-tr-[10px] shrink-0 w-full"
+                    className="bg-[#ffc37b] border-b border-l border-r border-[#f49b31] border-solid flex flex-col md:flex-row items-start md:items-center justify-between gap-3 md:gap-0 pb-[9px] pl-3 pr-3 md:pl-[21px] md:pr-[11px] pt-2 relative rounded-tl-[10px] rounded-tr-[10px] shrink-0 w-full"
                     data-node-id="5627:18000"
                 >
-                    <div className="flex gap-[16px] items-center shrink-0 max-w-full">
+                    <div className="flex gap-4 items-center shrink-0 max-w-full">
                         <img
                             src={item.pingAuthor.avatar}
                             alt={item.pingAuthor.name}
@@ -105,7 +120,7 @@ const FollowUpItem: React.FC<FollowUpItemProps> = ({ item }) => {
                             >
                                 {item.pingAuthor.name} · {item.pingAuthor.timestamp}
                             </span>
-                            <div className="flex gap-[10px] items-center w-full flex-wrap">
+                            <div className="flex gap-2.5 items-center w-full flex-wrap">
                                 <h3
                                     className="font-poppins font-semibold text-[14px] sm:text-[16px] leading-[19.5px] text-black truncate"
                                     data-node-id="5627:18007"
@@ -135,11 +150,11 @@ const FollowUpItem: React.FC<FollowUpItemProps> = ({ item }) => {
                     </div>
                     {/* Acknowledged Badge */}
                     <div
-                        className="bg-[#fefefe] border-[#626665] border-[1.5px] border-solid flex gap-[9px] items-center justify-center px-[16.5px] py-[6px] relative rounded-[23px] shrink-0 self-end md:self-auto"
+                        className="bg-[#fefefe] border-[#626665] border-[1.5px] border-solid flex gap-[9px] items-center justify-center px-[16.5px] py-1.5 relative rounded-[23px] shrink-0 self-end md:self-auto"
                         data-node-id="5627:18014"
                     >
                         <img
-                            src="/assets/icon/dot-yellow.svg"
+                            src="/assets/icon/dot-green.svg"
                             alt=""
                             className="w-[7.5px] h-[7.5px]"
                         />
@@ -196,7 +211,7 @@ const FollowUpItem: React.FC<FollowUpItemProps> = ({ item }) => {
 
                     {/* Status badge */}
                     <div
-                        className="bg-[#fefefe] border-[#626665] border-[1.5px] border-solid flex gap-[9px] items-center justify-center px-[16.5px] py-[6px] relative rounded-[23px] shrink-0"
+                        className="bg-[#fefefe] border-[#626665] border-[1.5px] border-solid flex gap-[9px] items-center justify-center px-[16.5px] py-1.5 relative rounded-[23px] shrink-0"
                         data-node-id="5701:15619"
                     >
                         <img
@@ -224,13 +239,13 @@ const FollowUpItem: React.FC<FollowUpItemProps> = ({ item }) => {
 
                 {/* Bottom section: Action buttons and wave count */}
                 <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0 relative shrink-0 w-full" data-node-id="5701:15624">
-                    <div className="flex gap-2 sm:gap-[10px] items-center flex-wrap" data-node-id="5701:15626">
+                    <div className="flex gap-2 sm:gap-2.5 items-center flex-wrap" data-node-id="5701:15626">
                         {item.actions.primary && (() => {
                             const { bgClass, iconUrl, iconSizeClass } = getButtonStylesAndIcon(item.actions.primary.label, item.actions.primary.variant);
                             return (
                                 <button
                                     onClick={item.actions.primary.onClick}
-                                    className={`flex gap-[10px] h-[39px] items-center justify-center px-[15px] py-[11px] rounded-[15px] font-poppins font-semibold text-[13px] leading-[0.94] uppercase transition-all whitespace-nowrap border-solid border ${bgClass}`}
+                                    className={`flex gap-2.5 h-[39px] items-center justify-center px-[15px] py-[11px] rounded-[15px] font-poppins font-semibold text-[13px] leading-[0.94] uppercase transition-all whitespace-nowrap border-solid border ${bgClass}`}
                                 >
                                     <img src={iconUrl} alt="" className={`${iconSizeClass} shrink-0`} />
                                     <span>{item.actions.primary.label}</span>
@@ -242,7 +257,7 @@ const FollowUpItem: React.FC<FollowUpItemProps> = ({ item }) => {
                             return (
                                 <button
                                     onClick={item.actions.secondary.onClick}
-                                    className={`flex gap-[10px] h-[39px] items-center justify-center px-[15px] py-[11px] rounded-[15px] font-poppins font-semibold text-[13px] leading-[0.94] uppercase transition-all whitespace-nowrap border-solid border ${bgClass}`}
+                                    className={`flex gap-2.5 h-[39px] items-center justify-center px-[15px] py-[11px] rounded-[15px] font-poppins font-semibold text-[13px] leading-[0.94] uppercase transition-all whitespace-nowrap border-solid border ${bgClass}`}
                                 >
                                     <img src={iconUrl} alt="" className={`${iconSizeClass} shrink-0`} />
                                     <span>{item.actions.secondary.label}</span>
@@ -254,7 +269,7 @@ const FollowUpItem: React.FC<FollowUpItemProps> = ({ item }) => {
                             return (
                                 <button
                                     onClick={item.actions.tertiary.onClick}
-                                    className={`flex gap-[10px] h-[39px] items-center justify-center px-[15px] py-[11px] rounded-[15px] font-poppins font-semibold text-[13px] leading-[0.94] uppercase transition-all whitespace-nowrap border-solid border ${bgClass}`}
+                                    className={`flex gap-2.5 h-[39px] items-center justify-center px-[15px] py-[11px] rounded-[15px] font-poppins font-semibold text-[13px] leading-[0.94] uppercase transition-all whitespace-nowrap border-solid border ${bgClass}`}
                                 >
                                     <img src={iconUrl} alt="" className={`${iconSizeClass} shrink-0`} />
                                     <span>{item.actions.tertiary.label}</span>
@@ -268,7 +283,7 @@ const FollowUpItem: React.FC<FollowUpItemProps> = ({ item }) => {
                         <img
                             src="/assets/images/surge.svg"
                             alt="Surges"
-                            className="h-[26px] w-[20px] shrink-0"
+                            className="h-[26px] w-5 shrink-0"
                             data-node-id="5701:15639"
                         />
                         <span

@@ -3,11 +3,14 @@
  */
 
 export type FollowUpStatus =
-  | "approved"
-  | "under-review"
+  | "rejected"
   | "completed"
-  | "implementing"
-  | "acknowledged";
+  | "in_progress"
+  | "approved"
+  | "under_review"
+  | "posted"
+  | "acknowledged"
+  | "resolved";
 export type FilterType =
   | "all"
   | "approved-waves"

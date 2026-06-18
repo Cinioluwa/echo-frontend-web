@@ -4,16 +4,12 @@ import type { ModerationItem as ModerationItemType } from "./types";
 
 interface ModerationItemProps {
     item: ModerationItemType;
+    onTakeAction?: (id: string) => void;
+    onDismiss?: (id: string) => void;
+    actionLoading?: boolean;
 }
 
-const ModerationItem: React.FC<ModerationItemProps> = ({ item }) => {
-    const handleTakeAction = () => {
-        console.log("Take action on", item.id);
-    };
-
-    const handleDismiss = () => {
-        console.log("Dismiss", item.id);
-    };
+const ModerationItem: React.FC<ModerationItemProps> = ({ item, onTakeAction, onDismiss, actionLoading }) => {
 
     const headerText = item.type === "comment" ? "Comment on:" : item.type === "wave" ? "Wave on:" : null;
 
@@ -80,15 +76,17 @@ const ModerationItem: React.FC<ModerationItemProps> = ({ item }) => {
                 <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0 pt-2">
                     <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
                         <button
-                            onClick={handleTakeAction}
-                            className="bg-[#f49b31] hover:bg-[#e68a1f] text-white font-poppins font-semibold text-[11px] sm:text-[13px] px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl flex items-center justify-center gap-2 transition-colors whitespace-nowrap"
+                            onClick={() => onTakeAction?.(item.id)}
+                            disabled={actionLoading}
+                            className="bg-[#f49b31] hover:bg-[#e68a1f] text-white font-poppins font-semibold text-[11px] sm:text-[13px] px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl flex items-center justify-center gap-2 transition-colors whitespace-nowrap disabled:opacity-50"
                         >
                             <img src='/assets/icon/take-action.svg' alt='judge' className="w-[28px] h-[28px]" />
-                            TAKE ACTION
+                            {actionLoading ? "..." : "TAKE ACTION"}
                         </button>
                         <button
-                            onClick={handleDismiss}
-                            className="bg-white border border-[#f49b31] text-[#f49b31] hover:bg-[#fef5ea] font-poppins font-semibold text-[11px] sm:text-[13px] px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl flex items-center justify-center gap-2 transition-colors whitespace-nowrap"
+                            onClick={() => onDismiss?.(item.id)}
+                            disabled={actionLoading}
+                            className="bg-white border border-[#f49b31] text-[#f49b31] hover:bg-[#fef5ea] font-poppins font-semibold text-[11px] sm:text-[13px] px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl flex items-center justify-center gap-2 transition-colors whitespace-nowrap disabled:opacity-50"
                         >
                             <span>✕</span>
                             DISMISS

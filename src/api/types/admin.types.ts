@@ -83,6 +83,7 @@ export interface AdminWave {
     title: string;
     progressStatus: string;
     createdAt: string;
+    category?: { id: number; name: string } | null;
   };
   _count: {
     surges: number;
@@ -185,5 +186,345 @@ export interface UpdateWaveStatusDto {
 }
 
 export interface UpdatePingProgressDto {
-  status: "PENDING" | "IN_PROGRESS" | "RESOLVED" | "WONT_FIX";
+  progressStatus: "UNACKNOWLEDGED" | "ACKNOWLEDGED" | "IN_PROGRESS" | "RESOLVED";
+}
+
+// ==================== Report Types ====================
+
+export interface ReportItem {
+  id: number;
+  status: "PENDING" | "REVIEWED" | "RESOLVED" | "DISMISSED";
+  reason: string | null;
+  reporterId: number;
+  pingId: number | null;
+  waveId: number | null;
+  commentId: number | null;
+  createdAt: string;
+  reporter: {
+    id: number;
+    email: string;
+    firstName: string;
+    lastName: string;
+    displayName: string | null;
+    profilePicture: string | null;
+  };
+  ping: { id: number; title: string; content: string } | null;
+  wave: {
+    id: number;
+    solution: string;
+    ping: { id: number; title: string };
+  } | null;
+  comment: {
+    id: number;
+    content: string;
+    pingId: number;
+    waveId: number;
+  } | null;
+}
+
+export interface ReportActionDto {
+  action: "DISMISS" | "WARN" | "REMOVE_POST" | "SUSPEND" | "BAN" | "REQUEST_IDENTITY_DISCLOSURE";
+  note?: string;
+  suspendPreset?: "1_DAY" | "1_WEEK" | "1_MONTH";
+}
+
+export interface ReportStatusDto {
+  status: "PENDING" | "REVIEWED" | "RESOLVED" | "DISMISSED";
+}
+
+// ==================== Overview Dashboard Types ====================
+
+export interface OverviewResponse {
+  period: {
+    month: string;
+    year: number;
+    start: string;
+    end: string;
+  };
+  summaryCards: {
+    waves: { value: number; deltaPercent: number };
+    pingsSubmitted: { value: number; deltaPercent: number };
+    resolutionRate: { value: number; deltaPercentagePoints: number };
+    avgResolveTimeDays: { value: number; deltaDays: number };
+    activeUsers: { value: number; deltaPercent: number };
+    underReview: { value: number; deltaPercent: number };
+    unresolvedOlderThanDays: { thresholdDays: number; value: number; deltaAbsolute: number };
+  };
+  communityActivity: {
+    months: number;
+    series: Array<{ month: string; waves: number; pings: number; resolved: number }>;
+  };
+  categoryHealth: Array<{
+    categoryId: number;
+    categoryName: string;
+    resolutionRate: number;
+    unresolvedCount: number;
+    totalPings: number;
+  }>;
+  topPings: {
+    windowDays: number;
+    items: Array<{
+      rank: number;
+      pingId: number;
+      title: string;
+      author: { id: number; name: string } | null;
+      engagementCount: number;
+      engagementType: "surges";
+    }>;
+  };
+  oldestUnresolved: {
+    total: number;
+    items: Array<{
+      pingId: number;
+      title: string;
+      category: { id: number; name: string } | null;
+      createdAt: string;
+      ageDays: number;
+    }>;
+  };
+  surgeVelocity: Array<{ pingId: number; velocity: number }>;
+  stalledWavesCount: number;
+  stalledAcknowledgedPingsCount: number;
+  categoriesStats: Array<{
+    categoryId: number;
+    categoryName: string;
+    totalPings: number;
+    openCount: number;
+    resolvedCount: number;
+    openPercentage: number;
+    resolutionPercentage: number;
+  }>;
+}
+
+export interface SurgingIssue {
+  pingId: number;
+  title: string;
+  category: { id: number; name: string } | null;
+  currentRatePerHour: number;
+  previousRatePerHour: number;
+  rateDelta: number;
+  currentSurges: number;
+  previousSurges: number;
+}
+
+export interface TopContributor {
+  rank: number;
+  userId: number;
+  name: string;
+  pingsSubmitted: number;
+  wavesCast: number;
+  badge: string | null;
+}
+
+export interface CommunityMood {
+  window: { days: number; start: string; end: string };
+  totals: { comments: number; positive: number; neutral: number; negative: number };
+  percentages: { positive: number; neutral: number; negative: number };
+  trend: Array<{
+    date: string;
+    positivePercent: number;
+    neutralPercent: number;
+    negativePercent: number;
+    sampleSize: number;
+  }>;
+}
+
+// ==================== Organization Settings Types ====================
+
+export interface OrgSettings {
+  organization: {
+    id: number;
+    name: string;
+    domain: string | null;
+    status: string;
+    joinPolicy: "OPEN" | "REQUIRES_APPROVAL";
+    isDomainLocked: boolean;
+    effectiveJoinPolicy: string;
+    joinPolicyLocked: boolean;
+  };
+}
+
+export interface JoinRequest {
+  id: number;
+  email: string;
+  status: "PENDING" | "APPROVED" | "REJECTED";
+  reason?: string;
+  createdAt: string;
+  user: {
+    id: number;
+    email: string;
+    firstName: string;
+    lastName: string;
+    isVerified: boolean;
+    status: string;
+  };
+  reviewedBy?: {
+    id: number;
+    email: string;
+    firstName: string;
+    lastName: string;
+  };
+}
+
+export interface JoinPolicyDto {
+  joinPolicy: "OPEN" | "REQUIRES_APPROVAL";
+}
+
+// ==================== Org Settings Update ====================
+
+export interface UpdateOrgSettingsDto {
+  name?: string;
+  description?: string;
+  logoUrl?: string;
+}
+
+// ==================== Org Rules ====================
+
+export interface OrgRules {
+  allowMediaAttachments: boolean;
+  sameTopicCooldownHours: number;
+  autoFlagReportThreshold: number;
+  hideFlaggedContentPending: boolean;
+  minSurgesForWave: number;
+}
+
+export interface UpdateOrgRulesDto {
+  allowMediaAttachments?: boolean;
+  sameTopicCooldownHours?: number;
+  autoFlagReportThreshold?: number;
+  hideFlaggedContentPending?: boolean;
+  minSurgesForWave?: number;
+}
+
+// ==================== Reports Analytics ====================
+
+export interface ReportsAnalytics {
+  pendingReview: number;
+  resolvedThisWeek: number;
+  activeSuspensions: number;
+}
+
+// ==================== Follow-Up Queue ====================
+
+export interface FollowUpQueue {
+  approvedWavesNotImplementing: number;
+  wavesAwaitingApproval: number;
+  acknowledgedPingsStalling: number;
+  total: number;
+}
+
+// ==================== Issues by Category ====================
+
+export interface IssueByCategory {
+  categoryId: number;
+  categoryName: string;
+  openCount: number;
+  resolvedCount: number;
+  resolutionRate: number;
+  topPings: Array<{
+    id: number;
+    title: string;
+    surgeCount: number;
+    createdAt: string;
+  }>;
+}
+
+// ==================== Member Management ====================
+
+export interface SuspendUserDto {
+  duration: "1_DAY" | "1_WEEK" | "1_MONTH" | "PERMANENT";
+  reason?: string;
+}
+
+export interface CategoryUpdateDto {
+  name?: string;
+  isActive?: boolean;
+}
+
+// ==================== Official Response Types ====================
+
+export interface OfficialResponse {
+  id: number;
+  content: string;
+  pingId: number;
+  authorId: number;
+  organizationId: number;
+  isResolved: boolean;
+  createdAt: string;
+}
+
+export interface CreateOfficialResponseDto {
+  content: string;
+  isResolved?: boolean;
+}
+
+export interface UpdateOfficialResponseDto {
+  content?: string;
+  isResolved?: boolean;
+}
+
+// ==================== Super Admin Types ====================
+
+export interface SuperAdminStats {
+  organizations: { total: number; active: number; pending: number };
+  users: { total: number; active: number; pending: number };
+  content: { pings: number; waves: number; surges: number };
+  queue: { pendingOrgRequests: number; pendingClaims: number };
+}
+
+export interface SuperAdminOrganization {
+  id: number;
+  name: string;
+  domain: string | null;
+  status: string;
+  isClaimVerified: boolean;
+  categoryCustomizationLocked: boolean;
+  joinPolicy: string;
+  isDomainLocked: boolean;
+  createdAt: string;
+  userCount: number;
+  pingCount: number;
+}
+
+export interface SuperAdminUser {
+  id: number;
+  email: string;
+  firstName: string;
+  lastName: string;
+  role: string;
+  status: string;
+  isVerified: boolean;
+  createdAt: string;
+  organization: { id: number; name: string; domain: string | null };
+}
+
+export interface StallingPing {
+  id: number;
+  title: string;
+  progressStatus: string;
+  progressUpdatedAt: string;
+  daysStalled: number;
+  categoryId: number | null;
+  categoryName: string;
+  surgeCount: number;
+  waveCount: number;
+}
+
+export interface PriorityPing {
+  priorityScore: number;
+  id: number;
+  title: string;
+  content: string;
+  status: string;
+  progressStatus: string;
+  createdAt: string;
+  author: {
+    id: number;
+    firstName: string;
+    lastName: string;
+    level: number | null;
+    profilePicture: string | null;
+  };
+  category: { id: number; name: string } | null;
+  _count: { waves: number; comments: number; surges: number };
 }
