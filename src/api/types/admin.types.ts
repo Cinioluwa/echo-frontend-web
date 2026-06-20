@@ -3,6 +3,8 @@
  * Extended types for admin dashboard functionality
  */
 
+import type { Ping } from ".";
+
 // ==================== Platform Stats ====================
 
 export interface PlatformStats {
@@ -505,33 +507,10 @@ export interface SuperAdminUser {
   organization: { id: number; name: string; domain: string | null };
 }
 
-export interface StallingPing {
-  id: number;
-  title: string;
-  progressStatus: string;
-  progressUpdatedAt: string;
-  daysStalled: number;
-  categoryId: number | null;
-  categoryName: string;
-  surgeCount: number;
-  waveCount: number;
+export interface StallingPing extends Ping {
+  daysStalled: number
 }
 
-export interface PriorityPing {
+export interface PriorityPing extends Ping {
   priorityScore: number;
-  id: number;
-  title: string;
-  content: string;
-  status: string;
-  progressStatus: string;
-  createdAt: string;
-  author: {
-    id: number;
-    firstName: string;
-    lastName: string;
-    level: number | null;
-    profilePicture: string | null;
-  };
-  category: { id: number; name: string } | null;
-  _count: { waves: number; comments: number; surges: number };
 }

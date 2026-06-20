@@ -363,7 +363,7 @@ const AdminPingDetail: React.FC<AdminPingDetailProps> = ({ pingId: propPingId })
                                     value={responseText}
                                     onChange={(e) => setResponseText(e.target.value)}
                                     placeholder="Post an update visible to all students"
-                                    className="h-[50px] resize-none border border-[#ffc37b] rounded-[20px] ps-4 pe-[170px] py-3 font-poppins font-medium text-[12px] sm:text-[14px] placeholder-[#9e9e9e] outline-none focus:border-[#f49b31]"
+                                    className="bg-white h-[50px] resize-none border border-[#ffc37b] rounded-[15px] ps-4 pe-[170px] py-3 font-poppins font-medium text-[12px] sm:text-[14px] placeholder-[#9e9e9e] outline-none focus:border-[#f49b31]"
                                 />
                                 <motion.button
                                     variants={resposeButtonVariants}

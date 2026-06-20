@@ -73,7 +73,7 @@ const IssuesByCategoryCard: React.FC<IssuesByCategoryCardProps> = ({
                         {/* Issues List */}
                         <div className="flex flex-col gap-2">
                             {category.issues.slice(0, 2).map((issue) => (
-                                <div key={issue.id} className="flex items-start justify-between p-2">
+                                <a href={`/admin/soundboard/${issue.id}`} key={issue.id} className="flex items-start justify-between p-2">
                                     <div className="flex-1">
                                         <p className="text-[#212121] font-medium text-[12px] leading-4">
                                             {issue.title}
@@ -85,7 +85,7 @@ const IssuesByCategoryCard: React.FC<IssuesByCategoryCardProps> = ({
                                     <div className="ml-2 shrink-0 text-[#f49b31] font-semibold text-[12px]">
                                         ⚡ {issue.count}
                                     </div>
-                                </div>
+                                </a>
                             ))}
                         </div>
                     </div>

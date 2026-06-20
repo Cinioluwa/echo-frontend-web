@@ -28,7 +28,7 @@ const FollowUpQueueCard: React.FC<FollowUpQueueCardProps> = ({
     };
 
     return (
-        <a
+        < a href="/admin/followUp"
             className={`bg-white border border-[rgba(244,155,49,0.3)] rounded-xl p-5 flex flex-col gap-[15px] cursor-pointer hover:border-[rgba(244,155,49,0.5)] transition-all ${className}`}
             data-node-id="followup-queue-card"
         >
@@ -79,7 +79,7 @@ const FollowUpQueueCard: React.FC<FollowUpQueueCardProps> = ({
                     </div>
                 ))}
             </div>
-        </a>
+        </ a>
     );
 };
 

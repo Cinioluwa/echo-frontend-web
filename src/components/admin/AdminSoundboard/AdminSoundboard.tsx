@@ -49,11 +49,11 @@ const AdminSoundboard: React.FC<AdminSoundboardProps> = ({
             setLoading(true);
             setError(null);
 
-            const [overview, surging, priority, stalling, followUpQueue, issuesByCategory] = await Promise.all([
+            const [overview, surging, followUpQueue, issuesByCategory] = await Promise.all([
                 adminService.getOverview({ months: 1 }),
-                adminService.getSurgingIssues({ hours: 6, limit: 3 }),
-                adminService.getPriorityPings({ weeks: 1, limit: 3 }),
-                adminService.getStallingPings({ staleDays: 7, limit: 5 }),
+                adminService.getSurgingIssues({ hours: 72, limit: 3 }),
+                // adminService.getPriorityPings({ weeks: 1, limit: 3 }),
+                // adminService.getStallingPings({ staleDays: 7, limit: 5 }),
                 adminService.getFollowUpQueue({ staleDays: 7 }).catch(() => null),
                 adminService.getIssuesByCategory().catch(() => null),
             ]);
@@ -64,6 +64,10 @@ const AdminSoundboard: React.FC<AdminSoundboardProps> = ({
                 title: item.title,
                 velocity: `+${item.currentRatePerHour}/hr`,
                 category: item.category?.name || "Uncategorized",
+                onClick: () => {
+                    // Navigate to ping details page
+                    window.location.href = `/admin/soundboard/${item.pingId}`;
+                }
             }));
             setSurgeItems(surges);
             setSurgeCount(surging.count);
@@ -71,67 +75,31 @@ const AdminSoundboard: React.FC<AdminSoundboardProps> = ({
             // Follow-up queue (use dedicated endpoint if available, fallback to manual)
             const followUps: FollowUpItem[] = [];
             if (followUpQueue) {
-                if (followUpQueue.approvedWavesNotImplementing > 0) {
-                    followUps.push({
-                        id: "approved-waves",
-                        title: "Approved waves not being implemented",
-                        description: `${followUpQueue.approvedWavesNotImplementing} approved waves require progression`,
-                        count: followUpQueue.approvedWavesNotImplementing,
-                        iconColor: "green",
-                        icon: "/assets/icon/not-implemented.svg",
-                    });
-                }
-                if (followUpQueue.wavesAwaitingApproval > 0) {
-                    followUps.push({
-                        id: "awaiting-approval",
-                        title: "Waves awaiting approval",
-                        description: `${followUpQueue.wavesAwaitingApproval} waves need review`,
-                        count: followUpQueue.wavesAwaitingApproval,
-                        iconColor: "red",
-                        icon: "/assets/icon/awaiting-approval.svg",
-                    });
-                }
-                if (followUpQueue.acknowledgedPingsStalling > 0) {
-                    followUps.push({
-                        id: "acknowledged-stalling",
-                        title: "Acknowledged pings stalling",
-                        description: `${followUpQueue.acknowledgedPingsStalling} acknowledged pings need progression`,
-                        count: followUpQueue.acknowledgedPingsStalling,
-                        iconColor: "red",
-                        icon: "/assets/icon/acknowledged-pings.svg",
-                    });
-                }
-            } else {
-                if (priority.data.length > 0) {
-                    followUps.push({
-                        id: "priority",
-                        title: "High priority pings need attention",
-                        description: `${priority.data.length} pings with high engagement need review`,
-                        count: priority.data.length,
-                        iconColor: "red",
-                        icon: "/assets/icon/awaiting-approval.svg",
-                    });
-                }
-                if (stalling.count > 0) {
-                    followUps.push({
-                        id: "stalling",
-                        title: "In-progress pings stalling",
-                        description: `${stalling.count} pings not updated in ${stalling.staleDays}+ days`,
-                        count: stalling.count,
-                        iconColor: "red",
-                        icon: "/assets/icon/acknowledged-pings.svg",
-                    });
-                }
-                if (overview.stalledWavesCount > 0) {
-                    followUps.push({
-                        id: "stalled-waves",
-                        title: "Approved waves not being implemented",
-                        description: `${overview.stalledWavesCount} approved waves require progression`,
-                        count: overview.stalledWavesCount,
-                        iconColor: "green",
-                        icon: "/assets/icon/not-implemented.svg",
-                    });
-                }
+                followUps.push({
+                    id: "approved-waves",
+                    title: "Approved waves not being implemented",
+                    description: `${overview.stalledWavesCount} approved waves require progression`,
+                    count: overview.stalledWavesCount,
+                    iconColor: "green",
+                    icon: "/assets/icon/not-implemented.svg",
+                });
+                followUps.push({
+                    id: "awaiting-approval",
+                    title: "Waves awaiting approval",
+                    description: `${followUpQueue.wavesAwaitingApproval} waves need review`,
+                    count: followUpQueue.wavesAwaitingApproval,
+                    iconColor: "red",
+                    icon: "/assets/icon/awaiting-approval.svg",
+                });
+                followUps.push({
+                    id: "acknowledged-stalling",
+                    title: "Acknowledged pings stalling",
+                    description: `${overview.stalledAcknowledgedPingsCount} acknowledged pings need progression`,
+                    count: overview.stalledAcknowledgedPingsCount,
+                    iconColor: "red",
+                    icon: "/assets/icon/acknowledged-pings.svg",
+                });
+
             }
             setFollowUpItems(followUps);
             setPendingCount(followUps.reduce((sum, i) => sum + i.count, 0));
