@@ -208,11 +208,11 @@ export interface ReportItem {
     displayName: string | null;
     profilePicture: string | null;
   };
-  ping: { id: number; title: string; content: string } | null;
+  ping: { id: number; title: string; content: string ; category: { id: number; name: string }} | null;
   wave: {
     id: number;
     solution: string;
-    ping: { id: number; title: string };
+    ping: { id: number; title: string, category: { id: number; name: string } };
   } | null;
   comment: {
     id: number;
@@ -220,6 +220,7 @@ export interface ReportItem {
     pingId: number;
     waveId: number;
   } | null;
+  reportCount: number;
 }
 
 export interface ReportActionDto {

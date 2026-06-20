@@ -1,15 +1,46 @@
-import React from "react";
+import React, { useState, useRef, useEffect } from "react";
 import ViolationBadge from "./ViolationBadge";
 import type { ModerationItem as ModerationItemType } from "./types";
+import { WarnModal, SuspendConfirmModal, SuspendDurationModal, BanModal } from "./TakeActionModals";
+import type { TakeActionType, SuspendDuration } from "./TakeActionModals";
+import { Clock, Ban as Bell, XCircle } from "lucide-react";
 
 interface ModerationItemProps {
     item: ModerationItemType;
-    onTakeAction?: (id: string) => void;
+    onTakeAction?: (id: string, actionPayload: any) => void;
     onDismiss?: (id: string) => void;
     actionLoading?: boolean;
 }
 
 const ModerationItem: React.FC<ModerationItemProps> = ({ item, onTakeAction, onDismiss, actionLoading }) => {
+    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+    const [activeModal, setActiveModal] = useState<TakeActionType | "SUSPEND_DURATION" | null>(null);
+    const [pendingDeletePost, setPendingDeletePost] = useState(false);
+    const dropdownRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+                setIsDropdownOpen(false);
+            }
+        };
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => document.removeEventListener("mousedown", handleClickOutside);
+    }, []);
+
+    const handleActionClick = (type: TakeActionType) => {
+        setActiveModal(type);
+        setIsDropdownOpen(false);
+    };
+
+    const confirmAction = (type: TakeActionType, deletePost: boolean, duration?: SuspendDuration) => {
+        let payload: any = { action: type, deletePost };
+        if (type === "SUSPEND" && duration) {
+            payload.suspendPreset = duration;
+        }
+        onTakeAction?.(item.id, payload);
+        setActiveModal(null);
+    };
 
     const headerText = item.type === "comment" ? "Comment on:" : item.type === "wave" ? "Wave on:" : null;
 
@@ -73,33 +104,93 @@ const ModerationItem: React.FC<ModerationItemProps> = ({ item, onTakeAction, onD
                 )}
 
                 {/* Action buttons */}
-                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0 pt-2">
-                    <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
-                        <button
-                            onClick={() => onTakeAction?.(item.id)}
-                            disabled={actionLoading}
-                            className="bg-[#f49b31] hover:bg-[#e68a1f] text-white font-poppins font-semibold text-[11px] sm:text-[13px] px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl flex items-center justify-center gap-2 transition-colors whitespace-nowrap disabled:opacity-50"
-                        >
-                            <img src='/assets/icon/take-action.svg' alt='judge' className="w-[28px] h-[28px]" />
-                            {actionLoading ? "..." : "TAKE ACTION"}
-                        </button>
-                        <button
-                            onClick={() => onDismiss?.(item.id)}
-                            disabled={actionLoading}
-                            className="bg-white border border-[#f49b31] text-[#f49b31] hover:bg-[#fef5ea] font-poppins font-semibold text-[11px] sm:text-[13px] px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl flex items-center justify-center gap-2 transition-colors whitespace-nowrap disabled:opacity-50"
-                        >
-                            <span>✕</span>
-                            DISMISS
-                        </button>
+                {item.status === "PENDING" && (
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0 pt-2">
+                        <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto relative" ref={dropdownRef}>
+                            {isDropdownOpen && (
+                                <div className="flex flex-row items-center gap-1 absolute bottom-full left-0 mb-2 bg-white rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.15)] border border-[#e0e0e0]  z-10 font-poppins whitespace-nowrap">
+                                    <button
+                                        onClick={() => handleActionClick("WARN")}
+                                        className="flex items-center gap-1.5 px-3 py-1.5 text-[12px] sm:text-[13px] text-black-50 hover:bg-gray-100 rounded-lg font-medium transition-colors"
+                                    >
+                                        <Bell className="w-3.5 h-3.5 " />
+                                        Warn
+                                    </button>
+                                    <button
+                                        onClick={() => handleActionClick("SUSPEND")}
+                                        className="flex items-center gap-1.5 px-3 py-1.5 text-[12px] sm:text-[13px] text-black-50 hover:bg-gray-100 rounded-lg font-medium transition-colors"
+                                    >
+                                        <Clock className="w-3.5 h-3.5 " />
+                                        Suspend
+                                    </button>
+                                    <button
+                                        onClick={() => handleActionClick("BAN")}
+                                        className="flex items-center gap-1.5 px-3 py-1.5 text-[12px] sm:text-[13px] text-black-50 hover:bg-red-50 rounded-lg font-medium transition-colors"
+                                    >
+                                        <XCircle className="w-3.5 h-3.5" />
+                                        Ban
+                                    </button>
+                                </div>
+                            )}
+                            <button
+                                onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                                disabled={actionLoading}
+                                className="bg-[#f49b31] hover:bg-[#e68a1f] text-white font-poppins font-semibold text-[11px] sm:text-[13px] px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl flex items-center justify-center gap-2 transition-colors whitespace-nowrap disabled:opacity-50"
+                            >
+                                <img src='/assets/icon/take-action.svg' alt='judge' className="w-[28px] h-[28px]" />
+                                {actionLoading ? "..." : "TAKE ACTION"}
+                            </button>
+                            <button
+                                onClick={() => onDismiss?.(item.id)}
+                                disabled={actionLoading}
+                                className="bg-white border border-[#f49b31] text-[#f49b31] hover:bg-[#fef5ea] font-poppins font-semibold text-[11px] sm:text-[13px] px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl flex items-center justify-center gap-2 transition-colors whitespace-nowrap disabled:opacity-50"
+                            >
+                                <span>✕</span>
+                                DISMISS
+                            </button>
+                        </div>
+                        <div className="flex items-center gap-1.5 text-[#eb5050] self-end sm:self-auto">
+                            <span className="text-[18px]">🚩</span>
+                            <p className="font-poppins font-semibold text-[18px] sm:text-[24px]">
+                                {item.reportCount}
+                            </p>
+                        </div>
                     </div>
-                    <div className="flex items-center gap-1.5 text-[#eb5050] self-end sm:self-auto">
-                        <span className="text-[18px]">🚩</span>
-                        <p className="font-poppins font-semibold text-[18px] sm:text-[24px]">
-                            {item.flagCount}
-                        </p>
-                    </div>
-                </div>
+                )}
             </div>
+
+            {activeModal === "WARN" && (
+                <WarnModal
+                    onConfirm={(deletePost) => confirmAction("WARN", deletePost)}
+                    onCancel={() => setActiveModal(null)}
+                    isLoading={actionLoading}
+                />
+            )}
+            {activeModal === "BAN" && (
+                <BanModal
+                    onConfirm={(deletePost) => confirmAction("BAN", deletePost)}
+                    onCancel={() => setActiveModal(null)}
+                    isLoading={actionLoading}
+                />
+            )}
+            {activeModal === "SUSPEND" && (
+                <SuspendConfirmModal
+                    onConfirm={(deletePost) => {
+                        setPendingDeletePost(deletePost);
+                        setActiveModal("SUSPEND_DURATION");
+                    }}
+                    onCancel={() => setActiveModal(null)}
+                    isLoading={actionLoading}
+                />
+            )}
+            {activeModal === "SUSPEND_DURATION" && (
+                <SuspendDurationModal
+                    initialDeletePost={pendingDeletePost}
+                    onConfirm={(duration, deletePost) => confirmAction("SUSPEND", deletePost, duration)}
+                    onCancel={() => setActiveModal(null)}
+                    isLoading={actionLoading}
+                />
+            )}
         </div>
     );
 };

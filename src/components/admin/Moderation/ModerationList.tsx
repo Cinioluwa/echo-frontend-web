@@ -5,7 +5,7 @@ import type { ModerationItem as ModerationItemType } from "./types";
 interface ModerationListProps {
     items: ModerationItemType[];
     isLoading?: boolean;
-    onTakeAction?: (id: string) => void;
+    onTakeAction?: (id: string, actionPayload: any) => void;
     onDismiss?: (id: string) => void;
     actionLoading?: boolean;
 }

@@ -34,8 +34,8 @@ const ViolationBadge: React.FC<ViolationBadgeProps> = ({ type, className = "" })
                 return {
                     bg: "bg-[#ffd7d7]",
                     text: "text-[#b01212]",
-                    icon: "/assets/icon/eye-off.svg",
-                    label: "Inappropriate content",
+                    iconSrc: "/assets/icon/eye-off.svg",
+                    label: violationType,
                 };
         }
     };

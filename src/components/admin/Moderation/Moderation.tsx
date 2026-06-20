@@ -24,9 +24,10 @@ const Moderation: React.FC<ModerationProps> = () => {
       setError(null);
       const status = activeFilter === "pending" ? "PENDING"
         : activeFilter === "resolved" ? "RESOLVED"
+        : activeFilter === "dismissed" ? "DISMISSED"
           : undefined;
       const [result, analyticsData] = await Promise.all([
-        adminService.getReports({ status, limit: 50 }),
+        adminService.getReports({ status }),
         adminService.getReportsAnalytics().catch(() => null),
       ]);
       setReports(result.data);
@@ -48,8 +49,7 @@ const Moderation: React.FC<ModerationProps> = () => {
     const targetType = report.ping ? "ping" : report.wave ? "wave" : "comment";
     const targetContent = report.ping?.content || report.wave?.solution || report.comment?.content || "";
     const targetTitle = report.ping?.title || report.wave?.ping?.title || "";
-    const categoryName = ""; // Not available in report response currently
-
+    const categoryName = report.ping?.category?.name || report.wave?.ping?.category?.name || " ";
     return {
       id: report.id.toString(),
       type: targetType as "comment" | "wave" | "ping",
@@ -62,20 +62,29 @@ const Moderation: React.FC<ModerationProps> = () => {
       },
       content: targetContent,
       violationType: report.reason as any || "inappropriate-content",
-      flagCount: 0,
+      reportCount: report.reportCount,
+      status: report.status,
     };
   };
 
   const moderationItems: ModerationItemType[] = reports.map(mapReportToModerationItem);
 
-  const handleTakeAction = async (id: string) => {
+  const handleTakeAction = async (id: string, actionPayload: any) => {
     try {
       setActionLoading(parseInt(id));
       const report = reports.find((r) => r.id.toString() === id);
       if (!report) return;
-      await adminService.applyReportAction(parseInt(id), {
-        action: "WARN",
-      });
+
+      const { deletePost, ...actionDto } = actionPayload;
+
+      await adminService.applyReportAction(parseInt(id), actionDto);
+
+      if (deletePost) {
+        // Assume calling another endpoint or it's handled by the backend if we augment the API
+        // But for now, we just pass the action payload.
+        console.log("Delete post requested for report ID:", id);
+      }
+
       await fetchReports();
     } catch (err: any) {
       setError(err?.response?.data?.error || "Failed to take action");
@@ -128,7 +137,7 @@ const Moderation: React.FC<ModerationProps> = () => {
         </div>
 
         <div className="flex items-center gap-2 self-end">
-          {(["all", "pending", "resolved"] as FilterType[]).map((f) => (
+          {(["all", "pending", "resolved", "dismissed"] as FilterType[]).map((f) => (
             <button
               key={f}
               onClick={() => setActiveFilter(f)}
@@ -137,7 +146,7 @@ const Moderation: React.FC<ModerationProps> = () => {
                 : "bg-white border border-[#f49b31] text-[#f49b31] hover:bg-[#fef5ea]"
                 }`}
             >
-              {f === "all" ? "All" : f === "pending" ? "Pending" : "Resolved"}
+              {f === "all" ? "All" : f === "pending" ? "Pending" : f === "resolved" ? "Resolved" : "Dismissed"}
             </button>
           ))}
         </div>

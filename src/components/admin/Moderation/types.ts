@@ -5,7 +5,8 @@
 export type ViolationType =
   | "inappropriate-content"
   | "misinformation"
-  | "threats";
+  | "threats"
+  | string;
 export type ContentType = "comment" | "wave" | "ping";
 
 export interface Author {
@@ -22,8 +23,9 @@ export interface ModerationItem {
   author: Author;
   content: string; // Full content of comment/wave
   violationType: ViolationType;
-  flagCount: number;
+  reportCount: number;
   image?: string; // Optional image content
+  status: "PENDING" | "REVIEWED" | "RESOLVED" | "DISMISSED";
 }
 
-export type FilterType = "all" | "pending" | "resolved" | "active-suspensions";
+export type FilterType = "all" | "pending" | "resolved" | "dismissed" | "active-suspensions";
