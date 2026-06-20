@@ -3,6 +3,8 @@
  * Shared types for the Echo API
  */
 
+import type { OfficialResponse } from "./admin.types";
+
 // ==================== User Types ====================
 
 export interface User {
@@ -168,6 +170,7 @@ export interface Ping {
     surges?: number;
   };
   media?: Media[];
+  officialResponse?: OfficialResponse;
 }
 
 export interface CreatePingRequest {

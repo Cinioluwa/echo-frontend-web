@@ -6,6 +6,7 @@ import KPICard from "./KPICard";
 import CommentsPanel from "./CommentsPanel";
 import StatusTimeline from "./StatusTimeline";
 import type { PingComment, StatusEvent, RelatedPing } from "./types";
+import AdminPingWaves from "./AdminPingWaves";
 import { motion } from "framer-motion";
 import pingService from "../../../api/services/ping.service";
 import { adminService } from "../../../api/services/admin.service";
@@ -183,10 +184,10 @@ const AdminPingDetail: React.FC<AdminPingDetailProps> = ({ pingId: propPingId })
                 ...(ping.resolvedAt ? [{ status: "Resolved", timestamp: new Date(ping.resolvedAt).toLocaleString() }] : []),
             ],
             relatedPings: [],
-            officialResponse: (ping as any).officialResponse ? {
-                content: (ping as any).officialResponse.content,
-                createdAt: (ping as any).officialResponse.createdAt,
-                author: (ping as any).officialResponse.author,
+            officialResponse: ping.officialResponse ? {
+                content: ping.officialResponse.content,
+                createdAt: ping.officialResponse.createdAt,
+                author: ping.officialResponse.author,
             } : null,
         };
     };
@@ -209,6 +210,16 @@ const AdminPingDetail: React.FC<AdminPingDetailProps> = ({ pingId: propPingId })
             setError(err?.response?.data?.error || "Failed to post response");
         } finally {
             setPostingResponse(false);
+        }
+    };
+
+    const handleUpdateWaveStatus = async (id: number, status: "APPROVED" | "REJECTED" | "UNDER_REVIEW", reason?: string) => {
+        try {
+            await adminService.updateWaveStatus(id, { status, reason });
+            await fetchPing();
+        } catch (err: any) {
+            console.error("Failed to update wave status", err);
+            // Optionally, we could set an error state here or show a toast
         }
     };
 
@@ -242,7 +253,6 @@ const AdminPingDetail: React.FC<AdminPingDetailProps> = ({ pingId: propPingId })
     const detail = mapPingToDetailData(pingData);
     const categoryName = detail.category?.name || "General";
     const categoryIcon = (categoryImages as Record<string, string>)[categoryName] || (categoryImages as Record<string, string>).General;
-
     return (
         <div className="m-0 md:ms-[230px] flex flex-col gap-4 sm:gap-6 items-start px-3 sm:px-6 py-6 sm:py-8 relative">
             <div className="flex items-center justify-between w-full mb-2">
@@ -321,13 +331,16 @@ const AdminPingDetail: React.FC<AdminPingDetailProps> = ({ pingId: propPingId })
                         )}
                     </div>
 
-                    <div className="bg-white rounded-[10px] p-4 sm:p-5 flex flex-col gap-3">
-                        <h3 className="font-poppins font-semibold text-[14px] sm:text-[16px] text-black">
-                            Official Response
-                        </h3>
+                    <div className="bg-[#FFC37B] rounded-[15px] pt-2.5 sm:pt-2.5 flex flex-col gap-3">
+                        <div className="flex items-center gap-2.5 px-2.5 sm:px-2.5">
+                            <img src="/assets/icon/official-response.svg" className="w-5 h-5" alt="Official Response Icon" />
+                            <h3 className="font-poppins font-semibold text-[14px] sm:text-[18px] text-black">
+                                Official Response
+                            </h3>
+                        </div>
 
                         {detail.officialResponse ? (
-                            <div className="bg-[#fef5ea] border border-[#f49b31] rounded-[10px] p-4">
+                            <div className="bg-white p-5 rounded-b-[15px]">
                                 <div className="flex items-center gap-2 mb-2">
                                     <span className="font-poppins font-semibold text-[13px] text-[#f49b31]">
                                         {detail.officialResponse.author.firstName} {detail.officialResponse.author.lastName}
@@ -368,6 +381,9 @@ const AdminPingDetail: React.FC<AdminPingDetailProps> = ({ pingId: propPingId })
                     <div className="flex flex-col sm:flex-row gap-3 w-full">
                         <KPICard icon="⚡" label="Surge count" value={detail.surgeCount} delta={detail.surgeDelta} deltaIcon={detail.surgeDeltaIcon} />
                         <KPICard icon="" label="Unresolved For" value={detail.unresolvedFor} />
+                    </div>
+                    <div className="w-full">
+                        <AdminPingWaves waves={pingData.waves || []} onUpdateWaveStatus={handleUpdateWaveStatus} />
                     </div>
                 </div>
 

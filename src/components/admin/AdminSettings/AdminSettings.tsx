@@ -10,13 +10,13 @@ import { User } from "lucide-react";
 
 type SettingTab = "general" | "members" | "categories" | "rules";
 
-const AdminSettings: React.FC = () => {
+interface AdminSettingsProps {
+    onPublishAnnouncement?: () => void;
+}
+
+const AdminSettings: React.FC<AdminSettingsProps> = ({ onPublishAnnouncement }) => {
     const [activeTab, setActiveTab] = useState<SettingTab>("general");
     const [openMenu, setOpenMenu] = useState(false);
-
-    const handlePublishAnnouncement = () => {
-        console.log("Publish announcement clicked");
-    };
 
     // TODO: Implement export functionality
     const onExport = () => {
@@ -66,7 +66,7 @@ const AdminSettings: React.FC = () => {
                             </motion.button>
                             {/* Publish Announcement Button */}
                             <button
-                                onClick={handlePublishAnnouncement}
+                                onClick={onPublishAnnouncement}
                                 className="bg-[#ffc37b] hover:bg-[#ffb347] border border-[#f49b31] rounded-lg px-3 sm:px-[15px] py-2 sm:py-[9px] flex items-center gap-1 sm:gap-2 transition-colors text-xs sm:text-[12px]"
                             >
                                 <img src="/assets/icon/cross.svg" alt="Announcement Icon" className="w-[13px] h-[13px]" />

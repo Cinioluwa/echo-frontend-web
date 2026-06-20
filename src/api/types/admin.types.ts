@@ -53,6 +53,7 @@ export interface AdminPing {
     comments?: number;
     surges?: number;
   };
+  officialResponse?: OfficialResponse;
 }
 
 // ==================== Admin Wave ====================
@@ -183,6 +184,7 @@ export interface UpdateWaveStatusDto {
     | "IN_PROGRESS"
     | "COMPLETED"
     | "ON_HOLD";
+  reason?: string;
 }
 
 export interface UpdatePingProgressDto {
@@ -452,6 +454,10 @@ export interface OfficialResponse {
   organizationId: number;
   isResolved: boolean;
   createdAt: string;
+  author: {
+    firstName: string;
+    lastName: string;
+  };
 }
 
 export interface CreateOfficialResponseDto {

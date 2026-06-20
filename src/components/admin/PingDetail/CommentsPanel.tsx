@@ -1,6 +1,6 @@
 import React from "react";
 import type { PingComment } from "./types";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, MessageCircle } from "lucide-react";
 
 interface CommentsPanelProps {
     comments: PingComment[];
@@ -30,17 +30,24 @@ const CommentsPanel: React.FC<CommentsPanelProps> = ({ comments }) => {
                             <p className="font-poppins font-medium text-[10px] sm:text-[12px] text-[#626665] line-clamp-2">
                                 {comment.text}
                             </p>
-                            <div className="flex gap-2 text-[9px] sm:text-[10px] text-[#8b8e8d]">
-                                <span>👍 {comment.likes}</span>
-                                <span>💬 {comment.replies}</span>
+                            <div className="flex gap-2 text-[9px] sm:text-[10px] text-black">
+                                <span className="flex items-center gap-2"><img src="/assets/images/surge.svg" alt="" className="w-5 h-5" /> {comment.likes}</span>
+                                <span className="flex items-center gap-2"><MessageCircle color="black" size={20} /> {comment.replies}</span>
                             </div>
                         </div>
                     </div>
                 ))}
             </div>
-            <button className="bg-white border border-white text-black font-poppins font-semibold text-[11px] sm:text-[13px] py-2.5 px-4 rounded-full hover:bg-[#fef5ea] transition-colors w-10/12 mx-3 mb-3 sm:mx-4 sm:mb-4  flex justify-center items-center gap-2 text-nowrap mx-auto self-center">
-                View all 27 Comments <ArrowRight color="black" size={20} />
-            </button>
+            {
+                comments.length >= 3 ? (
+                    <button className="bg-white border border-white text-black font-poppins font-semibold text-[11px] sm:text-[13px] py-2.5 px-4 rounded-full hover:bg-[#fef5ea] transition-colors w-10/12 mx-3 mb-3 sm:mx-4 sm:mb-4  flex justify-center items-center gap-2 text-nowrap mx-auto self-center">
+                        View all {comments.length} Comments <ArrowRight color="black" size={20} />
+                    </button>
+                ) : (
+                    <div className="text-black font-poppins font-semibold text-[11px] sm:text-[13px] py-2.5 px-4 rounded-full transition-colors w-10/12 mx-3 mb-3 sm:mx-4 sm:mb-4  flex justify-center items-center gap-2 text-nowrap mx-auto self-center">
+                    </div>
+                )
+            }
         </div>
     );
 };

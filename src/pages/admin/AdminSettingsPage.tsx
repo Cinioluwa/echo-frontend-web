@@ -4,12 +4,15 @@ import AdminLayout from "../../components/admin/AdminLayout";
 import AdminSettings from "../../components/admin/AdminSettings/AdminSettings";
 import { AdminPageProvider, type AdminPage } from "../../contexts/AdminPageContext";
 
+import AnnouncementModal from "../../components/admin/AnnouncementModal";
+
 /**
  * AdminSettingsPage
  * Page wrapper for the Admin Settings page with sidebar layout
  */
 const AdminSettingsPage: React.FC = () => {
     const location = useLocation();
+    const [showAnnouncementModal, setShowAnnouncementModal] = React.useState(false);
 
     const getCurrentPage = (): AdminPage => {
         const path = location.pathname;
@@ -21,11 +24,19 @@ const AdminSettingsPage: React.FC = () => {
         return "soundboard";
     };
 
+    const handlePublishAnnouncement = () => {
+        setShowAnnouncementModal(true);
+    };
+
     return (
         <AdminPageProvider initialPage={getCurrentPage()}>
             <div className="h-full relative ">
                 <AdminLayout />
-                <AdminSettings />
+                <AdminSettings onPublishAnnouncement={handlePublishAnnouncement} />
+
+                {showAnnouncementModal && (
+                    <AnnouncementModal setAnnouncementModal={setShowAnnouncementModal} />
+                )}
             </div>
         </AdminPageProvider>
     );
