@@ -5,7 +5,7 @@ import { categoryImages } from "../../CategoryImages";
 import KPICard from "./KPICard";
 import CommentsPanel from "./CommentsPanel";
 import StatusTimeline from "./StatusTimeline";
-import type { PingComment, StatusEvent, RelatedPing } from "./types";
+import type { StatusEvent, RelatedPing } from "./types";
 import AdminPingWaves from "./AdminPingWaves";
 import { motion } from "framer-motion";
 import pingService from "../../../api/services/ping.service";
@@ -85,7 +85,6 @@ interface PingDetailData {
     surgeDelta?: string;
     surgeDeltaIcon?: string;
     unresolvedFor: string;
-    comments: PingComment[];
     statusEvents: StatusEvent[];
     relatedPings: RelatedPing[];
     officialResponse?: { content: string; createdAt: string; author: { firstName: string; lastName: string } } | null;
@@ -170,14 +169,6 @@ const AdminPingDetail: React.FC<AdminPingDetailProps> = ({ pingId: propPingId })
             surgeDelta: diff > 0 ? `+${diff} today` : undefined,
             surgeDeltaIcon: diff > 0 ? "↑" : undefined,
             unresolvedFor: `${ageDays} day${ageDays !== 1 ? 's' : ''}`,
-            comments: (ping.comments || []).map((c: any) => ({
-                id: c.id?.toString() || Math.random().toString(),
-                author: c.author ? `${c.author.firstName} ${c.author.lastName}` : "Anonymous",
-                avatar: c.author?.profilePicture || `https://ui-avatars.com/api/?name=${c.author?.firstName || "A"}+${c.author?.lastName || "U"}&background=random`,
-                text: c.content || "",
-                likes: c.surgeCount || 0,
-                replies: c.replyCount || 0,
-            })),
             statusEvents: [
                 { status: "Ping Posted", timestamp: new Date(ping.createdAt).toLocaleString() },
                 ...((ping as any).acknowledgedAt ? [{ status: "Acknowledged by Admin", timestamp: new Date((ping as any).acknowledgedAt).toLocaleString() }] : []),
@@ -388,7 +379,7 @@ const AdminPingDetail: React.FC<AdminPingDetailProps> = ({ pingId: propPingId })
                 </div>
 
                 <div className="w-full lg:w-[320px] sm:w-[300px] flex flex-col gap-3 sm:gap-4">
-                    <CommentsPanel comments={detail.comments || []} />
+                    <CommentsPanel comments={pingData.comments || []} />
                     <StatusTimeline events={detail.statusEvents || []} />
                 </div>
             </div>

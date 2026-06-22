@@ -122,7 +122,7 @@ const PingActionsDropdown = ({
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: -8, scale: 0.95 }}
                         transition={{ duration: 0.15 }}
-                        className="absolute right-0 top-full mt-2 bg-white rounded-[8px] shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)] py-2 px-2 min-w-[172px] z-50"
+                        className="absolute right-0 top-full mt-2 bg-white rounded-lg shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)] py-2 px-2 min-w-[172px] z-50"
                         onClick={(e) => e.stopPropagation()}
                     >
                         {/* Copy link */}

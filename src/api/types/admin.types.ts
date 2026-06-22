@@ -190,7 +190,11 @@ export interface UpdateWaveStatusDto {
 }
 
 export interface UpdatePingProgressDto {
-  progressStatus: "UNACKNOWLEDGED" | "ACKNOWLEDGED" | "IN_PROGRESS" | "RESOLVED";
+  progressStatus:
+    | "UNACKNOWLEDGED"
+    | "ACKNOWLEDGED"
+    | "IN_PROGRESS"
+    | "RESOLVED";
 }
 
 // ==================== Report Types ====================
@@ -212,11 +216,16 @@ export interface ReportItem {
     displayName: string | null;
     profilePicture: string | null;
   };
-  ping: { id: number; title: string; content: string ; category: { id: number; name: string }} | null;
+  ping: {
+    id: number;
+    title: string;
+    content: string;
+    category: { id: number; name: string };
+  } | null;
   wave: {
     id: number;
     solution: string;
-    ping: { id: number; title: string, category: { id: number; name: string } };
+    ping: { id: number; title: string; category: { id: number; name: string } };
   } | null;
   comment: {
     id: number;
@@ -228,7 +237,13 @@ export interface ReportItem {
 }
 
 export interface ReportActionDto {
-  action: "DISMISS" | "WARN" | "REMOVE_POST" | "SUSPEND" | "BAN" | "REQUEST_IDENTITY_DISCLOSURE";
+  action:
+    | "DISMISS"
+    | "WARN"
+    | "REMOVE_POST"
+    | "SUSPEND"
+    | "BAN"
+    | "REQUEST_IDENTITY_DISCLOSURE";
   note?: string;
   suspendPreset?: "1_DAY" | "1_WEEK" | "1_MONTH";
 }
@@ -253,11 +268,20 @@ export interface OverviewResponse {
     avgResolveTimeDays: { value: number; deltaDays: number };
     activeUsers: { value: number; deltaPercent: number };
     underReview: { value: number; deltaPercent: number };
-    unresolvedOlderThanDays: { thresholdDays: number; value: number; deltaAbsolute: number };
+    unresolvedOlderThanDays: {
+      thresholdDays: number;
+      value: number;
+      deltaAbsolute: number;
+    };
   };
   communityActivity: {
     months: number;
-    series: Array<{ month: string; waves: number; pings: number; resolved: number }>;
+    series: Array<{
+      month: string;
+      waves: number;
+      pings: number;
+      resolved: number;
+    }>;
   };
   categoryHealth: Array<{
     categoryId: number;
@@ -290,6 +314,7 @@ export interface OverviewResponse {
   surgeVelocity: Array<{ pingId: number; velocity: number }>;
   stalledWavesCount: number;
   stalledAcknowledgedPingsCount: number;
+  wavesAwaitingApproval: number;
   categoriesStats: Array<{
     categoryId: number;
     categoryName: string;
@@ -323,7 +348,12 @@ export interface TopContributor {
 
 export interface CommunityMood {
   window: { days: number; start: string; end: string };
-  totals: { comments: number; positive: number; neutral: number; negative: number };
+  totals: {
+    comments: number;
+    positive: number;
+    neutral: number;
+    negative: number;
+  };
   percentages: { positive: number; neutral: number; negative: number };
   trend: Array<{
     date: string;
@@ -508,7 +538,7 @@ export interface SuperAdminUser {
 }
 
 export interface StallingPing extends Ping {
-  daysStalled: number
+  daysStalled: number;
 }
 
 export interface PriorityPing extends Ping {

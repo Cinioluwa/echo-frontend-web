@@ -49,12 +49,12 @@ const AdminSoundboard: React.FC<AdminSoundboardProps> = ({
             setLoading(true);
             setError(null);
 
-            const [overview, surging, followUpQueue, issuesByCategory] = await Promise.all([
+            const [overview, surging, issuesByCategory] = await Promise.all([
                 adminService.getOverview({ months: 1 }),
                 adminService.getSurgingIssues({ hours: 72, limit: 3 }),
                 // adminService.getPriorityPings({ weeks: 1, limit: 3 }),
                 // adminService.getStallingPings({ staleDays: 7, limit: 5 }),
-                adminService.getFollowUpQueue({ staleDays: 7 }).catch(() => null),
+                // adminService.getFollowUpQueue({ staleDays: 7 }).catch(() => null),
                 adminService.getIssuesByCategory().catch(() => null),
             ]);
 
@@ -74,33 +74,32 @@ const AdminSoundboard: React.FC<AdminSoundboardProps> = ({
 
             // Follow-up queue (use dedicated endpoint if available, fallback to manual)
             const followUps: FollowUpItem[] = [];
-            if (followUpQueue) {
-                followUps.push({
-                    id: "approved-waves",
-                    title: "Approved waves not being implemented",
-                    description: `${overview.stalledWavesCount} approved waves require progression`,
-                    count: overview.stalledWavesCount,
-                    iconColor: "green",
-                    icon: "/assets/icon/not-implemented.svg",
-                });
-                followUps.push({
-                    id: "awaiting-approval",
-                    title: "Waves awaiting approval",
-                    description: `${followUpQueue.wavesAwaitingApproval} waves need review`,
-                    count: followUpQueue.wavesAwaitingApproval,
-                    iconColor: "red",
-                    icon: "/assets/icon/awaiting-approval.svg",
-                });
-                followUps.push({
-                    id: "acknowledged-stalling",
-                    title: "Acknowledged pings stalling",
-                    description: `${overview.stalledAcknowledgedPingsCount} acknowledged pings need progression`,
-                    count: overview.stalledAcknowledgedPingsCount,
-                    iconColor: "red",
-                    icon: "/assets/icon/acknowledged-pings.svg",
-                });
+            followUps.push({
+                id: "approved-waves",
+                title: "Approved waves not being implemented",
+                description: `${overview.stalledWavesCount} approved waves require progression`,
+                count: overview.stalledWavesCount,
+                iconColor: "green",
+                icon: "/assets/icon/not-implemented.svg",
+            });
+            followUps.push({
+                id: "awaiting-approval",
+                title: "Waves awaiting approval",
+                description: `${overview.wavesAwaitingApproval} waves need review`,
+                count: overview.wavesAwaitingApproval,
+                iconColor: "red",
+                icon: "/assets/icon/awaiting-approval.svg",
+            });
+            followUps.push({
+                id: "acknowledged-stalling",
+                title: "Acknowledged pings stalling",
+                description: `${overview.stalledAcknowledgedPingsCount} acknowledged pings need progression`,
+                count: overview.stalledAcknowledgedPingsCount,
+                iconColor: "red",
+                icon: "/assets/icon/acknowledged-pings.svg",
+            });
 
-            }
+
             setFollowUpItems(followUps);
             setPendingCount(followUps.reduce((sum, i) => sum + i.count, 0));
 

@@ -235,15 +235,13 @@ const WaveCard = React.memo(
                   </div>
                 </Tooltip>
               )}
-              {isOwner && (
-                <WaveActionsDropdown
-                  waveId={wave.id}
-                  isOwner={isOwner}
-                  canEdit={canEdit}
-                  onEdit={() => setIsEditing(true)}
-                  onDelete={handleDeleteClick}
-                />
-              )}
+              <WaveActionsDropdown
+                waveId={wave.id}
+                isOwner={isOwner}
+                canEdit={canEdit}
+                onEdit={() => setIsEditing(true)}
+                onDelete={handleDeleteClick}
+              />
             </div>
           </div>
 
