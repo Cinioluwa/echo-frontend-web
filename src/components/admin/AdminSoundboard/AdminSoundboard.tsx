@@ -3,6 +3,7 @@ import StatCard from "./StatCard";
 import SurgeAlertCard, { type SurgeItem } from "./SurgeAlertCard";
 import FollowUpQueueCard, { type FollowUpItem } from "./FollowUpQueueCard";
 import IssuesByCategoryCard, { type CategoryData } from "./IssuesByCategoryCard";
+import PingIndexModal from "./PingIndexModal";
 import { motion } from "framer-motion";
 import AdminHeader from "../AdminHeader";
 import AdminMobileMenu from "../AdminMobileMenu";
@@ -40,6 +41,7 @@ const AdminSoundboard: React.FC<AdminSoundboardProps> = ({
     const [followUpItems, setFollowUpItems] = useState<FollowUpItem[]>([]);
     const [pendingCount, setPendingCount] = useState(0);
     const [categoryData, setCategoryData] = useState<CategoryData[]>([]);
+    const [selectedCategory, setSelectedCategory] = useState<CategoryData | null>(null);
     const [resolutionRate, setResolutionRate] = useState({ value: "0%", badge: "" });
     const [avgResolveTime, setAvgResolveTime] = useState({ value: "0 days", badge: "" });
     const [overdue, setOverdue] = useState({ value: "0", badge: "" });
@@ -106,6 +108,7 @@ const AdminSoundboard: React.FC<AdminSoundboardProps> = ({
             // Category data (use dedicated endpoint if available, fallback to overview)
             if (issuesByCategory) {
                 const cats: CategoryData[] = issuesByCategory.map((item) => ({
+                    categoryId: item.categoryId,
                     name: item.categoryName,
                     resolved: item.resolutionRate,
                     openCount: item.openCount,
@@ -119,6 +122,7 @@ const AdminSoundboard: React.FC<AdminSoundboardProps> = ({
                 setCategoryData(cats);
             } else {
                 const cats: CategoryData[] = overview.categoriesStats.map((stat) => ({
+                    categoryId: stat.categoryId,
                     name: stat.categoryName,
                     resolved: stat.resolutionPercentage,
                     openCount: stat.openCount,
@@ -233,7 +237,10 @@ const AdminSoundboard: React.FC<AdminSoundboardProps> = ({
                                 </div>
 
                                 {categoryData.length > 0 && (
-                                    <IssuesByCategoryCard categories={categoryData} />
+                                    <IssuesByCategoryCard
+                                        categories={categoryData}
+                                        onCategoryClick={setSelectedCategory}
+                                    />
                                 )}
                             </div>
                         )}
@@ -241,6 +248,13 @@ const AdminSoundboard: React.FC<AdminSoundboardProps> = ({
                 </div>
             </div>
             <AdminMobileMenu setMenu={setOpenMenu} menu={openMenu} />
+
+            {selectedCategory && (
+                <PingIndexModal
+                    category={selectedCategory}
+                    onClose={() => setSelectedCategory(null)}
+                />
+            )}
         </>
     );
 };

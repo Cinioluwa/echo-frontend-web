@@ -61,7 +61,7 @@ export const adminService = {
     category?: number;
     status?: string;
     progressStatus?: string;
-    categoryId?: number;
+    categoryId?: string | number;
   }): Promise<PaginatedResponse<AdminPing>> {
     const { data } = await api.get("/admin/pings", { params });
     return data;
@@ -126,7 +126,13 @@ export const adminService = {
   async getStallingPings(params?: {
     staleDays?: number;
     limit?: number;
-  }): Promise<{ staleDays: number; limit: number; cutoff: string; count: number; data: StallingPing[] }> {
+  }): Promise<{
+    staleDays: number;
+    limit: number;
+    cutoff: string;
+    count: number;
+    data: StallingPing[];
+  }> {
     const { data } = await api.get("/admin/pings/stalling", { params });
     return data;
   },
@@ -235,7 +241,15 @@ export const adminService = {
     page?: number;
     limit?: number;
     status?: "PENDING" | "REVIEWED" | "RESOLVED" | "DISMISSED";
-  }): Promise<{ data: ReportItem[]; pagination: { total: number; totalPages: number; currentPage: number; limit: number } }> {
+  }): Promise<{
+    data: ReportItem[];
+    pagination: {
+      total: number;
+      totalPages: number;
+      currentPage: number;
+      limit: number;
+    };
+  }> {
     const { data } = await api.get("/reports", { params });
     return data;
   },
@@ -245,7 +259,10 @@ export const adminService = {
    * @param id Report ID
    * @param dto Status update
    */
-  async updateReportStatus(id: number, dto: ReportStatusDto): Promise<ReportItem> {
+  async updateReportStatus(
+    id: number,
+    dto: ReportStatusDto,
+  ): Promise<ReportItem> {
     const { data } = await api.patch(`/reports/${id}/status`, dto);
     return data;
   },
@@ -255,7 +272,10 @@ export const adminService = {
    * @param id Report ID
    * @param dto Action data
    */
-  async applyReportAction(id: number, dto: ReportActionDto): Promise<ReportItem> {
+  async applyReportAction(
+    id: number,
+    dto: ReportActionDto,
+  ): Promise<ReportItem> {
     const { data } = await api.post(`/admin/reports/${id}/action`, dto);
     return data;
   },
@@ -286,7 +306,9 @@ export const adminService = {
     minEvents?: number;
     limit?: number;
   }): Promise<{ window: any; count: number; items: SurgingIssue[] }> {
-    const { data } = await api.get("/admin/overview/surging-issues", { params });
+    const { data } = await api.get("/admin/overview/surging-issues", {
+      params,
+    });
     return data;
   },
 
@@ -297,8 +319,13 @@ export const adminService = {
   async getTopContributors(params?: {
     days?: number;
     limit?: number;
-  }): Promise<{ window: { days: number; start: string; end: string }; items: TopContributor[] }> {
-    const { data } = await api.get("/admin/overview/top-contributors", { params });
+  }): Promise<{
+    window: { days: number; start: string; end: string };
+    items: TopContributor[];
+  }> {
+    const { data } = await api.get("/admin/overview/top-contributors", {
+      params,
+    });
     return data;
   },
 
@@ -307,7 +334,9 @@ export const adminService = {
    * @param params Query parameters
    */
   async getCommunityMood(params?: { days?: number }): Promise<CommunityMood> {
-    const { data } = await api.get("/admin/overview/community-mood", { params });
+    const { data } = await api.get("/admin/overview/community-mood", {
+      params,
+    });
     return data;
   },
 
@@ -337,7 +366,9 @@ export const adminService = {
   async getJoinRequests(params?: {
     status?: "PENDING" | "APPROVED" | "REJECTED";
   }): Promise<{ requests: JoinRequest[] }> {
-    const { data } = await api.get("/admin/organization/join-requests", { params });
+    const { data } = await api.get("/admin/organization/join-requests", {
+      params,
+    });
     return data;
   },
 
@@ -345,8 +376,12 @@ export const adminService = {
    * Approve a pending join request
    * @param id Join request ID
    */
-  async approveJoinRequest(id: number): Promise<{ message: string; requestId: number; userId: number }> {
-    const { data } = await api.post(`/admin/organization/join-requests/${id}/approve`);
+  async approveJoinRequest(
+    id: number,
+  ): Promise<{ message: string; requestId: number; userId: number }> {
+    const { data } = await api.post(
+      `/admin/organization/join-requests/${id}/approve`,
+    );
     return data;
   },
 
@@ -355,8 +390,14 @@ export const adminService = {
    * @param id Join request ID
    * @param reason Optional reason
    */
-  async rejectJoinRequest(id: number, reason?: string): Promise<{ message: string; requestId: number }> {
-    const { data } = await api.post(`/admin/organization/join-requests/${id}/reject`, { reason });
+  async rejectJoinRequest(
+    id: number,
+    reason?: string,
+  ): Promise<{ message: string; requestId: number }> {
+    const { data } = await api.post(
+      `/admin/organization/join-requests/${id}/reject`,
+      { reason },
+    );
     return data;
   },
 
@@ -367,7 +408,10 @@ export const adminService = {
    * @param pingId Ping ID
    * @param dto Response content
    */
-  async createOfficialResponse(pingId: number, dto: CreateOfficialResponseDto): Promise<OfficialResponse> {
+  async createOfficialResponse(
+    pingId: number,
+    dto: CreateOfficialResponseDto,
+  ): Promise<OfficialResponse> {
     const { data } = await api.post(`/pings/${pingId}/official-response`, dto);
     return data;
   },
@@ -377,7 +421,10 @@ export const adminService = {
    * @param pingId Ping ID
    * @param dto Updated response content
    */
-  async updateOfficialResponse(pingId: number, dto: UpdateOfficialResponseDto): Promise<OfficialResponse> {
+  async updateOfficialResponse(
+    pingId: number,
+    dto: UpdateOfficialResponseDto,
+  ): Promise<OfficialResponse> {
     const { data } = await api.patch(`/pings/${pingId}/official-response`, dto);
     return data;
   },
@@ -388,7 +435,13 @@ export const adminService = {
    * Update organization general settings
    * @param dto Settings to update
    */
-  async updateOrgSettings(dto: UpdateOrgSettingsDto): Promise<{ id: number; name: string; description: string | null; logoUrl: string | null; domain: string | null }> {
+  async updateOrgSettings(dto: UpdateOrgSettingsDto): Promise<{
+    id: number;
+    name: string;
+    description: string | null;
+    logoUrl: string | null;
+    domain: string | null;
+  }> {
     const { data } = await api.patch("/admin/organization/settings", dto);
     return data;
   },
@@ -428,7 +481,9 @@ export const adminService = {
    * Get follow-up queue summary
    * @param params Query parameters
    */
-  async getFollowUpQueue(params?: { staleDays?: number }): Promise<FollowUpQueue> {
+  async getFollowUpQueue(params?: {
+    staleDays?: number;
+  }): Promise<FollowUpQueue> {
     const { data } = await api.get("/admin/follow-up-queue", { params });
     return data;
   },
@@ -450,7 +505,14 @@ export const adminService = {
    * @param id User ID
    * @param dto Suspension details
    */
-  async suspendUser(id: number, dto: SuspendUserDto): Promise<{ userId: number; moderationStatus: string; suspendedUntil: string | null }> {
+  async suspendUser(
+    id: number,
+    dto: SuspendUserDto,
+  ): Promise<{
+    userId: number;
+    moderationStatus: string;
+    suspendedUntil: string | null;
+  }> {
     const { data } = await api.patch(`/admin/users/${id}/suspend`, dto);
     return data;
   },
@@ -459,7 +521,11 @@ export const adminService = {
    * Unsuspend a member
    * @param id User ID
    */
-  async unsuspendUser(id: number): Promise<{ userId: number; moderationStatus: string; suspendedUntil: null }> {
+  async unsuspendUser(id: number): Promise<{
+    userId: number;
+    moderationStatus: string;
+    suspendedUntil: null;
+  }> {
     const { data } = await api.patch(`/admin/users/${id}/unsuspend`);
     return data;
   },
@@ -489,7 +555,10 @@ export const adminService = {
    * @param id Category ID
    * @param dto Fields to update
    */
-  async updateCategory(id: number, dto: CategoryUpdateDto): Promise<{ id: number; name: string; isActive: boolean }> {
+  async updateCategory(
+    id: number,
+    dto: CategoryUpdateDto,
+  ): Promise<{ id: number; name: string; isActive: boolean }> {
     const { data } = await api.patch(`/categories/${id}`, dto);
     return data;
   },

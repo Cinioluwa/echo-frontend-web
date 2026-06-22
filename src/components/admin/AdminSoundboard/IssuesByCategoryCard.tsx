@@ -8,6 +8,7 @@ export interface CategoryIssue {
 }
 
 export interface CategoryData {
+    categoryId: number;
     name: string;
     icon?: string; // URL to icon image
     resolved: number; // percentage
@@ -17,11 +18,13 @@ export interface CategoryData {
 
 interface IssuesByCategoryCardProps {
     categories: CategoryData[];
+    onCategoryClick?: (category: CategoryData) => void;
     className?: string;
 }
 
 const IssuesByCategoryCard: React.FC<IssuesByCategoryCardProps> = ({
     categories,
+    onCategoryClick,
     className = "",
 }) => {
     return (
@@ -37,7 +40,11 @@ const IssuesByCategoryCard: React.FC<IssuesByCategoryCardProps> = ({
             {/* Categories Grid */}
             <div className="grid grid-cols-2 gap-5">
                 {categories.map((category, index) => (
-                    <div key={index} className="flex flex-col gap-3 bg-[#FEF5EA] p-4 border-[0.5px] border-[#F49B31] rounded-xl">
+                    <div
+                        key={index}
+                        className={`flex flex-col gap-3 bg-[#FEF5EA] p-4 border-[0.5px] border-[#F49B31] rounded-xl ${onCategoryClick ? "cursor-pointer hover:bg-[#FDE8D0] transition-colors" : ""}`}
+                        onClick={() => onCategoryClick?.(category)}
+                    >
                         {/* Category Header */}
                         <div className="flex items-center gap-3">
                             {category.icon && (
