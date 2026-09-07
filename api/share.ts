@@ -129,8 +129,8 @@ function generateOGPage(
   if (data.imageUrl) {
     image = data.imageUrl.startsWith("http") ? data.imageUrl : `${webBase}${data.imageUrl}`;
   } else {
-    // Fallback to Echo Brand Logo
-    image = `${webBase}/assets/images/Echo%20Logo.png`;
+    // Fallback to Echo Brand Banner (1200x630)
+    image = `${webBase}/assets/images/echo_og_banner.jpg`;
   }
   image = escapeHtml(image);
 
