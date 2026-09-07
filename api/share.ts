@@ -128,12 +128,14 @@ function generateOGPage(
   let image = "";
   if (data.imageUrl) {
     image = data.imageUrl.startsWith("http") ? data.imageUrl : `${webBase}${data.imageUrl}`;
-    image = escapeHtml(image);
+  } else {
+    // Fallback to Echo Brand Logo
+    image = `${webBase}/assets/images/Echo%20Logo.png`;
   }
+  image = escapeHtml(image);
 
-  // Without a valid image, Telegram will drop the entire preview if we pass a too-small logo (220x86).
-  // So if there's no image, we omit the image tags and let it render a clean text-only preview.
-  const twitterCard = image ? "summary_large_image" : "summary";
+  // Always use summary_large_image for rich media display
+  const twitterCard = "summary_large_image";
 
   return `<!DOCTYPE html>
 <html lang="en">
@@ -149,7 +151,8 @@ function generateOGPage(
   <meta property="og:url" content="${escapeHtml(shareUrl)}" />
   <meta property="og:site_name" content="${data.orgName ? escapeHtml(data.orgName) : 'Echo'}" />
   ${image ? `<meta property="og:image" content="${image}" />` : ""}
-  ${image ? `<meta property="og:image:width" content="1200" />\n  <meta property="og:image:height" content="630" />` : ""}
+  ${image ? `<meta property="og:image:width" content="1200" />` : ""}
+  ${image ? `<meta property="og:image:height" content="630" />` : ""}
   
   <!-- Twitter Card Meta Tags -->
   <meta name="twitter:card" content="${twitterCard}" />
@@ -167,6 +170,10 @@ function generateOGPage(
   <meta name="description" content="${finalDescription}" />
   <link rel="canonical" href="${escapeHtml(shareUrl)}" />
   
+  <!-- Redirect to app -->
+  <script>
+    window.location.replace("${absoluteCanonical}");
+  </script>
   
   <style>
     body {
@@ -196,10 +203,6 @@ function generateOGPage(
     <p>Redirecting to Echo app...</p>
     <p><a href="${escapeHtml(absoluteCanonical)}">Click here if not redirected automatically</a></p>
   </div>
-  <!-- Redirect to app — kept in body so crawlers read OG tags in head first -->
-  <script>
-    window.location.replace("${absoluteCanonical}");
-  </script>
 </body>
 </html>`;
 }
