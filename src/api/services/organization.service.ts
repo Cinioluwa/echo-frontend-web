@@ -6,7 +6,7 @@ import type { Organization } from "../types/index";
 // (e.g. the claim flow, which is a pre-registration step)
 const unauthApi = axios.create({
   baseURL: "https://echo-backend-twvk.onrender.com/api",
-  timeout: 10000,
+  timeout: 30000,
   headers: { "Content-Type": "application/json" },
 });
 
