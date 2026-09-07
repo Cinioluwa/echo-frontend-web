@@ -126,16 +126,18 @@ function generateOGPage(
     : descriptionText;
 
   let image = "";
+  let isFallbackImage = false;
   if (data.imageUrl) {
     image = data.imageUrl.startsWith("http") ? data.imageUrl : `${webBase}${data.imageUrl}`;
   } else {
     // Fallback to Echo Brand Logo
     image = `${webBase}/assets/images/Echo%20Logo.png`;
+    isFallbackImage = true;
   }
   image = escapeHtml(image);
 
-  // Always use summary_large_image for rich media display
-  const twitterCard = "summary_large_image";
+  // Use summary_large_image for user uploaded content, but summary for the small fallback logo
+  const twitterCard = isFallbackImage ? "summary" : "summary_large_image";
 
   return `<!DOCTYPE html>
 <html lang="en">
@@ -151,8 +153,7 @@ function generateOGPage(
   <meta property="og:url" content="${escapeHtml(shareUrl)}" />
   <meta property="og:site_name" content="${data.orgName ? escapeHtml(data.orgName) : 'Echo'}" />
   ${image ? `<meta property="og:image" content="${image}" />` : ""}
-  ${image ? `<meta property="og:image:width" content="1200" />` : ""}
-  ${image ? `<meta property="og:image:height" content="630" />` : ""}
+  ${image && !isFallbackImage ? `<meta property="og:image:width" content="1200" />\n  <meta property="og:image:height" content="630" />` : ""}
   
   <!-- Twitter Card Meta Tags -->
   <meta name="twitter:card" content="${twitterCard}" />
