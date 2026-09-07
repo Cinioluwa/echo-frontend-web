@@ -171,10 +171,6 @@ function generateOGPage(
   <meta name="description" content="${finalDescription}" />
   <link rel="canonical" href="${escapeHtml(shareUrl)}" />
   
-  <!-- Redirect to app -->
-  <script>
-    window.location.replace("${absoluteCanonical}");
-  </script>
   
   <style>
     body {
@@ -204,6 +200,10 @@ function generateOGPage(
     <p>Redirecting to Echo app...</p>
     <p><a href="${escapeHtml(absoluteCanonical)}">Click here if not redirected automatically</a></p>
   </div>
+  <!-- Redirect to app — kept in body so crawlers read OG tags in head first -->
+  <script>
+    window.location.replace("${absoluteCanonical}");
+  </script>
 </body>
 </html>`;
 }
