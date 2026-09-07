@@ -16,6 +16,7 @@ import { getEditErrorMessage } from "../utils/editErrors";
 import { EditedLabel } from "../utils/editedLabel";
 import { useState } from "react";
 import { pingService } from "../api/services";
+import { useAuthStore } from "../stores";
 
 interface PingCardProps {
     ping: Ping;
@@ -148,7 +149,9 @@ const PingCard = ({
                         pictureUrl={
                             ping.isAnonymous && ping.anonymousProfilePicture
                                 ? ping.anonymousProfilePicture
-                                : undefined
+                                : isOwner && !ping.isAnonymous && useAuthStore.getState().user?.profilePicture
+                                  ? useAuthStore.getState().user?.profilePicture
+                                  : undefined
                         }
                         bgColor="bg-[#ffc37b]"
                     />

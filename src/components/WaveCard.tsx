@@ -22,6 +22,7 @@ import { useEditWindow } from "../hooks";
 import { getEditErrorMessage } from "../utils/editErrors";
 import { EditedLabel } from "../utils/editedLabel";
 import { waveService } from "../api/services";
+import { useAuthStore } from "../stores";
 
 interface WaveCardProps {
   wave: Wave;
@@ -206,7 +207,9 @@ const WaveCard = React.memo(
                 bgColor="bg-[#ffc37b]" pictureUrl={
                   currentWave.isAnonymous && currentWave.anonymousProfilePicture
                     ? currentWave.anonymousProfilePicture
-                    : undefined
+                    : isOwner && !currentWave.isAnonymous && useAuthStore.getState().user?.profilePicture
+                      ? useAuthStore.getState().user?.profilePicture
+                      : undefined
                 } />
               <div className="flex flex-col">
                 <span className="font-['Poppins',sans-serif] font-semibold text-[14px] text-black">

@@ -175,7 +175,9 @@ const UnifiedPingCard = ({
                 pictureUrl={
                   currentPing.isAnonymous && currentPing.anonymousProfilePicture
                     ? currentPing.anonymousProfilePicture
-                    : undefined
+                    : isOwner && !currentPing.isAnonymous && currentUser?.profilePicture
+                      ? currentUser.profilePicture
+                      : undefined
                 }
               />
               {/* Name + timestamp */}

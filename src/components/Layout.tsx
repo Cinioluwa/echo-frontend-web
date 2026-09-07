@@ -56,6 +56,8 @@ const Layout = () => {
   useEffect(() => {
     if (currentUser) {
       subscribe();
+      // Fetch initial notifications to populate unread badge (Fixes "0" bubble issue)
+      useNotificationStore.getState().fetchNotifications();
     }
     // Only re-run when the logged-in user changes (e.g. after login/logout)
     // eslint-disable-next-line react-hooks/exhaustive-deps

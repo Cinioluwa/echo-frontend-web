@@ -126,8 +126,8 @@ export const usePingsStore = create<PingsState>()(
           return;
         }
 
-        // Prevent duplicate concurrent fetches
-        if (state.isLoading || state.isFetchingInBackground) return;
+        // Prevent duplicate concurrent fetches FOR THE SAME CACHE KEY
+        if ((state.isLoading || state.isFetchingInBackground) && state.currentCacheKey === cacheKey) return;
 
         // Set loading state (background if we have cached data, foreground otherwise)
         set((state) => {
@@ -136,6 +136,7 @@ export const usePingsStore = create<PingsState>()(
           } else {
             state.isLoading = true;
           }
+          state.currentCacheKey = cacheKey; // Set the intended cache key here
           // Don't clear error here - keep showing it with stale data
         });
 
@@ -178,18 +179,19 @@ export const usePingsStore = create<PingsState>()(
               },
             };
 
-            // Update current view
-            state.pings = response.data;
-            state.pingsById = dataById;
-            state.currentPage = page;
-            state.totalPages = response.pagination.totalPages || 1;
-            state.hasNextPage = response.pagination.hasNextPage || false;
-            state.currentCacheKey = cacheKey;
-            state.lastFetched = Date.now();
-            state.lastParams = params;
-            state.isLoading = false;
-            state.isFetchingInBackground = false;
-            state.error = null; // Clear error on successful fetch
+            // Update current view ONLY if this fetch's cacheKey is still the active one
+            if (state.currentCacheKey === cacheKey) {
+              state.pings = response.data;
+              state.pingsById = dataById;
+              state.currentPage = page;
+              state.totalPages = response.pagination.totalPages || 1;
+              state.hasNextPage = response.pagination.hasNextPage || false;
+              state.lastFetched = Date.now();
+              state.lastParams = params;
+              state.isLoading = false;
+              state.isFetchingInBackground = false;
+              state.error = null; // Clear error on successful fetch
+            }
           });
 
           // Calculate and set category counts ONLY when fetching all categories (no filters)
@@ -209,10 +211,12 @@ export const usePingsStore = create<PingsState>()(
         } catch (err: any) {
           console.error("Error fetching pings:", err);
           set((state) => {
-            // Keep showing cached data, just update error state
-            state.error = "Failed to load pings";
-            state.isLoading = false;
-            state.isFetchingInBackground = false;
+            if (state.currentCacheKey === cacheKey) {
+               // Keep showing cached data, just update error state
+               state.error = "Failed to load pings";
+               state.isLoading = false;
+               state.isFetchingInBackground = false;
+            }
           });
         }
       },

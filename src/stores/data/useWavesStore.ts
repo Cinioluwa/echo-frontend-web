@@ -134,8 +134,8 @@ export const useWavesStore = create<WavesState>()(
           return;
         }
 
-        // Prevent duplicate concurrent fetches
-        if (state.isLoading || state.isFetchingInBackground) return;
+        // Prevent duplicate concurrent fetches FOR THE SAME CACHE KEY
+        if ((state.isLoading || state.isFetchingInBackground) && state.currentCacheKey === cacheKey) return;
 
         // Set loading state (background if we have cached data, foreground otherwise)
         set((state) => {
@@ -144,6 +144,7 @@ export const useWavesStore = create<WavesState>()(
           } else {
             state.isLoading = true;
           }
+          state.currentCacheKey = cacheKey; // Set the intended cache key here
           // Don't clear error here - keep showing it with stale data
         });
 
@@ -186,20 +187,21 @@ export const useWavesStore = create<WavesState>()(
               },
             };
 
-            // Update current view
-            state.waves = response.data;
-            state.wavesById = dataById;
-            state.currentPage = page;
-            state.totalPages = response.pagination.totalPages || 1;
-            state.hasNextPage = response.pagination.hasNextPage || false;
-            state.currentCacheKey = cacheKey;
-
-            // Update cache timestamps
-            state.lastFetched = Date.now();
-            state.lastParams = params;
-            state.isLoading = false;
-            state.isFetchingInBackground = false;
-            state.error = null; // Clear error on successful fetch
+            // Update current view ONLY if this fetch's cacheKey is still the active one
+            if (state.currentCacheKey === cacheKey) {
+              state.waves = response.data;
+              state.wavesById = dataById;
+              state.currentPage = page;
+              state.totalPages = response.pagination.totalPages || 1;
+              state.hasNextPage = response.pagination.hasNextPage || false;
+              
+              // Update cache timestamps
+              state.lastFetched = Date.now();
+              state.lastParams = params;
+              state.isLoading = false;
+              state.isFetchingInBackground = false;
+              state.error = null; // Clear error on successful fetch
+            }
           });
 
           // Calculate and set category counts ONLY when fetching all categories (no filters)
@@ -219,10 +221,12 @@ export const useWavesStore = create<WavesState>()(
         } catch (err: any) {
           console.error("Error fetching waves:", err);
           set((state) => {
-            // Keep showing cached data, just update error state
-            state.error = err.response?.data?.error || "Failed to load waves";
-            state.isLoading = false;
-            state.isFetchingInBackground = false;
+            if (state.currentCacheKey === cacheKey) {
+              // Keep showing cached data, just update error state
+              state.error = err.response?.data?.error || "Failed to load waves";
+              state.isLoading = false;
+              state.isFetchingInBackground = false;
+            }
           });
         }
       },
