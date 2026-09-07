@@ -33,7 +33,7 @@ import {
 } from "../api/services";
 import type { Announcement, Ping } from "../api/types";
 import MarkAsResolvedBar from "./MarkAsResolvedBar";
-import { useAuthStore, usePingsStore } from "../stores";
+import { useAuthStore, usePingsStore, useNotificationStore } from "../stores";
 
 const Layout = () => {
   const location = useLocation();
