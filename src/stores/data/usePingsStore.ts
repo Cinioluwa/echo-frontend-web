@@ -117,9 +117,14 @@ export const usePingsStore = create<PingsState>()(
           : Infinity;
         const isCacheFresh = cacheAge < DEFAULT_CACHE_CONFIG.ttl;
 
+        // Only skip fetch if cache is fresh AND we're still on the same filter/query
+        // If the user changed category or sort, we MUST fetch even if cache is fresh
+        const isSameKey = state.currentCacheKey === cacheKey;
+
         if (
           isCacheFresh &&
           hasCachedData &&
+          isSameKey &&
           page === cachedData.pagination.currentPage
         ) {
           console.log(`✅ Cache is fresh for ${cacheKey}, skipping fetch`);
