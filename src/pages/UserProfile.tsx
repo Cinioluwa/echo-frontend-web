@@ -130,7 +130,7 @@ const UserProfile = () => {
     try {
       const res = await uploadService.uploadProfilePicture(file);
       const uploadedPicture =
-        res?.user?.profilePictureUrl || res?.profilePictureUrl || previousPicture;
+        res?.user?.profilePicture || res?.url || previousPicture;
 
       setUser((prev) =>
         prev
