@@ -91,7 +91,10 @@ const PingDetail = () => {
           useSurgeStore.getState().addSurge("ping", pingId);
         }
       })
-      .catch(() => setError("Failed to load ping"))
+      .catch((err) => {
+        console.error("Failed to load ping (possibly wrong org). Falling back to guest view:", err);
+        navigate(`/guest/feed/${pingId}`);
+      })
       .finally(() => setIsLoading(false));
   }, [pingId]);
 
