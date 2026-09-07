@@ -64,9 +64,14 @@ api.interceptors.response.use(
             // Show user-friendly message
             console.error("Your session has expired. Please log in again.");
 
-            // Redirect to login after a brief delay to allow error display
+            // Redirect to login (or guest view) after a brief delay
             setTimeout(() => {
-              window.location.href = "/login";
+              const currentPath = window.location.pathname;
+              if (currentPath.startsWith("/feed/")) {
+                window.location.href = `/guest${currentPath}`;
+              } else {
+                window.location.href = "/login";
+              }
             }, 1000);
           }
         }
