@@ -63,7 +63,7 @@ const PingDetail = () => {
 
   const [ping, setPing] = useState<Ping | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [error] = useState<string | null>(null);
   const [waves, setWaves] = useState<Wave[]>([]);
   const [wavesPage, setWavesPage] = useState(1);
   const [categories, setCategories] = useState<Record<number, CategoryData>>(
