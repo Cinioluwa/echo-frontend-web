@@ -126,18 +126,14 @@ function generateOGPage(
     : descriptionText;
 
   let image = "";
-  let isFallbackImage = false;
   if (data.imageUrl) {
     image = data.imageUrl.startsWith("http") ? data.imageUrl : `${webBase}${data.imageUrl}`;
-  } else {
-    // Fallback to Echo Brand Logo
-    image = `${webBase}/assets/images/Echo%20Logo.png`;
-    isFallbackImage = true;
+    image = escapeHtml(image);
   }
-  image = escapeHtml(image);
 
-  // Use summary_large_image for user uploaded content, but summary for the small fallback logo
-  const twitterCard = isFallbackImage ? "summary" : "summary_large_image";
+  // Without a valid image, Telegram will drop the entire preview if we pass a too-small logo (220x86).
+  // So if there's no image, we omit the image tags and let it render a clean text-only preview.
+  const twitterCard = image ? "summary_large_image" : "summary";
 
   return `<!DOCTYPE html>
 <html lang="en">
@@ -153,7 +149,7 @@ function generateOGPage(
   <meta property="og:url" content="${escapeHtml(shareUrl)}" />
   <meta property="og:site_name" content="${data.orgName ? escapeHtml(data.orgName) : 'Echo'}" />
   ${image ? `<meta property="og:image" content="${image}" />` : ""}
-  ${image && !isFallbackImage ? `<meta property="og:image:width" content="1200" />\n  <meta property="og:image:height" content="630" />` : ""}
+  ${image ? `<meta property="og:image:width" content="1200" />\n  <meta property="og:image:height" content="630" />` : ""}
   
   <!-- Twitter Card Meta Tags -->
   <meta name="twitter:card" content="${twitterCard}" />
