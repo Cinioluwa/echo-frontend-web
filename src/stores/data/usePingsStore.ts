@@ -15,6 +15,7 @@ interface FetchParams {
   sort?: "trending" | "new";
   q?: string;
   category?: number;
+  categoryId?: number;
 }
 
 interface CachedPingsData {
@@ -80,12 +81,13 @@ export const usePingsStore = create<PingsState>()(
 
       // Actions
       fetchPings: async (params: FetchParams = {}) => {
-        const { page = 1, limit = 20, sort = "new", q, category } = params;
+        const { page = 1, limit = 20, sort = "new", q, category, categoryId } = params;
+        const effectiveCategory = categoryId ?? category;
 
         const state = get();
 
         // Generate cache key based on category and search query
-        const cacheKey = `${category || "all"}_${q || "none"}_${sort}`;
+        const cacheKey = `${effectiveCategory || "all"}_${q || "none"}_${sort}`;
 
         // Check if we have cached data for this category/query
         const cachedData = state.cache[cacheKey];
@@ -109,6 +111,13 @@ export const usePingsStore = create<PingsState>()(
             .filter((ping) => ping.hasSurged)
             .map((ping) => ping.id.toString());
           useSurgeStore.getState().syncFromAPI("ping", surgedPingIds);
+        } else if (!hasCachedData && state.currentCacheKey !== cacheKey) {
+          // If switching to an uncached category/query, clear current pings immediately
+          // so the UI shows skeleton loading instead of staying stuck on old items
+          set((state) => {
+            state.pings = [];
+            state.pingsById = {};
+          });
         }
 
         // Check if cache is still fresh (no need to refetch)
@@ -148,10 +157,11 @@ export const usePingsStore = create<PingsState>()(
         try {
           let response;
 
-          if (q || category) {
+          if (q || effectiveCategory) {
             response = await searchService.searchSoundboard({
               q,
-              category,
+              category: effectiveCategory,
+              categoryId: effectiveCategory,
               page,
               limit,
               sort,
@@ -201,7 +211,7 @@ export const usePingsStore = create<PingsState>()(
 
           // Calculate and set category counts ONLY when fetching all categories (no filters)
           // This ensures counts remain stable when switching between categories
-          if (!q && !category) {
+          if (!q && !effectiveCategory) {
             const { counts, total } = calculatePingCategoryCounts(
               response.data,
             );

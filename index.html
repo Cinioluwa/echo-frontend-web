@@ -73,11 +73,14 @@
         inset: 0;
         z-index: 99999;
         background-color: #ffffff;
-        display: flex;
+        display: none;
         flex-direction: column;
         align-items: center;
         justify-content: center;
         transition: opacity 0.5s ease-out;
+      }
+      @media (display-mode: standalone), (display-mode: fullscreen) {
+        #echo-splash { display: flex; }
       }
       .echo-splash-logo {
         width: 100px;
@@ -93,6 +96,13 @@
     <div id="echo-splash">
       <img src="/icons/icon-192x192.png" alt="Echo Logo" class="echo-splash-logo" />
     </div>
+    <script>
+      // iOS Safari standalone detection support
+      if (window.matchMedia('(display-mode: standalone)').matches || ('standalone' in navigator && navigator.standalone)) {
+        var splashEl = document.getElementById('echo-splash');
+        if (splashEl) splashEl.style.display = 'flex';
+      }
+    </script>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

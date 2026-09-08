@@ -5,6 +5,7 @@ export interface SearchParams extends PaginationParams {
   q?: string; // Text search query
   hashtag?: string; // Hashtag search
   category?: number; // Filter by category
+  categoryId?: number; // Filter by category ID
   sort?: "trending" | "new"; // Sort order
 }
 
@@ -35,9 +36,15 @@ const searchService = {
   searchSoundboard: async (
     params: SearchParams
   ): Promise<PaginatedResponse<Ping>> => {
+    const queryParams: Record<string, any> = { ...params };
+    const effectiveCategory = params.categoryId ?? params.category;
+    if (effectiveCategory !== undefined) {
+      queryParams.categoryId = effectiveCategory;
+      queryParams.category = effectiveCategory;
+    }
     const response = await api.get<PaginatedResponse<Ping>>(
       "/public/soundboard",
-      { params }
+      { params: queryParams }
     );
     return response.data;
   },
@@ -50,8 +57,14 @@ const searchService = {
   searchStream: async (
     params: SearchParams
   ): Promise<PaginatedResponse<Wave>> => {
+    const queryParams: Record<string, any> = { ...params };
+    const effectiveCategory = params.categoryId ?? params.category;
+    if (effectiveCategory !== undefined) {
+      queryParams.categoryId = effectiveCategory;
+      queryParams.category = effectiveCategory;
+    }
     const response = await api.get<PaginatedResponse<Wave>>("/public/stream", {
-      params,
+      params: queryParams,
     });
     return response.data;
   },

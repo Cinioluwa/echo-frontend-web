@@ -5,7 +5,7 @@
  *   2. Web Push API events for native OS-level notifications
  */
 
-const CACHE_NAME = 'echo-shell-v1';
+const CACHE_NAME = 'echo-shell-v2';
 
 // Assets to pre-cache on install — update version string when deploying new builds
 const SHELL_ASSETS = [

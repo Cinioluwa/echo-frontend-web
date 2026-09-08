@@ -87,7 +87,8 @@ const UnifiedFeed = () => {
   useEffect(() => {
     fetchPings({
       q: debouncedQuery || undefined,
-      category: selectedCategoryId || undefined,
+      category: selectedCategoryId !== null ? selectedCategoryId : undefined,
+      categoryId: selectedCategoryId !== null ? selectedCategoryId : undefined,
       sort: "trending",
     });
     // Fetch top 3 pings to pass badge info to UnifiedPingCard components

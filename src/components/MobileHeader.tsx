@@ -14,6 +14,7 @@ import { FaPlus } from "react-icons/fa6";
 import MobileCategoryDropdown from "./MobileCategoryDropdown";
 import MobileOptionsDropdown from "./MobileOptionsDropdown";
 import PingFormModal from "./PingFormModal";
+import { useSearchStore } from "../stores";
 
 const menuBar = "/assets/images/menu-hotdog.svg";
 
@@ -22,6 +23,7 @@ const MobileHeader = () => {
     const [openCat, setOpenCat] = useState(false);
     const [showPingForm, setShowPingForm] = useState(false);
     const [selectedMobileCat, setSelectedMobileCat] = useState("");
+    const selectedCategoryName = useSearchStore((state) => state.selectedCategoryName);
     const location = useLocation();
     const navigate = useNavigate();
 
@@ -73,7 +75,7 @@ const MobileHeader = () => {
                             <span className="text-[clamp(8px,2.2vw,9px)] font-medium font-['Poppins',sans-serif] text-black leading-normal whitespace-nowrap">
                                 Category :{" "}
                                 <span className="text-[#F49B31]">
-                                    {selectedMobileCat || "ALL"}
+                                    {selectedCategoryName || selectedMobileCat || "ALL"}
                                 </span>
                             </span>
                         </button>

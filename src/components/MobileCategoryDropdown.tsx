@@ -28,6 +28,7 @@ const MobileCategoryDropdown = ({
 }: Props) => {
     const categories = useCategoriesStore((state) => state.categories);
     const fetchCategories = useCategoriesStore((state) => state.fetchCategories);
+    const selectedCategoryId = useSearchStore((state) => state.selectedCategoryId);
     const setCategory = useSearchStore((state) => state.setCategory);
     const clearCategory = useSearchStore((state) => state.clearCategory);
 
@@ -37,7 +38,7 @@ const MobileCategoryDropdown = ({
         );
     }, [fetchCategories]);
 
-    const isAllActive = !selectedMobileCat;
+    const isAllActive = selectedCategoryId === null;
 
     function handleAllClick() {
         setSelectedMobileCat("");
@@ -46,8 +47,14 @@ const MobileCategoryDropdown = ({
     }
 
     function handleCategoryClick(category: { label: string; labelIcon?: string; id: number }) {
-        setSelectedMobileCat(category.label);
-        setCategory(category.id, category.label);
+        if (selectedCategoryId === category.id) {
+            // Tapping already active category toggles back to All
+            setSelectedMobileCat("");
+            clearCategory();
+        } else {
+            setSelectedMobileCat(category.label);
+            setCategory(category.id, category.label);
+        }
         setOpenCat(false);
     }
 
@@ -79,7 +86,7 @@ const MobileCategoryDropdown = ({
                 <button
                     key={category.id}
                     onClick={() => handleCategoryClick(category)}
-                    className={`flex items-center gap-[5px] w-full cursor-pointer transition-opacity ${selectedMobileCat === category.label ? "opacity-100" : "opacity-[0.64] hover:opacity-90"
+                    className={`flex items-center gap-[5px] w-full cursor-pointer transition-opacity ${selectedCategoryId === category.id || selectedMobileCat === category.label ? "opacity-100 font-bold" : "opacity-[0.64] hover:opacity-90"
                         }`}
                 >
                     {/* Icon — 13×13, luminosity blend */}

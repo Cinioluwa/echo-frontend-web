@@ -11,6 +11,8 @@ export interface PublicFeedParams extends PaginationParams {
   top?: number;
   sort?: "trending" | "new";
   days?: number | "all";
+  categoryId?: number;
+  category?: number;
 }
 
 export interface ResolutionLogParams extends PaginationParams {
@@ -44,9 +46,15 @@ const publicService = {
   getSoundboard: async (
     params?: PublicFeedParams
   ): Promise<PaginatedResponse<Ping>> => {
+    const queryParams: Record<string, any> = { ...params };
+    const effectiveCategory = params?.categoryId ?? params?.category;
+    if (effectiveCategory !== undefined) {
+      queryParams.categoryId = effectiveCategory;
+      queryParams.category = effectiveCategory;
+    }
     const response = await api.get<PaginatedResponse<Ping>>(
       "/public/soundboard",
-      { params }
+      { params: queryParams }
     );
     return response.data;
   },
@@ -58,8 +66,14 @@ const publicService = {
   getStream: async (
     params?: PublicFeedParams
   ): Promise<PaginatedResponse<Wave>> => {
+    const queryParams: Record<string, any> = { ...params };
+    const effectiveCategory = params?.categoryId ?? params?.category;
+    if (effectiveCategory !== undefined) {
+      queryParams.categoryId = effectiveCategory;
+      queryParams.category = effectiveCategory;
+    }
     const response = await api.get<PaginatedResponse<Wave>>("/public/stream", {
-      params,
+      params: queryParams,
     });
     return response.data;
   },
