@@ -25,6 +25,7 @@ import Top3Widget from "./UnifiedFeed/Top3Widget";
 import CommentsPanel from "./CommentsPanel";
 import PingFormModal from "./PingFormModal";
 import ToastNotification from "./ToastNotification";
+import InstallBanner from "./shared/InstallBanner";
 import { PingCreatorProvider } from "../contexts/PingCreatorContext";
 import {
   announcementService,
@@ -223,6 +224,9 @@ const Layout = () => {
 
       {/* Floating toast notifications (bottom-right) */}
       <ToastNotification />
+
+      {/* PWA Install Banner */}
+      <InstallBanner />
     </div>
   );
 };
