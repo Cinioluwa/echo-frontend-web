@@ -67,6 +67,32 @@
     <title>Echo</title>
   </head>
   <body>
+    <style>
+      #echo-splash {
+        position: fixed;
+        inset: 0;
+        z-index: 99999;
+        background-color: #ffffff;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        transition: opacity 0.5s ease-out;
+      }
+      .echo-splash-logo {
+        width: 100px;
+        height: 100px;
+        border-radius: 20px;
+        animation: echo-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+      }
+      @keyframes echo-pulse {
+        0%, 100% { transform: scale(1); opacity: 1; }
+        50% { transform: scale(1.05); opacity: 0.8; }
+      }
+    </style>
+    <div id="echo-splash">
+      <img src="/icons/icon-192x192.png" alt="Echo Logo" class="echo-splash-logo" />
+    </div>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

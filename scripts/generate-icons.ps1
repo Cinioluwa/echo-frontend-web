@@ -10,7 +10,7 @@ if (!(Test-Path $destDir)) {
 $sizes = @(72, 96, 128, 144, 152, 167, 180, 192, 512)
 
 # Brand color #f49b31
-$bgColor = [System.Drawing.Color]::FromArgb(244, 155, 49)
+$bgColor = [System.Drawing.Color]::White
 
 foreach ($size in $sizes) {
     $srcImg = [System.Drawing.Image]::FromFile($srcPath)

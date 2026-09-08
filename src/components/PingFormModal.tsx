@@ -338,7 +338,7 @@ const PingFormModal = ({
           )}
 
           {/* Title Input */}
-          <div className="flex px-4 md:px-[27px] py-2 md:py-3 border-2 border-[#FFC37B] rounded-[20px] focus-within:border-[#F49B31] focus-within:shadow-md transition-all duration-200 bg-white w-full h-[40px] md:h-[50px]">
+          <div className="flex px-4 md:px-[27px] py-1.5 md:py-3 border-2 border-[#FFC37B] rounded-[20px] focus-within:border-[#F49B31] focus-within:shadow-md transition-all duration-200 bg-white w-full h-[36px] md:h-[50px]">
             <input
               type="text"
               id="pingTitle"
@@ -354,7 +354,7 @@ const PingFormModal = ({
           {errors.title && <p className="text-red-500 text-xs">{errors.title}</p>}
 
           {/* Body/Description Input */}
-          <div className="flex px-4 md:px-[27px] py-2 md:py-3 border-2 border-[#FFC37B] rounded-[20px] focus-within:border-[#F49B31] focus-within:shadow-md transition-all duration-200 bg-white min-h-[80px] md:min-h-[100px] w-full">
+          <div className="flex px-4 md:px-[27px] py-1.5 md:py-3 border-2 border-[#FFC37B] rounded-[20px] focus-within:border-[#F49B31] focus-within:shadow-md transition-all duration-200 bg-white min-h-[50px] md:min-h-[100px] w-full">
             <textarea
               name="pingDescription"
               id="pingDescription"
@@ -577,11 +577,11 @@ const PingFormModal = ({
 
       {/* Modal Container - Responsive width */}
       <div
-        className="w-full mx-4 md:mx-0 md:w-[770px] shadow-2xl rounded-[10px] px-4 py-6 md:px-6 md:py-6 bg-white gap-4 overflow-visible font-poppins flex flex-col items-center"
+        className="w-full mx-4 md:mx-0 md:w-[770px] shadow-2xl rounded-[10px] px-4 py-4 md:px-6 md:py-6 bg-white gap-2 md:gap-4 overflow-visible font-poppins flex flex-col items-center"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Modal Title */}
-        <h2 className="font-semibold text-center text-2xl md:text-[30px] text-black w-full">
+        <h2 className="font-semibold text-center text-xl md:text-[30px] text-black w-full">
           Create Ping
         </h2>
 

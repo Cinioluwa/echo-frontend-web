@@ -320,16 +320,16 @@ const PingCard = ({
                     </button>
                 </Tooltip>
 
-                <div className="flex items-center gap-3.5">
+                <div className="flex items-center gap-1.5 md:gap-3.5 flex-wrap justify-end">
                     {/* Wave count */}
                     <div className="flex items-center gap-0">
                         <img
                             src={waveIcon}
-                            className=" h-[27px] w-[25px]"
+                            className="h-[20px] w-[18px] md:h-[27px] md:w-[25px]"
                             alt="waveIcon"
                         />
-                        <span className="font-['Inter',sans-serif] font-medium text-[12px] md:text-[14px] text-[#63637B] leading-5">
-                            {waveCount} Waves Proposed
+                        <span className="font-['Inter',sans-serif] font-medium text-[11px] md:text-[14px] text-[#63637B] leading-5 whitespace-nowrap">
+                            {waveCount} <span className="md:hidden">Waves</span><span className="hidden md:inline">Waves Proposed</span>
                         </span>
                     </div>
 
@@ -340,10 +340,10 @@ const PingCard = ({
                     >
                         <img
                             src={commentIcon}
-                            className=" h-[18px] w-[18px]"
+                            className="h-[14px] w-[14px] md:h-[18px] md:w-[18px]"
                             alt="commentIcon"
                         />
-                        <span className="font-['Inter',sans-serif] font-medium text-[12px] md:text-[14px] text-[#63637B] leading-5">
+                        <span className="font-['Inter',sans-serif] font-medium text-[11px] md:text-[14px] text-[#63637B] leading-5 whitespace-nowrap">
                             {commentCount} Comments
                         </span>
                     </button>

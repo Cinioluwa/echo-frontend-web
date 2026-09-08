@@ -26,3 +26,14 @@ createRoot(document.getElementById('root')!).render(
     </AppErrorBoundary>
   </StrictMode>,
 )
+
+// Remove splash screen smoothly
+const splash = document.getElementById('echo-splash');
+if (splash) {
+  setTimeout(() => {
+    splash.style.opacity = '0';
+    setTimeout(() => {
+      splash.remove();
+    }, 500);
+  }, 500);
+}
