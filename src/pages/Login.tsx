@@ -348,12 +348,26 @@ const Login = () => {
               style={{ fontFamily: "Poppins, sans-serif", fontWeight: 500 }}
             >
               <p className="text-[#838383]">By creating an account, you agree to Echo</p>
-              <Link
-                to="/terms"
-                className="text-[#f49b31] hover:text-[#e08a2a] transition-colors"
-              >
-                Terms of Use, Privacy Policy
-              </Link>
+              <div className="flex gap-1 text-[#f49b31]">
+                <a
+                  href="https://www.echo-ng.com/terms"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-[#e08a2a] transition-colors"
+                >
+                  Terms of Use
+                </a>
+                <span>and</span>
+                <a
+                  href="https://www.echo-ng.com/privacy"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-[#e08a2a] transition-colors"
+                >
+                  Privacy Policy
+                </a>
+              </div>
+
             </div>
 
             {/* Divider */}

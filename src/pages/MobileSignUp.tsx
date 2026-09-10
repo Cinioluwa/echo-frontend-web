@@ -176,7 +176,9 @@ const MobileSignUp = () => {
               By creating an account, you agree to Echo
             </p>
             <span className="text-[#F49B31] text-[14px] mt-3">
-              <a href="#">Terms of Use</a>, <a href="#">Privacy Policy</a>
+              <a href="https://www.echo-ng.com/terms" target="_blank" rel="noopener noreferrer">Terms of Use</a>
+              <span> and </span>
+              <a href="https://www.echo-ng.com/privacy" target="_blank" rel="noopener noreferrer">Privacy Policy</a>
             </span>
             <div className=" mb-5 md:mb-5 pt-[30px] border-t border-[#D3CECE] mt-10 self-end w-full">
               <p className="text-center text-[#838383] ">

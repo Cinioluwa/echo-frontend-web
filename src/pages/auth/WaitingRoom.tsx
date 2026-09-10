@@ -156,13 +156,25 @@ const WaitingRoom: React.FC = () => {
 
                 {/* Footer Section - Terms and Privacy */}
                 <div className="flex flex-col gap-[15px] items-center px-5 w-full mt-2.5">
-                    <a
-                        href="/terms"
-                        className="text-[9px] sm:text-[14px] text-[#f49b31] text-center leading-3.5 font-medium hover:text-[#e08a2a] transition-colors"
-                        style={{ fontFamily: 'Poppins, sans-serif' }}
-                    >
-                        Terms of Use, Privacy Policy
-                    </a>
+                    <div className="flex gap-1 text-[9px] sm:text-[14px] text-[#f49b31] leading-3.5 font-medium" style={{ fontFamily: 'Poppins, sans-serif' }}>
+                        <a
+                            href="https://www.echo-ng.com/terms"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="hover:text-[#e08a2a] transition-colors"
+                        >
+                            Terms of Use
+                        </a>
+                        <span>and</span>
+                        <a
+                            href="https://www.echo-ng.com/privacy"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="hover:text-[#e08a2a] transition-colors"
+                        >
+                            Privacy Policy
+                        </a>
+                    </div>
                 </div>
             </AuthCard>
         </AuthLayout>
