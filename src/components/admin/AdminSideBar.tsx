@@ -18,8 +18,8 @@ interface AdminSidebarProps {
 
 const AdminSideBar: React.FC<AdminSidebarProps> = ({
   userAvatar = "",
-  userName = "Osagumwenro Ugbo",
-  userBadge = "ADMIN.CU",
+  userName,
+  userBadge,
   onToggleSidebar,
   onSoundboardClick,
   onFollowUpClick,
@@ -68,8 +68,18 @@ const AdminSideBar: React.FC<AdminSidebarProps> = ({
     navigate("/profile");
   };
 
-  const displayFullName = user ? `${user.firstName} ${user.lastName}` : userName;
+  const getBadgeFromOrg = () => {
+    if (!user?.organization?.name) return "ADMIN";
+    const words = user.organization.name.split(" ");
+    if (words.length > 1) {
+      return `ADMIN.${words[0][0]}${words[1][0]}`.toUpperCase();
+    }
+    return `ADMIN.${user.organization.name.substring(0, 2)}`.toUpperCase();
+  };
+
+  const displayFullName = user ? `${user.firstName} ${user.lastName}` : (userName || "Admin");
   const displayEmail = user?.email || "";
+  const displayBadge = userBadge || (user?.role === "SUPER_ADMIN" ? "SUPER ADMIN" : getBadgeFromOrg());
 
 
   const getCurrentPage = () => {
@@ -194,27 +204,27 @@ const AdminSideBar: React.FC<AdminSidebarProps> = ({
           className="w-full bg-transparent border border-[#f49b31] rounded-[15px] p-2.5 flex items-start gap-2.5 hover:bg-[#fef5ea] transition-colors"
         >
           {/* Avatar */}
-          {userAvatar ? (
+          {userAvatar || user?.profilePicture ? (
             <img
-              src={userAvatar}
-              alt={userName}
+              src={userAvatar || user?.profilePicture}
+              alt={displayFullName}
               className="w-[45px] h-[45px] rounded-full object-cover shrink-0"
             />
           ) : (
             <div className="w-[45px] h-[45px] rounded-full bg-[#f49b31] flex items-center justify-center shrink-0 text-[#fef5ea] font-bold text-[18px]">
-              {userName?.charAt(0).toUpperCase()}
+              {displayFullName.charAt(0).toUpperCase()}
             </div>
           )}
 
           {/* User Info */}
           <div className="flex-1 min-w-0">
             <p className="text-[#212121] font-medium text-[14px] leading-[normal] text-left truncate">
-              {userName}
+              {displayFullName}
             </p>
             <div className="flex items-center gap-[5px] mt-[5px]">
               <img src="/assets/icon/badge-check.svg" alt="Echo Badge" className="w-[15px] h-[15px]" />
               <span className="text-[#926b3d] font-medium text-[12px] leading-[normal]">
-                {userBadge}
+                {displayBadge}
               </span>
             </div>
           </div>

@@ -12,8 +12,6 @@ const AdminLayout = () => {
       </header>
       <aside className="">
         <AdminSideBar
-          userName="Osagumwenro Ugbo"
-          userBadge="ADMIN.CU"
           onToggleSidebar={() => { }}
           onSoundboardClick={() => { }} />
       </aside>
