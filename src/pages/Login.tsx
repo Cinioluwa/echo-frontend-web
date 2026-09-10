@@ -76,6 +76,10 @@ const Login = () => {
   const login = useAuthStore((state) => state.login);
   const { isOffline } = useNetworkStatus();
 
+  // Extract demoOrg from URL
+  const searchParams = new URLSearchParams(location.search);
+  const demoOrg = searchParams.get("demoOrg");
+
   // Set page title
   usePageTitle();
 
@@ -90,6 +94,24 @@ const Login = () => {
     password?: string;
   }>({});
   const [forgotPasswordOpen, setForgotPasswordOpen] = useState(false);
+
+  const fillDemoAdmin = () => {
+    setFormData({
+      email: `admin@${demoOrg}.demo.echo-ng.com`,
+      password: "EchoDemo2026!",
+    });
+    setValidationErrors({});
+    if (error) setError(null);
+  };
+
+  const fillDemoStudent = () => {
+    setFormData({
+      email: `student@${demoOrg}.demo.echo-ng.com`,
+      password: "EchoDemo2026!",
+    });
+    setValidationErrors({});
+    if (error) setError(null);
+  };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -267,6 +289,28 @@ const Login = () => {
           {error && (
             <div className="w-full p-3 bg-red-50 border border-red-200 rounded-lg">
               <p className="text-red-600 text-sm text-center">{error}</p>
+            </div>
+          )}
+
+          {/* Demo Helpers */}
+          {demoOrg && (
+            <div className="w-full flex gap-3 justify-center mb-1">
+              <button
+                type="button"
+                onClick={fillDemoAdmin}
+                className="flex-1 bg-[#fff5eb] border border-[#f49b31] text-[#f49b31] rounded-lg py-2.5 text-xs sm:text-sm font-semibold hover:bg-[#fff0e0] transition-colors"
+                style={{ fontFamily: "Poppins, sans-serif" }}
+              >
+                Admin Demo
+              </button>
+              <button
+                type="button"
+                onClick={fillDemoStudent}
+                className="flex-1 bg-[#fff5eb] border border-[#f49b31] text-[#f49b31] rounded-lg py-2.5 text-xs sm:text-sm font-semibold hover:bg-[#fff0e0] transition-colors"
+                style={{ fontFamily: "Poppins, sans-serif" }}
+              >
+                Student Demo
+              </button>
             </div>
           )}
 
