@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import React from "react";
+import { Link } from "react-router-dom";
 import { useAuthStore } from "../../../stores";
 interface AdminSoundboardSidebarProps {
     userAvatar?: string;
@@ -22,21 +22,7 @@ const AdminSoundboardSidebar: React.FC<AdminSoundboardSidebarProps> = ({
     onModerationClick,
     onAdminSettingsClick,
 }) => {
-    const navigate = useNavigate();
     const user = useAuthStore((state) => state.user);
-    const logout = useAuthStore((state) => state.logout);
-    const [isOpen, setIsOpen] = useState(false);
-
-    const handleLogout = () => {
-        logout();
-        setIsOpen(false);
-        navigate("/login");
-    };
-
-    const handleProfileSettings = () => {
-        setIsOpen(false);
-        navigate("/profile");
-    };
 
     const getBadgeFromOrg = () => {
         if (!user?.organization?.name) return "ADMIN";
@@ -48,7 +34,6 @@ const AdminSoundboardSidebar: React.FC<AdminSoundboardSidebarProps> = ({
     };
 
     const displayFullName = user ? `${user.firstName} ${user.lastName}` : (userName || "Admin User");
-    const displayEmail = user?.email || "";
     const displayBadge = userBadge || (user?.role === "SUPER_ADMIN" ? "SUPER ADMIN" : getBadgeFromOrg());
 
     // SVG Icons
