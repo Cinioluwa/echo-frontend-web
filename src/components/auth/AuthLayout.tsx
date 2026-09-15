@@ -1,6 +1,6 @@
 import React from "react";
 import SkipLink from "./SkipLink";
-const background = "/assets/images/Log in Page Background.svg";
+const background = "/assets/images/login-bg.svg";
 
 interface AuthLayoutProps {
   children: React.ReactNode;
@@ -21,12 +21,10 @@ const AuthLayout: React.FC<AuthLayoutProps> = React.memo(({ children }) => {
     <div
       className="min-h-screen flex items-center justify-center px-4 py-8 sm:px-6 lg:px-8"
       style={{
-        backgroundImage: `
-            url(${background})
-        `,
-        backgroundSize: "cover, 50px 50px",
-        backgroundPosition: "center, 0 0",
-        backgroundRepeat: "no-repeat, repeat",
+        backgroundImage: `url(${background})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
       }}
     >
       {/* Skip to main content link for keyboard users */}

@@ -4,6 +4,7 @@ import AdminLayout from "../../components/admin/AdminLayout";
 import AnnouncementModal from "../../components/admin/AnnouncementModal";
 import AdminSoundboard from "../../components/admin/AdminSoundboard/AdminSoundboard";
 import { AdminPageProvider, type AdminPage } from "../../contexts/AdminPageContext";
+import { analyticsService } from "../../api/services/analytics.service";
 
 /**
  * AdminSoundboardPage
@@ -27,16 +28,21 @@ const AdminSoundboardPage: React.FC = () => {
         setShowAnnouncementModal(true);
     };
 
-    const handleExport = () => {
-        // TODO: Implement export functionality
-        console.log("Export clicked");
+    const handleExport = async () => {
+        const blob = await analyticsService.exportPings();
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = `pings-export-${new Date().toISOString()}.csv`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
     };
 
     return (
         <AdminPageProvider initialPage={getCurrentPage()}>
-            <div className="min-h-full w-screen">
-                <AdminLayout />
-
+            <AdminLayout>
                 <AdminSoundboard
                     onPublishAnnouncement={handlePublishAnnouncement}
                     onExport={handleExport}
@@ -45,7 +51,7 @@ const AdminSoundboardPage: React.FC = () => {
                 {showAnnouncementModal && (
                     <AnnouncementModal setAnnouncementModal={setShowAnnouncementModal} />
                 )}
-            </div>
+            </AdminLayout>
         </AdminPageProvider>
     );
 };

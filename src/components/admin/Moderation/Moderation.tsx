@@ -107,7 +107,7 @@ const Moderation: React.FC<ModerationProps> = () => {
 
   return (
     <>
-      <div className="m-0 md:ms-[230px] flex flex-col gap-4 sm:gap-6 items-start px-3 sm:px-6 py-6 sm:py-8 relative">
+      <div className="flex-1 min-w-0 flex flex-col gap-4 sm:gap-6 items-start px-3 sm:px-8 py-6 sm:py-8 relative w-full max-w-[1200px] mx-auto">
         <div className="flex flex-col gap-1 sm:gap-2 items-start relative w-full">
           <h1 className="hidden md:block font-poppins font-semibold text-[24px] sm:text-[28px] leading-normal text-black">
             Moderation

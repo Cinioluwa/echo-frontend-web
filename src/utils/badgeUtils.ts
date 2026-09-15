@@ -10,7 +10,7 @@ import type { Wave, Ping } from "../api/types";
 // ─── Wave Badge Types ────────────────────────────────────────────────────────
 
 export type WaveBadgeType =
-  | "COMMUNITY_PICK"
+  | "TOP_3"
   | "POSTED"
   | "UNDER_REVIEW"
   | "APPROVED"
@@ -55,7 +55,7 @@ const BADGE_COLORS = {
  * Only ONE badge displays at a time.
  *
  * Hierarchy (highest to lowest priority):
- * 1. Community Pick (Yellow) - if this wave has the highest surge count for its Ping
+ * 1. Top 3 (Yellow) - if this wave has the highest surge count for its Ping
  * 2. Rejected (Red)
  * 3. Completed (Orange)
  * 4. In Progress (Amber)
@@ -81,8 +81,8 @@ export function calculateWaveBadge(
 
     if (waveSurgeCount === maxSurgeCount && maxSurgeCount > 0) {
       return {
-        type: "COMMUNITY_PICK",
-        label: "Community Pick",
+        type: "TOP_3",
+        label: "Top 3",
         color: BADGE_COLORS.YELLOW,
       };
     }
@@ -129,7 +129,7 @@ export function calculateWaveBadge(
     case "POSTED":
       return {
         type: "POSTED",
-        label: "Posted",
+        label: "Proposed",
         color: BADGE_COLORS.GREY,
       };
     // Unsupported status or "ON_HOLD"
@@ -193,14 +193,13 @@ export function calculatePingBadge(
  */
 export function getBadgeColor(type: WaveBadgeType | PingBadgeType): string {
   const colorMap: Record<string, string> = {
-    COMMUNITY_PICK: BADGE_COLORS.YELLOW,
+    TOP_3: BADGE_COLORS.YELLOW,
     POSTED: BADGE_COLORS.GREY,
     UNDER_REVIEW: BADGE_COLORS.GREEN,
     APPROVED: BADGE_COLORS.GREEN,
     IN_PROGRESS: BADGE_COLORS.AMBER,
     REJECTED: BADGE_COLORS.RED,
     COMPLETED: BADGE_COLORS.ORANGE,
-    TOP_3: BADGE_COLORS.YELLOW,
     ACKNOWLEDGED: BADGE_COLORS.GREEN,
     RESOLVED: BADGE_COLORS.AMBER,
   };

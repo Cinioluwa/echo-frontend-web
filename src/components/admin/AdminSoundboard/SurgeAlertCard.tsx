@@ -37,17 +37,19 @@ const SurgeAlertCard: React.FC<SurgeAlertCardProps> = ({
                     <a
                         key={item.id || index}
                         onClick={item.onClick}
-                        className="bg-[#fef5ea] rounded-lg px-3 py-5 flex items-center justify-between cursor-pointer hover:bg-opacity-90 transition-all"
+                        className="bg-[#fef5ea] rounded-lg px-3 py-3 sm:py-5 h-[76px] sm:h-[88px] flex items-center justify-between cursor-pointer hover:bg-opacity-90 transition-all overflow-hidden"
                     >
-                        {/* Title */}
-                        <div className="flex-1">
-                            <p className="text-[#212121] font-medium text-[14px] leading-[19.5px]">
+                        {/* Title — min-w-0 so the flex row can squeeze this
+                            column instead of the browser breaking the text one
+                            character per line against the nowrap badges */}
+                        <div className="flex-1 min-w-0">
+                            <p className="text-[#212121] font-medium text-[14px] leading-[19.5px] line-clamp-2 overflow-hidden">
                                 {item.title}
                             </p>
                         </div>
 
                         {/* Velocity and Category */}
-                        <div className="flex gap-2.5 ml-3">
+                        <div className="flex gap-2.5 ml-3 shrink-0">
                             {/* Surge Velocity Badge */}
                             <div className="bg-[#f49b31] rounded-[20px] px-2 py-0.5 flex items-center">
                                 <span className="text-[#fef5ea] font-medium text-[11px] leading-[16.5px] whitespace-nowrap">
@@ -57,7 +59,7 @@ const SurgeAlertCard: React.FC<SurgeAlertCardProps> = ({
 
                             {/* Category Badge */}
                             <div className="bg-[#fef5ea] border border-[#f49b31] rounded-[20px] px-2 py-0.5 flex items-center">
-                                <span className="text-[#f49b31] font-semibold text-[11px] leading-[16.5px] whitespace-nowrap">
+                                <span className="text-[#f49b31] font-semibold text-[11px] leading-[16.5px] whitespace-nowrap max-w-[88px] truncate">
                                     {item.category}
                                 </span>
                             </div>

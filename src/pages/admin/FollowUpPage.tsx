@@ -2,7 +2,6 @@ import { useLocation } from "react-router-dom";
 import AdminLayout from "../../components/admin/AdminLayout";
 import { FollowUp } from "../../components/admin/FollowUp";
 import { AdminPageProvider, type AdminPage } from "../../contexts/AdminPageContext";
-
 /**
  * FollowUpPage
  * Page wrapper for the Follow Up admin page with sidebar layout
@@ -22,10 +21,9 @@ const FollowUpPage: React.FC = () => {
 
     return (
         <AdminPageProvider initialPage={getCurrentPage()}>
-            <div className="h-full">
-                <AdminLayout />
+            <AdminLayout>
                 <FollowUp />
-            </div>
+            </AdminLayout>
         </AdminPageProvider>
     );
 };

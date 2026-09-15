@@ -2,17 +2,29 @@ import React, { useState } from "react";
 import type { Wave } from "../../../api/types/index";
 import { CheckCircle, FileScan, XCircle } from "lucide-react";
 import WaveActionModal from "./WaveActionModal";
+import FigmaBadge from "../FigmaBadge";
+import { getWaveBadgeName } from "../figmaBadgeUtils";
 
 interface AdminWaveCardProps {
     wave: Wave;
     onUpdateStatus: (id: number, status: "APPROVED" | "REJECTED" | "UNDER_REVIEW", reason?: string) => Promise<void>;
+    badgeLabel?: "Community Pick" | "Alternative";
 }
 
-const AdminWaveCard: React.FC<AdminWaveCardProps> = ({ wave, onUpdateStatus }) => {
+const AdminWaveCard: React.FC<AdminWaveCardProps> = ({ wave, onUpdateStatus, badgeLabel }) => {
     const [activeAction, setActiveAction] = useState<"APPROVED" | "REJECTED" | "UNDER_REVIEW" | null>(null);
 
     const isPending = wave.status === "UNDER_REVIEW";
     const isPosted = wave.status === "POSTED";
+    const statusConfig = ({
+        POSTED: { label: "Proposed", color: "#A09F9F", icon: "/assets/icon/dot-yellow.svg" },
+        UNDER_REVIEW: { label: "Under Review", color: "#4CAF50", icon: "/assets/icon/dot-green.svg" },
+        APPROVED: { label: "Approved", color: "#4CAF50", icon: "/assets/icon/dot-green.svg" },
+        IN_PROGRESS: { label: "Implementing", color: "#F49B31", icon: "/assets/icon/dot-blue.svg" },
+        REJECTED: { label: "Rejected", color: "#FF6B6B", icon: "/assets/icon/dot-yellow.svg" },
+        COMPLETED: { label: "Completed", color: "#F49B31", icon: "/assets/icon/dot-blue.svg" },
+    } as Record<string, { label: string; color: string; icon: string }>)[wave.status];
+    const imageMedia = (wave.media ?? []).filter((media) => media.mimeType?.startsWith("image/"));
 
     // Format timestamp
     const date = new Date(wave.createdAt);
@@ -38,16 +50,20 @@ const AdminWaveCard: React.FC<AdminWaveCardProps> = ({ wave, onUpdateStatus }) =
                             </span>
                         </div>
                     </div>
-                    {/* Optional: Add badges if any */}
-                    <div className="flex gap-1">
-                        {/* Wave badges can be implemented here if needed */}
-                    </div>
+                    {badgeLabel ? <FigmaBadge label={badgeLabel} /> : statusConfig && <FigmaBadge label={getWaveBadgeName(wave.status)} />}
                 </div>
 
                 {/* Body: Solution */}
                 <p className="font-poppins text-[14px] text-black">
                     {wave.solution}
                 </p>
+                {imageMedia.length > 0 && (
+                    <div className="grid grid-cols-2 gap-2">
+                        {imageMedia.map((media) => (
+                            <img key={media.id} src={media.url} alt="Wave attachment" className="w-full aspect-video rounded-lg object-cover" />
+                        ))}
+                    </div>
+                )}
             </div>
 
             {/* Divider */}

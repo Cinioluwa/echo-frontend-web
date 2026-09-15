@@ -18,6 +18,11 @@ body {
   flex-direction: column;
 }
 
+@keyframes admin-sheet-up {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
 html,
 body,
 #root {

@@ -30,14 +30,13 @@ const AdminSettingsPage: React.FC = () => {
 
     return (
         <AdminPageProvider initialPage={getCurrentPage()}>
-            <div className="h-full relative ">
-                <AdminLayout />
+            <AdminLayout>
                 <AdminSettings onPublishAnnouncement={handlePublishAnnouncement} />
 
                 {showAnnouncementModal && (
                     <AnnouncementModal setAnnouncementModal={setShowAnnouncementModal} />
                 )}
-            </div>
+            </AdminLayout>
         </AdminPageProvider>
     );
 };

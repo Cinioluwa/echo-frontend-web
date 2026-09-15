@@ -16,10 +16,9 @@ const GeneralSettings: React.FC = () => {
       setLoading(true);
       const settings = await adminService.getOrgSettings();
       setSpaceName(settings.organization.name);
-      if (settings.organization.domain) {
-      }
-    } catch (err: any) {
-      setError(err?.response?.data?.error || "Failed to load settings");
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : "Failed to load settings";
+      setError(message);
     } finally {
       setLoading(false);
     }
@@ -44,8 +43,9 @@ const GeneralSettings: React.FC = () => {
       setSuccess(null);
       await adminService.updateOrgSettings({ name: spaceName, description });
       setSuccess("Settings saved successfully.");
-    } catch (err: any) {
-      setError(err?.response?.data?.error || "Failed to save settings");
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : "Failed to save settings";
+      setError(message);
     } finally {
       setSaving(false);
     }
@@ -93,9 +93,9 @@ const GeneralSettings: React.FC = () => {
         <div className="flex flex-col gap-2 items-start">
           <button
             onClick={() => fileInputRef.current?.click()}
-            className="px-4 py-2 border border-[#f49b31] rounded-[10px] bg-white hover:bg-[#fef5ea] text-[#f49b31] font-poppins font-medium text-[14px] transition-colors"
+            className="px-5 py-2.5 border-[0.5px] border-[#7d7d7d] rounded-[6px] bg-transparent hover:bg-[#fef5ea] text-[#454545] font-poppins text-[14px] transition-colors"
           >
-            Change logo
+            Change Logo
           </button>
           <span className="font-poppins text-[12px] text-[#8b8e8d]">
             JPG, PNG or GIF. Max size 5MB
@@ -131,7 +131,8 @@ const GeneralSettings: React.FC = () => {
             rows={6}
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-            className="w-full px-5 py-3 border border-[#ffd7a8] bg-[#FEF5EA] rounded-[9px] font-poppins text-[15px] text-[#212121] focus:border-[#f49b31] outline-none transition-colors resize-none"
+            placeholder="Brief description of the space"
+            className="w-full px-5 py-3 border border-[#ffd7a8] bg-[#FEF5EA] rounded-[9px] font-poppins text-[15px] text-[#212121] placeholder:italic placeholder:text-black focus:border-[#f49b31] outline-none transition-colors resize-none"
           />
         </div>
       </div>

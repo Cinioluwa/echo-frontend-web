@@ -37,8 +37,9 @@ const IssuesByCategoryCard: React.FC<IssuesByCategoryCardProps> = ({
                 Issues by Category
             </h3>
 
-            {/* Categories Grid */}
-            <div className="grid grid-cols-2 gap-5">
+            {/* Categories Grid — single column on mobile so cards are not
+                squeezed to a width that breaks titles mid-word */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                 {categories.map((category, index) => (
                     <div
                         key={index}
@@ -52,11 +53,11 @@ const IssuesByCategoryCard: React.FC<IssuesByCategoryCardProps> = ({
                                     <img src={category.icon} alt={category.name} className="w-full h-full object-contain" />
                                 </div>
                             )}
-                            <div className="flex-1">
-                                <p className="text-[#212121] font-medium text-[14px] leading-4">
+                            <div className="flex-1 min-w-0">
+                                <p className="text-[#212121] font-medium text-[clamp(10px,1.1vw,14px)] leading-4 whitespace-nowrap truncate">
                                     {category.name}
                                 </p>
-                                <p className="text-[#5e5c58] text-[12px] leading-3.5">
+                                <p className="text-[#5e5c58] text-[clamp(9px,1vw,12px)] leading-3.5 whitespace-nowrap truncate">
                                     {category.openCount} open
                                 </p>
                             </div>
@@ -69,11 +70,18 @@ const IssuesByCategoryCard: React.FC<IssuesByCategoryCardProps> = ({
                             </p>
                         </div>
 
-                        {/* Progress Bar */}
+                        {/* Progress Bar — colour identifier per Figma 5458:14828 */}
                         <div className="w-full h-1 bg-[#e0e0e0] rounded-full overflow-hidden">
                             <div
-                                className="h-full bg-[#f49b31] rounded-full"
-                                style={{ width: `${category.resolved}%` }}
+                                className="h-full rounded-full"
+                                style={{
+                                    width: `${category.resolved}%`,
+                                    backgroundColor:
+                                        category.resolved <= 30 ? "#E05C5C"
+                                        : category.resolved <= 50 ? "#E8C97A"
+                                        : category.resolved <= 74 ? "#4EB88A"
+                                        : "#F49B31",
+                                }}
                             />
                         </div>
 
@@ -81,7 +89,12 @@ const IssuesByCategoryCard: React.FC<IssuesByCategoryCardProps> = ({
                         <div className="flex flex-col gap-2">
                             {category.issues.slice(0, 2).map((issue) => (
                                 <a href={`/admin/soundboard/${issue.id}`} key={issue.id} className="flex items-start justify-between p-2">
-                                    <div className="flex-1">
+                                    {/* min-w-0: the surge count column below is
+                                        ml-2 shrink-0 (nowrap), so without this
+                                        the flex algorithm can squeeze the title
+                                        to near-zero width and break it per
+                                        character */}
+                                    <div className="flex-1 min-w-0">
                                         <p className="text-[#212121] font-medium text-[12px] leading-4">
                                             {issue.title}
                                         </p>
@@ -89,8 +102,9 @@ const IssuesByCategoryCard: React.FC<IssuesByCategoryCardProps> = ({
                                             {issue.postedTime}
                                         </p>
                                     </div>
-                                    <div className="ml-2 shrink-0 text-[#f49b31] font-semibold text-[12px]">
-                                        ⚡ {issue.count}
+                                    <div className="ml-2 shrink-0 flex items-center gap-0.5 text-[#f49b31] font-semibold text-[12px]">
+                                        <img src="/assets/images/surge.svg" alt="" className="w-3.5 h-3.5" />
+                                        {issue.count}
                                     </div>
                                 </a>
                             ))}

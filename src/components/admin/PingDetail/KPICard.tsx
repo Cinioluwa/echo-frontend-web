@@ -1,7 +1,7 @@
 import React from "react";
 
 interface KPICardProps {
-    icon: string;
+    icon: React.ReactNode;
     label: string;
     value: string | number;
     delta?: string;
@@ -17,14 +17,14 @@ const KPICard: React.FC<KPICardProps> = ({ icon, label, value, delta, deltaIcon 
                     {label}
                 </p>
             </div>
-            <div className="flex items-center justify-between">
+            <div className="flex items-start justify-between gap-2 flex-wrap">
                 <p className="font-poppins font-semibold text-[28px] sm:text-[35px] text-black tracking-[-1px] leading-none">
                     {value}
                 </p>
                 {delta && (
                     <div className="bg-[#fef5ea] rounded-[20px] px-2 py-1 flex items-center gap-1 text-[#f49b31] ">
                         {deltaIcon && <span className="text-[12px] text-bold">{deltaIcon}</span>}
-                        <p className="font-poppins font-medium text-[9px] sm:text-[11px] ">
+                        <p className="font-poppins font-medium text-[9px] sm:text-[11px] whitespace-normal">
                             {delta}
                         </p>
                     </div>

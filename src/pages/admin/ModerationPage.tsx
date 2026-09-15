@@ -23,10 +23,9 @@ const ModerationPage: React.FC = () => {
 
     return (
         <AdminPageProvider initialPage={getCurrentPage()}>
-            <div className="h-full">
-                <AdminLayout />
+            <AdminLayout>
                 <Moderation />
-            </div>
+            </AdminLayout>
         </AdminPageProvider>
     );
 };

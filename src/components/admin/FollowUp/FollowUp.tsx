@@ -5,9 +5,18 @@ import AdminHeader from "../AdminHeader";
 import AdminMobileMenu from "../AdminMobileMenu";
 import type { FollowUpItem as FollowUpItemType, FilterType } from "./types";
 import { adminService } from "../../../api/services/admin.service";
-import type { AdminWave } from "../../../api/types/admin.types";
+import type { AdminWave, UpdateWaveStatusDto } from "../../../api/types/admin.types";
 
-interface FollowUpProps {}
+type FollowUpProps = Record<string, never>;
+
+const getErrorMessage = (error: unknown, fallback: string) => {
+  if (error instanceof Error) return error.message;
+  if (typeof error === "object" && error !== null) {
+    const response = (error as { response?: { data?: { error?: string } } }).response;
+    if (response?.data?.error) return response.data.error;
+  }
+  return fallback;
+};
 
 const FollowUp: React.FC<FollowUpProps> = () => {
   const [activeFilter, setActiveFilter] = useState<FilterType>("all");
@@ -23,8 +32,8 @@ const FollowUp: React.FC<FollowUpProps> = () => {
       setError(null);
       const result = await adminService.getWaves({ limit: 100 });
       setAllWaves(result.data);
-    } catch (err: any) {
-      setError(err?.response?.data?.error || err.message || "Failed to load follow-ups");
+    } catch (err: unknown) {
+      setError(getErrorMessage(err, "Failed to load follow-ups"));
     } finally {
       setLoading(false);
     }
@@ -72,6 +81,7 @@ const FollowUp: React.FC<FollowUpProps> = () => {
 
     return {
       id: wave.id.toString(),
+      pingId: wave.ping.id,
       title: wave.ping?.title || wave.solution,
       category: wave.ping?.category?.name || "",
       author: {
@@ -137,13 +147,13 @@ const FollowUp: React.FC<FollowUpProps> = () => {
   const items: FollowUpItemType[] = filteredWaves.map((w) => mapWaveToItem(w, activeFilter));
   const filterCounts = computeCounts(allWaves);
 
-  const handleUpdateWaveStatus = async (id: number, status: string) => {
+  const handleUpdateWaveStatus = async (id: number, status: UpdateWaveStatusDto["status"]) => {
     try {
       setActionLoading(id.toString());
-      await adminService.updateWaveStatus(id, { status: status as any });
+      await adminService.updateWaveStatus(id, { status });
       await fetchWaves();
-    } catch (err: any) {
-      setError(err?.response?.data?.error || "Failed to update wave status");
+    } catch (err: unknown) {
+      setError(getErrorMessage(err, "Failed to update wave status"));
     } finally {
       setActionLoading(null);
     }
@@ -154,8 +164,8 @@ const FollowUp: React.FC<FollowUpProps> = () => {
       setActionLoading(pingId.toString());
       await adminService.resolvePing(pingId);
       await fetchWaves();
-    } catch (err: any) {
-      setError(err?.response?.data?.error || "Failed to resolve ping");
+    } catch (err: unknown) {
+      setError(getErrorMessage(err, "Failed to resolve ping"));
     } finally {
       setActionLoading(null);
     }
@@ -167,7 +177,7 @@ const FollowUp: React.FC<FollowUpProps> = () => {
 
   return (
     <>
-      <div className="m-0 md:ms-[230px] flex flex-col gap-4 sm:gap-6 items-start px-3 sm:px-6 py-6 sm:py-8 relative">
+      <div className="flex-1 min-w-0 flex flex-col gap-4 sm:gap-6 items-start px-3 sm:px-8 py-6 sm:py-8 relative w-full max-w-[1200px] mx-auto">
         <div className="flex flex-col gap-1 sm:gap-2 items-start relative w-full">
           <h1 className="hidden md:block font-poppins font-bold text-[24px] sm:text-[32px] leading-normal text-black">
             Follow Up

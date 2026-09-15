@@ -15,6 +15,8 @@ import { useNetworkStatus } from "../hooks";
 import { getErrorMessage } from "../utils/networkUtils";
 import { validateLoginForm } from "../utils/validationUtils";
 import type { User } from "../api/types";
+import DevLogin from "./DevLogin";
+import { DEV_ACCOUNTS } from "./devAccounts";
 
 // Email and password icons (orange/gold color matching Figma)
 const EmailIcon = () => (
@@ -236,6 +238,22 @@ const Login = () => {
     }
   };
 
+  const handleDevLogin = async (credentials: (typeof DEV_ACCOUNTS)[number]) => {
+    setError(null);
+    setValidationErrors({});
+    setLoading(true);
+
+    try {
+      await login(credentials);
+      const user = useAuthStore.getState().user;
+      if (user) redirectUser(user);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : getErrorMessage(err));
+    } finally {
+      setLoading(false);
+    }
+  };
+
   // COMMENTED OUT: Google auth not implemented yet
   // const handleGoogleLogin = () => {
   //   // TODO: Implement Google OAuth flow
@@ -339,6 +357,11 @@ const Login = () => {
               {loading ? "Logging in..." : "Log in"}
             </AuthButton>
           </form>
+
+          {/* ── Dev account switcher (dev-only) ─────────────────────── */}
+          {import.meta.env.DEV && (
+            <DevLogin disabled={loading} onSelect={handleDevLogin} />
+          )}
 
           {/* Footer Section */}
           <div className="flex flex-col gap-4 sm:gap-5 items-center px-3 sm:px-5 w-full">

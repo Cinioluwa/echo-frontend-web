@@ -73,7 +73,7 @@ const FollowUpFilterTabs: React.FC<FollowUpFilterTabsProps> = ({
                     <button
                         key={filter.id}
                         onClick={() => onFilterChange(filter.id)}
-                        className={`flex gap-[6px] sm:gap-[9px] items-center justify-center px-3 sm:px-[18px] py-1.5 sm:py-[9px] relative shrink-0 rounded-[22.5px] whitespace-nowrap transition-all text-xs sm:text-sm border-[1.8px] border-solid ${
+                        className={`flex gap-[6px] sm:gap-[9px] items-center justify-center h-11 sm:h-[52px] px-3 sm:px-[18px] relative shrink-0 rounded-[22.5px] whitespace-nowrap transition-all text-xs sm:text-sm border-[1.8px] border-solid ${
                             isActive
                                 ? "bg-[#f49b31] border-[#f49b31] hover:bg-[#e28a20]"
                                 : "bg-[#fef5ea] border-[#f49b31] hover:bg-[#fdecd8]"

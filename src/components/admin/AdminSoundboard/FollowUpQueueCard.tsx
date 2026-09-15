@@ -49,7 +49,7 @@ const FollowUpQueueCard: React.FC<FollowUpQueueCardProps> = ({
                 {items.map((item) => (
                     <div
                         key={item.id}
-                        className="bg-[#fef5ea] border border-[#f49b31] rounded-[9px] px-[12.5px] py-[10.5px] flex gap-2.5 items-center"
+                        className="bg-[#fef5ea] border border-[#f49b31] rounded-[9px] px-[12.5px] h-[88px] flex gap-2.5 items-center overflow-hidden"
                     >
                         {/* Icon */}
                         <div
@@ -62,10 +62,10 @@ const FollowUpQueueCard: React.FC<FollowUpQueueCardProps> = ({
 
                         {/* Content */}
                         <div className="flex flex-col min-w-0 gap-1 me-auto">
-                            <p className="text-[#212121] font-medium text-[12px] leading-[18px]">
+                            <p className="text-[#212121] font-medium text-[12px] leading-[18px] line-clamp-1 overflow-hidden">
                                 {item.title}
                             </p>
-                            <p className="text-[#5e5c58] font-normal text-[11px] leading-[16.5px]">
+                            <p className="text-[#5e5c58] font-normal text-[11px] leading-[16.5px] line-clamp-1 overflow-hidden">
                                 {item.description}
                             </p>
                         </div>

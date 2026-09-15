@@ -92,8 +92,8 @@ export const useAuthStore = create<AuthState>()(
               state.isAuthenticated = true;
             });
 
-            // Connect WebSocket (Phase 11)
-            connectSocket(response.token);
+            // The dev fixture layer has no backend websocket to connect to.
+            if (!import.meta.env.DEV) connectSocket(response.token);
 
             // Fetch user profile after login to populate user data
             // Use getCurrentUser directly instead of fetchUserProfile to avoid isLoading guard

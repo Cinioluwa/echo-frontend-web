@@ -56,6 +56,7 @@ export interface AdminPing {
     surges?: number;
   };
   officialResponse?: OfficialResponse;
+  adminBadges?: Array<{ key: string; label: string; group: string }>;
 }
 
 // ==================== Admin Wave ====================

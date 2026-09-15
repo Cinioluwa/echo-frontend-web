@@ -1,4 +1,7 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
+import FigmaBadge from "../FigmaBadge";
+import { getWaveBadgeName } from "../figmaBadgeUtils";
 import type { FollowUpItem as FollowUpItemType } from "./types";
 
 interface FollowUpItemProps {
@@ -41,58 +44,9 @@ const getButtonStylesAndIcon = (label: string, variant?: string) => {
     return { bgClass, iconUrl, iconSizeClass };
 };
 
-const getStatusBadgeConfig = (status: string) => {
-    switch (status) {
-        case "rejected":
-            return {
-                label: "Rejected",
-                dotUrl: "/assets/icon/dot-yellow.svg",
-            };
-        case "completed":
-            return {
-                label: "Completed",
-                dotUrl: "/assets/icon/dot-green.svg",
-            };
-        case "in_progress":
-            return {
-                label: "In Progress",
-                dotUrl: "/assets/icon/dot-blue.svg",
-            };
-        case "approved":
-            return {
-                label: "Approved",
-                dotUrl: "/assets/icon/dot-green.svg",
-            };
-        case "under_review":
-            return {
-                label: "Under Review",
-                dotUrl: "/assets/icon/dot-green.svg",
-            };
-        case "posted":
-            return {
-                label: "Posted",
-                dotUrl: "/assets/icon/dot-yellow.svg",
-            };
-        case "acknowledged":
-            return {
-                label: "Acknowledged",
-                dotUrl: "/assets/icon/dot-green.svg",
-            };
-        case "resolved":
-            return {
-                label: "Resolved",
-                dotUrl: "/assets/icon/dot-blue.svg",
-            };
-        default:
-            return {
-                label: status,
-                dotUrl: "/assets/icon/dot-green.svg",
-            };
-    }
-};
-
 const FollowUpItem: React.FC<FollowUpItemProps> = ({ item }) => {
-    const statusConfig = getStatusBadgeConfig(item.status);
+    const navigate = useNavigate();
+    const statusConfig = item.status === "acknowledged" ? "Acknowledged" : getWaveBadgeName(item.status.toUpperCase());
 
     return (
         <div
@@ -170,12 +124,14 @@ const FollowUpItem: React.FC<FollowUpItemProps> = ({ item }) => {
                     data-node-id="5701:15607"
                 >
                     <div className="flex gap-2 sm:gap-2.5 items-center flex-1 flex-wrap">
-                        <h3
-                            className="font-poppins font-semibold text-[14px] sm:text-[16px] leading-[17px] sm:leading-[19.5px] text-black"
+                        <button
+                            type="button"
+                            onClick={() => navigate(`/admin/soundboard/${item.pingId ?? item.id}`)}
+                            className="font-poppins font-semibold text-[14px] sm:text-[16px] leading-[17px] sm:leading-[19.5px] text-black text-left hover:text-[#f49b31] transition-colors truncate max-w-full"
                             data-node-id="5701:15609"
                         >
                             {item.title}
-                        </h3>
+                        </button>
                         <span
                             className="bg-[#fef5ea] border border-[#f49b31] border-solid flex items-center justify-center px-1.5 sm:px-2 py-0.5 rounded-[20px] shrink-0 text-xs sm:text-sm"
                             data-node-id="5701:15610"
@@ -210,19 +166,7 @@ const FollowUpItem: React.FC<FollowUpItemProps> = ({ item }) => {
                     </div>
 
                     {/* Status badge */}
-                    <div
-                        className="bg-[#fefefe] border-[#626665] border-[1.5px] border-solid flex gap-[9px] items-center justify-center px-[16.5px] py-1.5 relative rounded-[23px] shrink-0"
-                        data-node-id="5701:15619"
-                    >
-                        <img
-                            src={statusConfig.dotUrl}
-                            alt=""
-                            className="w-[7.5px] h-[7.5px] rounded-full shrink-0"
-                        />
-                        <span className="font-poppins font-medium text-[13.5px] leading-normal text-black text-right whitespace-nowrap capitalize">
-                            {statusConfig.label}
-                        </span>
-                    </div>
+                    <div data-node-id="5701:15619"><FigmaBadge label={statusConfig} /></div>
                 </div>
 
                 {/* Description */}

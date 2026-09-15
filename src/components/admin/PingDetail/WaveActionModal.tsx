@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Check, X, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 
 interface WaveActionModalProps {
     action: "APPROVED" | "REJECTED" | "UNDER_REVIEW";
@@ -29,8 +29,8 @@ const WaveActionModal: React.FC<WaveActionModalProps> = ({ action, onConfirm, on
         try {
             await onConfirm(action === "REJECTED" ? reason : undefined);
             setIsSuccess(true);
-        } catch (err: any) {
-            setError(err?.message || "Failed to update wave status. Please try again.");
+        } catch (err: unknown) {
+            setError(err instanceof Error ? err.message : "Failed to update wave status. Please try again.");
             setIsLoading(false);
         }
     };
@@ -39,13 +39,11 @@ const WaveActionModal: React.FC<WaveActionModalProps> = ({ action, onConfirm, on
     if (isSuccess) {
         return (
             <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 animate-fade-in font-poppins">
-                <div className="bg-white rounded-[30px] w-[350px] p-8 flex flex-col items-center justify-center gap-6 shadow-2xl animate-scale-in">
+                <div className="bg-white rounded-[32px] w-[min(530px,calc(100vw-32px))] p-8 sm:p-10 flex flex-col items-center justify-center gap-6 animate-scale-in">
                     {action === "APPROVED" && (
                         <>
-                            <div className="w-[80px] h-[80px] rounded-full border-[4px] border-[#f49b31] flex items-center justify-center animate-bounce-subtle">
-                                <Check className="w-10 h-10 text-[#f49b31]" strokeWidth={3.5} />
-                            </div>
-                            <h3 className="font-bold text-[24px] text-black text-center tracking-tight">
+                            <img src="/assets/figma/admin/approve-success.svg" alt="" className="w-[114px] h-[114px]" />
+                            <h3 className="font-poppins font-semibold text-[28px] text-black text-center">
                                 Approved!
                             </h3>
                         </>
@@ -53,9 +51,7 @@ const WaveActionModal: React.FC<WaveActionModalProps> = ({ action, onConfirm, on
 
                     {action === "UNDER_REVIEW" && (
                         <>
-                            <div className="w-[80px] h-[80px] rounded-full border-[4px] border-[#f49b31] flex items-center justify-center animate-bounce-subtle">
-                                <Check className="w-10 h-10 text-[#f49b31]" strokeWidth={3.5} />
-                            </div>
+                            <img src="/assets/figma/admin/approve-success.svg" alt="" className="w-[114px] h-[114px]" />
                             <h3 className="font-bold text-[24px] text-black text-center tracking-tight">
                                 Under Review!
                             </h3>
@@ -64,11 +60,9 @@ const WaveActionModal: React.FC<WaveActionModalProps> = ({ action, onConfirm, on
 
                     {action === "REJECTED" && (
                         <>
-                            <div className="w-[80px] h-[80px] rounded-full bg-[#eb5050] flex items-center justify-center animate-bounce-subtle shadow-md">
-                                <X className="w-10 h-10 text-white" strokeWidth={3.5} />
-                            </div>
-                            <h3 className="font-bold text-[24px] text-black text-center tracking-tight">
-                                Rejected!
+                            <img src="/assets/figma/admin/rejected.svg" alt="" className="w-[114px] h-[114px]" />
+                            <h3 className="font-poppins font-semibold text-[28px] text-black text-center">
+                                Rejected
                             </h3>
                         </>
                     )}
@@ -80,7 +74,7 @@ const WaveActionModal: React.FC<WaveActionModalProps> = ({ action, onConfirm, on
     // Render Confirmation Forms
     return (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 animate-fade-in font-poppins">
-            <div className="bg-white rounded-[30px] w-[350px] p-8 flex flex-col items-center gap-6 shadow-2xl animate-scale-in relative">
+            <div className="bg-white rounded-[32px] w-[min(530px,calc(100vw-32px))] px-8 sm:px-10 py-10 flex flex-col items-center gap-6 animate-scale-in relative">
                 {error && (
                     <div className="absolute top-4 left-4 right-4 bg-red-50 text-red-600 text-xs p-2 rounded-lg text-center font-medium border border-red-100">
                         {error}
@@ -90,11 +84,9 @@ const WaveActionModal: React.FC<WaveActionModalProps> = ({ action, onConfirm, on
                 {/* APPROVED Action */}
                 {action === "APPROVED" && (
                     <>
-                        <div className="w-[80px] h-[80px] rounded-full border-[4px] border-[#f49b31] flex items-center justify-center">
-                            <span className="text-[#f49b31] font-bold text-[48px] leading-none -mt-1 font-sans">!</span>
-                        </div>
+                        <img src="/assets/figma/admin/approve-warning.svg" alt="" className="w-[114px] h-[114px]" />
                         
-                        <h3 className="font-bold text-[20px] text-center text-[#282828] leading-[26px]">
+                        <h3 className="font-poppins font-semibold text-[28px] text-center text-[#282828] leading-[normal]">
                             Do you want to Approve this wave?
                         </h3>
 
@@ -102,14 +94,14 @@ const WaveActionModal: React.FC<WaveActionModalProps> = ({ action, onConfirm, on
                             <button
                                 onClick={handleConfirm}
                                 disabled={isLoading}
-                                className="flex-1 py-3 bg-[#f49b31] hover:bg-[#e68a1f] text-white font-bold text-[16px] rounded-[15px] transition-all duration-200 active:scale-95 disabled:opacity-50 flex items-center justify-center"
+                                className="flex-1 py-3 bg-[#f49b31] hover:bg-[#e68a1f] text-white font-medium text-[18px] rounded-[17px] transition-colors disabled:opacity-50 flex items-center justify-center"
                             >
                                 {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : "Yes"}
                             </button>
                             <button
                                 onClick={onCancel}
                                 disabled={isLoading}
-                                className="flex-1 py-3 border-2 border-[#f49b31] text-[#f49b31] bg-transparent hover:bg-[#fef5ea] font-bold text-[16px] rounded-[15px] transition-all duration-200 active:scale-95 disabled:opacity-50"
+                                className="flex-1 py-3 border-2 border-[#f49b31] text-[#f49b31] bg-[#fef5ea] hover:bg-white font-medium text-[18px] rounded-[17px] transition-colors disabled:opacity-50"
                             >
                                 No
                             </button>
@@ -120,11 +112,9 @@ const WaveActionModal: React.FC<WaveActionModalProps> = ({ action, onConfirm, on
                 {/* UNDER_REVIEW Action */}
                 {action === "UNDER_REVIEW" && (
                     <>
-                        <div className="w-[80px] h-[80px] rounded-full border-[4px] border-[#f49b31] flex items-center justify-center">
-                            <span className="text-[#f49b31] font-bold text-[48px] leading-none -mt-1 font-sans">!</span>
-                        </div>
+                        <img src="/assets/figma/admin/approve-warning.svg" alt="" className="w-[114px] h-[114px]" />
                         
-                        <h3 className="font-bold text-[20px] text-center text-[#282828] leading-[26px]">
+                        <h3 className="font-poppins font-semibold text-[28px] text-center text-[#282828] leading-[normal]">
                             Do you want to put this wave Under Review?
                         </h3>
 
@@ -150,7 +140,7 @@ const WaveActionModal: React.FC<WaveActionModalProps> = ({ action, onConfirm, on
                 {/* REJECTED Action */}
                 {action === "REJECTED" && (
                     <>
-                        <h3 className="font-bold text-[24px] text-center text-[#282828]">
+                        <h3 className="font-poppins font-semibold text-[28px] text-center text-[#282828]">
                             Why is it being Rejected?
                         </h3>
 
@@ -159,21 +149,21 @@ const WaveActionModal: React.FC<WaveActionModalProps> = ({ action, onConfirm, on
                             onChange={(e) => setReason(e.target.value)}
                             placeholder="What's the reason behind the rejection?"
                             disabled={isLoading}
-                            className="w-full h-[100px] border border-[#a2a2a2] rounded-[10px] p-3 text-[14px] font-medium text-black placeholder-[#626665] outline-none focus:border-[#eb5050] transition-colors resize-none disabled:bg-gray-50"
+                            className="w-full h-[74px] border border-[#626665] rounded-[10px] p-3 text-[12px] font-normal text-black placeholder-[#626665] outline-none focus:border-[#b01212] transition-colors resize-none disabled:bg-gray-50"
                         />
 
                         <div className="flex flex-col items-center gap-4 w-full mt-2">
                             <button
                                 onClick={handleConfirm}
                                 disabled={isLoading}
-                                className="w-full py-3 bg-[#b01212] hover:bg-[#8e0f0f] text-white font-bold text-[16px] rounded-[15px] transition-all duration-200 active:scale-95 disabled:opacity-50 flex items-center justify-center shadow-md"
+                                className="w-full py-3 bg-[#b01212] hover:bg-[#8e0f0f] text-white font-medium text-[18px] rounded-[17px] transition-colors disabled:opacity-50 flex items-center justify-center"
                             >
                                 {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : "Reject"}
                             </button>
                             <button
                                 onClick={onCancel}
                                 disabled={isLoading}
-                                className="font-bold text-[16px] text-black underline hover:text-[#626665] transition-colors cursor-pointer"
+                                className="font-medium text-[18px] text-black underline hover:text-[#626665] transition-colors cursor-pointer"
                             >
                                 Don't reject
                             </button>

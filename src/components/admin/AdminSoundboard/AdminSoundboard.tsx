@@ -5,9 +5,10 @@ import FollowUpQueueCard, { type FollowUpItem } from "./FollowUpQueueCard";
 import IssuesByCategoryCard, { type CategoryData } from "./IssuesByCategoryCard";
 import PingIndexModal from "./PingIndexModal";
 import { motion } from "framer-motion";
-import AdminHeader from "../AdminHeader";
+import SoundboardMobileHeader from "./SoundboardMobileHeader";
 import AdminMobileMenu from "../AdminMobileMenu";
 import { adminService } from "../../../api/services/admin.service";
+import { categoryImages } from "../../CategoryImages";
 
 interface AdminSoundboardProps {
     onPublishAnnouncement?: () => void;
@@ -110,6 +111,7 @@ const AdminSoundboard: React.FC<AdminSoundboardProps> = ({
                 const cats: CategoryData[] = issuesByCategory.map((item) => ({
                     categoryId: item.categoryId,
                     name: item.categoryName,
+                    icon: categoryImages[item.categoryName] || categoryImages.General,
                     resolved: item.resolutionRate,
                     openCount: item.openCount,
                     issues: item.topPings.map((p) => ({
@@ -124,6 +126,7 @@ const AdminSoundboard: React.FC<AdminSoundboardProps> = ({
                 const cats: CategoryData[] = overview.categoriesStats.map((stat) => ({
                     categoryId: stat.categoryId,
                     name: stat.categoryName,
+                    icon: categoryImages[stat.categoryName] || categoryImages.General,
                     resolved: stat.resolutionPercentage,
                     openCount: stat.openCount,
                     issues: [],
@@ -145,8 +148,12 @@ const AdminSoundboard: React.FC<AdminSoundboardProps> = ({
                 badge: `↑ +${overview.summaryCards.unresolvedOlderThanDays.deltaAbsolute} this week`,
             });
 
-        } catch (err: any) {
-            setError(err?.response?.data?.error || err.message || "Failed to load dashboard data");
+        } catch (err: unknown) {
+            const message =
+                err instanceof Error
+                    ? err.message
+                    : (err as { response?: { data?: { error?: string } } })?.response?.data?.error;
+            setError(message || "Failed to load dashboard data");
         } finally {
             setLoading(false);
         }
@@ -158,18 +165,23 @@ const AdminSoundboard: React.FC<AdminSoundboardProps> = ({
 
     return (
         <>
-            <div className="flex min-h-screen bg-[#fae9d4] m-0 md:ms-[230px]" data-node-id="admin-soundboard-page">
-                <div className="flex-1 flex flex-col">
-                    <div className="px-3 sm:px-5 pt-5 sm:pt-[30px] pb-3 sm:pb-5">
-                        <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 sm:gap-0">
+            <div className="flex-1 min-w-0 flex flex-col bg-[#fae9d4]" data-node-id="admin-soundboard-page">
+                    <div className="px-3 sm:px-8 pt-5 sm:pt-[30px] pb-3 sm:pb-5 w-full max-w-[1200px] mx-auto">
+                        {/* Header row: title/subtitle + actions share one flex row so
+                            buttons move with content; right edge of Publish button
+                            aligns with right edge of content column (= Follow-Up card) */}
+                        <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 sm:gap-4">
+                            {/* Mobile: Figma Nav row (5802-21854) — logo left, bell +
+                                "Welcome back" + name + avatar right, with the
+                                hamburger integrated in the same row */}
+                            <SoundboardMobileHeader openMenu={openMenu} setOpenMenu={setOpenMenu} />
                             <div className="flex flex-col gap-1 sm:gap-2">
                                 <h1 className="hidden md:block text-[#212121] font-semibold text-[24px] sm:text-[28px] leading-[26px] sm:leading-[30.8px] tracking-[-0.5px]">
                                     Soundboard
                                 </h1>
-                                <AdminHeader title="Soundboard" setOpenMenu={setOpenMenu} openMenu={openMenu} />
                             </div>
 
-                            <div className="flex gap-2 flex-wrap sm:flex-nowrap">
+                            <div className="flex gap-2 flex-wrap sm:flex-nowrap shrink-0" data-node-id="soundboard-header-actions">
                                 <motion.button
                                     onClick={onExport}
                                     className="border border-[#f49b31] rounded-lg px-3 sm:px-[15px] py-2 sm:py-[9px] flex items-center gap-1 sm:gap-2 hover:bg-[#F49B31] text-[#f49b31] hover:text-white transition-colors text-xs sm:text-[12px]"
@@ -190,7 +202,7 @@ const AdminSoundboard: React.FC<AdminSoundboardProps> = ({
                         </div>
                     </div>
 
-                    <div className="flex-1 overflow-y-auto px-3 sm:px-5 py-5 sm:py-[30px]">
+                    <div className="flex-1 px-3 sm:px-8 py-5 sm:py-[30px] w-full max-w-[1200px] mx-auto">
                         {loading ? (
                             <div className="flex items-center justify-center h-[400px]">
                                 <div className="animate-spin w-12 h-12 border-4 border-[#f49b31] border-t-transparent rounded-full" />
@@ -201,7 +213,7 @@ const AdminSoundboard: React.FC<AdminSoundboardProps> = ({
                                 <button onClick={fetchDashboardData} className="ml-2 underline">Retry</button>
                             </div>
                         ) : (
-                            <div className="flex flex-col gap-[30px] max-w-[1200px]">
+                            <div className="flex flex-col gap-[30px] w-full">
                                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
                                     <SurgeAlertCard
                                         count={surgeCount}
@@ -245,7 +257,6 @@ const AdminSoundboard: React.FC<AdminSoundboardProps> = ({
                             </div>
                         )}
                     </div>
-                </div>
             </div>
             <AdminMobileMenu setMenu={setOpenMenu} menu={openMenu} />
 

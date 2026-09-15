@@ -9,12 +9,9 @@ import { AdminPingDetail } from "../../components/admin/PingDetail";
 const AdminPingDetailPage: React.FC = () => {
 
     return (
-        <div className="h-full">
-            <AdminLayout />
-
+        <AdminLayout>
             <AdminPingDetail />
-
-        </div>
+        </AdminLayout>
     );
 };
 

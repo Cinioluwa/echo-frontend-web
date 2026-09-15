@@ -7,6 +7,7 @@ import CategoryManagement from "./CategoryManagement";
 import RulesSettings from "./RulesSettings";
 import { motion } from "framer-motion";
 import { User } from "lucide-react";
+import { analyticsService } from "../../../api/services/analytics.service";
 
 type SettingTab = "general" | "members" | "categories" | "rules";
 
@@ -18,9 +19,16 @@ const AdminSettings: React.FC<AdminSettingsProps> = ({ onPublishAnnouncement }) 
     const [activeTab, setActiveTab] = useState<SettingTab>("general");
     const [openMenu, setOpenMenu] = useState(false);
 
-    // TODO: Implement export functionality
-    const onExport = () => {
-        console.log("Export clicked");
+    const onExport = async () => {
+        const blob = await analyticsService.exportPings();
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = `pings-export-${new Date().toISOString()}.csv`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
     };
 
     const iconVariants = {
@@ -37,14 +45,14 @@ const AdminSettings: React.FC<AdminSettingsProps> = ({ onPublishAnnouncement }) 
     };
 
     const tabClass = (isActive: boolean) =>
-        `flex items-center gap-2 px-5 py-2.5 rounded-[12px] font-poppins font-semibold text-[13px] sm:text-[14px] border transition-all ${isActive
-            ? "bg-[#f49b31] border-[#f49b31] text-white shadow-md shadow-[#f49b31]/10"
-            : "bg-white border-[#ffd7a8] text-[#926b3d] hover:bg-[#fef5ea]"
+        `flex items-center gap-2 px-4 py-2 rounded-[10px] font-poppins text-[13px] sm:text-[16px] transition-colors ${isActive
+            ? "bg-[#f49b31] text-white font-medium"
+            : "bg-[#fef5ea] text-black font-normal hover:bg-[#ffe9cc]"
         }`;
 
     return (
         <>
-            <div className="m-0 md:ms-[230px] flex flex-col gap-6 items-start px-4 sm:px-8 py-6 sm:py-8 relative min-h-screen pb-24 z-0 relative">
+            <div className="flex-1 min-w-0 flex flex-col gap-6 items-start px-4 sm:px-8 py-6 sm:py-8 relative min-h-screen pb-24 z-0 w-full max-w-[1200px] mx-auto">
                 {/* Header Row */}
                 <div className="flex flex-col gap-2 items-start relative w-full border-b border-[#ffd7a8] pb-4">
                     <div className="flex items-center justify-between w-full">

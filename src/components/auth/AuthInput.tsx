@@ -177,7 +177,7 @@ const AuthInput = forwardRef<HTMLInputElement, AuthInputProps>(
                         className="
               flex-1 bg-transparent border-none outline-none
               text-[12px] sm:text-[13px] text-[#4a504e]
-              placeholder:text-[#737373] placeholder:italic
+                        placeholder:text-[#737373] placeholder:not-italic
               disabled:cursor-not-allowed
             "
                         style={{ fontFamily: 'Poppins, sans-serif', fontWeight: 500 }}

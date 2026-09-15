@@ -12,13 +12,9 @@ type Tab = "Top" | "Approved" | "Rejected";
 const AdminPingWaves: React.FC<AdminPingWavesProps> = ({ waves, onUpdateWaveStatus }) => {
     const [activeTab, setActiveTab] = useState<Tab>("Top");
 
-    const topWaves = waves.sort((a, b) => b.surgeCount - a.surgeCount);
+    const topWaves = [...waves].sort((a, b) => b.surgeCount - a.surgeCount);
     const approvedWaves = waves.filter(w => w.status === "APPROVED");
     const rejectedWaves = waves.filter(w => w.status === "REJECTED");
-    console.log(waves);
-    console.log(topWaves);
-    console.log(approvedWaves);
-    console.log(rejectedWaves);
     let currentWaves: Wave[] = [];
     if (activeTab === "Top") currentWaves = topWaves;
     if (activeTab === "Approved") currentWaves = approvedWaves;

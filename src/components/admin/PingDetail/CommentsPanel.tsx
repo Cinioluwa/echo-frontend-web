@@ -1,11 +1,15 @@
 import React, { useState } from "react";
-import { MessageCircle } from "lucide-react";
+import { ArrowRight, MessageCircle, X } from "lucide-react";
 import UserAvatar from "../../UserAvatar";
 import type { Comment } from "../../../api/types";
 import api from "../../../api/axios.config";
 
 interface AdminCommentsPanelProps {
     comments: Comment[];
+    isDrawer?: boolean;
+    showViewAll?: boolean;
+    onViewAll?: () => void;
+    onClose?: () => void;
 }
 
 interface CommentWithReplies extends Comment {
@@ -197,25 +201,33 @@ const ReplyCard = ({ reply }: { reply: Comment }) => {
     );
 };
 
-const AdminCommentsPanel: React.FC<AdminCommentsPanelProps> = ({ comments }) => {
+const AdminCommentsPanel: React.FC<AdminCommentsPanelProps> = ({ comments, isDrawer = false, showViewAll = true, onViewAll, onClose }) => {
+    const [showAllComments, setShowAllComments] = useState(false);
     const topLevelComments = comments.filter(
         (c) => !c.parentCommentId || c.parentCommentId === null
     );
 
-    const commentsWithReplies: CommentWithReplies[] = topLevelComments.map((comment) => ({
+    // Part A.3: the compact card always shows at most 2 comments; the 3rd+
+    // is only reachable through the expanded drawer/modal (isDrawer=true),
+    // which renders the full scrollable list.
+    const visibleTopLevelComments = isDrawer ? topLevelComments : topLevelComments.slice(0, 2);
+    const commentsWithReplies: CommentWithReplies[] = visibleTopLevelComments.map((comment) => ({
         ...comment,
         replies: comments.filter((c) => c.parentCommentId === comment.id),
     }));
 
     return (
-        <div className="bg-[#F49B31] rounded-xl flex flex-col gap-2 sm:gap-3">
-            <h3 className="font-poppins pt-3 px-3 sm:pt-4 sm:px-4 font-semibold text-[16px] sm:text-[18px] text-white rounded-t-xl">
+        <div className={`bg-[#F49B31] flex flex-col gap-2 sm:gap-3 ${isDrawer ? "rounded-t-[30px] lg:rounded-[20px] h-full" : "rounded-xl"}`}>
+            <div className="flex items-center justify-between pt-3 px-3 sm:pt-4 sm:px-4 shrink-0">
+            <h3 className="font-poppins font-semibold text-[16px] sm:text-[18px] text-white rounded-t-xl">
                 Comments
                 {topLevelComments.length > 0 && (
                     <span className="ms-1.5 text-[#626665]">{topLevelComments.length}</span>
                 )}
             </h3>
-            <div className="flex flex-col gap-2 px-3 sm:px-4 sm:gap-3 max-h-[250px] sm:max-h-[300px] overflow-y-auto bg-[#ffc37b] py-2">
+            {isDrawer && onClose && <button type="button" onClick={onClose} aria-label="Close comments" className="p-1 text-white"><X className="w-5 h-5" /></button>}
+            </div>
+            <div className={`flex flex-col gap-2 px-3 sm:px-4 sm:gap-3 bg-[#ffc37b] py-2 ${isDrawer ? "flex-1 min-h-0 overflow-y-auto" : "overflow-hidden"}`}>
                 {commentsWithReplies.length === 0 ? (
                     <p className="text-center text-white text-[13px] py-4">No comments yet</p>
                 ) : (
@@ -223,6 +235,18 @@ const AdminCommentsPanel: React.FC<AdminCommentsPanelProps> = ({ comments }) => 
                         <CommentCard key={comment.id} comment={comment} />
                     ))
                 )}
+            </div>
+            <div className="bg-[#F49B31] rounded-b-xl px-3 sm:px-4 py-2.5 sm:py-3 shrink-0">
+            {showViewAll && topLevelComments.length > 2 && (
+                <button
+                    type="button"
+                    onClick={() => onViewAll ? onViewAll() : setShowAllComments((value) => !value)}
+                    className="w-full bg-white border border-[#f49b31] rounded-full px-4 py-2 flex items-center justify-center gap-2 text-[11px] sm:text-[12px] font-poppins font-medium text-black whitespace-nowrap hover:bg-[#fff8f0] transition-colors"
+                >
+                    {showAllComments ? "Collapse comments" : `View all ${topLevelComments.length} Comments`}
+                    <ArrowRight className={`w-3.5 h-3.5 transition-transform ${showAllComments ? "rotate-[-90deg]" : ""}`} />
+                </button>
+            )}
             </div>
         </div>
     );

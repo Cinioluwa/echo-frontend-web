@@ -30,8 +30,8 @@ const AdminRoute: React.FC<AdminRouteProps> = ({ children }) => {
     const isAdmin = user.role === "ADMIN" || user.role === "SUPER_ADMIN";
 
     if (!isAdmin) {
-        console.warn("AdminRoute: User does not have admin privileges, redirecting to soundBoard");
-        return <Navigate to="/soundBoard" replace />;
+        console.warn("AdminRoute: User does not have admin privileges, redirecting to feed");
+        return <Navigate to="/feed" replace />;
     }
 
     return <>{children}</>;
