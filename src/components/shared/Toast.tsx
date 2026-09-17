@@ -14,7 +14,7 @@
 
 import { useEffect, useState } from "react";
 
-export type ToastVariant = "ping" | "wave" | "deleted" | "copied";
+export type ToastVariant = "ping" | "wave" | "deleted" | "copied" | "reported";
 
 interface ToastProps {
     variant: ToastVariant;
@@ -47,6 +47,12 @@ const TOAST_CONFIG: Record<
     },
     copied: {
         message: "Link copied to clipboard",
+        bg: "bg-[#ffc37b]",
+        textColor: "text-[#454545]",
+        iconBg: "bg-[#f49b31]",
+    },
+    reported: {
+        message: "Report submitted successfully",
         bg: "bg-[#ffc37b]",
         textColor: "text-[#454545]",
         iconBg: "bg-[#f49b31]",

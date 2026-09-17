@@ -11,6 +11,7 @@ import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link2, Flag, Trash2, MoreVertical } from "lucide-react";
 import Toast from "../shared/Toast";
+import ReportModal from '../shared/ReportModal';
 import { buildPingShareUrl } from "../../utils/shareUrl";
 
 interface PingActionsDropdownProps {
@@ -28,6 +29,8 @@ const PingActionsDropdown = ({
     onEdit,
     onDelete,
 }: PingActionsDropdownProps) => {
+    const [isReportModalOpen, setIsReportModalOpen] = useState(false);
+    const [showReportToast, setShowReportToast] = useState(false);
     const [isOpen, setIsOpen] = useState(false);
     const [isHovered, setIsHovered] = useState(false);
     const [showCopyToast, setShowCopyToast] = useState(false);
@@ -69,8 +72,8 @@ const PingActionsDropdown = ({
 
     const handleReport = (e: React.MouseEvent) => {
         e.stopPropagation();
-        // TODO: Implement report functionality
         setIsOpen(false);
+        setIsReportModalOpen(true);
     };
 
     const handleDelete = (e: React.MouseEvent) => {
@@ -87,6 +90,15 @@ const PingActionsDropdown = ({
                         variant="copied"
                         duration={2000}
                         onDismiss={() => setShowCopyToast(false)}
+                    />
+                </div>
+            )}
+            {showReportToast && (
+                <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50">
+                    <Toast
+                        variant="reported"
+                        duration={2500}
+                        onDismiss={() => setShowReportToast(false)}
                     />
                 </div>
             )}
@@ -196,6 +208,14 @@ const PingActionsDropdown = ({
                     </motion.div>
                 )}
             </AnimatePresence>
+            
+            <ReportModal
+                isOpen={isReportModalOpen}
+                onClose={() => setIsReportModalOpen(false)}
+                entityType="ping"
+                entityId={pingId}
+                onSuccess={() => setShowReportToast(true)}
+            />
         </div>
     );
 };

@@ -8,6 +8,7 @@ import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link2, Flag, Trash2, MoreVertical } from "lucide-react";
 import Toast from "../shared/Toast";
+import ReportModal from "../shared/ReportModal";
 import { buildCommentShareUrl } from "../../utils/shareUrl";
 
 interface CommentActionsDropdownProps {
@@ -26,6 +27,8 @@ const CommentActionsDropdown = ({
     onDelete,
 }: CommentActionsDropdownProps) => {
     const [isOpen, setIsOpen] = useState(false);
+    const [isReportModalOpen, setIsReportModalOpen] = useState(false);
+    const [showReportToast, setShowReportToast] = useState(false);
     const [showCopyToast, setShowCopyToast] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
     const buttonRef = useRef<HTMLButtonElement>(null);
@@ -65,8 +68,8 @@ const CommentActionsDropdown = ({
 
     const handleReport = (e: React.MouseEvent) => {
         e.stopPropagation();
-        // TODO: Implement report functionality
         setIsOpen(false);
+        setIsReportModalOpen(true);
     };
 
     const handleDelete = (e: React.MouseEvent) => {
@@ -83,6 +86,15 @@ const CommentActionsDropdown = ({
                         variant="copied"
                         duration={2000}
                         onDismiss={() => setShowCopyToast(false)}
+                    />
+                </div>
+            )}
+            {showReportToast && (
+                <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50">
+                    <Toast
+                        variant="reported"
+                        duration={2500}
+                        onDismiss={() => setShowReportToast(false)}
                     />
                 </div>
             )}
@@ -190,6 +202,14 @@ const CommentActionsDropdown = ({
                     </motion.div>
                 )}
             </AnimatePresence>
+
+            <ReportModal
+                isOpen={isReportModalOpen}
+                onClose={() => setIsReportModalOpen(false)}
+                entityType="comment"
+                entityId={Number(commentId)}
+                onSuccess={() => setShowReportToast(true)}
+            />
         </div>
     );
 };
