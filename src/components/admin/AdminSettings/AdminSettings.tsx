@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import AdminHeader from "../AdminHeader";
 import AdminMobileMenu from "../AdminMobileMenu";
+import { useUIStore } from "../../../stores";
 import GeneralSettings from "./GeneralSettings";
 import MemberManagement from "./MemberManagement";
 import CategoryManagement from "./CategoryManagement";
@@ -12,16 +13,13 @@ type SettingTab = "general" | "members" | "categories" | "rules";
 
 interface AdminSettingsProps {
     onPublishAnnouncement?: () => void;
+    onExport?: () => void;
 }
 
-const AdminSettings: React.FC<AdminSettingsProps> = ({ onPublishAnnouncement }) => {
+const AdminSettings: React.FC<AdminSettingsProps> = ({ onPublishAnnouncement, onExport }) => {
     const [activeTab, setActiveTab] = useState<SettingTab>("general");
     const [openMenu, setOpenMenu] = useState(false);
-
-    // TODO: Implement export functionality
-    const onExport = () => {
-        console.log("Export clicked");
-    };
+    const { isSidebarCollapsed } = useUIStore();
 
     const iconVariants = {
         initial: {
@@ -37,14 +35,14 @@ const AdminSettings: React.FC<AdminSettingsProps> = ({ onPublishAnnouncement }) 
     };
 
     const tabClass = (isActive: boolean) =>
-        `flex items-center gap-2 px-5 py-2.5 rounded-[12px] font-poppins font-semibold text-[13px] sm:text-[14px] border transition-all ${isActive
+        `flex shrink-0 items-center gap-2 px-5 py-2.5 rounded-[12px] font-poppins font-semibold text-[13px] sm:text-[14px] border transition-all ${isActive
             ? "bg-[#f49b31] border-[#f49b31] text-white shadow-md shadow-[#f49b31]/10"
             : "bg-white border-[#ffd7a8] text-[#926b3d] hover:bg-[#fef5ea]"
         }`;
 
     return (
         <>
-            <div className="m-0 md:ms-[230px] flex flex-col gap-6 items-start px-4 sm:px-8 py-6 sm:py-8 relative min-h-screen pb-24 z-0 relative">
+            <div className={`m-0 ${isSidebarCollapsed ? "md:ms-[80px]" : "md:ms-[230px]"} flex flex-col gap-6 items-start px-4 sm:px-8 py-6 sm:py-8 relative min-h-screen pb-24 z-0 transition-all duration-300`}>
                 {/* Header Row */}
                 <div className="flex flex-col gap-2 items-start relative w-full border-b border-[#ffd7a8] pb-4">
                     <div className="flex items-center justify-between w-full">
@@ -79,7 +77,7 @@ const AdminSettings: React.FC<AdminSettingsProps> = ({ onPublishAnnouncement }) 
                 </div>
 
                 {/* Main Settings Tabs Bar */}
-                <div className="flex flex-wrap gap-2 w-full">
+                <div className="flex overflow-x-auto scrollbar-hide flex-nowrap gap-2 w-full pb-2">
                     {/* General Tab */}
                     <button
                         onClick={() => setActiveTab("general")}

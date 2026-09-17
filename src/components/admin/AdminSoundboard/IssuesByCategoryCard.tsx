@@ -1,4 +1,5 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
 export interface CategoryIssue {
     id: string;
@@ -27,6 +28,8 @@ const IssuesByCategoryCard: React.FC<IssuesByCategoryCardProps> = ({
     onCategoryClick,
     className = "",
 }) => {
+    const navigate = useNavigate();
+
     return (
         <div
             className={`bg-white border border-[rgba(244,155,49,0.3)] rounded-xl p-5 flex flex-col gap-5 ${className}`}
@@ -80,7 +83,7 @@ const IssuesByCategoryCard: React.FC<IssuesByCategoryCardProps> = ({
                         {/* Issues List */}
                         <div className="flex flex-col gap-2">
                             {category.issues.slice(0, 2).map((issue) => (
-                                <a href={`/admin/soundboard/${issue.id}`} key={issue.id} className="flex items-start justify-between p-2">
+                                <button onClick={() => navigate(`/admin/soundboard/${issue.id}`)} key={issue.id} className="flex items-start justify-between p-2 w-full text-left hover:bg-gray-50 rounded-lg transition-colors cursor-pointer">
                                     <div className="flex-1">
                                         <p className="text-[#212121] font-medium text-[12px] leading-4">
                                             {issue.title}
@@ -92,7 +95,7 @@ const IssuesByCategoryCard: React.FC<IssuesByCategoryCardProps> = ({
                                     <div className="ml-2 shrink-0 text-[#f49b31] font-semibold text-[12px]">
                                         ⚡ {issue.count}
                                     </div>
-                                </a>
+                                </button>
                             ))}
                         </div>
                     </div>

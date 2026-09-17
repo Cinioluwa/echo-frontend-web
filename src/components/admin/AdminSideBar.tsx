@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { useAuthStore } from "../../stores";
-import { LogOut, Settings, HelpCircle } from "lucide-react";
+import { useAuthStore, useUIStore } from "../../stores";
+import { LogOut, Settings, HelpCircle, ChevronLeft } from "lucide-react";
 import UserAvatar from "../UserAvatar";
 import OnboardingOverlay from "../onboarding/OnboardingOverlay";
 
@@ -33,6 +33,7 @@ const AdminSideBar: React.FC<AdminSidebarProps> = ({
   const markOnboardingComplete = useAuthStore(
     (state) => state.markOnboardingComplete,
   );
+  const { isSidebarCollapsed, toggleSidebar } = useUIStore();
 
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -94,13 +95,13 @@ const AdminSideBar: React.FC<AdminSidebarProps> = ({
   const currentPage = getCurrentPage();
 
   const navButtonClass = (isActive: boolean) =>
-    `w-full rounded-[15px] px-5 py-3 flex items-center gap-3 transition-colors border ${isActive
+    `w-full rounded-[15px] ${isSidebarCollapsed ? "p-3 justify-center" : "px-5 py-3 justify-start"} flex items-center gap-3 transition-colors border ${isActive
       ? "bg-[#f49b31] border-[#f49b31]"
       : "bg-transparent border-[#f49b31] hover:bg-[#fef5ea]"
     }`;
 
   const navTextClass = (isActive: boolean) =>
-    `font-semibold text-[15px] leading-[normal] whitespace-nowrap ${isActive ? "text-[#fef5ea]" : "text-[#212121]"
+    `font-semibold text-[15px] leading-[normal] whitespace-nowrap ${isSidebarCollapsed ? "hidden" : "block"} ${isActive ? "text-[#fef5ea]" : "text-[#212121]"
     }`;
 
   const navIconClass = (isActive: boolean) =>
@@ -127,17 +128,17 @@ const AdminSideBar: React.FC<AdminSidebarProps> = ({
   );
 
   const CollapseIcon = () => (
-    <img src="/assets/icon/expand.svg" alt="Collapse Icon" className="w-4 h-4" />
+    <img src="/assets/icon/expand.svg" alt="Collapse Icon" className={`w-4 h-4 transition-transform duration-300 ${isSidebarCollapsed ? "rotate-180" : ""}`} />
   );
 
   return (
     <div
-      className="hidden md:flex bg-[#fef5ea] border-r border-b border-[#f49b31] rounded-br-[20px] w-[230px] flex-col gap-5 pt-5 pb-[30px] px-5"
+      className={`hidden md:flex bg-[#fef5ea] border-r border-b border-[#f49b31] rounded-br-[20px] ${isSidebarCollapsed ? "w-[80px] px-3" : "w-[230px] px-5"} flex-col gap-5 pt-5 pb-[30px] transition-all duration-300`}
       data-node-id="admin-soundboard-sidebar"
     >
       {/* Logo Section */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
+      <div className={`flex items-center ${isSidebarCollapsed ? "justify-center" : "justify-between"}`}>
+        <div className={`flex items-center gap-2 ${isSidebarCollapsed ? "hidden" : ""}`}>
           <div className="w-[25px] h-[27px] flex items-center justify-center">
             <img src="/assets/images/Echo Logo_black.svg" alt="Echo Logo" className="w-full h-full" />
           </div>
@@ -146,7 +147,10 @@ const AdminSideBar: React.FC<AdminSidebarProps> = ({
           </h1>
         </div>
         <button
-          onClick={onToggleSidebar}
+          onClick={() => {
+            onToggleSidebar?.();
+            toggleSidebar();
+          }}
           className="hover:opacity-70 transition-opacity"
           aria-label="Toggle sidebar"
         >
@@ -201,7 +205,7 @@ const AdminSideBar: React.FC<AdminSidebarProps> = ({
       <div className="relative w-full" ref={dropdownRef}>
         <button
           onClick={() => setIsOpen(!isOpen)}
-          className="w-full bg-transparent border border-[#f49b31] rounded-[15px] p-2.5 flex items-start gap-2.5 hover:bg-[#fef5ea] transition-colors"
+          className={`w-full bg-transparent border border-[#f49b31] rounded-[15px] p-2 flex items-center ${isSidebarCollapsed ? "justify-center" : "items-start gap-2.5"} hover:bg-[#fef5ea] transition-colors`}
         >
           {/* Avatar */}
           {userAvatar || user?.profilePicture ? (
@@ -217,17 +221,19 @@ const AdminSideBar: React.FC<AdminSidebarProps> = ({
           )}
 
           {/* User Info */}
-          <div className="flex-1 min-w-0">
-            <p className="text-[#212121] font-medium text-[14px] leading-[normal] text-left truncate">
-              {displayFullName}
-            </p>
-            <div className="flex items-center gap-[5px] mt-[5px]">
-              <img src="/assets/icon/badge-check.svg" alt="Echo Badge" className="w-[15px] h-[15px]" />
-              <span className="text-[#926b3d] font-medium text-[12px] leading-[normal]">
-                {displayBadge}
-              </span>
+          {!isSidebarCollapsed && (
+            <div className="flex-1 min-w-0">
+              <p className="text-[#212121] font-medium text-[14px] leading-[normal] text-left truncate">
+                {displayFullName}
+              </p>
+              <div className="flex items-center gap-[5px] mt-[5px]">
+                <img src="/assets/icon/badge-check.svg" alt="Echo Badge" className="w-[15px] h-[15px]" />
+                <span className="text-[#926b3d] font-medium text-[12px] leading-[normal]">
+                  {displayBadge}
+                </span>
+              </div>
             </div>
-          </div>
+          )}
         </button>
 
         {/* Dropdown Menu */}

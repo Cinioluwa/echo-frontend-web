@@ -3,11 +3,15 @@ import StatCard from "./StatCard";
 import SurgeAlertCard, { type SurgeItem } from "./SurgeAlertCard";
 import FollowUpQueueCard, { type FollowUpItem } from "./FollowUpQueueCard";
 import IssuesByCategoryCard, { type CategoryData } from "./IssuesByCategoryCard";
+import { useUIStore } from "../../../stores";
 import PingIndexModal from "./PingIndexModal";
 import { motion } from "framer-motion";
 import AdminHeader from "../AdminHeader";
 import AdminMobileMenu from "../AdminMobileMenu";
 import { adminService } from "../../../api/services/admin.service";
+import { useNavigate } from "react-router-dom";
+import { ToastContainer } from "../../shared/Toast";
+import type { ToastItem } from "../../shared/Toast";
 
 interface AdminSoundboardProps {
     onPublishAnnouncement?: () => void;
@@ -31,9 +35,17 @@ const AdminSoundboard: React.FC<AdminSoundboardProps> = ({
     onPublishAnnouncement,
     onExport,
 }) => {
+    const { isSidebarCollapsed } = useUIStore();
+    const navigate = useNavigate();
     const [openMenu, setOpenMenu] = useState(false);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [toasts, setToasts] = useState<ToastItem[]>([]);
+
+    const pushToast = (variant: ToastItem["variant"]) => {
+        const id = `${Date.now()}`;
+        setToasts((prev) => [...prev, { id, variant }]);
+    };
 
     // Data state
     const [surgeItems, setSurgeItems] = useState<SurgeItem[]>([]);
@@ -46,9 +58,11 @@ const AdminSoundboard: React.FC<AdminSoundboardProps> = ({
     const [avgResolveTime, setAvgResolveTime] = useState({ value: "0 days", badge: "" });
     const [overdue, setOverdue] = useState({ value: "0", badge: "" });
 
-    const fetchDashboardData = useCallback(async () => {
+    const fetchDashboardData = useCallback(async (isSilentRefetch = false) => {
         try {
-            setLoading(true);
+            if (!isSilentRefetch) {
+                setLoading(true);
+            }
             setError(null);
 
             const [overview, surging, issuesByCategory] = await Promise.all([
@@ -68,7 +82,7 @@ const AdminSoundboard: React.FC<AdminSoundboardProps> = ({
                 category: item.category?.name || "Uncategorized",
                 onClick: () => {
                     // Navigate to ping details page
-                    window.location.href = `/admin/soundboard/${item.pingId}`;
+                    navigate(`/admin/soundboard/${item.pingId}`);
                 }
             }));
             setSurgeItems(surges);
@@ -150,16 +164,24 @@ const AdminSoundboard: React.FC<AdminSoundboardProps> = ({
         } finally {
             setLoading(false);
         }
-    }, []);
+    }, [navigate]);
 
     useEffect(() => {
         fetchDashboardData();
     }, [fetchDashboardData]);
 
+    const handleExportClick = () => {
+        if (onExport) {
+            onExport();
+        } else {
+            pushToast("approved"); // Re-using a positive toast to indicate "Export Started"
+        }
+    };
+
     return (
         <>
-            <div className="flex min-h-screen bg-[#fae9d4] m-0 md:ms-[230px]" data-node-id="admin-soundboard-page">
-                <div className="flex-1 flex flex-col">
+            <div className={`flex min-h-screen bg-[#fae9d4] m-0 ${isSidebarCollapsed ? "md:ms-[80px]" : "md:ms-[230px]"} transition-all duration-300`} data-node-id="admin-soundboard-page">
+                <div className="flex-1 w-full bg-[#fcfcfc]">
                     <div className="px-3 sm:px-5 pt-5 sm:pt-[30px] pb-3 sm:pb-5">
                         <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 sm:gap-0">
                             <div className="flex flex-col gap-1 sm:gap-2">
@@ -171,7 +193,7 @@ const AdminSoundboard: React.FC<AdminSoundboardProps> = ({
 
                             <div className="flex gap-2 flex-wrap sm:flex-nowrap">
                                 <motion.button
-                                    onClick={onExport}
+                                    onClick={handleExportClick}
                                     className="border border-[#f49b31] rounded-lg px-3 sm:px-[15px] py-2 sm:py-[9px] flex items-center gap-1 sm:gap-2 hover:bg-[#F49B31] text-[#f49b31] hover:text-white transition-colors text-xs sm:text-[12px]"
                                     whileHover="hover"
                                 >
@@ -252,9 +274,18 @@ const AdminSoundboard: React.FC<AdminSoundboardProps> = ({
             {selectedCategory && (
                 <PingIndexModal
                     category={selectedCategory}
+                    categories={categoryData}
+                    onSelectCategory={setSelectedCategory}
                     onClose={() => setSelectedCategory(null)}
                 />
             )}
+
+            <div className="fixed bottom-0 left-1/2 -translate-x-1/2 z-[100] pointer-events-none">
+                <ToastContainer
+                    toasts={toasts}
+                    removeToast={(id) => setToasts((prev) => prev.filter((t) => t.id !== id))}
+                />
+            </div>
         </>
     );
 };

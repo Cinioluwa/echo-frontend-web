@@ -28,11 +28,18 @@ const AdminSettingsPage: React.FC = () => {
         setShowAnnouncementModal(true);
     };
 
+    const handleExport = () => {
+        alert("Settings exported");
+    };
+
     return (
         <AdminPageProvider initialPage={getCurrentPage()}>
             <div className="h-full relative ">
                 <AdminLayout />
-                <AdminSettings onPublishAnnouncement={handlePublishAnnouncement} />
+                <AdminSettings 
+                    onPublishAnnouncement={handlePublishAnnouncement} 
+                    onExport={handleExport}
+                />
 
                 {showAnnouncementModal && (
                     <AnnouncementModal setAnnouncementModal={setShowAnnouncementModal} />

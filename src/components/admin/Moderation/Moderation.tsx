@@ -3,13 +3,17 @@ import ModerationCard from "./ModerationCard";
 import ModerationList from "./ModerationList";
 import AdminHeader from "../AdminHeader";
 import AdminMobileMenu from "../AdminMobileMenu";
+import { ToastContainer, type ToastItem } from "../../shared/Toast";
 import type { ModerationItem as ModerationItemType, FilterType } from "./types";
+import { useUIStore } from "../../../stores";
 import { adminService } from "../../../api/services/admin.service";
 import type { ReportItem } from "../../../api/types/admin.types";
 
 interface ModerationProps { }
 
 const Moderation: React.FC<ModerationProps> = () => {
+  const [toasts, setToasts] = useState<ToastItem[]>([]);
+  const { isSidebarCollapsed } = useUIStore();
   const [reports, setReports] = useState<ReportItem[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -18,9 +22,18 @@ const Moderation: React.FC<ModerationProps> = () => {
   const [actionLoading, setActionLoading] = useState<number | null>(null);
   const [analytics, setAnalytics] = useState<{ pendingReview: number; resolvedThisWeek: number; activeSuspensions: number } | null>(null);
 
-  const fetchReports = useCallback(async () => {
+  const pushToast = (variant: ToastItem["variant"]) => {
+    const id = `${Date.now()}`;
+    setToasts((prev) => [...prev, { id, variant }]);
+  };
+
+  const removeToast = (id: string) => {
+    setToasts((prev) => prev.filter((t) => t.id !== id));
+  };
+
+  const fetchReports = useCallback(async (isSilent = false) => {
     try {
-      setLoading(true);
+      if (!isSilent) setLoading(true);
       setError(null);
       const status = activeFilter === "pending" ? "PENDING"
         : activeFilter === "resolved" ? "RESOLVED"
@@ -85,7 +98,7 @@ const Moderation: React.FC<ModerationProps> = () => {
         console.log("Delete post requested for report ID:", id);
       }
 
-      await fetchReports();
+      await fetchReports(true);
     } catch (err: any) {
       setError(err?.response?.data?.error || "Failed to take action");
     } finally {
@@ -97,7 +110,7 @@ const Moderation: React.FC<ModerationProps> = () => {
     try {
       setActionLoading(parseInt(id));
       await adminService.updateReportStatus(parseInt(id), { status: "DISMISSED" });
-      await fetchReports();
+      await fetchReports(true);
     } catch (err: any) {
       setError(err?.response?.data?.error || "Failed to dismiss");
     } finally {
@@ -106,8 +119,9 @@ const Moderation: React.FC<ModerationProps> = () => {
   };
 
   return (
-    <>
-      <div className="m-0 md:ms-[230px] flex flex-col gap-4 sm:gap-6 items-start px-3 sm:px-6 py-6 sm:py-8 relative">
+    <div className="w-full min-h-screen bg-[#FCFCFC] relative" data-node-id="moderation-page">
+      <ToastContainer toasts={toasts} onDismiss={removeToast} />
+      <div className={`m-0 ${isSidebarCollapsed ? "md:ms-[80px]" : "md:ms-[230px]"} flex flex-col gap-4 sm:gap-6 items-start px-3 sm:px-6 py-6 sm:py-8 relative transition-all duration-300`}>
         <div className="flex flex-col gap-1 sm:gap-2 items-start relative w-full">
           <h1 className="hidden md:block font-poppins font-semibold text-[24px] sm:text-[28px] leading-normal text-black">
             Moderation
@@ -168,7 +182,7 @@ const Moderation: React.FC<ModerationProps> = () => {
         </div>
       </div>
       <AdminMobileMenu setMenu={setOpenMenu} menu={openMenu} />
-    </>
+    </div>
   );
 };
 

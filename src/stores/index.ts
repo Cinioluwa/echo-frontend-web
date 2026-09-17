@@ -22,6 +22,7 @@ export * from "./data/useOrganizationStore";
 export * from "./adminStore";
 export * from "./ui/useNotificationStore";
 export * from "./useGuestStore";
+export * from "./ui/useUIStore";
 
 // Re-export types
 export * from "./types";

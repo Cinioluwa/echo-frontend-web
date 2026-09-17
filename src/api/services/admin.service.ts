@@ -571,6 +571,33 @@ export const adminService = {
     const { data } = await api.delete(`/categories/${id}`);
     return data;
   },
+
+  // ==================== Analytics ====================
+
+  /**
+   * Get activity time series for dashboard chart
+   */
+  async getActivityTimeSeries(params?: { days?: number; groupBy?: string }) {
+    const { data } = await api.get("/admin/analytics/activity", { params });
+    return data;
+  },
+
+  /**
+   * Get ping count per category (for soundboard analytics)
+   */
+  async getStatsByCategory(params?: { window?: "day" | "week" | "month" | "year" }) {
+    const { data } = await api.get("/admin/analytics/by-category", { params });
+    return data;
+  },
+
+  /**
+   * Get trending categories
+   */
+  async getTrendingCategories(params?: { window: "day" | "week" | "month" | "year" }) {
+    const { data } = await api.get("/admin/analytics/trending", { params });
+    return data;
+  },
 };
 
 export default adminService;
+

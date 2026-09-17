@@ -197,10 +197,10 @@ const MemberManagement: React.FC = () => {
                 </div>
             )}
 
-            <div className="flex gap-2 p-1 rounded-[15px] w-fit">
+            <div className="flex gap-2 p-1 rounded-[15px] w-full overflow-x-auto scrollbar-hide flex-nowrap">
                 <button
                     onClick={() => setSubTab("policy")}
-                    className={`px-4 py-2 rounded-[12px] font-poppins font-semibold text-[13px] transition-all ${subTab === "policy"
+                    className={`shrink-0 px-4 py-2 rounded-[12px] font-poppins font-semibold text-[13px] transition-all ${subTab === "policy"
                         ? "bg-[#f49b31] text-white"
                         : "text-[#414141] bg-[#FFC37B]"
                     }`}
@@ -209,7 +209,7 @@ const MemberManagement: React.FC = () => {
                 </button>
                 <button
                     onClick={() => setSubTab("waiting")}
-                    className={`px-4 py-2 rounded-[12px] font-poppins font-semibold text-[13px] transition-all relative ${subTab === "waiting"
+                    className={`shrink-0 px-4 py-2 rounded-[12px] font-poppins font-semibold text-[13px] transition-all relative ${subTab === "waiting"
                         ? "bg-[#f49b31] text-white"
                         : "text-[#414141] bg-[#FFC37B]"
                     }`}
@@ -218,7 +218,7 @@ const MemberManagement: React.FC = () => {
                 </button>
                 <button
                     onClick={() => setSubTab("roster")}
-                    className={`px-4 py-2 rounded-[12px] font-poppins font-semibold text-[13px] transition-all ${subTab === "roster"
+                    className={`shrink-0 px-4 py-2 rounded-[12px] font-poppins font-semibold text-[13px] transition-all ${subTab === "roster"
                         ? "bg-[#f49b31] text-white"
                         : "text-[#414141] bg-[#FFC37B]"
                     }`}
@@ -427,7 +427,7 @@ const MemberManagement: React.FC = () => {
                                                 </td>
                                                 <td className="p-4 font-poppins text-[14px] text-[#5e5c58]">{user.email}</td>
                                                 <td className="p-4">
-                                                    <span className={`px-2 py-0.5 rounded-[6px] font-poppins font-semibold text-[11px] ${
+                                                    <span className={`inline-block whitespace-nowrap px-2 py-0.5 rounded-[6px] font-poppins font-semibold text-[11px] ${
                                                         user.role === "Admin"
                                                             ? "bg-[#ffefdb] text-[#f49b31]"
                                                             : user.role === "Leader"

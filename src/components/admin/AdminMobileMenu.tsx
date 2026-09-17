@@ -50,7 +50,7 @@ const AdminMobileMenu = ({ setMenu, menu }: Props) => {
             Soundboard
           </button>
         </Link>
-        <Link to={"/admin/followup"}>
+        <Link to={"/admin/followUp"}>
           <button
             onClick={() => {
               setCurrentPage("followUp");

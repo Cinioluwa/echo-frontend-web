@@ -2,6 +2,8 @@ import { FiInfo } from "react-icons/fi";
 import { adminService } from "../../api";
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { ToastContainer } from "../shared/Toast";
+import type { ToastItem } from "../shared/Toast";
 
 interface PostActionMenuProps {
   setOpenMenu: React.Dispatch<React.SetStateAction<boolean>>;
@@ -23,6 +25,13 @@ const PostActionMenu = ({
 
   const idString = String(entityId);
   const [loading, setLoading] = useState(false);
+  const [toasts, setToasts] = useState<ToastItem[]>([]);
+
+  const pushToast = (variant: ToastItem["variant"]) => {
+    const id = `${Date.now()}`;
+    setToasts((prev) => [...prev, { id, variant }]);
+  };
+
   const menuPanelClass =
     "absolute right-2 top-14 px-2 py-2 z-50 w-[186px] md:w-56 rounded-xl bg-white shadow-md border border-gray-100 overflow-hidden";
   const menuItemClass =
@@ -40,13 +49,16 @@ const PostActionMenu = ({
       setLoading(true);
       await adminService.updateWaveStatus(Number(entityId), { status });
 
-      alert('Wave status updated successfully');
-      setOpenMenu(false);
-
+      pushToast('wave');
+      
+      // Delay closing menu slightly to let the user see the toast if we wanted, 
+      // but parent might unmount us. If parent unmounts us, the toast will disappear.
+      // So we just call onUpdate to trigger refetch.
       if (onUpdate) onUpdate();
-    } catch (error: any) {
+      setOpenMenu(false);
+    } catch (error) {
       console.error('Failed to update wave status:', error);
-      alert(error.response?.data?.error || 'Failed to update status');
+      pushToast('deleted'); // Using 'deleted' variant for error state visually
     } finally {
       setLoading(false);
     }
@@ -63,7 +75,7 @@ const PostActionMenu = ({
       <div className={menuPanelClass}>
         {entityType === 'ping' && (
           <Link
-            to={`/admin/feed/details/${idString}`}
+            to={`/admin/soundboard/${idString}`}
             onClick={() => setOpenMenu(false)}
             className={`${menuItemClass} border-b border-gray-200 rounded-none mb-1.5 pb-2.5`}
           >
@@ -113,6 +125,13 @@ const PostActionMenu = ({
             </button>
           </>
         )}
+      </div>
+
+      <div className="fixed bottom-0 left-1/2 -translate-x-1/2 z-[100] pointer-events-none">
+        <ToastContainer
+          toasts={toasts}
+          onDismiss={(id: string) => setToasts((prev) => prev.filter((t) => t.id !== id))}
+        />
       </div>
     </>
   );

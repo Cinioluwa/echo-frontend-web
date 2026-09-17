@@ -11,6 +11,8 @@ import { motion } from "framer-motion";
 import pingService from "../../../api/services/ping.service";
 import { adminService } from "../../../api/services/admin.service";
 import type { Ping } from "../../../api/types/index";
+import { ToastContainer } from "../../shared/Toast";
+import { useUIStore } from "../../../stores";
 
 export type AdminBadgeType =
     | "SURGING_NOW"
@@ -123,6 +125,7 @@ const resposeButtonVariants = {
 const AdminPingDetail: React.FC<AdminPingDetailProps> = ({ pingId: propPingId }) => {
     const routeParams = useParams<{ pingId: string }>();
     const pingId = propPingId || routeParams.pingId;
+    const { isSidebarCollapsed } = useUIStore();
 
     const [pingData, setPingData] = useState<Ping | null>(null);
     const [loading, setLoading] = useState(true);
@@ -134,7 +137,7 @@ const AdminPingDetail: React.FC<AdminPingDetailProps> = ({ pingId: propPingId })
     const fetchPing = useCallback(async () => {
         if (!pingId) return;
         try {
-            setLoading(true);
+            if (!pingData) setLoading(true);
             const data = await pingService.getPingById(pingId);
             setPingData(data);
         } catch (err: any) {
@@ -142,7 +145,7 @@ const AdminPingDetail: React.FC<AdminPingDetailProps> = ({ pingId: propPingId })
         } finally {
             setLoading(false);
         }
-    }, [pingId]);
+    }, [pingId, pingData]);
 
     useEffect(() => {
         fetchPing();
@@ -210,13 +213,13 @@ const AdminPingDetail: React.FC<AdminPingDetailProps> = ({ pingId: propPingId })
             await fetchPing();
         } catch (err: any) {
             console.error("Failed to update wave status", err);
-            // Optionally, we could set an error state here or show a toast
+            throw new Error(err?.response?.data?.error || err?.response?.data?.message || "Failed to update wave status");
         }
     };
 
     if (loading) {
         return (
-            <div className="m-0 md:ms-[230px] flex items-center justify-center h-[400px]">
+            <div className={`m-0 ${isSidebarCollapsed ? "md:ms-[80px]" : "md:ms-[230px]"} flex items-center justify-center h-[400px] transition-all duration-300`}>
                 <div className="animate-spin w-12 h-12 border-4 border-[#f49b31] border-t-transparent rounded-full" />
             </div>
         );
@@ -224,7 +227,7 @@ const AdminPingDetail: React.FC<AdminPingDetailProps> = ({ pingId: propPingId })
 
     if (error) {
         return (
-            <div className="m-0 md:ms-[230px] p-6">
+            <div className={`m-0 ${isSidebarCollapsed ? "md:ms-[80px]" : "md:ms-[230px]"} p-6 transition-all duration-300`}>
                 <div className="p-4 bg-red-50 border border-red-200 rounded-lg text-red-700">
                     {error}
                     <button onClick={fetchPing} className="ml-2 underline">Retry</button>
@@ -235,7 +238,7 @@ const AdminPingDetail: React.FC<AdminPingDetailProps> = ({ pingId: propPingId })
 
     if (!pingData) {
         return (
-            <div className="m-0 md:ms-[230px] p-6">
+            <div className={`m-0 ${isSidebarCollapsed ? "md:ms-[80px]" : "md:ms-[230px]"} p-6 transition-all duration-300`}>
                 <div className="p-4 bg-gray-50 border border-gray-200 rounded-lg text-gray-500">Ping not found</div>
             </div>
         );
@@ -245,7 +248,7 @@ const AdminPingDetail: React.FC<AdminPingDetailProps> = ({ pingId: propPingId })
     const categoryName = detail.category?.name || "General";
     const categoryIcon = (categoryImages as Record<string, string>)[categoryName] || (categoryImages as Record<string, string>).General;
     return (
-        <div className="m-0 md:ms-[230px] flex flex-col gap-4 sm:gap-6 items-start px-3 sm:px-6 py-6 sm:py-8 relative">
+        <div className={`m-0 ${isSidebarCollapsed ? "md:ms-[80px]" : "md:ms-[230px]"} flex flex-col gap-4 sm:gap-6 items-start px-3 sm:px-6 py-6 sm:py-8 relative transition-all duration-300`}>
             <div className="flex items-center justify-between w-full mb-2">
                 <h1 className="font-poppins font-semibold text-[24px] sm:text-[28px] leading-normal text-black">
                     Ping Details
