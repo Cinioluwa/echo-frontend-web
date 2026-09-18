@@ -7,10 +7,6 @@
  * - ClaimSpaceBanner (dismissible, shows when org has no leader)
  * - InlinePingCreator (expandable inline form)
  * - Scrollable list of UnifiedPingCard (each with InlineWavePreview)
- *
- * TODO: API — fetch pings with fetchPings() and waves with fetchWaves()
- * TODO: API — check if org has a leader; show ClaimSpaceBanner when leaderless
- * TODO: API — feed top-3 to Layout's right column (via context or outlet context)
  */
 
 import { useCallback, useEffect, useState } from "react";
@@ -150,7 +146,6 @@ const UnifiedFeed = () => {
   // ── Render ──────────────────────────────────────────────────────────────────
   return (
     <div className="flex flex-col gap-[15px] pb-10 max-w-[93vw]">
-      {/* Claim space banner — TODO: API — hide when org.leaderId != null */}
       <ClaimSpaceBanner
         onClaimSpace={() => setClaimModalOpen(true)}
         onInviteLeader={() => setInviteModalOpen(true)}

@@ -4,6 +4,7 @@ import AdminLayout from "../../components/admin/AdminLayout";
 import AnnouncementModal from "../../components/admin/AnnouncementModal";
 import AdminSoundboard from "../../components/admin/AdminSoundboard/AdminSoundboard";
 import { AdminPageProvider, type AdminPage } from "../../contexts/AdminPageContext";
+import { adminService } from "../../api/services/admin.service";
 
 /**
  * AdminSoundboardPage
@@ -27,9 +28,43 @@ const AdminSoundboardPage: React.FC = () => {
         setShowAnnouncementModal(true);
     };
 
-    const handleExport = () => {
-        // TODO: Implement export functionality
-        console.log("Export clicked");
+    const handleExport = async () => {
+        try {
+            const result = await adminService.getPings({ limit: 500 });
+            const pings = result.data;
+
+            if (!pings || pings.length === 0) {
+                alert("No pings to export.");
+                return;
+            }
+
+            // Build CSV
+            const headers = ["ID", "Title", "Category", "Status", "Author", "Surges", "Waves", "Created At"];
+            const rows = pings.map((p: any) => [
+                p.id,
+                `"${(p.title || "").replace(/"/g, '""')}"`,
+                `"${(p.category?.name || "Uncategorized").replace(/"/g, '""')}"`,
+                p.status || "",
+                `"${(p.author?.firstName ? `${p.author.firstName} ${p.author.lastName}` : "Anonymous").replace(/"/g, '""')}"`,
+                p.surgeCount ?? 0,
+                p.wavesCount ?? 0,
+                new Date(p.createdAt).toLocaleDateString(),
+            ]);
+
+            const csv = [headers.join(","), ...rows.map((r: any[]) => r.join(","))].join("\n");
+            const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement("a");
+            link.href = url;
+            link.download = `echo-pings-${new Date().toISOString().slice(0, 10)}.csv`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+        } catch (err) {
+            console.error("Export failed:", err);
+            alert("Export failed. Please try again.");
+        }
     };
 
     return (

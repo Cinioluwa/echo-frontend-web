@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuthStore, useUIStore } from "../../stores";
-import { LogOut, Settings, HelpCircle, ChevronLeft } from "lucide-react";
+import { LogOut, Settings, HelpCircle } from "lucide-react";
 import UserAvatar from "../UserAvatar";
 import OnboardingOverlay from "../onboarding/OnboardingOverlay";
 

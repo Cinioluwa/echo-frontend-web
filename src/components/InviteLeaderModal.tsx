@@ -32,7 +32,6 @@ const InviteLeaderModal = ({ isOpen, onClose, organizationId }: InviteLeaderModa
         setIsSubmitting(true);
         setError(null);
         try {
-            // TODO: waiting on backend — POST /api/organization/:id/invite-leader
             await organizationService.inviteLeader(organizationId, { name, email, proofLink });
             onClose();
         } catch {

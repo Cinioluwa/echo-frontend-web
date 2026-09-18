@@ -174,7 +174,7 @@ const AdminSoundboard: React.FC<AdminSoundboardProps> = ({
         if (onExport) {
             onExport();
         } else {
-            pushToast("approved"); // Re-using a positive toast to indicate "Export Started"
+            pushToast("ping");
         }
     };
 
@@ -220,7 +220,7 @@ const AdminSoundboard: React.FC<AdminSoundboardProps> = ({
                         ) : error ? (
                             <div className="p-4 bg-red-50 border border-red-200 rounded-lg text-red-700 text-[13px]">
                                 {error}
-                                <button onClick={fetchDashboardData} className="ml-2 underline">Retry</button>
+                                <button onClick={() => fetchDashboardData()} className="ml-2 underline">Retry</button>
                             </div>
                         ) : (
                             <div className="flex flex-col gap-[30px] max-w-[1200px]">
@@ -283,7 +283,7 @@ const AdminSoundboard: React.FC<AdminSoundboardProps> = ({
             <div className="fixed bottom-0 left-1/2 -translate-x-1/2 z-[100] pointer-events-none">
                 <ToastContainer
                     toasts={toasts}
-                    removeToast={(id) => setToasts((prev) => prev.filter((t) => t.id !== id))}
+                    onDismiss={(id) => setToasts((prev) => prev.filter((t) => t.id !== id))}
                 />
             </div>
         </>

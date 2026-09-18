@@ -22,11 +22,6 @@ const Moderation: React.FC<ModerationProps> = () => {
   const [actionLoading, setActionLoading] = useState<number | null>(null);
   const [analytics, setAnalytics] = useState<{ pendingReview: number; resolvedThisWeek: number; activeSuspensions: number } | null>(null);
 
-  const pushToast = (variant: ToastItem["variant"]) => {
-    const id = `${Date.now()}`;
-    setToasts((prev) => [...prev, { id, variant }]);
-  };
-
   const removeToast = (id: string) => {
     setToasts((prev) => prev.filter((t) => t.id !== id));
   };
