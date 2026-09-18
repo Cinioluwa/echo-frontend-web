@@ -12,7 +12,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { useOutletContext, useSearchParams, useNavigate } from "react-router-dom";
 import { useShallow } from "zustand/react/shallow";
-import { publicService } from "../api/services";
+import { publicService, organizationService } from "../api/services";
 import { getSocket } from "../api/socket";
 import ClaimSpaceBanner from "../components/ClaimSpaceBanner";
 import ClaimSpaceModal from "../components/ClaimSpaceModal";
@@ -79,8 +79,18 @@ const UnifiedFeed = () => {
   const [isClaimModalOpen, setClaimModalOpen] = useState(false);
   const [isInviteModalOpen, setInviteModalOpen] = useState(false);
   const [weeklyTop3Ids, setWeeklyTop3Ids] = useState<number[]>([]);
+  const [hasLeader, setHasLeader] = useState<boolean>(true); // Default true so it doesn't flash before check
+
   // ── Fetch data on mount / search change ────────────────────────────────────
   useEffect(() => {
+    if (organizationId) {
+      organizationService.getLeaderStatus(organizationId).then((res) => {
+        setHasLeader(res.hasLeader);
+      }).catch((err) => {
+        console.error("Failed to fetch leader status:", err);
+      });
+    }
+
     fetchPings({
       q: debouncedQuery || undefined,
       category: selectedCategoryId !== null ? selectedCategoryId : undefined,
@@ -146,10 +156,13 @@ const UnifiedFeed = () => {
   // ── Render ──────────────────────────────────────────────────────────────────
   return (
     <div className="flex flex-col gap-[15px] pb-10 max-w-[93vw]">
-      <ClaimSpaceBanner
-        onClaimSpace={() => setClaimModalOpen(true)}
-        onInviteLeader={() => setInviteModalOpen(true)}
-      />
+      {/* ClaimSpaceBanner */}
+      {!hasLeader && (
+        <ClaimSpaceBanner
+          onClaimSpace={() => setClaimModalOpen(true)}
+          onInviteLeader={() => setInviteModalOpen(true)}
+        />
+      )}
 
       {/* Inline ping creator */}
       <InlinePingCreator />

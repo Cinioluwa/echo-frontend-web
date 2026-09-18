@@ -79,6 +79,20 @@ const organizationService = {
     );
     return response.data;
   },
+
+  /**
+   * Get leader status of an organization.
+   * @param orgId Organization ID
+   * @returns Object containing hasLeader boolean
+   */
+  getLeaderStatus: async (
+    orgId: number,
+  ): Promise<{ hasLeader: boolean }> => {
+    const response = await api.get<{ hasLeader: boolean }>(
+      `/public/organizations/${orgId}/leader-status`,
+    );
+    return response.data;
+  },
 };
 
 export default organizationService;
