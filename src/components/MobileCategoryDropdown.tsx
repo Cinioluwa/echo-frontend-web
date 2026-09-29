@@ -12,6 +12,7 @@
  */
 
 import { useEffect, type SetStateAction } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import { categoryImages } from "./CategoryImages";
 import { useCategoriesStore, useSearchStore } from "../stores";
 
@@ -26,6 +27,8 @@ const MobileCategoryDropdown = ({
     selectedMobileCat,
     setOpenCat,
 }: Props) => {
+    const navigate = useNavigate();
+    const location = useLocation();
     const categories = useCategoriesStore((state) => state.categories);
     const fetchCategories = useCategoriesStore((state) => state.fetchCategories);
     const selectedCategoryId = useSearchStore((state) => state.selectedCategoryId);
@@ -44,6 +47,9 @@ const MobileCategoryDropdown = ({
         setSelectedMobileCat("");
         clearCategory();
         setOpenCat(false);
+        if (location.pathname !== "/feed") {
+            navigate("/feed");
+        }
     }
 
     function handleCategoryClick(category: { label: string; labelIcon?: string; id: number }) {
@@ -56,6 +62,9 @@ const MobileCategoryDropdown = ({
             setCategory(category.id, category.label);
         }
         setOpenCat(false);
+        if (location.pathname !== "/feed") {
+            navigate("/feed");
+        }
     }
 
     return (

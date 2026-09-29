@@ -2,28 +2,67 @@
  * Notifications
  * Full-page notification feed — lists all past notifications,
  * marks items as read on click, and navigates to the relevant deep-link.
+ * Adheres to Echo Design Philosophy & Brand System (DESIGN-GUIDE.md).
  */
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Bell, CheckCheck, ArrowLeft } from 'lucide-react';
+import {
+  Bell,
+  CheckCheck,
+  ArrowLeft,
+  Waves,
+  MessageSquare,
+  TrendingUp,
+  CornerDownRight,
+  ClipboardCheck,
+  Megaphone,
+  AlertTriangle,
+  CheckCircle2,
+} from 'lucide-react';
 import { useNotificationStore } from '../stores/ui/useNotificationStore';
 import type { NotificationType } from '../api/types';
 
 // ── Icon / label map for each notification type ────────────────────────────
-const TYPE_META: Record<NotificationType, { emoji: string; label: string }> = {
-  NEW_WAVE_ON_PING:        { emoji: '🌊', label: 'New wave on your ping' },
-  NEW_COMMENT_ON_POST:     { emoji: '💬', label: 'New comment on your post' },
-  PING_SURGED_MILESTONE:   { emoji: '🚀', label: 'Surge milestone reached' },
-  COMMENT_REPLY:           { emoji: '↩️', label: 'Reply to your comment' },
-  WAVE_STATUS_UPDATED:     { emoji: '📋', label: 'Wave status updated' },
-  OFFICIAL_RESPONSE:       { emoji: '📣', label: 'Official response' },
-  ANNOUNCEMENT:            { emoji: '📢', label: 'Announcement' },
+const TYPE_META: Partial<
+  Record<
+    NotificationType,
+    { icon: React.ComponentType<{ className?: string }>; label: string }
+  >
+> = {
+  // Waves & Pings
+  NEW_WAVE_ON_PING: { icon: Waves, label: 'New wave on your ping' },
+  WAVE_APPROVED: { icon: CheckCircle2, label: 'Wave approved' },
+  WAVE_STATUS_UPDATED: { icon: ClipboardCheck, label: 'Wave status updated' },
+  PING_SURGED_MILESTONE: { icon: TrendingUp, label: 'Surge milestone reached' },
+
+  // Comments
+  NEW_COMMENT_ON_POST: { icon: MessageSquare, label: 'New comment on your post' },
+  COMMENT_REPLY: { icon: CornerDownRight, label: 'Reply to your comment' },
+  COMMENT_SURGE: { icon: TrendingUp, label: 'Comment surged' },
+
+  // Official / Announcements
+  OFFICIAL_RESPONSE_POSTED: { icon: Megaphone, label: 'Official response' },
+  OFFICIAL_RESPONSE: { icon: Megaphone, label: 'Official response' },
+  ANNOUNCEMENT_POSTED: { icon: Bell, label: 'Announcement' },
+  ANNOUNCEMENT: { icon: Bell, label: 'Announcement' },
+
+  // Reports & Moderation
+  POST_REPORTED: { icon: AlertTriangle, label: 'Post reported' },
+  MODERATION_WARNING: { icon: AlertTriangle, label: 'Moderation warning' },
+  MODERATION_SUSPENSION: { icon: AlertTriangle, label: 'Account suspended' },
+  MODERATION_BAN: { icon: AlertTriangle, label: 'Account banned' },
+  MODERATION_IDENTITY_DISCLOSURE_REQUESTED: { icon: AlertTriangle, label: 'Identity disclosure requested' },
 };
 
 const Notifications = () => {
   const navigate = useNavigate();
-  const { notifications, isLoadingFeed, fetchNotifications, markAsRead, markAllAsRead } =
-    useNotificationStore();
+  const {
+    notifications,
+    isLoadingFeed,
+    fetchNotifications,
+    markAsRead,
+    markAllAsRead,
+  } = useNotificationStore();
 
   useEffect(() => {
     fetchNotifications();
@@ -47,108 +86,137 @@ const Notifications = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#FFFBF6]">
-
-      <main className="max-w-2xl mx-auto px-4 py-6">
+    <div className="min-h-screen bg-white rounded-[20px] border border-black/15 pb-12">
+      <div className="max-w-2xl mx-auto px-4 py-6">
         {/* ── Page header ─────────────────────────────────────── */}
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center gap-3">
-            <button
-              onClick={() => navigate(-1)}
-              className="p-1.5 rounded-full hover:bg-black/10 transition-colors cursor-pointer"
-              aria-label="Go back"
-            >
-              <ArrowLeft className="w-5 h-5 text-[#4A3728]" />
-            </button>
-            <div>
-              <h1 className="text-xl font-bold text-[#4A3728] font-['Poppins',sans-serif]">
-                Notifications
-              </h1>
-              {unreadCount > 0 && (
-                <p className="text-xs text-[#7D7D7D]">{unreadCount} unread</p>
-              )}
-            </div>
-          </div>
-
-          {unreadCount > 0 && (
-            <button
-              onClick={() => void markAllAsRead()}
-              className="flex items-center gap-1.5 text-sm text-[#F49B31] hover:text-[#d88429] font-medium transition-colors cursor-pointer"
-            >
-              <CheckCheck className="w-4 h-4" />
-              Mark all read
-            </button>
-          )}
-        </div>
-
-        {/* ── Content ─────────────────────────────────────────── */}
-        {isLoadingFeed ? (
-          /* Skeleton loader */
-          <div className="space-y-3">
-            {[...Array(5)].map((_, i) => (
-              <div
-                key={i}
-                className="flex items-start gap-3 p-4 bg-white rounded-2xl border border-orange-100 animate-pulse"
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => navigate(-1)}
+                className="p-2 rounded-full hover:bg-black/5 transition-colors cursor-pointer text-[#060B13]"
+                aria-label="Go back"
               >
-                <div className="w-10 h-10 rounded-full bg-orange-100 shrink-0" />
-                <div className="flex-1 space-y-2">
-                  <div className="h-3 bg-orange-100 rounded w-2/3" />
-                  <div className="h-3 bg-orange-100 rounded w-full" />
-                  <div className="h-2 bg-orange-50 rounded w-1/4" />
+                <ArrowLeft className="w-5 h-5" />
+              </button>
+              <div>
+                <div className="flex items-center gap-2.5">
+                  <h1 className="text-2xl font-bold text-[#060B13] font-['Poppins',sans-serif] tracking-tight">
+                    Notifications
+                  </h1>
+                  {unreadCount > 0 && (
+                    <span className="bg-[#FFC37B]/40 text-[#E8911A] text-xs font-semibold px-2.5 py-0.5 rounded-full font-['Inter',sans-serif]">
+                      {unreadCount} unread
+                    </span>
+                  )}
                 </div>
               </div>
-            ))}
-          </div>
-        ) : notifications.length === 0 ? (
-          /* Empty state */
-          <div className="flex flex-col items-center justify-center py-20 gap-4 text-center">
-            <div className="w-16 h-16 rounded-full bg-orange-100 flex items-center justify-center">
-              <Bell className="w-8 h-8 text-[#F49B31]" />
             </div>
-            <p className="text-[#4A3728] font-semibold text-lg">All caught up!</p>
-            <p className="text-[#7D7D7D] text-sm max-w-xs">
-              When someone interacts with your pings or comments you'll see it here.
-            </p>
+
+            {unreadCount > 0 && (
+              <button
+                onClick={() => void markAllAsRead()}
+                className="flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-[#F49B31] border border-[#F49B31] hover:bg-[#F49B31] hover:text-white rounded-full px-4 py-1.5 transition-all cursor-pointer font-['Inter',sans-serif]"
+              >
+                <CheckCheck className="w-4 h-4" />
+                Mark all read
+              </button>
+            )}
           </div>
-        ) : (
-          /* Notification list */
-          <div className="space-y-2">
-            {notifications.map((n) => {
-              const meta = TYPE_META[n.type] ?? { emoji: '🔔', label: n.type };
-              return (
-                <button
-                  key={n.id}
-                  onClick={() => void handleItemClick(n.id, n.url)}
-                  className={`w-full text-left flex items-start gap-3 p-4 rounded-2xl border transition-all cursor-pointer
-                    ${n.isRead
-                      ? 'bg-white border-orange-100 hover:bg-orange-50'
-                      : 'bg-[#FFF5E9] border-[#F49B31]/40 hover:bg-orange-100'
-                    }`}
+
+          {/* ── Content ─────────────────────────────────────────── */}
+          {isLoadingFeed ? (
+            /* Skeleton loader */
+            <div className="space-y-3">
+              {[...Array(5)].map((_, i) => (
+                <div
+                  key={i}
+                  className="flex items-start gap-3.5 p-4 bg-[#FBFBFA] rounded-[20px] border border-black/5 animate-pulse"
                 >
-                  {/* Emoji avatar */}
-                  <span className="text-2xl leading-none mt-0.5 shrink-0">{meta.emoji}</span>
-
-                  {/* Text content */}
-                  <div className="flex-1 min-w-0">
-                    <p className={`text-sm font-semibold text-[#4A3728] ${!n.isRead ? 'font-bold' : ''}`}>
-                      {n.title}
-                    </p>
-                    <p className="text-sm text-[#7D7D7D] mt-0.5 leading-snug line-clamp-2">
-                      {n.body}
-                    </p>
-                    <p className="text-[11px] text-[#ADADAD] mt-1.5">{formatTime(n.createdAt)}</p>
+                  <div className="w-10 h-10 rounded-full bg-[#FAEEDA] shrink-0" />
+                  <div className="flex-1 space-y-2">
+                    <div className="h-3.5 bg-[#FAEEDA] rounded w-2/3" />
+                    <div className="h-3 bg-[#FAEEDA]/70 rounded w-full" />
+                    <div className="h-2.5 bg-[#FAEEDA]/50 rounded w-1/4" />
                   </div>
+                </div>
+              ))}
+            </div>
+          ) : notifications.length === 0 ? (
+            /* Empty state */
+            <div className="flex flex-col items-center justify-center py-16 px-6 bg-[#FDFDFD] rounded-[16px] border border-dashed border-black/10 text-center">
+              <div className="w-14 h-14 rounded-full bg-[#FAE9D4] text-[#F49B31] flex items-center justify-center mb-4">
+                <Bell className="w-7 h-7" />
+              </div>
+              <p className="text-[#060B13] font-bold text-lg font-['Poppins',sans-serif]">
+                All caught up!
+              </p>
+              <p className="text-[#737373] text-sm max-w-sm mt-1 font-['Inter',sans-serif] leading-relaxed">
+                When someone interacts with your pings, waves, or comments, you'll see it here.
+              </p>
+            </div>
+          ) : (
+            /* Notification list */
+            <div className="space-y-3">
+              {notifications.map((n) => {
+                const meta = TYPE_META[n.type];
+                const IconComponent = meta?.icon ?? Bell;
+                const formattedType = n.type ? n.type.replace(/_/g, ' ') : 'Notification';
+                const fallbackLabel = meta?.label ?? (formattedType.charAt(0).toUpperCase() + formattedType.slice(1).toLowerCase());
+                const displayTitle = n.title || fallbackLabel;
 
-                  {/* Unread dot */}
-                  {!n.isRead && (
-                    <span className="w-2 h-2 rounded-full bg-[#F49B31] mt-1.5 shrink-0" />
-                  )}
-                </button>
-              );
-            })}
-          </div>
-        )}
-      </main>
+                return (
+                  <button
+                    key={n.id}
+                    onClick={() => void handleItemClick(n.id, n.url)}
+                    className={`w-full text-left flex items-start gap-3.5 p-4 rounded-[20px] border transition-all cursor-pointer shadow-xs ${
+                      n.isRead
+                        ? 'bg-[#FBFBFA] border-black/5 hover:border-black/15 hover:shadow-xs'
+                        : 'bg-[#FFF9F2] border-[#F49B31]/30 hover:border-[#F49B31]/60 hover:shadow-xs'
+                    }`}
+                  >
+                    {/* Icon avatar */}
+                    <div
+                      className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 mt-0.5 ${
+                        n.isRead
+                          ? 'bg-[#F0EEEB] text-[#737373]'
+                          : 'bg-[#FAE9D4] text-[#F49B31]'
+                      }`}
+                    >
+                      <IconComponent className="w-5 h-5" />
+                    </div>
+
+                    {/* Text content */}
+                    <div className="flex-1 min-w-0 font-['Inter',sans-serif]">
+                      <p
+                        className={`text-[14px] leading-snug font-['Poppins',sans-serif] ${
+                          n.isRead ? 'font-normal text-[#555555]' : 'font-bold text-[#060B13]'
+                        }`}
+                      >
+                        {displayTitle}
+                      </p>
+                      <p className={`text-[13px] mt-1 leading-relaxed line-clamp-2 ${
+                        n.isRead ? 'text-[#777777]' : 'text-[#444444]'
+                      }`}>
+                        {n.body}
+                      </p>
+                      <p className="text-[11px] text-[#999999] mt-1.5 font-medium">
+                        {formatTime(n.createdAt)}
+                      </p>
+                    </div>
+
+                    {/* Unread indicator */}
+                    {!n.isRead && (
+                      <span
+                        className="w-2.5 h-2.5 rounded-full bg-[#F49B31] mt-2 shrink-0 animate-pulse"
+                        title="Unread"
+                      />
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+          )}
+      </div>
     </div>
   );
 };

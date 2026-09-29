@@ -12,6 +12,7 @@ import { useState, useEffect } from "react";
 import { waveService } from "../../api/services";
 import UserAvatar from "../UserAvatar";
 import type { Wave } from "../../api/types";
+import SurgeIcon from "../shared/SurgeIcon";
 
 type WavePreviewMode = "embedded-only" | "fetch-if-missing";
 
@@ -80,7 +81,9 @@ const InlineWavePreview = ({
     if (displayedWaves.length === 0) return null;
 
     return (
-        <div className="flex flex-col gap-[13px] w-full max-w-full">
+        <>
+            <div className="h-px w-full bg-black/10" />
+            <div className="flex flex-col gap-[13px] w-full max-w-full">
             <p className="font-['Poppins',sans-serif] font-medium text-[clamp(12px,2.8vw,13px)] text-[#171717] w-fit">
                 Waves
             </p>
@@ -141,9 +144,7 @@ const InlineWavePreview = ({
 
                             {/* Surge count */}
                             <div className="flex items-center gap-[5px] shrink-0">
-                                <svg width="12" height="16" viewBox="0 0 12 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                                    <path d="M6.5 1L1 9h5l-0.5 6 6-8H7l0.5-6z" fill="#4A504E" />
-                                </svg>
+                                <SurgeIcon width={12} height={16} fill="#F49B31" />
                                 <span className="font-['Poppins',sans-serif] font-semibold text-[clamp(12px,2.8vw,14px)] text-[#4A504E] leading-normal">
                                     {wave.surgeCount || wave._count?.surges || 0}
                                 </span>
@@ -153,7 +154,8 @@ const InlineWavePreview = ({
                 })}
             </div>
         </div>
-    );
+    </>
+);
 };
 
 export default InlineWavePreview;

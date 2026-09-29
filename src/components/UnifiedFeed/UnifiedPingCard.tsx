@@ -21,6 +21,7 @@ import ImageCarousel from "../shared/ImageCarousel";
 import type { Ping } from "../../api/types";
 import { categoryImages } from "../CategoryImages";
 import { Tooltip } from "../Tooltip";
+import SurgeIcon from "../shared/SurgeIcon";
 
 const waveIcon = "/assets/icon/wave.svg";
 const commentIcon = "/assets/icon/comment.svg";
@@ -215,19 +216,15 @@ const UnifiedPingCard = ({
 
                 return (
                   <Tooltip
-                    content="Current aknowledgement status of this post."
+                    content="Current acknowledgement status of this post."
                     position="left"
                     delay={0.2}
                   >
-                    <div className="border border-[#626665] rounded-[23px] flex items-center gap-1 px-2.5 md:px-[15px] py-[5px] md:py-[7px]">
-                      <div
-                        className="w-[7px] h-[7px] rounded-full"
-                        style={{ backgroundColor: badgeConfig.color }}
-                      />
-                      <span className="font-['Poppins',sans-serif] font-medium text-[clamp(9px,2.3vw,11px)] text-black whitespace-nowrap">
-                        {badgeConfig.label}
-                      </span>
-                    </div>
+                    <img
+                      src={badgeConfig.svg}
+                      alt={badgeConfig.label}
+                      className="h-[18px] md:h-[22px] w-auto shrink-0 select-none object-contain"
+                    />
                   </Tooltip>
                 );
               })()}
@@ -307,21 +304,13 @@ const UnifiedPingCard = ({
               onClick={handleSurge}
               disabled={isToggling}
               aria-label={hasSurged ? "Remove surge" : "Surge"}
-              className={`flex items-center gap-[5px] px-2 md:px-2.5 py-1 md:py-[5px] rounded-[15px] border border-black cursor-pointer transition-colors disabled:opacity-50 ${hasSurged ? "bg-[#F49B31] text-white border-[#F49B31]" : "bg-[#FEF5EA] text-[#4A504E]"}`}
+              className={`flex items-center gap-[5px] px-2 md:px-2.5 py-1 md:py-[5px] rounded-[15px] border border-black cursor-pointer transition-colors disabled:opacity-50 ${hasSurged ? "bg-[#F49B31] text-white" : "bg-[#FEF5EA] text-[#4A504E]"}`}
             >
-              <svg
-                width="12"
-                height="16"
-                viewBox="0 0 12 16"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-                aria-hidden="true"
-              >
-                <path
-                  d="M6.5 1L1 9h5l-0.5 6 6-8H7l0.5-6z"
-                  fill={hasSurged ? "white" : "#4A504E"}
-                />
-              </svg>
+              <SurgeIcon
+                width={12}
+                height={16}
+                fill={hasSurged ? "#FFFFFF" : "#F49B31"}
+              />
               <span className="font-['Poppins',sans-serif] font-semibold text-[clamp(11px,2.6vw,14px)] leading-normal">
                 {surgeCount}
               </span>
@@ -362,9 +351,6 @@ const UnifiedPingCard = ({
             </button>
           </div>
         </div>
-
-        {/* ─── Separator ───────────────────────────── */}
-        <div className="h-px w-full bg-black/10" />
 
         {/* ─── Inline Wave Preview ─────────────────── */}
         <InlineWavePreview

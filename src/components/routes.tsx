@@ -126,6 +126,9 @@ const withSuspense = (Component: React.LazyExoticComponent<React.ComponentType<a
 
 const router = createBrowserRouter([
   {
+    errorElement: withSuspense(ErrorPage),
+    children: [
+      {
     path: "/",
     element: <Login />,
     children: [
@@ -137,6 +140,10 @@ const router = createBrowserRouter([
   },
   {
     path: "/signUp",
+    element: <SignUp />,
+  },
+  {
+    path: "/signup",
     element: <SignUp />,
   },
   // Auth flow routes with lazy loading
@@ -362,6 +369,8 @@ const router = createBrowserRouter([
   {
     path: "*",
     element: withSuspense(ErrorPage),
+  },
+    ],
   },
 ]);
 

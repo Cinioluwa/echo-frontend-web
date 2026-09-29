@@ -1,11 +1,5 @@
-/**
- * ImageLightbox
- * Full-screen image viewer triggered by clicking any post image.
- * - Click backdrop or × button to close
- * - ESC key closes
- * - Smooth open/close via framer-motion
- */
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, ChevronLeft, ChevronRight } from "lucide-react";
 
@@ -37,6 +31,11 @@ const ImageLightbox = ({ src, images = [], initialIndex = 0, alt = "Image", onCl
     }
   };
 
+  const handleClose = (e?: React.MouseEvent) => {
+    if (e) e.stopPropagation();
+    onClose();
+  };
+
   // Keyboard navigation & close on ESC
   useEffect(() => {
     const handleKey = (e: KeyboardEvent) => {
@@ -58,20 +57,20 @@ const ImageLightbox = ({ src, images = [], initialIndex = 0, alt = "Image", onCl
 
   if (!currentSrc) return null;
 
-  return (
+  const content = (
     <AnimatePresence>
       <motion.div
-        className="fixed inset-0 z-200 flex items-center justify-center bg-black/85 p-4 select-none"
+        className="fixed inset-0 z-[99999] flex items-center justify-center bg-black/85 p-4 select-none"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         transition={{ duration: 0.2 }}
-        onClick={onClose}
+        onClick={handleClose}
       >
         <button
           type="button"
-          onClick={onClose}
-          className="absolute top-4 right-4 z-201 rounded-full bg-white/10 p-2 text-white hover:bg-white/25 transition-colors cursor-pointer"
+          onClick={handleClose}
+          className="absolute top-4 right-4 z-[100000] rounded-full bg-white/10 p-2 text-white hover:bg-white/25 transition-colors cursor-pointer"
           aria-label="Close image"
         >
           <X size={22} />
@@ -81,7 +80,7 @@ const ImageLightbox = ({ src, images = [], initialIndex = 0, alt = "Image", onCl
           <button
             type="button"
             onClick={handlePrev}
-            className="absolute left-4 lg:left-8 z-201 rounded-full bg-black/50 p-2 lg:p-3 text-white hover:bg-black/70 transition-colors cursor-pointer"
+            className="absolute left-4 lg:left-8 z-[100000] rounded-full bg-black/50 p-2 lg:p-3 text-white hover:bg-black/70 transition-colors cursor-pointer"
             aria-label="Previous image"
           >
             <ChevronLeft size={28} />
@@ -105,7 +104,7 @@ const ImageLightbox = ({ src, images = [], initialIndex = 0, alt = "Image", onCl
           <button
             type="button"
             onClick={handleNext}
-            className="absolute right-4 lg:right-8 z-201 rounded-full bg-black/50 p-2 lg:p-3 text-white hover:bg-black/70 transition-colors cursor-pointer"
+            className="absolute right-4 lg:right-8 z-[100000] rounded-full bg-black/50 p-2 lg:p-3 text-white hover:bg-black/70 transition-colors cursor-pointer"
             aria-label="Next image"
           >
             <ChevronRight size={28} />
@@ -114,12 +113,13 @@ const ImageLightbox = ({ src, images = [], initialIndex = 0, alt = "Image", onCl
 
         {/* Indicator dots */}
         {activeImages.length > 1 && (
-          <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-1.5 z-201 bg-black/30 px-3 py-2 rounded-full backdrop-blur-sm">
+          <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-1.5 z-[100000] bg-black/30 px-3 py-2 rounded-full backdrop-blur-sm">
             {activeImages.map((_, i) => (
               <div
                 key={i}
-                className={`w-1.5 h-1.5 rounded-full transition-all ${i === currentIndex ? "bg-white scale-125" : "bg-white/50"
-                  }`}
+                className={`w-1.5 h-1.5 rounded-full transition-all ${
+                  i === currentIndex ? "bg-white scale-125" : "bg-white/50"
+                }`}
               />
             ))}
           </div>
@@ -127,6 +127,8 @@ const ImageLightbox = ({ src, images = [], initialIndex = 0, alt = "Image", onCl
       </motion.div>
     </AnimatePresence>
   );
+
+  return typeof document !== "undefined" ? createPortal(content, document.body) : content;
 };
 
 export default ImageLightbox;

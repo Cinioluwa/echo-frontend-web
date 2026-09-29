@@ -385,15 +385,20 @@ const CommentItem = ({ comment, onRefresh: _onRefresh, pingId }: Props) => {
                                             bgColor="bg-[#f49b31]"
                                         />
                                     </div>
-                                    <div className="flex-1 h-6 px-2.5 bg-white rounded-[30px] border-[0.75px] border-black flex justify-between items-center gap-2.5">
-                                        <input
-                                            type="text"
-                                            value={replyInput}
-                                            onChange={(e) => setReplyInput(e.target.value)}
-                                            disabled={isPostingReply}
-                                            placeholder="Reply"
-                                            className="flex-1 bg-transparent text-black text-[11px] font-normal font-['Poppins'] outline-none placeholder-neutral-500 disabled:opacity-50"
-                                        />
+                                    <div className="flex-1 min-h-[24px] py-1 px-2.5 bg-white rounded-[12px] border-[0.75px] border-black flex justify-between items-end gap-2.5">
+                                            <textarea
+                                                value={replyInput}
+                                                onChange={(e) => {
+                                                    setReplyInput(e.target.value);
+                                                    e.target.style.height = 'auto';
+                                                    e.target.style.height = e.target.scrollHeight + 'px';
+                                                }}
+                                                disabled={isPostingReply}
+                                                placeholder="Reply"
+                                                rows={1}
+                                                className="flex-1 bg-transparent text-black text-[11px] font-normal font-['Poppins'] outline-none placeholder-neutral-500 disabled:opacity-50 resize-none overflow-hidden"
+                                                style={{ minHeight: '16px' }}
+                                            />
                                         <button
                                             type="button"
                                             onClick={handlePostReply}

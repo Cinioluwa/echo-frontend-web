@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import { categoryImages } from "./CategoryImages";
 import { useSearchStore, useCategoriesStore } from "../stores";
 import CategoriesSkeleton from "./skeletons/CategoriesSkeleton";
@@ -20,6 +21,8 @@ const CountBadge = ({ value }: { value: number }) => {
 };
 
 const Categories = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
   const selectedCategoryId = useSearchStore((state) => state.selectedCategoryId);
   const setCategory = useSearchStore((state) => state.setCategory);
   const clearCategory = useSearchStore((state) => state.clearCategory);
@@ -42,6 +45,9 @@ const Categories = () => {
 
   function handleClick() {
     clearCategory(); // Reset to "All Categories"
+    if (location.pathname !== "/feed") {
+      navigate("/feed");
+    }
   }
 
   function handleCategoryClick(category: category) {
@@ -49,6 +55,9 @@ const Categories = () => {
       clearCategory(); // Toggle off to "All Categories"
     } else {
       setCategory(category.id, category.label); // Update the global filter
+    }
+    if (location.pathname !== "/feed") {
+      navigate("/feed");
     }
   }
 

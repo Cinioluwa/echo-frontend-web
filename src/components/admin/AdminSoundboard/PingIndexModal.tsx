@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { ChevronDown, Filter, X, Zap } from "lucide-react";
+import { ChevronDown, Filter, X } from "lucide-react";
+import SurgeIcon from "../../shared/SurgeIcon";
 import { adminService } from "../../../api/services/admin.service";
 import { categoryImages } from "../../CategoryImages";
 import type { AdminPing } from "../../../api/types/admin.types";
@@ -46,7 +47,7 @@ const getAdminSignal = (ping: AdminPing): React.ReactNode | null => {
     if (velocity >= 5) {
         return (
             <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-[#FFD7D7] text-[#B01212] text-[9px] font-semibold whitespace-nowrap">
-                <Zap className="w-2.5 h-2.5" fill="currentColor" />
+                <SurgeIcon width={10} height={13} fill="#B01212" />
                 Surging now
             </span>
         );
@@ -54,7 +55,7 @@ const getAdminSignal = (ping: AdminPing): React.ReactNode | null => {
     if (velocity >= 1) {
         return (
             <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-[#FEF5EA] text-[#F49B31] text-[9px] font-semibold whitespace-nowrap">
-                <Zap className="w-2.5 h-2.5" />
+                <SurgeIcon width={10} height={13} fill="#F49B31" />
                 Rising
             </span>
         );

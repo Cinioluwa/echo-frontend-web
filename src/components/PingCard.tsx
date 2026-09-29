@@ -17,6 +17,7 @@ import { EditedLabel } from "../utils/editedLabel";
 import { useState } from "react";
 import { pingService } from "../api/services";
 import { useAuthStore } from "../stores";
+import SurgeIcon from "./shared/SurgeIcon";
 
 interface PingCardProps {
     ping: Ping;
@@ -173,19 +174,15 @@ const PingCard = ({
 
                         return (
                             <Tooltip
-                                content="Current aknowledgement status of this post."
+                                content="Current acknowledgement status of this post."
                                 position="left"
                                 delay={0.2}
                             >
-                                <div className="border border-[#626665] rounded-[23px] flex items-center gap-1.5 px-[15px] py-[7px]">
-                                    <div
-                                        className="w-[5px] h-[5px] rounded-full shrink-0"
-                                        style={{ backgroundColor: badgeConfig.color }}
-                                    />
-                                    <span className="font-['Poppins',sans-serif] font-medium text-[11px] text-black whitespace-nowrap">
-                                        {badgeConfig.label}
-                                    </span>
-                                </div>
+                                <img
+                                    src={badgeConfig.svg}
+                                    alt={badgeConfig.label}
+                                    className="h-[18px] md:h-[22px] w-auto shrink-0 select-none object-contain"
+                                />
                             </Tooltip>
                         );
                     })()}
@@ -297,23 +294,15 @@ const PingCard = ({
                         disabled={isToggling}
                         aria-label={hasSurged ? "Remove surge" : "Surge"}
                         className={`flex items-center gap-[5px] px-2 py-1 rounded-[15px] border border-black cursor-pointer transition-colors disabled:opacity-50 ${hasSurged
-                            ? "bg-[#f49b31] text-white border-[#f49b31]"
-                            : "bg-[#fef5ea] text-[#4a504e]"
+                            ? "bg-[#f49b31] text-white"
+                            : "bg-[#fef5ea] text-[#4A504E]"
                             }`}
                     >
-                        <svg
-                            width="10"
-                            height="14"
-                            viewBox="0 0 12 16"
-                            fill="none"
-                            xmlns="http://www.w3.org/2000/svg"
-                            aria-hidden="true"
-                        >
-                            <path
-                                d="M6.5 1L1 9h5l-0.5 6 6-8H7l0.5-6z"
-                                fill={hasSurged ? "white" : "#4A504E"}
-                            />
-                        </svg>
+                        <SurgeIcon
+                            width={10}
+                            height={14}
+                            fill={hasSurged ? "#FFFFFF" : "#F49B31"}
+                        />
                         <span className="font-['Poppins',sans-serif] font-semibold text-[11px]">
                             {displayedSurgeCount}
                         </span>

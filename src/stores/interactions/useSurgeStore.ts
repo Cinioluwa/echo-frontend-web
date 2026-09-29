@@ -49,53 +49,67 @@ export const useSurgeStore = create<SurgeState>()(
           const currentSurgeSet = get()[setKey];
           const wasSurged = currentSurgeSet.has(id);
 
-          // Optimistic update
+          // Optimistic update of surge Set
           set((state) => {
+            const nextSet = new Set(state[setKey]);
             if (wasSurged) {
-              state[setKey].delete(id);
+              nextSet.delete(id);
             } else {
-              state[setKey].add(id);
+              nextSet.add(id);
             }
+            state[setKey] = nextSet;
           });
+
+          // Optimistically update surge count and hasSurged in data stores immediately
+          if (type === "ping") {
+            const ping = usePingsStore.getState().pingsById[id];
+            if (ping) {
+              const countChange = wasSurged ? -1 : 1;
+              const newSurgeCount = Math.max(0, ping.surgeCount + countChange);
+              usePingsStore.getState().updatePing(id, {
+                surgeCount: newSurgeCount,
+                hasSurged: !wasSurged,
+              });
+            }
+          } else if (type === "wave") {
+            const wave = useWavesStore.getState().wavesById[id];
+            if (wave) {
+              const countChange = wasSurged ? -1 : 1;
+              const newSurgeCount = Math.max(0, wave.surgeCount + countChange);
+              useWavesStore.getState().updateWave(id, {
+                surgeCount: newSurgeCount,
+                hasSurged: !wasSurged,
+              });
+            }
+          }
 
           try {
             const response = await surgeService.toggleSurge(type, id);
 
             // Sync with API response
             set((state) => {
+              const nextSet = new Set(state[setKey]);
               if (response.surged) {
-                state[setKey].add(id);
+                nextSet.add(id);
               } else {
-                state[setKey].delete(id);
+                nextSet.delete(id);
               }
+              state[setKey] = nextSet;
               delete state.isToggling[key];
             });
 
-            // Update surge count and hasSurged in the data stores
-            // When surging: increment count, when unsurging: decrement count
+            // Confirm final surge count and hasSurged in the data stores
             if (type === "ping") {
               const ping = usePingsStore.getState().pingsById[id];
               if (ping) {
-                const countChange = response.surged ? 1 : -1;
-                const newSurgeCount = Math.max(
-                  0,
-                  ping.surgeCount + countChange,
-                );
                 usePingsStore.getState().updatePing(id, {
-                  surgeCount: newSurgeCount,
                   hasSurged: response.surged,
                 });
               }
             } else if (type === "wave") {
               const wave = useWavesStore.getState().wavesById[id];
               if (wave) {
-                const countChange = response.surged ? 1 : -1;
-                const newSurgeCount = Math.max(
-                  0,
-                  wave.surgeCount + countChange,
-                );
                 useWavesStore.getState().updateWave(id, {
-                  surgeCount: newSurgeCount,
                   hasSurged: response.surged,
                 });
               }
@@ -107,13 +121,37 @@ export const useSurgeStore = create<SurgeState>()(
 
             // Revert on error
             set((state) => {
+              const nextSet = new Set(state[setKey]);
               if (wasSurged) {
-                state[setKey].add(id);
+                nextSet.add(id);
               } else {
-                state[setKey].delete(id);
+                nextSet.delete(id);
               }
+              state[setKey] = nextSet;
               delete state.isToggling[key];
             });
+
+            if (type === "ping") {
+              const ping = usePingsStore.getState().pingsById[id];
+              if (ping) {
+                const revertChange = wasSurged ? 1 : -1;
+                const revertedCount = Math.max(0, ping.surgeCount + revertChange);
+                usePingsStore.getState().updatePing(id, {
+                  surgeCount: revertedCount,
+                  hasSurged: wasSurged,
+                });
+              }
+            } else if (type === "wave") {
+              const wave = useWavesStore.getState().wavesById[id];
+              if (wave) {
+                const revertChange = wasSurged ? 1 : -1;
+                const revertedCount = Math.max(0, wave.surgeCount + revertChange);
+                useWavesStore.getState().updateWave(id, {
+                  surgeCount: revertedCount,
+                  hasSurged: wasSurged,
+                });
+              }
+            }
 
             throw error;
           }
@@ -127,14 +165,18 @@ export const useSurgeStore = create<SurgeState>()(
         addSurge: (type: SurgeType, id: string) => {
           set((state) => {
             const setKey = type === "wave" ? "surgedWaves" : "surgedPings";
-            state[setKey].add(id);
+            const nextSet = new Set(state[setKey]);
+            nextSet.add(id);
+            state[setKey] = nextSet;
           });
         },
 
         removeSurge: (type: SurgeType, id: string) => {
           set((state) => {
             const setKey = type === "wave" ? "surgedWaves" : "surgedPings";
-            state[setKey].delete(id);
+            const nextSet = new Set(state[setKey]);
+            nextSet.delete(id);
+            state[setKey] = nextSet;
           });
         },
 

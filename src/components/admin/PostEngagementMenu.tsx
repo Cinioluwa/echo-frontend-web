@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { FiMessageSquare, FiTrendingUp, FiZap } from "react-icons/fi";
+import { FiMessageSquare, FiTrendingUp } from "react-icons/fi";
+import SurgeIcon from "../shared/SurgeIcon";
 import { pingService } from "../../api";
 
 interface PostEngagementMenuProps {
@@ -138,7 +139,7 @@ const PostEngagementMenu = ({
           disabled={loading}
           className={menuItemClass}
         >
-          <FiZap size={17} />
+          <SurgeIcon width={14} height={17} fill="#000000" />
           Surge
         </button>
 

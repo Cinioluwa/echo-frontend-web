@@ -4,7 +4,7 @@ const Top3Skeleton = () => {
       {[1, 2, 3].map((_, index) => (
         <div
           key={index}
-          className="flex items-center gap-2 w-full rounded-[15px] px-2.5 py-3.5 bg-gray-100 animate-pulse"
+          className="flex items-center gap-2 w-full rounded-[12px] px-2.5 py-2.5 min-h-[55px] bg-gray-100 animate-pulse"
         >
           {/* Avatar */}
           <div className="w-[30px] h-[30px] rounded-full bg-gray-300 shrink-0" />

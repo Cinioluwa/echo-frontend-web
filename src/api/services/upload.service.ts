@@ -40,17 +40,47 @@ const uploadService = {
     files: File[],
     entityType: "ping" | "wave",
   ): Promise<UploadedMedia[]> => {
-    const formData = new FormData();
-    files.forEach((file) => formData.append("files", file));
-    formData.append("entityType", entityType);
-    const res = await api.post<{ media: UploadedMedia[] }>(
-      "/uploads",
-      formData,
-      {
-        headers: { "Content-Type": "multipart/form-data" },
-      },
-    );
-    return res.data.media;
+    if (!files || files.length === 0) return [];
+
+    // If only 1 file, upload directly
+    if (files.length === 1) {
+      const formData = new FormData();
+      formData.append("files", files[0]);
+      formData.append("entityType", entityType);
+      const res = await api.post<{ media: UploadedMedia[] }>(
+        "/uploads",
+        formData,
+        {
+          headers: { "Content-Type": "multipart/form-data" },
+          timeout: 60000,
+        },
+      );
+      return res.data.media || [];
+    }
+
+    // For multiple files, upload individually so that:
+    // 1. Payloads stay small and don't choke the network or hit the 30s aggregate timeout
+    // 2. Low-memory hosting (Render) doesn't fail trying to buffer and stream multiple images at once
+    const uploadPromises = files.map(async (file) => {
+      const formData = new FormData();
+      formData.append("files", file);
+      formData.append("entityType", entityType);
+      const res = await api.post<{ media: UploadedMedia[] }>(
+        "/uploads",
+        formData,
+        {
+          headers: { "Content-Type": "multipart/form-data" },
+          timeout: 60000,
+        },
+      );
+      const item = res.data.media?.[0];
+      if (!item) {
+        throw new Error(`Upload failed for ${file.name}`);
+      }
+      return item;
+    });
+
+    return Promise.all(uploadPromises);
   },
 
   /**

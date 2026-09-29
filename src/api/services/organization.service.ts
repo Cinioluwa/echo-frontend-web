@@ -88,10 +88,15 @@ const organizationService = {
   getLeaderStatus: async (
     orgId: number,
   ): Promise<{ hasLeader: boolean }> => {
-    const response = await api.get<{ hasLeader: boolean }>(
-      `/public/organizations/${orgId}/leader-status`,
-    );
-    return response.data;
+    try {
+      const response = await api.get<{ hasLeader: boolean }>(
+        `/public/organizations/${orgId}/leader-status`,
+      );
+      return response.data;
+    } catch {
+      // Graceful fallback to true if backend route is not yet deployed on live server
+      return { hasLeader: true };
+    }
   },
 };
 

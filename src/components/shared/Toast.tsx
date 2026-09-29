@@ -166,24 +166,26 @@ export interface ToastItem {
 interface ToastContainerProps {
     toasts: ToastItem[];
     onDismiss: (id: string) => void;
-    position?: "bottom-center" | "top-center";
+    position?: "bottom-center" | "top-center" | "bottom-right";
 }
 
 export const ToastContainer = ({
     toasts,
     onDismiss,
-    position = "bottom-center",
+    position = "bottom-right",
 }: ToastContainerProps) => {
     const positionClass =
         position === "top-center"
-            ? "top-6"
-            : "bottom-6";
+            ? "top-6 left-1/2 -translate-x-1/2 items-center"
+            : position === "bottom-center"
+            ? "bottom-6 left-1/2 -translate-x-1/2 items-center"
+            : "bottom-6 right-6 items-end";
 
     if (toasts.length === 0) return null;
 
     return (
         <div
-            className={`fixed left-1/2 -translate-x-1/2 ${positionClass} z-100 flex flex-col gap-2 items-center`}
+            className={`fixed ${positionClass} z-100 flex flex-col gap-2`}
             aria-label="Notifications"
         >
             {toasts.map((toast) => (

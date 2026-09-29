@@ -7,6 +7,35 @@
 
 import type { Wave, Ping } from "../api/types";
 
+// Badge SVGs from Figma
+export {
+  waveCommunityPick,
+  waveProposed,
+  waveUnderReview,
+  waveInProgress,
+  waveApproved,
+  waveRejected,
+  waveCompleted,
+  waveImplementing,
+  pingTop3,
+  pingAcknowledged,
+  pingResolved,
+  pingOpen,
+};
+import waveCommunityPick from "../assets/badges/wave-community-pick.svg";
+import waveProposed from "../assets/badges/wave-proposed.svg";
+import waveUnderReview from "../assets/badges/wave-under-review.svg";
+import waveInProgress from "../assets/badges/wave-in-progress.svg";
+import waveApproved from "../assets/badges/wave-approved.svg";
+import waveRejected from "../assets/badges/wave-rejected.svg";
+import waveCompleted from "../assets/badges/wave-completed.svg";
+import waveImplementing from "../assets/badges/wave-implementing.svg";
+
+import pingTop3 from "../assets/badges/ping-top3.svg";
+import pingAcknowledged from "../assets/badges/ping-acknowledged.svg";
+import pingResolved from "../assets/badges/ping-resolved.svg";
+import pingOpen from "../assets/badges/ping-open.svg";
+
 // ─── Wave Badge Types ────────────────────────────────────────────────────────
 
 export type WaveBadgeType =
@@ -24,6 +53,7 @@ export interface WaveBadgeConfig {
   label: string;
   color: string; // Hex color code
   bgColor?: string; // Optional background color for badges
+  svg: string; // Pre-rendered SVG asset path from Figma
 }
 
 // ─── Ping Badge Types ───────────────────────────────────────────────────────
@@ -35,6 +65,7 @@ export interface PingBadgeConfig {
   label: string;
   color: string;
   bgColor?: string;
+  svg: string;
 }
 
 // ─── Color Reference (from spec) ─────────────────────────────────────────────
@@ -84,6 +115,7 @@ export function calculateWaveBadge(
         type: "COMMUNITY_PICK",
         label: "Community Pick",
         color: BADGE_COLORS.YELLOW,
+        svg: waveCommunityPick,
       };
     }
   }
@@ -96,6 +128,7 @@ export function calculateWaveBadge(
         type: "REJECTED",
         label: "Rejected",
         color: BADGE_COLORS.RED,
+        svg: waveRejected,
       };
 
     case "COMPLETED":
@@ -103,6 +136,7 @@ export function calculateWaveBadge(
         type: "COMPLETED",
         label: "Completed",
         color: BADGE_COLORS.ORANGE,
+        svg: waveCompleted,
       };
 
     case "IN_PROGRESS":
@@ -110,6 +144,7 @@ export function calculateWaveBadge(
         type: "IN_PROGRESS",
         label: "In Progress",
         color: BADGE_COLORS.AMBER,
+        svg: waveInProgress,
       };
 
     case "APPROVED":
@@ -117,6 +152,7 @@ export function calculateWaveBadge(
         type: "APPROVED",
         label: "Approved",
         color: BADGE_COLORS.GREEN,
+        svg: waveApproved,
       };
 
     case "UNDER_REVIEW":
@@ -124,6 +160,7 @@ export function calculateWaveBadge(
         type: "UNDER_REVIEW",
         label: "Under Review",
         color: BADGE_COLORS.GREEN,
+        svg: waveUnderReview,
       };
 
     case "POSTED":
@@ -131,6 +168,7 @@ export function calculateWaveBadge(
         type: "POSTED",
         label: "Posted",
         color: BADGE_COLORS.GREY,
+        svg: waveProposed,
       };
     // Unsupported status or "ON_HOLD"
     default:
@@ -163,6 +201,7 @@ export function calculatePingBadge(
       type: "TOP_3",
       label: "Top 3",
       color: BADGE_COLORS.YELLOW,
+      svg: pingTop3,
     };
   }
 
@@ -172,6 +211,7 @@ export function calculatePingBadge(
       type: "ACKNOWLEDGED",
       label: "Acknowledged",
       color: BADGE_COLORS.GREEN,
+      svg: pingAcknowledged,
     };
   }
 
@@ -181,6 +221,7 @@ export function calculatePingBadge(
       type: "RESOLVED",
       label: "Resolved",
       color: BADGE_COLORS.AMBER,
+      svg: pingResolved,
     };
   }
 

@@ -179,7 +179,12 @@ const InlinePingCreator = forwardRef<InlinePingCreatorHandle>((_, ref) => {
         const uploaded = await uploadService.uploadFiles(pingData.photos, "ping");
         mediaIds = uploaded.map((m) => m.id);
       } catch (err: any) {
-        setUploadError("Photo upload failed. Please try again.");
+        const errMsg =
+          err?.response?.data?.message ||
+          err?.response?.data?.error ||
+          err?.message ||
+          "Photo upload failed. Please try again.";
+        setUploadError(errMsg);
         setIsPosting(false);
         return;
       }

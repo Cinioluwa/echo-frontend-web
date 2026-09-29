@@ -31,6 +31,7 @@ import type { Ping, Wave, CategoryData } from "../api/types";
 import { FaPlus } from "react-icons/fa6";
 import { Tooltip } from "../components/Tooltip";
 import PingDetailSkeleton from "../components/skeletons/PingDetailSkeleton";
+import DeleteConfirmationModal from "../components/DeleteConfirmationModal";
 
 const mergeServerWaves = (serverWaves: Wave[], localWaves: Wave[]) => {
   const serverIds = new Set(serverWaves.map((wave) => wave.id));
@@ -60,6 +61,9 @@ const PingDetail = () => {
   const isToggling = useSurgeStore(
     (state) => state.isToggling[`ping-${pingId}`] || false,
   );
+
+  const [itemToDelete, setItemToDelete] = useState<{ type: "Ping" | "Wave", id: number } | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const [ping, setPing] = useState<Ping | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -188,23 +192,32 @@ const PingDetail = () => {
     };
   }, [pingId]);
 
-  const handleDeleteWave = async (waveId: number) => {
-    try {
-      await waveService.deleteWave(String(waveId));
-      setWaves((prev) => prev.filter((w) => w.id !== waveId));
-    } catch (err) {
-      console.error("Failed to delete wave:", err);
-    }
+  const handleDeleteWave = (waveId: number) => {
+    setItemToDelete({ type: "Wave", id: waveId });
   };
 
-  const handleDeletePing = async (e: React.MouseEvent) => {
+  const handleDeletePing = (e: React.MouseEvent) => {
     e.stopPropagation();
+    setItemToDelete({ type: "Ping", id: Number(pingId) });
+  };
+
+  const confirmDelete = async () => {
+    if (!itemToDelete) return;
+    setIsDeleting(true);
     try {
-      await pingService.deletePing(String(pingId));
-      usePingsStore.getState().removePing(String(pingId));
-      navigate("/feed");
+      if (itemToDelete.type === "Wave") {
+        await waveService.deleteWave(String(itemToDelete.id));
+        setWaves((prev) => prev.filter((w) => w.id !== itemToDelete.id));
+      } else if (itemToDelete.type === "Ping") {
+        await pingService.deletePing(String(pingId));
+        usePingsStore.getState().removePing(String(pingId));
+        navigate("/feed");
+      }
     } catch (err) {
-      console.error("Failed to delete ping:", err);
+      console.error(`Failed to delete ${itemToDelete.type}:`, err);
+    } finally {
+      setIsDeleting(false);
+      setItemToDelete(null);
     }
   };
 
@@ -320,9 +333,12 @@ const PingDetail = () => {
           </div>
         </div>
       )}
-      <p className="pb-3 border-b mb-5 border-black/30 font-['Poppins',sans-serif] text-[14px] text-black">
-        Waves
-      </p>
+      {/* ── Wave Header ────────────────────────────── */}
+      {waves.length > 0 && (
+        <h2 className="mb-3.5 font-['Poppins',sans-serif] font-bold text-[22px] md:text-[24px] text-black tracking-tight">
+          Waves
+        </h2>
+      )}
 
       {/* ── Wave Cards ────────────────────────────── */}
       {waves.length > 0 && (
@@ -402,6 +418,15 @@ const PingDetail = () => {
           </>
         )}
       </AnimatePresence>
+
+      {itemToDelete && (
+        <DeleteConfirmationModal
+          itemType={itemToDelete.type}
+          isLoading={isDeleting}
+          onConfirm={confirmDelete}
+          onCancel={() => setItemToDelete(null)}
+        />
+      )}
     </div>
   );
 };

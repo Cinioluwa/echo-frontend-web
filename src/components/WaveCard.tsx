@@ -23,6 +23,7 @@ import { getEditErrorMessage } from "../utils/editErrors";
 import { EditedLabel } from "../utils/editedLabel";
 import { waveService } from "../api/services";
 import { useAuthStore } from "../stores";
+import SurgeIcon from "./shared/SurgeIcon";
 
 interface WaveCardProps {
   wave: Wave;
@@ -193,10 +194,10 @@ const WaveCard = React.memo(
 
     return (
       <>
-        <div className="bg-white rounded-[10px] px-[27.5px] py-[23px] flex flex-col gap-[17px] w-full min-w-full">
-          {/* Header: avatar + name/time + badge */}
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2.5">
+        <div className="bg-white rounded-[10px] px-3.5 sm:px-[27.5px] py-3.5 sm:py-[23px] flex flex-col gap-3 sm:gap-[17px] w-full min-w-0 overflow-hidden">
+          {/* Header: avatar + name/time + badge + actions */}
+          <div className="flex items-center justify-between gap-2 min-w-0 w-full">
+            <div className="flex items-center gap-2 sm:gap-2.5 min-w-0 flex-1">
               <UserAvatar
                 user={
                   typeof currentWave.author === "object"
@@ -204,38 +205,39 @@ const WaveCard = React.memo(
                     : null
                 }
                 size="md"
-                bgColor="bg-[#ffc37b]" pictureUrl={
+                bgColor="bg-[#ffc37b]"
+                pictureUrl={
                   currentWave.isAnonymous && currentWave.anonymousProfilePicture
                     ? currentWave.anonymousProfilePicture
                     : isOwner && !currentWave.isAnonymous && useAuthStore.getState().user?.profilePicture
                       ? useAuthStore.getState().user?.profilePicture
                       : undefined
-                } />
-              <div className="flex flex-col">
-                <span className="font-['Poppins',sans-serif] font-semibold text-[14px] text-black">
+                }
+              />
+              <div className="flex flex-col min-w-0">
+                <span
+                  title={authorName}
+                  className="font-['Poppins',sans-serif] font-semibold text-[13px] sm:text-[14px] text-black truncate max-w-[130px] xs:max-w-[200px] sm:max-w-none leading-snug whitespace-nowrap"
+                >
                   {authorName}
                 </span>
-                <span className="font-['Poppins',sans-serif] font-medium text-[10px] text-black">
+                <span className="font-['Poppins',sans-serif] font-medium text-[10px] text-[#8B8E8D] leading-tight whitespace-nowrap">
                   {formatTimestamp(wave.createdAt)}
                 </span>
               </div>
             </div>
 
-            <div className="flex gap-5">
+            <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
               {badgeConfig && (
                 <Tooltip
-                  content="Current aknowledgement status of this post."
+                  content={`Status: ${badgeConfig.label}`}
                   position="left"
                 >
-                  <div className="border border-[#626665] rounded-[23px] flex items-center gap-1.5 px-[11px] py-1">
-                    <div
-                      className="w-[5px] h-[5px] rounded-full shrink-0"
-                      style={{ backgroundColor: badgeConfig.color }}
-                    />
-                    <span className="font-['Poppins',sans-serif] font-medium text-[11px] text-black">
-                      {badgeConfig.label}
-                    </span>
-                  </div>
+                  <img
+                    src={badgeConfig.svg}
+                    alt={badgeConfig.label}
+                    className="h-[18px] sm:h-[22px] w-auto shrink-0 select-none object-contain"
+                  />
                 </Tooltip>
               )}
               <WaveActionsDropdown
@@ -248,121 +250,86 @@ const WaveCard = React.memo(
             </div>
           </div>
 
-          {/* Body: solution text + surge */}
-          <div className="flex items-start justify-between gap-2.5">
-            <div className="flex-1">
-              {isEditing ? (
-                  <div className="flex flex-col gap-2 w-full mt-1">
-                      <textarea
-                          value={editInput}
-                          onChange={(e) => setEditInput(e.target.value)}
-                          disabled={isSavingEdit}
-                          className="w-full text-[12px] font-['Poppins',sans-serif] font-medium p-3 border border-gray-300 rounded-md focus:outline-none focus:border-[#f49b31] resize-y min-h-[100px]"
-                          autoFocus
-                      />
-                      {actionError && <p className="text-red-500 text-sm">{actionError}</p>}
-                      <div className="flex justify-between items-center">
-                          <span className="text-[12px] text-gray-500">
-                              {countdownLabel ? `Edit window closes in ${countdownLabel}` : "Edit window closed"}
-                          </span>
-                          <div className="flex gap-2">
-                              <button
-                                  type="button"
-                                  onClick={handleCancelEdit}
-                                  disabled={isSavingEdit}
-                                  className="text-[12px] px-3 py-1.5 border border-gray-300 rounded-md hover:bg-gray-50"
-                              >
-                                  Cancel
-                              </button>
-                              <button
-                                  type="button"
-                                  onClick={handleSaveEdit}
-                                  disabled={isSavingEdit || !editInput.trim()}
-                                  className="text-[12px] px-3 py-1.5 bg-[#f49b31] text-white rounded-md disabled:opacity-50"
-                              >
-                                  {isSavingEdit ? "Saving..." : "Save"}
-                              </button>
-                          </div>
-                      </div>
-                  </div>
-              ) : (
-                <p className="font-['Poppins',sans-serif] font-medium text-[12px] text-black leading-relaxed">
-                  {currentWave.solution}
-                  {currentWave.isEdited && <EditedLabel />}
-                </p>
-              )}
-            </div>
-
-            <div className="flex flex-col items-center gap-2 shrink-0">
-              <Tooltip
-                content={
-                  hasSurged
-                    ? "Remove your surge"
-                    : "Surge this post to show it's important!"
-                }
-                position="left"
-              >
-                <button
-                  type="button"
-                  onClick={handleSurge}
-                  disabled={isToggling}
-                  aria-label={hasSurged ? "Remove surge" : "Surge"}
-                  className={`flex items-center gap-[5px] px-2 py-1 rounded-[15px] border border-black cursor-pointer transition-colors duration-300 disabled:opacity-50 ${hasSurged
-                    ? "bg-[#f49b31] text-white border-[#f49b31]"
-                    : "bg-[#fef5ea] text-[#4a504e]"
-                    }`}
-                  style={{
-                    transition:
-                      "background-color 0.3s, color 0.3s, border-color 0.3s",
-                  }}
-                >
-                  <svg
-                    width="10"
-                    height="14"
-                    viewBox="0 0 12 16"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                    aria-hidden="true"
-                  >
-                    <path
-                      d="M6.5 1L1 9h5l-0.5 6 6-8H7l0.5-6z"
-                      fill={hasSurged ? "white" : "#4A504E"}
-                    />
-                  </svg>
-                  <span className="font-['Poppins',sans-serif] font-semibold text-[11px]">
-                    {surgeCount}
+          {/* Body: solution text */}
+          <div className="w-full">
+            {isEditing ? (
+              <div className="flex flex-col gap-2 w-full mt-1">
+                <textarea
+                  value={editInput}
+                  onChange={(e) => setEditInput(e.target.value)}
+                  disabled={isSavingEdit}
+                  className="w-full text-[12px] font-['Poppins',sans-serif] font-medium p-3 border border-gray-300 rounded-md focus:outline-none focus:border-[#f49b31] resize-y min-h-[100px]"
+                  autoFocus
+                />
+                {actionError && <p className="text-red-500 text-sm">{actionError}</p>}
+                <div className="flex justify-between items-center">
+                  <span className="text-[12px] text-gray-500">
+                    {countdownLabel ? `Edit window closes in ${countdownLabel}` : "Edit window closed"}
                   </span>
-                </button>
-              </Tooltip>
-            </div>
+                  <div className="flex gap-2">
+                    <button
+                      type="button"
+                      onClick={handleCancelEdit}
+                      disabled={isSavingEdit}
+                      className="text-[12px] px-3 py-1.5 border border-gray-300 rounded-md hover:bg-gray-50 cursor-pointer"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleSaveEdit}
+                      disabled={isSavingEdit || !editInput.trim()}
+                      className="text-[12px] px-3 py-1.5 bg-[#f49b31] text-white rounded-md disabled:opacity-50 cursor-pointer"
+                    >
+                      {isSavingEdit ? "Saving..." : "Save"}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <p className="font-['Poppins',sans-serif] font-medium text-[12px] sm:text-[13px] text-black leading-relaxed break-words">
+                {currentWave.solution}
+                {currentWave.isEdited && <EditedLabel />}
+              </p>
+            )}
           </div>
 
+          {/* Media Attachments */}
           {previewMedia && (
-            <div className="relative overflow-hidden rounded-xl border border-black/10 bg-[#F8F7F3]">
+            <div className="relative overflow-hidden rounded-xl border border-black/15 bg-black/90 flex items-center justify-center max-h-80 w-full">
+              {/* Ambient blurred backdrop for images */}
+              {!previewMedia.mimeType?.startsWith("video/") && (
+                <img
+                  src={previewMedia.url}
+                  alt=""
+                  aria-hidden="true"
+                  className="absolute inset-0 w-full h-full object-cover blur-2xl scale-120 opacity-60 pointer-events-none select-none"
+                />
+              )}
               {previewMedia.mimeType?.startsWith("video/") ? (
                 <video
                   src={previewMedia.url}
                   controls
                   preload="metadata"
-                  className="w-full max-h-80 object-cover"
+                  className="relative z-10 w-full h-auto max-h-80 object-contain mx-auto block"
                 />
               ) : (
                 <button
                   type="button"
                   onClick={() => setLightboxSrc(previewMedia.url)}
                   aria-label="View full image"
-                  className="w-full text-left cursor-zoom-in"
+                  className="relative z-10 w-full text-left cursor-zoom-in flex items-center justify-center"
                 >
                   <img
                     src={previewMedia.url}
                     alt="Wave attachment"
-                    className="w-full max-h-80 object-cover"
+                    className="w-full h-auto max-h-80 object-contain mx-auto block transition-opacity duration-200 hover:opacity-95"
                     loading="lazy"
                   />
                 </button>
               )}
               {remainingMediaCount > 0 && (
-                <span className="absolute right-2 top-2 bg-black/70 text-white text-[11px] px-2 py-0.5 rounded-full">
+                <span className="absolute right-2 top-2 z-20 bg-black/70 text-white text-[11px] px-2 py-0.5 rounded-full">
                   +{remainingMediaCount}
                 </span>
               )}
@@ -370,7 +337,7 @@ const WaveCard = React.memo(
           )}
 
           {!previewMedia && fileMedia.length > 0 && (
-            <div className="flex flex-wrap gap-2">
+            <div className="flex flex-wrap gap-2 w-full">
               {fileMedia.slice(0, 2).map((item) => (
                 <a
                   key={item.id}
@@ -389,6 +356,38 @@ const WaveCard = React.memo(
               )}
             </div>
           )}
+
+          {/* Footer: Surge button at the bottom right */}
+          <div className="flex items-center justify-end w-full pt-0.5">
+            <Tooltip
+              content={
+                hasSurged
+                  ? "Remove your surge"
+                  : "Surge this post to show it's important!"
+              }
+              position="left"
+            >
+              <button
+                type="button"
+                onClick={handleSurge}
+                disabled={isToggling}
+                aria-label={hasSurged ? "Remove surge" : "Surge"}
+                className={`flex items-center gap-[5px] px-2.5 py-1 rounded-[15px] border border-black cursor-pointer transition-colors duration-200 disabled:opacity-50 ${hasSurged
+                  ? "bg-[#F49B31] text-white"
+                  : "bg-[#FEF5EA] text-[#4A504E]"
+                  }`}
+              >
+                <SurgeIcon
+                  width={10}
+                  height={14}
+                  fill={hasSurged ? "#FFFFFF" : "#F49B31"}
+                />
+                <span className="font-['Poppins',sans-serif] font-semibold text-[11px]">
+                  {surgeCount}
+                </span>
+              </button>
+            </Tooltip>
+          </div>
         </div>
 
         {showDeleteModal && (

@@ -6,14 +6,23 @@ import type { AppNotification, NotificationType } from '../api/types';
 
 const AUTO_DISMISS_MS = 5500;
 
-const ICONS: Record<NotificationType, string> = {
+const ICONS: Partial<Record<NotificationType, string>> = {
   NEW_WAVE_ON_PING: '🌊',
   NEW_COMMENT_ON_POST: '💬',
   PING_SURGED_MILESTONE: '🚀',
   COMMENT_REPLY: '↩️',
+  COMMENT_SURGE: '⚡',
   WAVE_STATUS_UPDATED: '📋',
+  WAVE_APPROVED: '✅',
+  OFFICIAL_RESPONSE_POSTED: '📣',
   OFFICIAL_RESPONSE: '📣',
+  ANNOUNCEMENT_POSTED: '📢',
   ANNOUNCEMENT: '📢',
+  POST_REPORTED: '⚠️',
+  MODERATION_WARNING: '⚠️',
+  MODERATION_SUSPENSION: '🚫',
+  MODERATION_BAN: '⛔',
+  MODERATION_IDENTITY_DISCLOSURE_REQUESTED: '🔒',
 };
 
 // ─── Single Toast ──────────────────────────────────────────────────────────────

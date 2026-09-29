@@ -507,13 +507,22 @@ export interface UserPreference {
  * Used for icon mapping in ToastNotification and UserNotification page.
  */
 export type NotificationType =
+  | 'WAVE_APPROVED'
+  | 'WAVE_STATUS_UPDATED'
+  | 'OFFICIAL_RESPONSE_POSTED'
+  | 'OFFICIAL_RESPONSE'
+  | 'ANNOUNCEMENT_POSTED'
+  | 'ANNOUNCEMENT'
   | 'NEW_WAVE_ON_PING'
   | 'NEW_COMMENT_ON_POST'
   | 'PING_SURGED_MILESTONE'
   | 'COMMENT_REPLY'
-  | 'WAVE_STATUS_UPDATED'
-  | 'OFFICIAL_RESPONSE'
-  | 'ANNOUNCEMENT';
+  | 'COMMENT_SURGE'
+  | 'POST_REPORTED'
+  | 'MODERATION_WARNING'
+  | 'MODERATION_SUSPENSION'
+  | 'MODERATION_BAN'
+  | 'MODERATION_IDENTITY_DISCLOSURE_REQUESTED';
 
 export interface AppNotification {
   id: number | string;

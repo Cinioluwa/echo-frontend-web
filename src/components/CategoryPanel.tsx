@@ -8,6 +8,7 @@
  */
 
 import { useState, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import { categoryImages } from "./CategoryImages";
 import { useSearchStore, useCategoriesStore } from "../stores";
 
@@ -18,6 +19,8 @@ type CategoryItem = {
 };
 
 const CategoryPanel = () => {
+    const navigate = useNavigate();
+    const location = useLocation();
     const setCategory = useSearchStore((state) => state.setCategory);
     const clearCategory = useSearchStore((state) => state.clearCategory);
     const categoryCounts = useSearchStore((state) => state.categoryCounts);
@@ -37,11 +40,17 @@ const CategoryPanel = () => {
     function handleAllCategories() {
         setLocalSelectedCategory(null);
         clearCategory();
+        if (location.pathname !== "/feed") {
+            navigate("/feed");
+        }
     }
 
     function handleCategoryClick(category: CategoryItem) {
         setLocalSelectedCategory(category);
         setCategory(category.id, category.label);
+        if (location.pathname !== "/feed") {
+            navigate("/feed");
+        }
     }
 
     const isAllSelected = selectedCategory === null;

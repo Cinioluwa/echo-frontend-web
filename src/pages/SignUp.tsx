@@ -282,7 +282,7 @@ const SignUp: React.FC = () => {
               value={formData.email}
               onChange={handleInputChange}
               onBlur={handleEmailBlur}
-              placeholder="Email..."
+              placeholder="Enter Institutional Email..."
               icon={<EmailIcon />}
               error={validationErrors.email}
               autoComplete="email"

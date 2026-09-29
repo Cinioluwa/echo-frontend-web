@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { Zap, Loader2, ArrowLeft } from "lucide-react";
+import { Loader2, ArrowLeft } from "lucide-react";
 import GuestSurgeModal from "../../components/guest/GuestSurgeModal";
+import SurgeIcon from "../../components/shared/SurgeIcon";
 import { publicService, guestService } from "../../api/services";
 import { useGuestStore } from "../../stores";
 
@@ -144,11 +145,17 @@ const GuestPingDetail = () => {
         <div className="bg-white rounded-[20px] shadow-sm border border-gray-100 overflow-hidden">
           {/* Image Attachment (if any and different from org logo) */}
           {pingData.imageUrl && pingData.imageUrl !== pingData.orgLogoUrl && (
-            <div className="w-full bg-gray-100 border-b border-gray-100">
+            <div className="relative w-full overflow-hidden border-b border-gray-100 bg-black/90 flex items-center justify-center max-h-[500px]">
+              <img
+                src={pingData.imageUrl}
+                alt=""
+                aria-hidden="true"
+                className="absolute inset-0 w-full h-full object-cover blur-2xl scale-120 opacity-60 pointer-events-none select-none"
+              />
               <img 
                 src={pingData.imageUrl} 
                 alt="Attachment" 
-                className="w-full aspect-video md:aspect-[2/1] object-cover"
+                className="relative z-10 w-full h-auto max-h-[500px] object-contain"
               />
             </div>
           )}
@@ -182,7 +189,7 @@ const GuestPingDetail = () => {
           <div className="p-4 md:p-6 bg-gray-50/50 flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="flex gap-6 text-sm text-gray-500 w-full sm:w-auto">
               <span className="flex items-center gap-1.5 font-medium">
-                <Zap size={18} className="text-[#F49B31]" /> 
+                <SurgeIcon width={14} height={18} fill="#F49B31" /> 
                 {pingData.surgeCount} {pingData.surgeCount === 1 ? 'Surge' : 'Surges'}
               </span>
               <span className="font-medium">
@@ -202,7 +209,7 @@ const GuestPingDetail = () => {
               {isSurging ? (
                 <Loader2 className="animate-spin w-4 h-4" />
               ) : (
-                <Zap size={18} className={hasSurged ? "fill-current" : ""} />
+                <SurgeIcon width={14} height={18} fill={hasSurged ? "#F49B31" : "#FFFFFF"} />
               )}
               {hasSurged ? "Surged!" : "Surge as Guest"}
             </button>

@@ -94,8 +94,11 @@ const notificationService = {
     const response = await api.get<{ data: AppNotification[] }>("/notifications", {
       params: { page, limit },
     });
-    // Backend may return { data: [...] } or the array directly
-    return Array.isArray(response.data) ? response.data : (response.data.data ?? []);
+    const rawList = Array.isArray(response.data) ? response.data : (response.data.data ?? []);
+    return rawList.map((item: any) => ({
+      ...item,
+      isRead: Boolean(item.readAt) || Boolean(item.isRead),
+    }));
   },
 
   /**
