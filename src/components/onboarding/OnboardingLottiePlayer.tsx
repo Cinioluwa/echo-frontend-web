@@ -145,7 +145,7 @@ export const OnboardingLottiePlayer = ({
   return (
     <div className={`relative w-full h-full flex items-center justify-center ${className}`}>
       {loading && (
-        <div className="absolute inset-0 flex items-center justify-center bg-slate-50/60 dark:bg-black/20">
+        <div className="absolute inset-0 flex items-center justify-center bg-[#FEFBF6]/80">
           <div className="w-8 h-8 rounded-full border-2 border-[#F49B31] border-t-transparent animate-spin" />
         </div>
       )}

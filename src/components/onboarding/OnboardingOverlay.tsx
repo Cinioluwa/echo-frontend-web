@@ -52,17 +52,17 @@ const OnboardingOverlay = ({ onFinish }: { onFinish?: () => void }) => {
   const CurrentStep = steps[step];
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/75 backdrop-blur-sm pointer-events-auto">
-      {/* Modal Card Shell */}
-      <div className="relative w-full max-w-[580px] bg-white dark:bg-[#16181d] rounded-3xl shadow-2xl border border-gray-100 dark:border-white/10 flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/40 backdrop-blur-sm pointer-events-auto animate-in fade-in duration-200">
+      {/* Modal Card Shell — Warm, Light Aesthetic matching Echo */}
+      <div className="relative w-full max-w-[580px] bg-white rounded-3xl shadow-[0_20px_60px_-15px_rgba(244,155,49,0.18),0_10px_30px_-10px_rgba(0,0,0,0.08)] border border-[#F49B31]/20 flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
         
         {/* Top Header Bar */}
         <div className="px-6 sm:px-8 pt-6 pb-2 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-amber-500/10 text-[#F49B31] border border-[#F49B31]/20">
+            <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-[#FEF5EA] text-[#F49B31] border border-[#F49B31]/30">
               {step + 1} of {steps.length}
             </span>
-            <span className="text-xs font-medium text-gray-400 dark:text-gray-500">
+            <span className="text-xs font-medium text-[#7A808C]">
               {STEP_LABELS[step]}
             </span>
           </div>
@@ -70,7 +70,7 @@ const OnboardingOverlay = ({ onFinish }: { onFinish?: () => void }) => {
           <button
             onClick={onFinish}
             aria-label="Close tutorial"
-            className="p-2 rounded-full text-gray-400 hover:text-gray-700 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/10 transition-colors cursor-pointer"
+            className="p-2 rounded-full text-[#7A808C] hover:text-[#060B13] hover:bg-[#FEF5EA] transition-colors cursor-pointer"
           >
             <FiX className="w-5 h-5" />
           </button>
@@ -111,12 +111,12 @@ const OnboardingOverlay = ({ onFinish }: { onFinish?: () => void }) => {
         </div>
 
         {/* Bottom Action Footer Bar */}
-        <div className="px-6 sm:px-8 py-4 border-t border-gray-100 dark:border-white/5 flex items-center justify-between bg-gray-50/60 dark:bg-white/[0.02]">
+        <div className="px-6 sm:px-8 py-4 border-t border-[#F0E6D8] flex items-center justify-between bg-[#FAF6F1]">
           {/* Back or Skip Button */}
           {step > 0 ? (
             <button
               onClick={prev}
-              className="flex items-center gap-1.5 text-sm font-semibold text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white px-3 py-2 rounded-xl hover:bg-gray-200/50 dark:hover:bg-white/5 transition-all cursor-pointer"
+              className="flex items-center gap-1.5 text-sm font-semibold text-[#7A808C] hover:text-[#060B13] px-3.5 py-2 rounded-xl hover:bg-[#EFE8DD]/70 transition-all cursor-pointer"
             >
               <FiArrowLeft className="w-4 h-4" />
               Back
@@ -124,7 +124,7 @@ const OnboardingOverlay = ({ onFinish }: { onFinish?: () => void }) => {
           ) : (
             <button
               onClick={onFinish}
-              className="text-sm font-medium text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 px-3 py-2 rounded-xl transition-all cursor-pointer"
+              className="text-sm font-medium text-[#7A808C] hover:text-[#060B13] px-3.5 py-2 rounded-xl hover:bg-[#EFE8DD]/70 transition-all cursor-pointer"
             >
               Skip
             </button>
@@ -139,7 +139,7 @@ const OnboardingOverlay = ({ onFinish }: { onFinish?: () => void }) => {
                 className={`h-2 rounded-full transition-all duration-300 cursor-pointer ${
                   step === index
                     ? "w-6 bg-[#F49B31]"
-                    : "w-2 bg-gray-200 dark:bg-white/20 hover:bg-gray-300 dark:hover:bg-white/30"
+                    : "w-2 bg-[#E2D6C5] hover:bg-[#D4C5B0]"
                 }`}
                 aria-label={`Go to slide ${index + 1}`}
               />
@@ -149,7 +149,7 @@ const OnboardingOverlay = ({ onFinish }: { onFinish?: () => void }) => {
           {/* Primary Action Button (Next / Get Started) */}
           <button
             onClick={next}
-            className="flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-[#F49B31] hover:bg-[#e08b26] text-white font-semibold text-sm shadow-sm hover:shadow-md transition-all active:scale-95 cursor-pointer"
+            className="flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-[#F49B31] hover:bg-[#E08A24] text-white font-semibold text-sm shadow-sm hover:shadow-md transition-all active:scale-95 cursor-pointer"
           >
             {step === steps.length - 1 ? (
               <>

@@ -89,39 +89,37 @@ const Notifications = () => {
     <div className="min-h-screen bg-white rounded-[20px] border border-black/15 pb-12">
       <div className="max-w-2xl mx-auto px-4 py-6">
         {/* ── Page header ─────────────────────────────────────── */}
-          <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center gap-3">
-              <button
-                onClick={() => navigate(-1)}
-                className="p-2 rounded-full hover:bg-black/5 transition-colors cursor-pointer text-[#060B13]"
-                aria-label="Go back"
-              >
-                <ArrowLeft className="w-5 h-5" />
-              </button>
-              <div>
-                <div className="flex items-center gap-2.5">
-                  <h1 className="text-2xl font-bold text-[#060B13] font-['Poppins',sans-serif] tracking-tight">
-                    Notifications
-                  </h1>
-                  {unreadCount > 0 && (
-                    <span className="bg-[#FFC37B]/40 text-[#E8911A] text-xs font-semibold px-2.5 py-0.5 rounded-full font-['Inter',sans-serif]">
-                      {unreadCount} unread
-                    </span>
-                  )}
-                </div>
-              </div>
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
+          <div className="flex items-center gap-2.5 min-w-0">
+            <button
+              onClick={() => navigate(-1)}
+              className="p-2 -ml-2 rounded-full hover:bg-black/5 transition-colors cursor-pointer text-[#060B13] shrink-0"
+              aria-label="Go back"
+            >
+              <ArrowLeft className="w-5 h-5" />
+            </button>
+            <div className="flex items-center gap-2 min-w-0">
+              <h1 className="text-xl sm:text-2xl font-bold text-[#060B13] font-['Poppins',sans-serif] tracking-tight whitespace-nowrap shrink-0">
+                Notifications
+              </h1>
+              {unreadCount > 0 && (
+                <span className="shrink-0 bg-[#FFC37B]/40 text-[#E8911A] text-xs font-semibold px-2.5 py-0.5 rounded-full font-['Inter',sans-serif] whitespace-nowrap">
+                  {unreadCount} unread
+                </span>
+              )}
             </div>
-
-            {unreadCount > 0 && (
-              <button
-                onClick={() => void markAllAsRead()}
-                className="flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-[#F49B31] border border-[#F49B31] hover:bg-[#F49B31] hover:text-white rounded-full px-4 py-1.5 transition-all cursor-pointer font-['Inter',sans-serif]"
-              >
-                <CheckCheck className="w-4 h-4" />
-                Mark all read
-              </button>
-            )}
           </div>
+
+          {unreadCount > 0 && (
+            <button
+              onClick={() => void markAllAsRead()}
+              className="self-end sm:self-auto shrink-0 flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-[#F49B31] border border-[#F49B31] hover:bg-[#F49B31] hover:text-white rounded-full px-3.5 py-1.5 transition-all cursor-pointer font-['Inter',sans-serif] whitespace-nowrap"
+            >
+              <CheckCheck className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+              Mark all read
+            </button>
+          )}
+        </div>
 
           {/* ── Content ─────────────────────────────────────────── */}
           {isLoadingFeed ? (
