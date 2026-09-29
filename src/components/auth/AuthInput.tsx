@@ -26,6 +26,7 @@ const AnimatedEyeIcon = ({ isOpen }: { isOpen: boolean }) => {
             viewBox="0 0 24 24"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
+            className="overflow-visible"
             style={{
                 transition: 'all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1)',
             }}
@@ -78,7 +79,7 @@ const AnimatedEyeIcon = ({ isOpen }: { isOpen: boolean }) => {
             {/* Closed eye - top eyelid */}
             <path
                 className="eye-closed-path"
-                d="M2 12c1.73 4.35 6 7.54 11 7.54s9.27-3.19 11-7.54"
+                d="M1 12.46c1.73-4.35 6-7.46 11-7.46s9.27 3.11 11 7.46"
                 stroke="currentColor"
                 strokeWidth="1.5"
                 fill="none"
@@ -87,7 +88,7 @@ const AnimatedEyeIcon = ({ isOpen }: { isOpen: boolean }) => {
             {/* Closed eye - bottom eyelid */}
             <path
                 className="eye-closed-path"
-                d="M2 12c1.73-4.35 6-7.54 11-7.54s9.27 3.19 11 7.54"
+                d="M1 12.46c1.73 4.35 6 7.54 11 7.54s9.27-3.19 11-7.54"
                 stroke="currentColor"
                 strokeWidth="1.5"
                 fill="none"
@@ -144,7 +145,7 @@ const AuthInput = forwardRef<HTMLInputElement, AuthInputProps>(
           px-[15px] sm:px-[18px] md:px-[21px] py-[11px]
           ${error ? "border-red-500" : "border-[#cacaca]"}
           transition-colors duration-200
-          focus-within:border-[#f49b31] focus-within:ring-1 focus-within:ring-[#f49b31]
+          focus-within:border-[#f49b31]
         `}>
                     {icon && (
                         <>

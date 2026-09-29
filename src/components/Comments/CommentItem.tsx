@@ -377,36 +377,42 @@ const CommentItem = ({ comment, onRefresh: _onRefresh, pingId }: Props) => {
                                 )}
 
                                 {/* Reply input */}
-                                <div className="self-stretch pl-1.5 inline-flex justify-center items-center gap-[5px] mt-[5px] w-full">
-                                    <div className="flex justify-start items-center gap-4">
+                                <div className="w-full max-w-full flex items-center gap-2 mt-[5px]">
+                                    <div className="shrink-0 flex items-center size-[23px]">
                                         <UserAvatar
                                             user={user && typeof user === "object" ? user : null}
                                             size="sm"
                                             bgColor="bg-[#f49b31]"
                                         />
                                     </div>
-                                    <div className="flex-1 min-h-[24px] py-1 px-2.5 bg-white rounded-[12px] border-[0.75px] border-black flex justify-between items-end gap-2.5">
-                                            <textarea
-                                                value={replyInput}
-                                                onChange={(e) => {
-                                                    setReplyInput(e.target.value);
-                                                    e.target.style.height = 'auto';
-                                                    e.target.style.height = e.target.scrollHeight + 'px';
-                                                }}
-                                                disabled={isPostingReply}
-                                                placeholder="Reply"
-                                                rows={1}
-                                                className="flex-1 bg-transparent text-black text-[11px] font-normal font-['Poppins'] outline-none placeholder-neutral-500 disabled:opacity-50 resize-none overflow-hidden"
-                                                style={{ minHeight: '16px' }}
-                                            />
+                                    <div className="flex-1 min-w-0 min-h-[26px] py-1 px-2.5 bg-white rounded-[12px] border-[0.75px] border-black flex items-center justify-between gap-1.5 focus-within:border-[#f49b31] transition-colors">
+                                        <textarea
+                                            value={replyInput}
+                                            onChange={(e) => {
+                                                setReplyInput(e.target.value);
+                                                e.target.style.height = 'auto';
+                                                e.target.style.height = `${Math.min(e.target.scrollHeight, 80)}px`;
+                                            }}
+                                            onKeyDown={(e) => {
+                                                if (e.key === "Enter" && !e.shiftKey) {
+                                                    e.preventDefault();
+                                                    handlePostReply();
+                                                }
+                                            }}
+                                            disabled={isPostingReply}
+                                            placeholder="Reply"
+                                            rows={1}
+                                            className="flex-1 min-w-0 w-full bg-transparent text-black text-[11px] font-normal font-['Poppins',sans-serif] outline-none placeholder-neutral-500 disabled:opacity-50 resize-none overflow-y-auto break-words whitespace-pre-wrap leading-[1.35]"
+                                            style={{ minHeight: '16px', maxHeight: '80px' }}
+                                        />
                                         <button
                                             type="button"
                                             onClick={handlePostReply}
                                             disabled={isPostingReply || !replyInput.trim()}
                                             aria-label="Send reply"
-                                            className="flex items-center justify-center shrink-0 disabled:opacity-50 enabled:hover:text-[#f49b31] transition-colors"
+                                            className="flex items-center justify-center shrink-0 text-black disabled:opacity-40 enabled:hover:text-[#f49b31] transition-colors p-0.5 cursor-pointer disabled:cursor-not-allowed"
                                         >
-                                            <Send size={16} />
+                                            <Send size={14} />
                                         </button>
                                     </div>
                                 </div>

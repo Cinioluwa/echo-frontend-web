@@ -162,7 +162,7 @@ const UnifiedFeed = () => {
 
   // ── Render ──────────────────────────────────────────────────────────────────
   return (
-    <div className="flex flex-col gap-[15px] pb-10 max-w-[93vw]">
+    <div className="flex flex-col gap-[15px] pb-10 w-full max-w-[720px] mx-auto">
       {/* ClaimSpaceBanner */}
       {!hasLeader && (
         <ClaimSpaceBanner

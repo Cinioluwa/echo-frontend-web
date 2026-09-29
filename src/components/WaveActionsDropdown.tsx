@@ -112,15 +112,15 @@ const WaveActionsDropdown = ({
                 onMouseEnter={() => setIsHovered(true)}
                 onMouseLeave={() => setIsHovered(false)}
                 aria-label="More actions"
-                className="w-7 h-7 rounded-full flex items-center justify-center hover:bg-[#FFC37BAB] transition-colors cursor-pointer"
+                className="w-8 h-8 rounded-full flex items-center justify-center hover:bg-[#FFC37BAB] transition-colors cursor-pointer"
             >
                 <motion.div
                     animate={{ scale: isHovered ? 1.1 : 1 }}
                     transition={{ duration: 0.2 }}
                 >
                     <MoreVertical
-                        width={14}
-                        height={14}
+                        width={21}
+                        height={21}
                         className={isHovered ? "text-black" : "text-[#4A504E]"}
                     />
                 </motion.div>

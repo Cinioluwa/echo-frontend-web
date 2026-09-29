@@ -176,7 +176,7 @@ const ProposeWaveBar = ({ pingId, onWaveProposed }: Props) => {
     <form
       ref={formRef}
       onSubmit={handleSubmit}
-      className="bg-white rounded-[16px] md:rounded-[25px] mb-4 md:mb-5 p-2 md:p-2.5 flex items-start gap-2 md:gap-[13px] w-full max-w-full transition-all duration-300"
+      className={`bg-white rounded-[16px] md:rounded-[25px] mb-4 md:mb-5 p-2 md:p-2.5 flex ${isActive ? "items-start" : "items-center"} gap-2 md:gap-[13px] w-full max-w-full transition-all duration-300`}
     >
       {/* Hidden file input */}
       <input
@@ -190,7 +190,7 @@ const ProposeWaveBar = ({ pingId, onWaveProposed }: Props) => {
       />
 
       {/* Avatar */}
-      <div className="shrink-0 size-[38px] md:size-[50px] flex items-center justify-center mt-1 md:mt-1.5">
+      <div className={`shrink-0 flex items-center justify-center ${isActive ? "mt-1 md:mt-1.5" : ""}`}>
         <UserAvatar user={user} size="md" responsive bgColor="bg-[#ffc37b]" />
       </div>
 

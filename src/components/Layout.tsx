@@ -184,71 +184,67 @@ const Layout = () => {
         </nav>
       </header>
 
-      <div className="md:mt-[70px] flex ">
-        {/* Desktop Sidebar — fixed, narrower (280px with padding) */}
-        {!pingDetailId && (
-          <aside className="hidden md:block fixed left-0 top-[70px] bottom-0 w-[280px] overflow-y-auto [scrollbar-width:none] px-[18px] pt-[15px] ">
+      <div className="md:mt-[70px] w-full flex justify-center">
+        <div className="w-full max-w-[1400px] flex justify-center px-3 sm:px-6 gap-6 relative">
+          {/* Desktop Sidebar — sticky, 244px (persistent across feed and ping detail) */}
+          <aside className="hidden md:block w-[244px] shrink-0 sticky top-[85px] h-[calc(100vh-85px)] overflow-y-auto [scrollbar-width:none] pt-[15px]">
             <SideBar onCreatePing={() => setShowPingFormModal(true)} />
           </aside>
-        )}
 
-        {/* Main content area */}
-        <div
-          className={`flex-1 overflow-auto ${!pingDetailId ? "md:ml-[280px]" : ""}`}
-        >
-          {/* Mobile header — replaces PageTitleBar, mobile only */}
-          <div className="md:hidden">
-            <MobileHeader />
+          {/* Main content area */}
+          <div className="flex-1 w-full max-w-[720px] min-w-0">
+            {/* Mobile header — replaces PageTitleBar, mobile only */}
+            <div className="md:hidden">
+              <MobileHeader />
+            </div>
+
+            <PingCreatorProvider expandPingCreator={() => { }}>
+              <main className="mt-[15px] lg:mt-5 w-full">
+                <Outlet context={{ showPingFormModal, setShowPingFormModal, announcement, top3 }} />
+              </main>
+            </PingCreatorProvider>
           </div>
 
-          <PingCreatorProvider expandPingCreator={() => { }}>
-            <main
-              className={` mx-[15px] mt-[15px] md:ml-5 lg:mt-5 md:w-a[calc(100vw-45vw)] ${isFeedPage ? "lg:max-w-[calc(100vw-680px)]" : pingDetailId ? "lg:max-w-11/12 lg:w-full" : "lg:max-w-5/6 lg:w-5/6 lg:mx-10"}  `}
-            >
-              <Outlet context={{ showPingFormModal, setShowPingFormModal, announcement, top3 }} />
-            </main>
-          </PingCreatorProvider>
-        </div>
-
-        {/* Right aside — desktop only */}
-        {isFeedPage && (
-          <aside className="hidden lg:block w-[310px] shrink-0 pt-[15px] fixed right-5">
-            <div className="flex flex-col gap-[15px]">
-              <AnnouncementWidget announcement={announcement} />
-              <Top3Widget pings={top3} />
-            </div>
-          </aside>
-        )}
-
-        {/* Ping Detail right aside — CommentsPanel (Phase 3) */}
-        {pingDetailId && (
-          <aside className="hidden lg:flex w-[360px] shrink-0 pt-[15px] pr-5 lg:mr-[5vw] xl:mr-[12vw] flex-col gap-[15px] h-[75vh]">
-            <CommentsPanel pingId={pingDetailId} className="flex-1" initialCount={ping?._count?.comments} />
-
-            {/* ── Resolve error message ─────────────────── */}
-            {resolveError && (
-              <div className="bg-red-50 border border-red-200 rounded-[10px] p-3 text-red-700 text-sm">
-                {resolveError}
+          {/* Right aside — desktop only */}
+          {isFeedPage && (
+            <aside className="hidden lg:block w-[310px] shrink-0 sticky top-[85px] h-[calc(100vh-85px)] overflow-y-auto [scrollbar-width:none] pt-[15px]">
+              <div className="flex flex-col gap-[15px]">
+                <AnnouncementWidget announcement={announcement} />
+                <Top3Widget pings={top3} />
               </div>
-            )}
+            </aside>
+          )}
 
-            {/* ── Mark as Resolved bar ─────────────────── */}
-            {ping &&
-              (() => {
-                const isOwner = ping.isAnonymous
-                  ? (ping.isOwner ?? false)
-                  : (currentUser?.id === (typeof ping.author === "object" ? ping.author?.id : undefined));
-                const isResolved = !!ping.resolvedAt;
-                return isOwner && !isResolved ? (
-                  <MarkAsResolvedBar
-                    pingId={pingDetailId}
-                    onResolved={handleResolvePing}
-                    isLoading={isResolvingPing}
-                  />
-                ) : null;
-              })()}
-          </aside>
-        )}
+          {/* Ping Detail right aside — CommentsPanel (Phase 3) */}
+          {pingDetailId && (
+            <aside className="hidden lg:flex w-[360px] shrink-0 sticky top-[85px] pt-[15px] flex-col gap-[15px] h-[calc(100vh-85px)]">
+              <CommentsPanel pingId={pingDetailId} className="flex-1" initialCount={ping?._count?.comments} />
+
+              {/* ── Resolve error message ─────────────────── */}
+              {resolveError && (
+                <div className="bg-red-50 border border-red-200 rounded-[10px] p-3 text-red-700 text-sm">
+                  {resolveError}
+                </div>
+              )}
+
+              {/* ── Mark as Resolved bar ─────────────────── */}
+              {ping &&
+                (() => {
+                  const isOwner = ping.isAnonymous
+                    ? (ping.isOwner ?? false)
+                    : (currentUser?.id === (typeof ping.author === "object" ? ping.author?.id : undefined));
+                  const isResolved = !!ping.resolvedAt;
+                  return isOwner && !isResolved ? (
+                    <MarkAsResolvedBar
+                      pingId={pingDetailId}
+                      onResolved={handleResolvePing}
+                      isLoading={isResolvingPing}
+                    />
+                  ) : null;
+                })()}
+            </aside>
+          )}
+        </div>
       </div>
 
       {showPingFormModal && (

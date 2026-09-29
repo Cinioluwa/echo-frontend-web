@@ -310,7 +310,7 @@ const MakeRequest: React.FC = () => {
                                 >
                                     Additional Notes (Optional)
                                 </label>
-                                <div className="bg-[#fbfbfb] border border-[#cacaca] rounded-xl p-[15px] sm:p-[18px] md:p-[21px] focus-within:border-[#f49b31] focus-within:ring-1 focus-within:ring-[#f49b31] transition-colors duration-200">
+                                <div className="bg-[#fbfbfb] border border-[#cacaca] rounded-xl p-[15px] sm:p-[18px] md:p-[21px] focus-within:border-[#f49b31] transition-colors duration-200">
                                     <textarea
                                         id="additionalNotes"
                                         name="additionalNotes"

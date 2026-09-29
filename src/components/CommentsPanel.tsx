@@ -58,7 +58,7 @@ const CommentsPanel = ({ pingId, className = "", isDrawer = false, initialCount 
   return (
     <div
       className={`${
-        isDrawer ? "bg-[#FFC37B] rounded-t-[30px]" : "bg-[#FFC37B] rounded-[10px]"
+        isDrawer ? "bg-[#FFC37B] rounded-t-[30px]" : "bg-[#FFC37B] rounded-[24px] md:rounded-[28px]"
       } flex flex-col h-full w-full overflow-hidden ${className}`}
     >
       {/* Header */}
@@ -88,7 +88,7 @@ const CommentsPanel = ({ pingId, className = "", isDrawer = false, initialCount 
 
       {/* Comment input */}
       <div
-        className={`shrink-0 ${
+        className={`shrink-0 bg-[#f49b31] ${
           isDrawer ? "px-[15px] py-[15px] border-t border-[#e8b35b]" : ""
         }`}
       >

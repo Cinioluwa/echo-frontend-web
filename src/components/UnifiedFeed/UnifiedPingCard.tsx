@@ -135,7 +135,7 @@ const UnifiedPingCard = ({
     <>
       <div
         className={[
-          "bg-[#FEFEFE] rounded-[10px] px-3.5 sm:px-4 md:px-5 py-3 md:py-[15px] flex flex-col gap-[15px] cursor-pointer hover:shadow-sm transition-shadow w-full overflow-hidden",
+          "bg-[#FEFEFE] rounded-[10px] px-2.5 sm:px-4 md:px-5 py-2.5 sm:py-3 md:py-[15px] flex flex-col gap-[15px] cursor-pointer hover:shadow-sm transition-shadow w-full overflow-hidden",
           isHistoryContext ? "max-w-full min-w-0" : "",
           "text-wrap",
         ].join(" ")}
@@ -152,13 +152,13 @@ const UnifiedPingCard = ({
           {/* Author row */}
           <div
             className={[
-              "flex items-center justify-between",
+              "flex items-center justify-between gap-1.5 sm:gap-2",
               isHistoryContext ? "min-w-0" : "",
             ].join(" ")}
           >
             <div
               className={[
-                "flex items-center gap-2.5 md:gap-4",
+                "flex items-center gap-2 sm:gap-2.5 md:gap-4 min-w-0 flex-1",
                 isHistoryContext ? "min-w-0" : "",
               ].join(" ")}
             >
@@ -184,14 +184,17 @@ const UnifiedPingCard = ({
               {/* Name + timestamp */}
               <div
                 className={[
-                  "flex flex-col",
+                  "flex flex-col min-w-0",
                   isHistoryContext ? "min-w-0" : "",
                 ].join(" ")}
               >
-                <span className="font-['Poppins',sans-serif] font-semibold text-[clamp(12px,3vw,15px)] text-black leading-normal">
+                <span
+                  title={authorName}
+                  className="font-['Poppins',sans-serif] font-semibold text-[clamp(12px,3vw,15px)] text-black leading-normal truncate whitespace-nowrap max-w-[95px] xs:max-w-[140px] sm:max-w-none"
+                >
                   {authorName}
                 </span>
-                <span className="font-['Poppins',sans-serif] font-medium text-[clamp(10px,2.4vw,13px)] text-[#8B8E8D] leading-normal">
+                <span className="font-['Poppins',sans-serif] font-medium text-[clamp(10px,2.4vw,13px)] text-[#8B8E8D] leading-normal whitespace-nowrap">
                   {timestamp}
                 </span>
               </div>
@@ -200,7 +203,7 @@ const UnifiedPingCard = ({
             {/* Badges: Ping status + actions dropdown */}
             <div
               className={[
-                "flex items-center gap-2 md:gap-5",
+                "flex items-center gap-1 md:gap-2.5 shrink-0",
                 isHistoryContext ? "min-w-0" : "",
               ].join(" ")}
             >
@@ -223,7 +226,7 @@ const UnifiedPingCard = ({
                     <img
                       src={badgeConfig.svg}
                       alt={badgeConfig.label}
-                      className="h-[18px] md:h-[22px] w-auto shrink-0 select-none object-contain"
+                      className="h-[22px] sm:h-[28px] md:h-[33px] w-auto shrink-0 select-none object-contain"
                     />
                   </Tooltip>
                 );
@@ -304,14 +307,14 @@ const UnifiedPingCard = ({
               onClick={handleSurge}
               disabled={isToggling}
               aria-label={hasSurged ? "Remove surge" : "Surge"}
-              className={`flex items-center gap-[5px] px-2 md:px-2.5 py-1 md:py-[5px] rounded-[15px] border border-black cursor-pointer transition-colors disabled:opacity-50 ${hasSurged ? "bg-[#F49B31] text-white" : "bg-[#FEF5EA] text-[#4A504E]"}`}
+              className={`flex items-center gap-[5px] px-2.5 md:px-3 py-1 md:py-[5px] rounded-[15px] border border-black cursor-pointer transition-colors disabled:opacity-50 ${hasSurged ? "bg-[#F49B31] text-white" : "bg-[#FEF5EA] text-[#4A504E]"}`}
             >
               <SurgeIcon
                 width={12}
                 height={16}
                 fill={hasSurged ? "#FFFFFF" : "#F49B31"}
               />
-              <span className="font-['Poppins',sans-serif] font-semibold text-[clamp(11px,2.6vw,14px)] leading-normal">
+              <span className="font-['Poppins',sans-serif] font-semibold text-[13px] md:text-[14px] leading-normal">
                 {surgeCount}
               </span>
             </button>

@@ -17,28 +17,12 @@ import SuperAdminRoute from "./auth/SuperAdminRoute";
 import ProtectedRoute from "./auth/ProtectedRoute";
 import ProfileRedirect from "./auth/ProfileRedirect";
 import Layout from "./Layout";
-
-const CHUNK_RELOAD_KEY = "echo:chunk-reload-attempted";
-const CHUNK_LOAD_ERROR_PATTERN =
-  /ChunkLoadError|Failed to fetch dynamically imported module|Loading chunk [\d]+ failed|text\/html is not a valid JavaScript MIME type|Importing a module script failed/i;
-
-const isChunkLoadError = (error: unknown): boolean => {
-  const message = error instanceof Error ? error.message : String(error);
-  return CHUNK_LOAD_ERROR_PATTERN.test(message);
-};
-
-const forceRefreshForChunkError = () => {
-  if (typeof window === "undefined") return;
-
-  const alreadyRetried = sessionStorage.getItem(CHUNK_RELOAD_KEY) === "1";
-  if (alreadyRetried) return;
-
-  sessionStorage.setItem(CHUNK_RELOAD_KEY, "1");
-  const locationWithLegacyReload = window.location as Location & {
-    reload: (forcedReload?: boolean) => void;
-  };
-  locationWithLegacyReload.reload(true);
-};
+import ErrorPage from "../pages/ErrorPage";
+import {
+  isChunkLoadError,
+  tryAutoReloadForChunkError,
+  clearChunkReloadState,
+} from "../utils/chunkRetry";
 
 const lazyWithRetry = <T extends ComponentType<any>>(
   importer: () => Promise<{ default: T }>,
@@ -46,14 +30,14 @@ const lazyWithRetry = <T extends ComponentType<any>>(
   lazy(async () => {
     try {
       const module = await importer();
-      if (typeof window !== "undefined") {
-        sessionStorage.removeItem(CHUNK_RELOAD_KEY);
-      }
+      clearChunkReloadState();
       return module;
     } catch (error) {
       if (isChunkLoadError(error)) {
-        forceRefreshForChunkError();
-        return new Promise<never>(() => { });
+        const reloaded = tryAutoReloadForChunkError(error);
+        if (reloaded) {
+          return new Promise<never>(() => {});
+        }
       }
       throw error;
     }
@@ -110,8 +94,6 @@ const SuperAdminUsers = lazyWithRetry(() => import("../pages/super-admin/SuperAd
 const SuperAdminMaintenance = lazyWithRetry(() => import("../pages/super-admin/SuperAdminMaintenance"));
 
 
-// Lazy load error page
-const ErrorPage = lazyWithRetry(() => import("../pages/ErrorPage"));
 
 // Lazy load legal pages
 const TermsOfUse = lazyWithRetry(() => import("../pages/TermsOfUse"));
@@ -126,7 +108,7 @@ const withSuspense = (Component: React.LazyExoticComponent<React.ComponentType<a
 
 const router = createBrowserRouter([
   {
-    errorElement: withSuspense(ErrorPage),
+    errorElement: <ErrorPage />,
     children: [
       {
     path: "/",
@@ -368,7 +350,7 @@ const router = createBrowserRouter([
   // Catch-all route for 404 and unmatched paths
   {
     path: "*",
-    element: withSuspense(ErrorPage),
+    element: <ErrorPage />,
   },
     ],
   },

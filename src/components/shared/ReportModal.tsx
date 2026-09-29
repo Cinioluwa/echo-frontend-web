@@ -169,7 +169,7 @@ const ReportModal: React.FC<ReportModalProps> = ({
       aria-labelledby="report-modal-title"
     >
       <div
-        className="bg-white rounded-[20px] p-5 sm:p-7 w-full max-w-[500px] shadow-2xl border border-black/10 relative flex flex-col gap-4 sm:gap-5"
+        className="bg-white rounded-[20px] p-5 sm:p-7 w-full max-w-[560px] shadow-2xl border border-black/10 relative flex flex-col gap-4 sm:gap-5"
         onClick={(e) => e.stopPropagation()}
       >
         {/* ─── Header: Flag Icon + Title ─── */}
@@ -212,13 +212,13 @@ const ReportModal: React.FC<ReportModalProps> = ({
               <span className="block font-['Poppins',sans-serif] font-semibold text-[14px] text-black mb-3">
                 Offense:
               </span>
-              <div className="grid grid-cols-2 gap-x-4 gap-y-3">
+              <div className="grid grid-cols-2 gap-x-6 sm:gap-x-8 gap-y-3">
                 {OFFENSE_OPTIONS.map((opt) => {
                   const isChecked = selectedOffenses.includes(opt.id);
                   return (
                     <label
                       key={opt.id}
-                      className="flex items-center gap-2 cursor-pointer select-none group"
+                      className="flex items-center gap-2 cursor-pointer select-none group min-w-0"
                     >
                       {/* Custom Checkbox */}
                       <div
@@ -241,10 +241,10 @@ const ReportModal: React.FC<ReportModalProps> = ({
 
                       {/* Violation Badge */}
                       <div
-                        className={`${opt.bgClass} ${opt.textClass} px-3 py-1 rounded-[28.75px] font-['Poppins',sans-serif] font-medium text-[13px] flex items-center gap-1.5 shrink-0 transition-transform group-hover:scale-[1.02]`}
+                        className={`${opt.bgClass} ${opt.textClass} px-2.5 sm:px-3 py-1 rounded-[28.75px] font-['Poppins',sans-serif] font-medium text-[12px] sm:text-[13px] flex items-center gap-1 sm:gap-1.5 shrink-0 transition-transform group-hover:scale-[1.02]`}
                       >
-                        <opt.icon className="w-4 h-4 shrink-0" />
-                        <span>{opt.label}</span>
+                        <opt.icon className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
+                        <span className="whitespace-nowrap">{opt.label}</span>
                       </div>
                     </label>
                   );

@@ -105,40 +105,43 @@ const CommentInput = ({
 
 
     return (
-        <div className="bg-none md:bg-[#f49b31] flex gap-2 items-start px-[15px] py-2.5 rounded-bl-[15px] rounded-br-[15px] w-full" data-node-id="4790:11755" ref={containerRef}>
+        <div
+            className={`bg-[#f49b31] flex gap-2.5 ${isFocused ? "items-start" : "items-center"} px-[15px] py-3 rounded-b-[24px] md:rounded-b-[28px] w-full`}
+            data-node-id="4790:11755"
+            ref={containerRef}
+        >
             {/* Avatar */}
-            <div className="flex items-center shrink-0" data-node-id="4790:11756">
-                <div className="size-[30px]" data-node-id="4790:11757">
-                    <UserAvatar
-                        user={user}
-                        size="sm"
-                        bgColor="bg-[#f49b31]"
-                    />
-                </div>
+            <div className={`shrink-0 flex items-center justify-center size-[38px] md:size-[42px] ${isFocused ? "mt-1" : ""}`} data-node-id="4790:11756">
+                <UserAvatar
+                    user={user}
+                    size="md"
+                    className="!w-[38px] !h-[38px] md:!w-[42px] md:!h-[42px]"
+                    bgColor="bg-[#f49b31]"
+                />
             </div>
 
             {/* Input field container */}
-            <div className="flex-1">
+            <div className="flex-1 min-w-0">
                 {!isFocused ? (
                     /* Default state - button */
                     <button
                         onClick={() => setIsFocused(true)}
-                        className="bg-white flex h-[32px] md:h-[30px] items-center px-2.5 rounded-[30px] w-full cursor-pointer hover:bg-gray-50 transition-colors"
+                        className="bg-white flex h-[38px] md:h-[42px] items-center px-3.5 rounded-[30px] w-full cursor-pointer hover:bg-gray-50 transition-colors shadow-xs"
                         data-node-id="5210:15041"
                     >
-                        <div className="text-[#626665] text-[12px] font-['Poppins',sans-serif] font-normal">
+                        <div className="text-[#626665] text-[13px] md:text-[14px] font-['Poppins',sans-serif] font-normal">
                             What do you have to say?
                         </div>
                     </button>
                 ) : (
                     /* Active state - textarea with button */
-                    <div className="bg-white flex flex-col gap-2 items-stretch justify-between min-h-[74px] md:min-h-[60px] px-2.5 py-2 rounded-[12.5px] transition-all duration-200" data-node-id="5210:15043">
+                    <div className="bg-white flex flex-col gap-2 items-stretch justify-between min-h-[80px] md:min-h-[70px] px-3 py-2.5 rounded-[16px] transition-all duration-200" data-node-id="5210:15043">
                         <textarea
                             value={content}
                             onChange={(e) => setContent(e.target.value)}
                             placeholder="What do you have to say?"
                             autoFocus
-                            className="w-full flex-1 p-0 text-[12px] text-[#292936] placeholder:text-[#626665] resize-none focus:outline-none font-['Poppins',sans-serif] bg-transparent min-h-[34px] md:min-h-[30px]"
+                            className="w-full flex-1 p-0 text-[13px] md:text-[14px] text-[#292936] placeholder:text-[#626665] resize-none focus:outline-none font-['Poppins',sans-serif] bg-transparent min-h-[40px] md:min-h-[35px]"
                             disabled={isSubmitting}
                         />
 
@@ -147,7 +150,7 @@ const CommentInput = ({
                             type="button"
                             onClick={handleSubmit}
                             disabled={isSubmitting || !content.trim()}
-                            className="self-end bg-[#f49b31] inline-flex items-center justify-center px-2.5 py-1 rounded-[16px] text-white text-[11px] font-['Poppins',sans-serif] font-medium leading-none hover:bg-[#d88429] transition-colors disabled:opacity-50 disabled:cursor-not-allowed min-w-[64px] md:min-w-[58px] shrink-0"
+                            className="self-end bg-[#f49b31] inline-flex items-center justify-center px-3 py-1.5 rounded-[16px] text-white text-[12px] font-['Poppins',sans-serif] font-medium leading-none hover:bg-[#d88429] transition-colors disabled:opacity-50 disabled:cursor-not-allowed min-w-[70px] shrink-0 cursor-pointer"
                             data-node-id="5210:15071"
                         >
                             {isSubmitting ? "..." : "Comment"}

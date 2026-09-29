@@ -194,9 +194,9 @@ const WaveCard = React.memo(
 
     return (
       <>
-        <div className="bg-white rounded-[10px] px-3.5 sm:px-[27.5px] py-3.5 sm:py-[23px] flex flex-col gap-3 sm:gap-[17px] w-full min-w-0 overflow-hidden">
+        <div className="bg-white rounded-[10px] px-2.5 sm:px-[27.5px] py-2.5 sm:py-[23px] flex flex-col gap-3 sm:gap-[17px] w-full min-w-0 overflow-hidden">
           {/* Header: avatar + name/time + badge + actions */}
-          <div className="flex items-center justify-between gap-2 min-w-0 w-full">
+          <div className="flex items-center justify-between gap-1.5 sm:gap-2 min-w-0 w-full">
             <div className="flex items-center gap-2 sm:gap-2.5 min-w-0 flex-1">
               <UserAvatar
                 user={
@@ -217,7 +217,7 @@ const WaveCard = React.memo(
               <div className="flex flex-col min-w-0">
                 <span
                   title={authorName}
-                  className="font-['Poppins',sans-serif] font-semibold text-[13px] sm:text-[14px] text-black truncate max-w-[130px] xs:max-w-[200px] sm:max-w-none leading-snug whitespace-nowrap"
+                  className="font-['Poppins',sans-serif] font-semibold text-[13px] sm:text-[14px] text-black truncate max-w-[95px] xs:max-w-[140px] sm:max-w-none leading-snug whitespace-nowrap"
                 >
                   {authorName}
                 </span>
@@ -227,7 +227,7 @@ const WaveCard = React.memo(
               </div>
             </div>
 
-            <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+            <div className="flex items-center gap-1 shrink-0">
               {badgeConfig && (
                 <Tooltip
                   content={`Status: ${badgeConfig.label}`}
@@ -236,7 +236,7 @@ const WaveCard = React.memo(
                   <img
                     src={badgeConfig.svg}
                     alt={badgeConfig.label}
-                    className="h-[18px] sm:h-[22px] w-auto shrink-0 select-none object-contain"
+                    className="h-[22px] sm:h-[28px] md:h-[33px] w-auto shrink-0 select-none object-contain"
                   />
                 </Tooltip>
               )}
@@ -372,17 +372,17 @@ const WaveCard = React.memo(
                 onClick={handleSurge}
                 disabled={isToggling}
                 aria-label={hasSurged ? "Remove surge" : "Surge"}
-                className={`flex items-center gap-[5px] px-2.5 py-1 rounded-[15px] border border-black cursor-pointer transition-colors duration-200 disabled:opacity-50 ${hasSurged
+                className={`flex items-center gap-[5px] px-2.5 md:px-3 py-1 md:py-[5px] rounded-[15px] border border-black cursor-pointer transition-colors duration-200 disabled:opacity-50 ${hasSurged
                   ? "bg-[#F49B31] text-white"
                   : "bg-[#FEF5EA] text-[#4A504E]"
                   }`}
               >
                 <SurgeIcon
-                  width={10}
-                  height={14}
+                  width={12}
+                  height={16}
                   fill={hasSurged ? "#FFFFFF" : "#F49B31"}
                 />
-                <span className="font-['Poppins',sans-serif] font-semibold text-[11px]">
+                <span className="font-['Poppins',sans-serif] font-semibold text-[13px] md:text-[14px] leading-normal">
                   {surgeCount}
                 </span>
               </button>

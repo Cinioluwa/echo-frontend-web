@@ -1,4 +1,6 @@
 import { Component, type ErrorInfo, type ReactNode } from "react";
+import ErrorPage from "../../pages/ErrorPage";
+import { isChunkLoadError, tryAutoReloadForChunkError } from "../../utils/chunkRetry";
 
 interface AppErrorBoundaryProps {
   children: ReactNode;
@@ -35,6 +37,10 @@ class AppErrorBoundary extends Component<
       stack: error.stack,
       componentStack: errorInfo.componentStack,
     });
+
+    if (isChunkLoadError(error)) {
+      tryAutoReloadForChunkError(error);
+    }
   }
 
   handleRetry = () => {
@@ -42,10 +48,6 @@ class AppErrorBoundary extends Component<
       hasError: false,
       error: null,
     });
-  };
-
-  handleReload = () => {
-    window.location.reload();
   };
 
   render() {
@@ -56,36 +58,20 @@ class AppErrorBoundary extends Component<
 
       const isDomMutationError =
         this.state.error?.message.includes("removeChild") || false;
+      const isChunk = isChunkLoadError(this.state.error);
 
       return (
-        <div className="min-h-screen flex items-center justify-center bg-[#F8F7F3] px-6">
-          <div className="bg-white border border-black/10 rounded-[14px] shadow-sm p-6 w-full max-w-md">
-            <h2 className="font-['Poppins',sans-serif] text-[20px] font-semibold text-[#171717]">
-              We hit a rendering issue
-            </h2>
-            <p className="mt-2 font-['Poppins',sans-serif] text-[14px] text-[#4A504E] leading-relaxed">
-              {isDomMutationError
-                ? "A browser extension changed the page while it was updating."
-                : "An unexpected UI error occurred while rendering this view."}
-            </p>
-            <div className="mt-5 flex items-center gap-3">
-              <button
-                type="button"
-                onClick={this.handleRetry}
-                className="px-4 py-2 rounded-[10px] border border-[#F49B31] text-[#F49B31] font-medium text-sm hover:bg-[#FEF5EA]"
-              >
-                Try again
-              </button>
-              <button
-                type="button"
-                onClick={this.handleReload}
-                className="px-4 py-2 rounded-[10px] bg-[#F49B31] text-white font-medium text-sm hover:bg-[#d88429]"
-              >
-                Reload app
-              </button>
-            </div>
-          </div>
-        </div>
+        <ErrorPage
+          statusCode={isChunk ? 503 : 500}
+          message={
+            isChunk
+              ? "A new update was deployed or your connection was interrupted. Please reload."
+              : isDomMutationError
+              ? "A browser extension modified the page while it was updating."
+              : "An unexpected UI error occurred while rendering this view."
+          }
+          onRetry={this.handleRetry}
+        />
       );
     }
 
