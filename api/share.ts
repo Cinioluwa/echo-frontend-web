@@ -96,31 +96,10 @@ function generateOGPage(
   webBase: string,
 ): string {
   let title = escapeHtml(data.title);
-  let descriptionText = escapeHtml(data.description);
-  
-  const stats = [];
-  if (data.surgeCount !== undefined) stats.push(`${data.surgeCount} ${data.surgeCount === 1 ? 'Surge' : 'Surges'}`);
-  if (data.waveCount !== undefined) stats.push(`${data.waveCount} ${data.waveCount === 1 ? 'Wave' : 'Waves'}`);
-  if (data.commentCount !== undefined) stats.push(`${data.commentCount} ${data.commentCount === 1 ? 'Comment' : 'Comments'}`);
-  
-  let entityLabel = data.type; // "ping", "wave", "comment", "feed"
-  entityLabel = entityLabel.charAt(0).toUpperCase() + entityLabel.slice(1);
+  let descriptionText = escapeHtml(data.description || "");
 
-  const context = [
-    data.category ? `in ${data.category}` : "",
-    data.orgName ? `from ${data.orgName}` : ""
-  ].filter(Boolean).join(" ");
-  
-  const statsStr = stats.length > 0 ? ` • ${stats.join(" • ")}` : "";
-  const prefix = context ? `${entityLabel} ${context}${statsStr}` : `${entityLabel}${statsStr}`;
-  
-  if (prefix) {
-    descriptionText = `${prefix} — ${descriptionText}`;
-  }
-
-
-  // Trim the final description to 150 characters so it fits social previews cleanly
-  const maxDescLength = 150;
+  // Trim the final description to 200 characters so it fits social previews cleanly
+  const maxDescLength = 200;
   const finalDescription = descriptionText.length > maxDescLength
     ? `${descriptionText.slice(0, maxDescLength - 1).trimEnd()}…`
     : descriptionText;
