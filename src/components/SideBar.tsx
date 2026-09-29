@@ -39,9 +39,11 @@ const SideBar = ({ onCreatePing }: Props) => {
       <Tooltip content="Make a problem known." position="top" delay={0.2}>
         <button
           onClick={handleCreateClick}
-          className="flex items-center gap-[26px] h-12 bg-[#F49B31] hover:bg-[#d88429] transition-colors cursor-pointer rounded-[15px] pl-[26px] w-[244px] text-white"
+          className="flex items-center gap-3.5 h-12 bg-[#F49B31] hover:bg-[#d88429] transition-colors cursor-pointer rounded-[15px] pl-6 w-[244px] text-white"
         >
-          <FaPlus className="w-[18px] h-[18px]" />
+          <span className="w-5 h-5 flex items-center justify-center shrink-0">
+            <FaPlus className="w-4 h-4" />
+          </span>
           <span className="font-semibold text-[15px] font-['Poppins',sans-serif]">
             Create a Ping
           </span>
@@ -56,13 +58,15 @@ const SideBar = ({ onCreatePing }: Props) => {
       >
         <Link
           to="/history"
-          className={`flex items-center gap-3 h-12 ${isHistoryRoute ? "bg-[#F49B31] text-white" : "bg-[#FEF5EA] text-black hover:bg-[#fae9d4]"} border border-[#F49B31] rounded-[15px] pl-6 w-[244px] cursor-pointer transition-colors`}
+          className={`flex items-center gap-3.5 h-12 ${isHistoryRoute ? "bg-[#F49B31] text-white" : "bg-[#FEF5EA] text-black hover:bg-[#fae9d4]"} border border-[#F49B31] rounded-[15px] pl-6 w-[244px] cursor-pointer transition-colors`}
         >
-          <img
-            src={historyIcon}
-            alt="History"
-            className={`w-5 h-5 ${isHistoryRoute ? "filter brightness-0 invert" : ""}`}
-          />
+          <span className="w-5 h-5 flex items-center justify-center shrink-0">
+            <img
+              src={historyIcon}
+              alt="History"
+              className={`w-5 h-5 ${isHistoryRoute ? "filter brightness-0 invert" : ""}`}
+            />
+          </span>
           <span className="font-semibold text-[15px] font-['Poppins',sans-serif]">
             History
           </span>

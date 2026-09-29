@@ -113,9 +113,9 @@ const MarkAsResolvedBar = ({ pingId: _pingId, onResolved, isLoading = false }: P
 
     // Show resolve button
     return (
-        <div className="rounded-[15px] p-[5px] flex flex-col items-center gap-2.5 justify-center">
+        <div className="flex flex-col items-center gap-2.5 justify-center w-full">
             {/* Text */}
-            <p className="flex-1 text-[16px] text-black text-center">
+            <p className="text-[16px] text-black text-center font-['Poppins',sans-serif] font-medium">
                 Has this problem been solved?
             </p>
 
@@ -124,10 +124,10 @@ const MarkAsResolvedBar = ({ pingId: _pingId, onResolved, isLoading = false }: P
                 type="button"
                 onClick={handleResolveRequest}
                 disabled={isLoading || isProcessing}
-                className="w-full bg-[#f49b31] px-5 py-2.5 rounded-[15px] cursor-pointer hover:bg-[#ffac47] transition-colors duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full bg-[#f49b31] hover:bg-[#e08922] py-3 px-6 rounded-full cursor-pointer transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center shadow-xs"
             >
-                <span className="font-['Poppins:Medium',sans-serif] text-[#fffefe] text-[14px] text-center whitespace-nowrap">
-                    {isLoading || isProcessing ? "Resolving..." : "Mark as Resolved"}
+                <span className="font-['Baloo_Bhai_2',sans-serif] font-extrabold text-white text-[17px] tracking-wide uppercase text-center whitespace-nowrap">
+                    {isLoading || isProcessing ? "RESOLVING..." : "MARK AS RESOLVED"}
                 </span>
             </button>
         </div>

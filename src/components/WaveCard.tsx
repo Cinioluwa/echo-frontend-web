@@ -287,7 +287,7 @@ const WaveCard = React.memo(
                 </div>
               </div>
             ) : (
-              <p className="font-['Poppins',sans-serif] font-medium text-[12px] sm:text-[13px] text-black leading-relaxed break-words">
+              <p className="font-['Poppins',sans-serif] font-medium text-[12px] sm:text-[13px] text-black leading-relaxed break-words whitespace-pre-wrap">
                 {currentWave.solution}
                 {currentWave.isEdited && <EditedLabel />}
               </p>

@@ -124,7 +124,7 @@ const AdminWaveCard: React.FC<AdminWaveCardProps> = ({ wave, onUpdateStatus }) =
                 </div>
 
                 {/* Body: Solution text */}
-                <p className="font-poppins text-[13px] text-[#1a1a1a] leading-relaxed">{wave.solution}</p>
+                <p className="font-poppins text-[13px] text-[#1a1a1a] leading-relaxed whitespace-pre-wrap">{wave.solution}</p>
 
                 {/* Status description — from Figma Wave Indicators */}
                 <p className="font-poppins text-[11px] text-[#8b8e8d] italic leading-snug">{config.description}</p>

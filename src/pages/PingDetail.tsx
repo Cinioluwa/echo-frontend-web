@@ -29,6 +29,7 @@ import PingCard from "../components/PingCard";
 import { getSocket } from "../api/socket";
 import type { Ping, Wave, CategoryData } from "../api/types";
 import { FaPlus } from "react-icons/fa6";
+import { ArrowLeft } from "lucide-react";
 import { Tooltip } from "../components/Tooltip";
 import PingDetailSkeleton from "../components/skeletons/PingDetailSkeleton";
 import DeleteConfirmationModal from "../components/DeleteConfirmationModal";
@@ -63,7 +64,6 @@ const PingDetail = () => {
   );
 
   const [itemToDelete, setItemToDelete] = useState<{ type: "Ping" | "Wave", id: number } | null>(null);
-  const [isDeleting, setIsDeleting] = useState(false);
 
   const [ping, setPing] = useState<Ping | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -204,21 +204,36 @@ const PingDetail = () => {
 
   const confirmDelete = async () => {
     if (!itemToDelete) return;
-    setIsDeleting(true);
-    try {
-      if (itemToDelete.type === "Wave") {
-        await waveService.deleteWave(String(itemToDelete.id));
-        setWaves((prev) => prev.filter((w) => w.id !== itemToDelete.id));
-      } else if (itemToDelete.type === "Ping") {
-        await pingService.deletePing(String(pingId));
-        usePingsStore.getState().removePing(String(pingId));
-        navigate("/feed");
+    const target = itemToDelete;
+    // Instantly dismiss modal and remove from state/store
+    setItemToDelete(null);
+
+    if (target.type === "Wave") {
+      setWaves((prev) => prev.filter((w) => w.id !== target.id));
+      if (pingId) {
+        const curPing = usePingsStore.getState().pingsById[pingId];
+        if (curPing?._count) {
+          usePingsStore.getState().updatePing(pingId, {
+            _count: {
+              ...curPing._count,
+              waves: Math.max(0, curPing._count.waves - 1),
+            },
+          });
+        }
       }
-    } catch (err) {
-      console.error(`Failed to delete ${itemToDelete.type}:`, err);
-    } finally {
-      setIsDeleting(false);
-      setItemToDelete(null);
+      try {
+        await waveService.deleteWave(String(target.id));
+      } catch (err) {
+        console.error("Failed to delete Wave:", err);
+      }
+    } else if (target.type === "Ping") {
+      usePingsStore.getState().removePing(String(pingId));
+      navigate("/feed");
+      try {
+        await pingService.deletePing(String(pingId));
+      } catch (err) {
+        console.error("Failed to delete Ping:", err);
+      }
     }
   };
 
@@ -258,9 +273,10 @@ const PingDetail = () => {
       <div className="items-center justify-between hidden lg:flex">
         <button
           onClick={() => navigate("/feed")}
-          className="flex items-center gap-2 bg-[#fefefe] rounded-[18px] px-5 py-[5px] font-['Poppins',sans-serif] font-medium text-[15px] text-black hover:bg-[#FFC37B] transition-colors cursor-pointer"
+          className="flex items-center gap-2.5 bg-[#fefefe] rounded-full px-5 py-2 font-['Poppins',sans-serif] font-semibold text-[15px] text-black hover:bg-[#FFC37B] transition-colors cursor-pointer shadow-xs border border-[#f0f0f0]"
         >
-          ← Go back to feed
+          <ArrowLeft className="w-5 h-5 text-black stroke-[2.5]" />
+          <span>Go back to feed</span>
         </button>
 
         <Tooltip content="Make a problem known." position="left" delay={0.2}>
@@ -334,17 +350,14 @@ const PingDetail = () => {
           </div>
         </div>
       )}
-      {/* ── Wave Header ────────────────────────────── */}
-      {waves.length > 0 && (
-        <h2 className="mb-3.5 font-['Poppins',sans-serif] font-bold text-[22px] md:text-[24px] text-black tracking-tight">
-          Waves
-        </h2>
-      )}
-
-      {/* ── Wave Cards ────────────────────────────── */}
+      {/* ── Wave Header & Cards ───────────────────── */}
       {waves.length > 0 && (
         <div className="flex flex-col gap-2.5">
-          {waves.map((wave) => {
+          <h2 className="font-['Poppins',sans-serif] font-semibold text-[17px] md:text-[18px] text-black pt-1">
+            Waves
+          </h2>
+          <div className="flex flex-col gap-2.5">
+            {waves.map((wave) => {
             const waveIsOwner = wave.isAnonymous
               ? (wave.isOwner ?? false)
               : (currentUser?.id === (typeof wave.author === "object" ? wave.author?.id : undefined));
@@ -358,6 +371,7 @@ const PingDetail = () => {
               />
             );
           })}
+          </div>
         </div>
       )}
 
@@ -413,6 +427,7 @@ const PingDetail = () => {
               {/* Comments content with scrollable list and fixed input */}
               <CommentsPanel
                 pingId={pingId ?? String(displayPing.id)}
+                initialCount={commentCount}
                 isDrawer={true}
               />
             </motion.div>
@@ -423,7 +438,6 @@ const PingDetail = () => {
       {itemToDelete && (
         <DeleteConfirmationModal
           itemType={itemToDelete.type}
-          isLoading={isDeleting}
           onConfirm={confirmDelete}
           onCancel={() => setItemToDelete(null)}
         />

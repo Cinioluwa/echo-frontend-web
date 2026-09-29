@@ -1,10 +1,5 @@
-/**
- * CommentActionsDropdown
- * Dropdown menu showing: Copy link, Report, Delete (owner only)
- * Opens on click of vertical ellipsis button
- */
-
 import { useState, useRef, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link2, Flag, Trash2, MoreVertical } from "lucide-react";
 import Toast from "../shared/Toast";
@@ -27,35 +22,64 @@ const CommentActionsDropdown = ({
     onDelete,
 }: CommentActionsDropdownProps) => {
     const [isOpen, setIsOpen] = useState(false);
+    const [coords, setCoords] = useState<{ top: number; left: number } | null>(null);
     const [isReportModalOpen, setIsReportModalOpen] = useState(false);
     const [showReportToast, setShowReportToast] = useState(false);
     const [showCopyToast, setShowCopyToast] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
     const buttonRef = useRef<HTMLButtonElement>(null);
     const menuItemClass =
-        "w-full flex gap-2.5 items-center py-1.5 px-2 hover:bg-gray-50 rounded-[6px] transition-colors text-left";
+        "w-full flex gap-2.5 items-center py-2 px-2.5 hover:bg-gray-50 rounded-[8px] transition-colors text-left cursor-pointer";
     const menuLabelClass =
         "font-['Poppins',sans-serif] font-medium text-[13px] leading-[1.2] text-black whitespace-nowrap";
 
-    // Close dropdown when clicking outside
+    const updatePosition = () => {
+        if (!buttonRef.current) return;
+        const rect = buttonRef.current.getBoundingClientRect();
+        const menuWidth = 172;
+        const menuHeight = isOwner ? 140 : 100;
+
+        // Check if there is enough space below, else flip upwards
+        const spaceBelow = window.innerHeight - rect.bottom;
+        const shouldOpenUp = spaceBelow < menuHeight && rect.top > menuHeight;
+
+        const top = shouldOpenUp ? rect.top - menuHeight - 6 : rect.bottom + 6;
+        const left = Math.max(12, Math.min(window.innerWidth - menuWidth - 12, rect.right - menuWidth));
+
+        setCoords({ top, left });
+    };
+
+    // Close dropdown when clicking outside or scrolling
     useEffect(() => {
+        if (!isOpen) return;
+
+        updatePosition();
+
         const handleClickOutside = (event: MouseEvent) => {
+            const target = event.target as Node;
             if (
                 dropdownRef.current &&
-                !dropdownRef.current.contains(event.target as Node) &&
+                !dropdownRef.current.contains(target) &&
                 buttonRef.current &&
-                !buttonRef.current.contains(event.target as Node)
+                !buttonRef.current.contains(target)
             ) {
                 setIsOpen(false);
             }
         };
 
-        if (isOpen) {
-            document.addEventListener("mousedown", handleClickOutside);
-            return () => {
-                document.removeEventListener("mousedown", handleClickOutside);
-            };
-        }
+        const handleScrollOrResize = () => {
+            setIsOpen(false);
+        };
+
+        document.addEventListener("mousedown", handleClickOutside);
+        window.addEventListener("scroll", handleScrollOrResize, true);
+        window.addEventListener("resize", handleScrollOrResize);
+
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+            window.removeEventListener("scroll", handleScrollOrResize, true);
+            window.removeEventListener("resize", handleScrollOrResize);
+        };
     }, [isOpen]);
 
     const handleCopyLink = (e: React.MouseEvent) => {
@@ -79,7 +103,7 @@ const CommentActionsDropdown = ({
     };
 
     return (
-        <div className="relative" ref={dropdownRef}>
+        <div className="relative">
             {showCopyToast && (
                 <div className="fixed bottom-6 right-6 z-50">
                     <Toast
@@ -108,27 +132,29 @@ const CommentActionsDropdown = ({
                 aria-label="More actions"
                 className="w-7 h-7 rounded-full flex items-center justify-center hover:bg-[#FFC37BAB] transition-colors cursor-pointer"
             >
-                <motion.div
-                    animate={{ scale: 1 }}
-                    transition={{ duration: 0.2 }}
-                >
-                    <MoreVertical
-                        width={16}
-                        height={16}
-                        className="text-[#4A504E]"
-                    />
-                </motion.div>
+                <MoreVertical
+                    width={16}
+                    height={16}
+                    className="text-[#4A504E]"
+                />
             </button>
 
-            {/* Dropdown menu */}
-            <AnimatePresence>
-                {isOpen && (
+            {/* Dropdown menu rendered via Portal so it displays OVER EVERYTHING */}
+            {isOpen && coords && createPortal(
+                <AnimatePresence>
                     <motion.div
-                        initial={{ opacity: 0, y: -8, scale: 0.95 }}
-                        animate={{ opacity: 1, y: 0, scale: 1 }}
-                        exit={{ opacity: 0, y: -8, scale: 0.95 }}
-                        transition={{ duration: 0.15 }}
-                        className="absolute right-0 top-full mt-2 bg-white rounded-[8px] shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)] py-2 px-2 min-w-[172px] z-50"
+                        ref={dropdownRef}
+                        initial={{ opacity: 0, scale: 0.95, y: -4 }}
+                        animate={{ opacity: 1, scale: 1, y: 0 }}
+                        exit={{ opacity: 0, scale: 0.95, y: -4 }}
+                        transition={{ duration: 0.12 }}
+                        style={{
+                            position: "fixed",
+                            top: `${coords.top}px`,
+                            left: `${coords.left}px`,
+                            zIndex: 99999,
+                        }}
+                        className="bg-white rounded-[10px] shadow-[0px_8px_24px_rgba(0,0,0,0.18)] border border-[#eaeaea] py-1.5 px-1.5 min-w-[172px]"
                         onClick={(e) => e.stopPropagation()}
                     >
                         {/* Copy link */}
@@ -145,7 +171,7 @@ const CommentActionsDropdown = ({
                         {/* Report */}
                         <button
                             onClick={handleReport}
-                            className={`${menuItemClass} mt-1`}
+                            className={`${menuItemClass} mt-0.5`}
                         >
                             <Flag width={17} height={17} className="text-black shrink-0" />
                             <span className={menuLabelClass}>
@@ -161,7 +187,7 @@ const CommentActionsDropdown = ({
                                     onEdit();
                                     setIsOpen(false);
                                 }}
-                                className={`${menuItemClass} mt-1`}
+                                className={`${menuItemClass} mt-0.5`}
                             >
                                 <svg
                                     width="17"
@@ -187,21 +213,22 @@ const CommentActionsDropdown = ({
                         {isOwner && (
                             <button
                                 onClick={handleDelete}
-                                className={`${menuItemClass} mt-1 hover:bg-red-50`}
+                                className={`${menuItemClass} mt-0.5 hover:bg-red-50 text-red-500`}
                             >
                                 <Trash2
                                     width={17}
                                     height={17}
                                     className="text-red-500 shrink-0"
                                 />
-                                <span className={menuLabelClass}>
+                                <span className="font-['Poppins',sans-serif] font-medium text-[13px] leading-[1.2] text-red-500 whitespace-nowrap">
                                     Delete
                                 </span>
                             </button>
                         )}
                     </motion.div>
-                )}
-            </AnimatePresence>
+                </AnimatePresence>,
+                document.body
+            )}
 
             <ReportModal
                 isOpen={isReportModalOpen}

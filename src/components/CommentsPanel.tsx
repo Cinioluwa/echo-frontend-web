@@ -20,6 +20,8 @@ interface Props {
 
 const CommentsPanel = ({ pingId, className = "", isDrawer = false, initialCount = 0 }: Props) => {
   const commentsListRef = useRef<CommentsListHandle>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [commentsCount, setCommentsCount] = useState(initialCount);
   const updatePing = usePingsStore((state) => state.updatePing);
 
@@ -38,6 +40,28 @@ const CommentsPanel = ({ pingId, className = "", isDrawer = false, initialCount 
       }
   }, [initialCount, commentsCount]);
 
+  // Prevent outer page scrolling when there's nothing to scroll in the comment section
+  useEffect(() => {
+    const panel = panelRef.current;
+    if (!panel) return;
+
+    const onWheel = (e: WheelEvent) => {
+      const el = scrollContainerRef.current;
+      if (!el) return;
+
+      const isScrollable = el.scrollHeight > el.clientHeight + 1;
+      if (!isScrollable) {
+        // Nothing to scroll through — prevent outer page from scrolling
+        e.preventDefault();
+      }
+    };
+
+    panel.addEventListener("wheel", onWheel, { passive: false });
+    return () => {
+      panel.removeEventListener("wheel", onWheel);
+    };
+  }, []);
+
   const handleCommentAdded = (comment: import("../api/types").Comment) => {
     // Optimistic prepend — no refetch, no loading flash
     commentsListRef.current?.addComment(comment);
@@ -55,11 +79,40 @@ const CommentsPanel = ({ pingId, className = "", isDrawer = false, initialCount 
     });
   };
 
+  const handleCommentsLoaded = (count: number) => {
+    setCommentsCount(count);
+    const currentPing = usePingsStore.getState().pingsById[pingId];
+    if (currentPing) {
+      updatePing(pingId, {
+        _count: {
+          ...(currentPing._count || { waves: 0, surges: 0, comments: 0 }),
+          comments: count,
+        },
+      });
+    }
+  };
+
+  const handleCommentDeleted = (_commentId: string | number, newTotal?: number) => {
+    const updated = typeof newTotal === "number" ? newTotal : Math.max(0, commentsCount - 1);
+    setCommentsCount(updated);
+
+    const currentPing = usePingsStore.getState().pingsById[pingId];
+    if (!currentPing) return;
+
+    updatePing(pingId, {
+      _count: {
+        ...(currentPing._count || { waves: 0, surges: 0, comments: 0 }),
+        comments: updated,
+      },
+    });
+  };
+
   return (
     <div
+      ref={panelRef}
       className={`${
-        isDrawer ? "bg-[#FFC37B] rounded-t-[30px]" : "bg-[#FFC37B] rounded-[24px] md:rounded-[28px]"
-      } flex flex-col h-full w-full overflow-hidden ${className}`}
+        isDrawer ? "bg-[#FFC37B] rounded-t-[30px] h-full" : "bg-[#FFC37B] rounded-[24px] md:rounded-[28px] h-auto"
+      } flex flex-col w-full overflow-hidden overscroll-contain ${className}`}
     >
       {/* Header */}
       <h2
@@ -75,14 +128,17 @@ const CommentsPanel = ({ pingId, className = "", isDrawer = false, initialCount 
 
       {/* Scrollable comments list */}
       <div
-        className={`flex-1 overflow-y-auto [scrollbar-width:none] px-[15px] ${
-          isDrawer ? "" : "min-h-0 pt-3"
+        ref={scrollContainerRef}
+        className={`flex-1 min-h-0 overflow-y-auto overscroll-contain [scrollbar-width:none] px-[15px] ${
+          isDrawer ? "" : "pt-3"
         }`}
       >
         <CommentsList
           ref={commentsListRef}
           targetType="ping"
           targetId={pingId}
+          onCommentDeleted={handleCommentDeleted}
+          onCommentsLoaded={handleCommentsLoaded}
         />
       </div>
 

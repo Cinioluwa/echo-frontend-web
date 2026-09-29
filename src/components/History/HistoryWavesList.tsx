@@ -237,7 +237,7 @@ const WaveHistoryCard = ({ wave, onDelete }: WaveHistoryCardProps) => {
                             {wave.title}
                         </h3>
                     )}
-                    <p className="font-['Poppins',sans-serif] font-normal text-[12px] md:text-[14px] text-[#171717] leading-normal">
+                    <p className="font-['Poppins',sans-serif] font-normal text-[12px] md:text-[14px] text-[#171717] leading-normal whitespace-pre-wrap">
                         {wave.description || wave.solution}
                     </p>
                 </div>

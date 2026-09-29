@@ -9,6 +9,7 @@
  */
 
 import { useNavigate } from "react-router-dom";
+import { ArrowLeft } from "lucide-react";
 
 interface BackButtonProps {
     variant?: "default" | "active";
@@ -39,36 +40,21 @@ const BackButton = ({
         <button
             onClick={handleClick}
             className={`
-        flex gap-[5px] items-center
-        px-[15px] py-2.5 rounded-[20px]
+        flex gap-2.5 items-center cursor-pointer
+        px-5 py-2 rounded-full shadow-xs
         transition-colors duration-200
         ${isActive
                     ? "bg-[#ffc37b] border-[0.8px] border-[#f49b31] text-white"
-                    : "bg-[#fefefe] border border-[#e0e0e0] text-black hover:bg-[#ffc37b] hover:border-[#f49b31] hover:text-white"
+                    : "bg-[#fefefe] border border-[#f0f0f0] text-black hover:bg-[#ffc37b] hover:border-[#f49b31] hover:text-white"
                 }
         ${className ?? ""}
       `}
             aria-label={label}
         >
-            {/* Back arrow icon — 20×20 */}
-            <svg
-                className="shrink-0 w-5 h-5"
-                viewBox="0 0 20 20"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-                aria-hidden="true"
-            >
-                <path
-                    d="M12.5 15L7.5 10L12.5 5"
-                    stroke={isActive ? "white" : "black"}
-                    strokeWidth="1.5"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                />
-            </svg>
+            <ArrowLeft className={`w-5 h-5 shrink-0 stroke-[2.5] ${isActive ? "text-white" : "text-black"}`} />
 
             {/* Label */}
-            <span className={`font-semibold text-[13px] leading-none whitespace-nowrap font-poppins ${isActive ? "text-white" : "text-black"}`}>
+            <span className={`font-semibold text-[15px] leading-none whitespace-nowrap font-['Poppins',sans-serif] ${isActive ? "text-white" : "text-black"}`}>
                 {label}
             </span>
         </button>

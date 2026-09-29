@@ -14,6 +14,7 @@ import { EditedLabel } from "../../utils/editedLabel";
 interface Props {
     comment: Comment;
     onRefresh?: () => void;
+    onDelete?: (commentId: string | number) => void;
     pingId: string;
 }
 
@@ -57,7 +58,7 @@ const getAuthorName = (comment: Comment) => {
 
 // ─── CommentItem Component ──────────────────────────────────────────────────
 
-const CommentItem = ({ comment, onRefresh: _onRefresh, pingId }: Props) => {
+const CommentItem = ({ comment, onRefresh: _onRefresh, onDelete, pingId }: Props) => {
     const { user } = useAuthStore();
     const [localSurgeCount, setLocalSurgeCount] = useState<number>(
         comment.surgeCount ?? 0
@@ -80,11 +81,13 @@ const CommentItem = ({ comment, onRefresh: _onRefresh, pingId }: Props) => {
     // Use API's isOwner field for anonymous comments, calculate ownership for non-anonymous
     const isOwner = comment.isAnonymous
         ? (comment.isOwner ?? false)
-        : (user?.id === (typeof comment.author === "object" ? comment.author?.id : undefined));
+        : (user?.id && comment.author?.id
+            ? Number(user.id) === Number(comment.author.id)
+            : (comment.isOwner ?? false));
 
     const { isEditable, countdownLabel } = useEditWindow(comment.createdAt);
     const canEdit = isOwner && !comment.isAnonymous && isEditable;
-    const canDelete = isOwner && !comment.isAnonymous;
+    const canDelete = isOwner;
     const authorName = getAuthorName(comment);
 
     const [isEditing, setIsEditing] = useState(false);
@@ -154,18 +157,27 @@ const CommentItem = ({ comment, onRefresh: _onRefresh, pingId }: Props) => {
     };
 
     const handleDelete = async () => {
-        if (isDeleting || !isOwner || comment.isAnonymous) return;
+        if (isDeleting || !isOwner) return;
         setIsDeleting(true);
+        // Instantly close modal and remove from UI without waiting for API or showing spinner
+        setShowDeleteModal(false);
+        onDelete?.(comment.id);
+
         try {
             await commentService.deleteComment(String(comment.id));
-            setShowDeleteModal(false);
-            _onRefresh?.();
         } catch (err) {
             setActionError(getErrorMessage(err));
             console.error("Error deleting comment:", err);
+            // Silently refresh list only if backend failed
+            _onRefresh?.();
         } finally {
             setIsDeleting(false);
         }
+    };
+
+    const handleDeleteReply = (replyId: string | number) => {
+        setReplies((prev) => prev.filter((r) => String(r.id) !== String(replyId)));
+        setLocalReplyCount((prev) => Math.max(0, prev - 1));
     };
 
     const handleShowDeleteModal = () => {
@@ -310,7 +322,7 @@ const CommentItem = ({ comment, onRefresh: _onRefresh, pingId }: Props) => {
                                     </div>
                                 </div>
                             ) : (
-                                <p className="text-[12px] font-['Poppins',sans-serif] font-normal text-black leading-normal break-words">
+                                <p className="text-[12px] font-['Poppins',sans-serif] font-normal text-black leading-normal break-words whitespace-pre-wrap">
                                     {comment.content}
                                     {comment.isEdited && <EditedLabel />}
                                 </p>
@@ -371,7 +383,11 @@ const CommentItem = ({ comment, onRefresh: _onRefresh, pingId }: Props) => {
                                 {replies.length > 0 && (
                                     <div className="w-full flex flex-col gap-[5px]">
                                         {replies.map((reply) => (
-                                            <ReplyItem key={reply.id} reply={reply} />
+                                            <ReplyItem
+                                                key={reply.id}
+                                                reply={reply}
+                                                onDelete={handleDeleteReply}
+                                            />
                                         ))}
                                     </div>
                                 )}
@@ -440,9 +456,11 @@ export default CommentItem;
 
 interface ReplyItemProps {
     reply: Comment;
+    onDelete?: (replyId: string | number) => void;
 }
 
-const ReplyItem = ({ reply }: ReplyItemProps) => {
+const ReplyItem = ({ reply, onDelete }: ReplyItemProps) => {
+    const { user } = useAuthStore();
     const [replyLocalSurgeCount, setReplyLocalSurgeCount] = useState<number>(
         reply.surgeCount ?? 0
     );
@@ -450,8 +468,31 @@ const ReplyItem = ({ reply }: ReplyItemProps) => {
         reply.hasSurged ?? false
     );
     const [isReplyToggling, setIsReplyToggling] = useState(false);
+    const [isDeleting, setIsDeleting] = useState(false);
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+
+    const isReplyOwner = reply.isAnonymous
+        ? (reply.isOwner ?? false)
+        : (user?.id && reply.author?.id
+            ? Number(user.id) === Number(reply.author.id)
+            : (reply.isOwner ?? false));
 
     const replyAuthorName = getAuthorName(reply);
+
+    const handleDeleteReply = async () => {
+        if (isDeleting || !isReplyOwner) return;
+        setIsDeleting(true);
+        setShowDeleteModal(false);
+        onDelete?.(reply.id);
+
+        try {
+            await commentService.deleteComment(String(reply.id));
+        } catch (err) {
+            console.error("Error deleting reply:", err);
+        } finally {
+            setIsDeleting(false);
+        }
+    };
 
     const handleReplySurge = async () => {
         if (isReplyToggling) return;
@@ -489,64 +530,84 @@ const ReplyItem = ({ reply }: ReplyItemProps) => {
     };
 
     return (
-        <div className="bg-white rounded-xl p-1.5 w-full flex gap-[5px] items-start">
-            {/* Reply Avatar */}
-            <div className="shrink-0 size-[23px]">
-                <UserAvatar
-                    user={typeof reply.author === "object" ? reply.author : null}
-                    size="sm"
-                    bgColor="bg-[#f49b31]"
-                    pictureUrl={
-                        reply.isAnonymous && reply.anonymousProfilePicture
-                            ? reply.anonymousProfilePicture
-                            : undefined
-                    }
-                />
-            </div>
-
-            {/* Reply Content */}
-            <div className="flex-1 flex flex-col gap-[5px] items-start min-w-0">
-                <div className="flex flex-col gap-0.5 w-full">
-                    <p className="text-[11px] font-['Poppins',sans-serif] font-semibold text-black leading-none">
-                        {replyAuthorName}
-                    </p>
-                    <p className="text-[10px] font-['Poppins',sans-serif] font-medium text-[#454545] leading-none">
-                        {formatTimestamp(reply.createdAt)}
-                    </p>
+        <>
+            <div className="bg-white rounded-xl p-1.5 w-full flex gap-[5px] items-start">
+                {/* Reply Avatar */}
+                <div className="shrink-0 size-[23px]">
+                    <UserAvatar
+                        user={typeof reply.author === "object" ? reply.author : null}
+                        size="sm"
+                        bgColor="bg-[#f49b31]"
+                        pictureUrl={
+                            reply.isAnonymous && reply.anonymousProfilePicture
+                                ? reply.anonymousProfilePicture
+                                : undefined
+                        }
+                    />
                 </div>
 
-                <p className="text-[12px] font-['Poppins',sans-serif] font-normal text-black leading-normal break-words w-full">
-                    {reply.content}
-                    {reply.isEdited && <EditedLabel />}
-                </p>
+                {/* Reply Content */}
+                <div className="flex-1 flex flex-col gap-[5px] items-start min-w-0">
+                    <div className="flex items-start justify-between w-full">
+                        <div className="flex flex-col gap-0.5">
+                            <p className="text-[11px] font-['Poppins',sans-serif] font-semibold text-black leading-none">
+                                {replyAuthorName}
+                            </p>
+                            <p className="text-[10px] font-['Poppins',sans-serif] font-medium text-[#454545] leading-none">
+                                {formatTimestamp(reply.createdAt)}
+                            </p>
+                        </div>
 
-                {/* Reply Surge button only (no reply button - one level deep) */}
-                <button
-                    type="button"
-                    onClick={handleReplySurge}
-                    disabled={isReplyToggling}
-                    aria-label={replyLocalHasSurged ? "Remove surge" : "Surge"}
-                    className={`flex items-center gap-[2.25px] px-[7.5px] py-[5.25px] rounded-[18px] border-[0.75px] border-black cursor-pointer transition-all duration-200 disabled:opacity-50 text-[11px] font-['Baloo_Bhai_2',sans-serif] font-bold uppercase leading-none ${replyLocalHasSurged
-                        ? "bg-[#f49b31] text-white border-[#f49b31]"
-                        : "bg-white text-black"
-                        }`}
-                >
-                    <svg
-                        width="7.5"
-                        height="12"
-                        viewBox="0 0 8 13"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="shrink-0"
-                    >
-                        <path
-                            d="M4 1L0.5 7.5H3.5V12L7.5 5.5H4.5L4 1Z"
-                            fill="currentColor"
+                        {/* Triple dots actions dropdown for nested comment / reply */}
+                        <CommentActionsDropdown
+                            commentId={reply.id}
+                            isOwner={isReplyOwner}
+                            onDelete={() => setShowDeleteModal(true)}
                         />
-                    </svg>
-                    <span>{replyLocalSurgeCount}</span>
-                </button>
+                    </div>
+
+                    <p className="text-[12px] font-['Poppins',sans-serif] font-normal text-black leading-normal break-words w-full whitespace-pre-wrap">
+                        {reply.content}
+                        {reply.isEdited && <EditedLabel />}
+                    </p>
+
+                    {/* Reply Surge button only (no reply button - one level deep) */}
+                    <button
+                        type="button"
+                        onClick={handleReplySurge}
+                        disabled={isReplyToggling}
+                        aria-label={replyLocalHasSurged ? "Remove surge" : "Surge"}
+                        className={`flex items-center gap-[2.25px] px-[7.5px] py-[5.25px] rounded-[18px] border-[0.75px] border-black cursor-pointer transition-all duration-200 disabled:opacity-50 text-[11px] font-['Baloo_Bhai_2',sans-serif] font-bold uppercase leading-none ${replyLocalHasSurged
+                            ? "bg-[#f49b31] text-white border-[#f49b31]"
+                            : "bg-white text-black"
+                            }`}
+                    >
+                        <svg
+                            width="7.5"
+                            height="12"
+                            viewBox="0 0 8 13"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="shrink-0"
+                        >
+                            <path
+                                d="M4 1L0.5 7.5H3.5V12L7.5 5.5H4.5L4 1Z"
+                                fill="currentColor"
+                            />
+                        </svg>
+                        <span>{replyLocalSurgeCount}</span>
+                    </button>
+                </div>
             </div>
-        </div>
+
+            {showDeleteModal && (
+                <DeleteConfirmationModal
+                    onConfirm={handleDeleteReply}
+                    onCancel={() => setShowDeleteModal(false)}
+                    isLoading={isDeleting}
+                    itemType="Comment"
+                />
+            )}
+        </>
     );
 };

@@ -78,7 +78,12 @@ const ProposeWaveBar = ({ pingId, onWaveProposed }: Props) => {
         formRef.current &&
         !formRef.current.contains(event.target as Node)
       ) {
-        setIsActive(false);
+        if (!solution.trim() && uploadedFiles.length === 0) {
+          setIsActive(false);
+          if (textareaRef.current) {
+            textareaRef.current.style.height = "auto";
+          }
+        }
       }
     };
 
@@ -88,7 +93,7 @@ const ProposeWaveBar = ({ pingId, onWaveProposed }: Props) => {
         document.removeEventListener("mousedown", handleClickOutside);
       };
     }
-  }, [isActive]);
+  }, [isActive, solution, uploadedFiles]);
 
   const handleFocus = () => {
     setIsActive(true);
@@ -97,9 +102,9 @@ const ProposeWaveBar = ({ pingId, onWaveProposed }: Props) => {
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setSolution(e.target.value);
-    // Dynamic auto-resize
+    // Dynamic auto-resize up to max 140px
     e.target.style.height = "auto";
-    e.target.style.height = `${e.target.scrollHeight}px`;
+    e.target.style.height = `${Math.min(e.target.scrollHeight, 140)}px`;
   };
 
   const handleAttachClick = () => {
@@ -163,6 +168,9 @@ const ProposeWaveBar = ({ pingId, onWaveProposed }: Props) => {
       setSolution("");
       setUploadedFiles([]);
       setIsActive(false);
+      if (textareaRef.current) {
+        textareaRef.current.style.height = "auto";
+      }
       onWaveProposed?.(createdWave);
     } catch (err: any) {
       console.error("Failed to propose wave:", err);
@@ -176,7 +184,7 @@ const ProposeWaveBar = ({ pingId, onWaveProposed }: Props) => {
     <form
       ref={formRef}
       onSubmit={handleSubmit}
-      className={`bg-white rounded-[16px] md:rounded-[25px] mb-4 md:mb-5 p-2 md:p-2.5 flex ${isActive ? "items-start" : "items-center"} gap-2 md:gap-[13px] w-full max-w-full transition-all duration-300`}
+      className={`bg-white rounded-[16px] md:rounded-[25px] mb-4 md:mb-5 p-2 md:p-2.5 flex ${isActive ? "items-start" : "items-center"} gap-2 md:gap-[13px] w-full max-w-full transition-all duration-200`}
     >
       {/* Hidden file input */}
       <input
@@ -190,113 +198,108 @@ const ProposeWaveBar = ({ pingId, onWaveProposed }: Props) => {
       />
 
       {/* Avatar */}
-      <div className={`shrink-0 flex items-center justify-center ${isActive ? "mt-1 md:mt-1.5" : ""}`}>
+      <div className={`shrink-0 flex items-center justify-center transition-all duration-200 ${isActive ? "mt-1 md:mt-1.5" : ""}`}>
         <UserAvatar user={user} size="md" responsive bgColor="bg-[#ffc37b]" />
       </div>
 
       {/* Main input container */}
-      <div className="flex-1 min-w-0 transition-all duration-300">
-        {/* Input area - animates height and content */}
-        <div className="w-full bg-[#fefefe] border-2 border-[#ffc37b] rounded-[16px] md:rounded-[20px] overflow-hidden transition-all duration-300">
-          {/* Expanded state: textarea with controls */}
-          <div
-            className={`flex flex-col transition-all duration-300 ${isActive
-              ? "max-h-[600px] opacity-100 px-3 md:px-4 pt-3 pb-1 md:pt-4 md:pb-1"
-              : "max-h-0 opacity-0 overflow-hidden"
-              }`}
-          >
-            {/* Textarea - expands when active */}
-            <textarea
-              ref={textareaRef}
-              value={solution}
-              onChange={handleChange}
-              placeholder="What's your solution?"
-              className="flex-1 w-full bg-[#fefefe] border-0 px-0 py-0 text-[13px] md:text-[14px] leading-[1.5] text-black outline-none resize-none font-['Poppins',sans-serif] font-medium placeholder:text-[#9e9e9e] placeholder:font-medium min-h-[80px] md:min-h-[100px] overflow-hidden focus:ring-0"
-              rows={3}
-              disabled={isSubmitting || isUploading}
-            />
-
-            {/* Uploaded files preview */}
-            {uploadedFiles.length > 0 && (
-              <div className="flex flex-wrap gap-2 mt-2 pb-2 border-b border-[#ffc37b]">
-                {uploadedFiles.map((file) => (
-                  <div
-                    key={file.id}
-                    className="flex items-center gap-1 bg-[#fff9f0] px-2.5 py-1 rounded-lg text-xs text-[#454545]"
-                  >
-                    <span className="truncate max-w-[150px]">
-                      {file.filename}
-                    </span>
-                    <button
-                      type="button"
-                      onClick={() => removeFile(file.id)}
-                      disabled={isSubmitting}
-                      className="shrink-0 text-[#ffc37b] hover:text-[#F49B31] transition-colors"
-                      title="Remove file"
-                    >
-                      ✕
-                    </button>
-                  </div>
-                ))}
-              </div>
-            )}
-
-            {/* Controls row: attach icon + button */}
-            <div className="mt-1.5 md:mt-2 flex items-center justify-between gap-2">
-              {/* Attach icon button */}
-              <button
-                type="button"
-                onClick={handleAttachClick}
-                disabled={isSubmitting || isUploading}
-                className="shrink-0 size-6 md:size-[30px] flex items-center justify-center hover:opacity-70 transition-opacity disabled:opacity-50"
-                title="Attach file"
-              >
-                <img
-                  src={attachIcon}
-                  alt="Attach"
-                  className="size-6 md:size-[30px]"
-                />
-              </button>
-
-              {/* Propose button */}
-              <button
-                type="submit"
-                disabled={isSubmitting || isUploading || !solution.trim()}
-                className="bg-[#fef5ea] border border-black rounded-[16px] md:rounded-[20px] px-2 md:px-2.5 py-1 md:py-1.5 flex items-center gap-1 md:gap-[5px] cursor-pointer hover:bg-[#f9eedb] disabled:opacity-50 disabled:cursor-not-allowed transition-colors shrink-0 self-end"
-              >
-                {/* Wave icon */}
-                <img src={waveIcon} alt="Wave" className="size-5 md:size-6" />
-                <span className="font-['Baloo_Bhai_2',sans-serif] font-bold text-[12px] md:text-[14px] text-black uppercase whitespace-nowrap">
-                  {isUploading
-                    ? "Uploading..."
-                    : isSubmitting
-                      ? "Proposing..."
-                      : "Propose a Wave"}
-                </span>
-              </button>
-            </div>
-          </div>
-
-          {/* Compact state: simple textarea */}
+      <div className="flex-1 min-w-0 flex flex-col">
+        {/* Input area */}
+        <div
+          className={`w-full bg-[#fefefe] border-2 border-[#ffc37b] rounded-[16px] md:rounded-[20px] transition-all duration-200 flex flex-col justify-between ${
+            isActive
+              ? "px-3 md:px-4 pt-2.5 pb-2 md:pt-3 md:pb-2"
+              : "px-3 md:px-4 py-2 md:py-2.5"
+          }`}
+        >
+          {/* Single persistent Textarea */}
           <textarea
+            ref={textareaRef}
             value={solution}
             onChange={handleChange}
             onFocus={handleFocus}
             placeholder="What's your solution?"
-            className={`w-full bg-[#fefefe] border-0 px-3 md:px-4 py-2 md:py-2.5 text-[13px] md:text-[14px] leading-[1.35] text-black outline-none resize-none font-['Poppins',sans-serif] font-medium placeholder:text-[#9e9e9e] placeholder:font-medium focus:ring-0 transition-all duration-300 ${isActive
-              ? "max-h-0 opacity-0 overflow-hidden pointer-events-none py-0"
-              : "max-h-[44px] md:max-h-[50px] opacity-100"
-              }`}
             rows={1}
             disabled={isSubmitting || isUploading}
+            className={`w-full bg-transparent border-0 p-0 text-[13px] md:text-[14px] leading-[1.4] text-black outline-none resize-none font-['Poppins',sans-serif] font-medium placeholder:text-[#9e9e9e] placeholder:font-medium focus:ring-0 transition-[min-height] duration-200 ${
+              isActive
+                ? "min-h-[40px] md:min-h-[48px] max-h-[140px] overflow-y-auto"
+                : "min-h-[22px] md:min-h-[24px] max-h-[26px] overflow-hidden"
+            }`}
           />
-        </div>
-      </div>
 
-      {/* Error message - displayed when active */}
-      {error && isActive && (
-        <p className="text-red-500 text-xs px-5 py-1 w-full basis-full">{error}</p>
-      )}
+          {/* Uploaded files preview */}
+          {uploadedFiles.length > 0 && (
+            <div className="flex flex-wrap gap-2 mt-2 pb-2 border-b border-[#ffc37b]">
+              {uploadedFiles.map((file) => (
+                <div
+                  key={file.id}
+                  className="flex items-center gap-1 bg-[#fff9f0] px-2.5 py-1 rounded-lg text-xs text-[#454545]"
+                >
+                  <span className="truncate max-w-[150px]">
+                    {file.filename}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => removeFile(file.id)}
+                    disabled={isSubmitting}
+                    className="shrink-0 text-[#ffc37b] hover:text-[#F49B31] transition-colors"
+                    title="Remove file"
+                  >
+                    ✕
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* Controls row: attach icon + button (snug at the bottom, no dead gap) */}
+          <div
+            className={`flex items-center justify-between gap-2 overflow-hidden transition-all duration-200 ease-out ${
+              isActive
+                ? "max-h-[50px] opacity-100 mt-1.5 md:mt-2 pointer-events-auto"
+                : "max-h-0 opacity-0 mt-0 pointer-events-none"
+            }`}
+          >
+            {/* Attach icon button */}
+            <button
+              type="button"
+              onClick={handleAttachClick}
+              disabled={isSubmitting || isUploading}
+              className="shrink-0 size-6 md:size-[30px] flex items-center justify-center hover:opacity-70 transition-opacity disabled:opacity-50 cursor-pointer"
+              title="Attach file"
+            >
+              <img
+                src={attachIcon}
+                alt="Attach"
+                className="size-6 md:size-[30px]"
+              />
+            </button>
+
+            {/* Propose button */}
+            <button
+              type="submit"
+              disabled={isSubmitting || isUploading || !solution.trim()}
+              className="bg-[#fef5ea] border border-black rounded-[16px] md:rounded-[20px] px-2.5 md:px-3 py-1 md:py-1.5 flex items-center gap-1 md:gap-[5px] cursor-pointer hover:bg-[#f9eedb] disabled:opacity-50 disabled:cursor-not-allowed transition-colors shrink-0 self-end"
+            >
+              {/* Wave icon */}
+              <img src={waveIcon} alt="Wave" className="size-5 md:size-6" />
+              <span className="font-['Baloo_Bhai_2',sans-serif] font-bold text-[12px] md:text-[14px] text-black uppercase whitespace-nowrap">
+                {isUploading
+                  ? "Uploading..."
+                  : isSubmitting
+                    ? "Proposing..."
+                    : "Propose a Wave"}
+              </span>
+            </button>
+          </div>
+        </div>
+
+        {/* Error message - displayed when active */}
+        {error && isActive && (
+          <p className="text-red-500 text-xs px-2 pt-1">{error}</p>
+        )}
+      </div>
     </form>
   );
 };

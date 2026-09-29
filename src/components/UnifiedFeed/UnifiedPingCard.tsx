@@ -55,7 +55,6 @@ const UnifiedPingCard = ({
   const currentPing = pingFromStore || ping;
 
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [isDeleting, setIsDeleting] = useState(false);
 
   const isOwner = currentPing.isAnonymous
     ? (currentPing.isOwner ?? false)
@@ -119,15 +118,12 @@ const UnifiedPingCard = ({
   };
 
   const handleDeleteConfirm = async () => {
-    setIsDeleting(true);
+    setShowDeleteModal(false);
+    usePingsStore.getState().removePing(String(currentPing.id));
     try {
       await pingService.deletePing(String(currentPing.id));
-      usePingsStore.getState().removePing(String(currentPing.id));
     } catch (err) {
       console.error("Failed to delete ping:", err);
-    } finally {
-      setIsDeleting(false);
-      setShowDeleteModal(false);
     }
   };
 
@@ -367,7 +363,6 @@ const UnifiedPingCard = ({
         <DeleteConfirmationModal
           onConfirm={handleDeleteConfirm}
           onCancel={() => setShowDeleteModal(false)}
-          isLoading={isDeleting}
         />
       )}
     </>

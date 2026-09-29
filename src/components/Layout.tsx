@@ -217,31 +217,42 @@ const Layout = () => {
 
           {/* Ping Detail right aside — CommentsPanel (Phase 3) */}
           {pingDetailId && (
-            <aside className="hidden lg:flex w-[360px] shrink-0 sticky top-[85px] pt-[15px] flex-col gap-[15px] h-[calc(100vh-85px)]">
-              <CommentsPanel pingId={pingDetailId} className="flex-1" initialCount={ping?._count?.comments} />
+            <aside className="hidden lg:flex w-[360px] shrink-0 sticky top-[85px] pt-[15px] pb-4 flex-col gap-[15px] max-h-[calc(100vh-85px)]">
+              {(() => {
+                const isOwner = ping?.isAnonymous
+                  ? (ping.isOwner ?? false)
+                  : (currentUser?.id === (typeof ping?.author === "object" ? ping.author?.id : undefined));
+                const isResolved = !!ping?.resolvedAt;
+                const canResolve = ping && isOwner && !isResolved;
 
-              {/* ── Resolve error message ─────────────────── */}
-              {resolveError && (
-                <div className="bg-red-50 border border-red-200 rounded-[10px] p-3 text-red-700 text-sm">
-                  {resolveError}
-                </div>
-              )}
-
-              {/* ── Mark as Resolved bar ─────────────────── */}
-              {ping &&
-                (() => {
-                  const isOwner = ping.isAnonymous
-                    ? (ping.isOwner ?? false)
-                    : (currentUser?.id === (typeof ping.author === "object" ? ping.author?.id : undefined));
-                  const isResolved = !!ping.resolvedAt;
-                  return isOwner && !isResolved ? (
-                    <MarkAsResolvedBar
+                return (
+                  <>
+                    <CommentsPanel
                       pingId={pingDetailId}
-                      onResolved={handleResolvePing}
-                      isLoading={isResolvingPing}
+                      className={canResolve ? "max-h-[calc(100vh-85px-135px)]" : "max-h-[calc(100vh-105px)]"}
+                      initialCount={ping?._count?.comments}
                     />
-                  ) : null;
-                })()}
+
+                    {/* ── Resolve error message ─────────────────── */}
+                    {resolveError && (
+                      <div className="bg-red-50 border border-red-200 rounded-[10px] p-3 text-red-700 text-sm shrink-0">
+                        {resolveError}
+                      </div>
+                    )}
+
+                    {/* ── Mark as Resolved bar ─────────────────── */}
+                    {canResolve && (
+                      <div className="shrink-0">
+                        <MarkAsResolvedBar
+                          pingId={pingDetailId}
+                          onResolved={handleResolvePing}
+                          isLoading={isResolvingPing}
+                        />
+                      </div>
+                    )}
+                  </>
+                );
+              })()}
             </aside>
           )}
         </div>

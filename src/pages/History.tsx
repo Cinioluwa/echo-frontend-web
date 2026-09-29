@@ -24,6 +24,7 @@ import {
 } from "../components/History";
 import type { HistoryTab } from "../components/History";
 import { FaPlus } from "react-icons/fa6";
+import { ArrowLeft } from "lucide-react";
 
 const VALID_TABS: HistoryTab[] = ["pings", "waves", "comments", "surged"];
 
@@ -50,9 +51,10 @@ const History = () => {
             <div className="hidden md:flex items-center justify-between mb-[22px]">
                 <button
                     onClick={() => navigate("/feed")}
-                    className="flex items-center gap-2 bg-[#fefefe] rounded-[18px] px-5 py-[5px] font-['Poppins',sans-serif] font-medium text-[15px] text-black hover:bg-[#FFC37B] transition-colors cursor-pointer"
+                    className="flex items-center gap-2.5 bg-[#fefefe] rounded-full px-5 py-2 font-['Poppins',sans-serif] font-semibold text-[15px] text-black hover:bg-[#FFC37B] transition-colors cursor-pointer shadow-xs border border-[#f0f0f0]"
                 >
-                    ← Go back to feed
+                    <ArrowLeft className="w-5 h-5 text-black stroke-[2.5]" />
+                    <span>Go back to feed</span>
                 </button>
                 <button
                     onClick={() => setShowPingFormModal(true)}
