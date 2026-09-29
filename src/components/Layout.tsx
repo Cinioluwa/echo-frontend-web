@@ -17,7 +17,7 @@ import { Outlet, useLocation } from "react-router-dom";
 import { usePageTitle } from "../hooks/usePageTitle";
 import { useNotificationSocket } from "../hooks/useNotificationSocket";
 import { usePushNotifications } from "../hooks/usePushNotifications";
-import { getSocket } from "../api/socket";
+import { getSocket, connectSocket } from "../api/socket";
 import NavBar from "./NavBar";
 import SideBar from "./SideBar";
 import MobileHeader from "./MobileHeader";
@@ -57,6 +57,10 @@ const Layout = () => {
   const { subscribe } = usePushNotifications();
   useEffect(() => {
     if (currentUser) {
+      const token = useAuthStore.getState().token;
+      if (token) {
+        connectSocket(token);
+      }
       subscribe();
       // Fetch initial notifications to populate unread badge (Fixes "0" bubble issue)
       useNotificationStore.getState().fetchNotifications();
@@ -65,18 +69,34 @@ const Layout = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentUser?.id]);
 
-  // Global surge updates listener
+  // Global real-time socket events
   useEffect(() => {
     const socket = getSocket();
     if (!socket) return;
 
     const handleSurgeUpdate = ({ pingId, surgeCount }: { pingId: number | string; surgeCount: number }) => {
+      console.log(`⚡ Real-time ping:surgeUpdate ${pingId}: count=${surgeCount}`);
       updatePingStore(String(pingId), { surgeCount });
     };
 
+    const handlePingCreated = (newPing: any) => {
+      console.log('📌 Real-time ping:created:', newPing);
+      usePingsStore.getState().addPing(newPing);
+    };
+
+    const handlePingDeleted = ({ pingId }: { pingId: number | string }) => {
+      console.log('🗑️ Real-time ping:deleted:', pingId);
+      usePingsStore.getState().removePing(String(pingId));
+    };
+
     socket.on("ping:surgeUpdate", handleSurgeUpdate);
+    socket.on("ping:created", handlePingCreated);
+    socket.on("ping:deleted", handlePingDeleted);
+
     return () => {
       socket.off("ping:surgeUpdate", handleSurgeUpdate);
+      socket.off("ping:created", handlePingCreated);
+      socket.off("ping:deleted", handlePingDeleted);
     };
   }, [updatePingStore]);
   // ─────────────────────────────────────────────────────────────────────────

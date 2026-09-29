@@ -245,13 +245,30 @@ export const usePingsStore = create<PingsState>()(
       },
 
       addPing: (ping: Ping) => {
+        let isNew = false;
+
         set((state) => {
-          state.pings.unshift(ping);
+          if (state.pingsById[ping.id.toString()]) {
+            return;
+          }
+          isNew = true;
+
+          const currentCategoryId = useSearchStore.getState().selectedCategoryId;
+          const pingCategoryId = ping.category?.id;
+
+          // If no category filter is active, or if the filter matches this ping's category, prepend
+          if (!currentCategoryId || currentCategoryId === pingCategoryId) {
+            state.pings.unshift(ping);
+          }
+
           state.pingsById[ping.id.toString()] = ping;
+
+          // Clear cache so navigating between categories shows fresh data including this ping
+          state.cache = {};
         });
 
-        // Increment category count for the new ping's category
-        if (ping.category?.id) {
+        // Increment category count only if ping was actually newly added
+        if (isNew && ping.category?.id) {
           useSearchStore.getState().incrementCategoryCount(ping.category.id);
         }
       },

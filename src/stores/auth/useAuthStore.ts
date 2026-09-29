@@ -466,6 +466,11 @@ export const useAuthStore = create<AuthState>()(
           token: state.token,
           isAuthenticated: state.isAuthenticated,
         }),
+        onRehydrateStorage: () => (state) => {
+          if (state?.token) {
+            connectSocket(state.token);
+          }
+        },
       },
     ),
     { name: "AuthStore" },

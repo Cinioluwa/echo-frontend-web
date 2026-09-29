@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { getSocket } from '../api/socket';
 import { useNotificationStore } from '../stores/ui/useNotificationStore';
+import { playNotificationChime } from '../utils/audioUtils';
 import type { AppNotification } from '../api/types';
 
 /**
@@ -26,18 +27,11 @@ export function useNotificationSocket() {
     if (!socket) return;
 
     const handler = (notification: AppNotification) => {
+      console.log('🔔 Received notification:new event:', notification);
       incrementUnread();
 
       // Play notification chime
-      try {
-        const audio = new Audio('/sounds/sonar-ping.mp3');
-        audio.volume = 0.6;
-        audio.play().catch(() => {
-          // Autoplay blocked by browser before user gesture - ignore safely
-        });
-      } catch {
-        // Audio playback unavailable - ignore safely
-      }
+      playNotificationChime();
 
       const isQuietPage = QUIET_PATHS.some((path) =>
         location.pathname.startsWith(path)
