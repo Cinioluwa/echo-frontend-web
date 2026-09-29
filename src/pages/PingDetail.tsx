@@ -174,6 +174,7 @@ const PingDetail = () => {
       setPing((prev) =>
         prev && prev.id === Number(id) ? { ...prev, surgeCount } : prev,
       );
+      usePingsStore.getState().updatePing(String(id), { surgeCount });
     });
 
     // Listen for surge updates on waves

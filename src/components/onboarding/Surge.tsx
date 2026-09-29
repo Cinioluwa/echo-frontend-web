@@ -1,48 +1,23 @@
-import { useState } from "react";
+import OnboardingLottiePlayer from "./OnboardingLottiePlayer";
 
 const Surge = () => {
-  const [videoUnavailable, setVideoUnavailable] = useState(false);
-
   return (
-    <div>
-      {/* Main Container */}
-      <div className="relative w-full max-w-4xl aspect-16/10 bg-white rounded-2xl shadow-2xl  border border-purple-100 flex flex-col gap-10 items-center justify-between p-8 md:p-12">
-        {/* Top/Center Section: Branding/Logo */}
-        <div className="flex-1  items-center justify-center w-full">
-          <div>
-            {videoUnavailable ? (
-              <div className="w-full max-h-[500px] min-h-[220px] rounded-xl bg-[#f8f8f8] border border-[#ececec] flex items-center justify-center px-6 text-center text-[#4a504e] text-sm">
-                Video preview is unavailable right now. Continue to the next step.
-              </div>
-            ) : (
-              <video
-                autoPlay
-                loop
-                muted
-                playsInline
-                preload="metadata"
-                onError={() => setVideoUnavailable(true)}
-                className="w-full max-h-[500px] rounded-xl object-contain"
-              >
-                <source src="/assets/videos/Surge.mp4" type="video/mp4" />
-              </video>
-            )}
-          </div>
-        </div>
+    <div className="w-full flex flex-col items-center text-center">
+      {/* Visual Stage */}
+      <div className="w-full h-[260px] sm:h-[280px] rounded-2xl bg-slate-50 dark:bg-[#0D0E12] border border-slate-200/70 dark:border-white/10 flex items-center justify-center p-3 relative overflow-hidden mb-6 shadow-inner">
+        <OnboardingLottiePlayer type="support" className="w-full h-full" />
+      </div>
 
-        {/* Bottom Section: Text Content */}
-        <div className="w-full max-w-[1000px] text-center space-y-6">
-          <div className="space-y-4">
-            <h1 className="text-4xl md:text-5xl font-bold text-[#F49B31]">
-              Back <span className="text-[#FFC37B]">what matters</span>
-            </h1>
-            <p className="text-gray-700 text-[15px] leading-relaxed font-medium">
-              Tap the lightning bolt on any Ping, Wave, or comment you agree
-              with to Surge it. The more surges something gets, the higher it
-              rises — and the harder it becomes for leadership to ignore.
-            </p>
-          </div>
-        </div>
+      {/* Text Content */}
+      <div className="space-y-3 px-2">
+        <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-900 dark:text-white tracking-tight">
+          Back <span className="text-[#F49B31]">what matters</span>
+        </h2>
+        <p className="text-gray-600 dark:text-gray-300 text-sm sm:text-base leading-relaxed max-w-md mx-auto">
+          Tap the lightning bolt on any Ping, Wave, or comment you agree with to{" "}
+          <strong className="text-[#F49B31] font-semibold">Surge</strong> it. The more
+          surges something gets, the higher it rises — and the harder it becomes to ignore.
+        </p>
       </div>
     </div>
   );

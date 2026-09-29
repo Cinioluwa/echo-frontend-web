@@ -123,9 +123,16 @@ const UnifiedFeed = () => {
       usePingsStore.getState().removePing(String(pingId));
     });
 
+    // Listen for real-time surge updates
+    const handleSurgeUpdate = ({ pingId, surgeCount }: { pingId: number | string; surgeCount: number }) => {
+      usePingsStore.getState().updatePing(String(pingId), { surgeCount });
+    };
+    socket.on("ping:surgeUpdate", handleSurgeUpdate);
+
     return () => {
       socket.off("ping:created");
       socket.off("ping:deleted");
+      socket.off("ping:surgeUpdate", handleSurgeUpdate);
     };
   }, []);
 

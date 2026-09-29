@@ -17,6 +17,7 @@ import { Outlet, useLocation } from "react-router-dom";
 import { usePageTitle } from "../hooks/usePageTitle";
 import { useNotificationSocket } from "../hooks/useNotificationSocket";
 import { usePushNotifications } from "../hooks/usePushNotifications";
+import { getSocket } from "../api/socket";
 import NavBar from "./NavBar";
 import SideBar from "./SideBar";
 import MobileHeader from "./MobileHeader";
@@ -63,6 +64,21 @@ const Layout = () => {
     // Only re-run when the logged-in user changes (e.g. after login/logout)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentUser?.id]);
+
+  // Global surge updates listener
+  useEffect(() => {
+    const socket = getSocket();
+    if (!socket) return;
+
+    const handleSurgeUpdate = ({ pingId, surgeCount }: { pingId: number | string; surgeCount: number }) => {
+      updatePingStore(String(pingId), { surgeCount });
+    };
+
+    socket.on("ping:surgeUpdate", handleSurgeUpdate);
+    return () => {
+      socket.off("ping:surgeUpdate", handleSurgeUpdate);
+    };
+  }, [updatePingStore]);
   // ─────────────────────────────────────────────────────────────────────────
 
   const [announcement, setAnnouncement] = useState<Announcement | null>(null);

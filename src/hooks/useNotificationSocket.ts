@@ -28,6 +28,17 @@ export function useNotificationSocket() {
     const handler = (notification: AppNotification) => {
       incrementUnread();
 
+      // Play notification chime
+      try {
+        const audio = new Audio('/sounds/sonar-ping.mp3');
+        audio.volume = 0.6;
+        audio.play().catch(() => {
+          // Autoplay blocked by browser before user gesture - ignore safely
+        });
+      } catch {
+        // Audio playback unavailable - ignore safely
+      }
+
       const isQuietPage = QUIET_PATHS.some((path) =>
         location.pathname.startsWith(path)
       );
