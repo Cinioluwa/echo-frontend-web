@@ -85,7 +85,7 @@ const VIOLENT_LANGUAGE = [
   "kill yourself",
   "kys",
   "i will kill",
-  "i\'ll kill",
+  "i'll kill",
   "go die",
   "bomb threat",
   "shoot you",

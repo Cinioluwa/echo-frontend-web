@@ -94,7 +94,7 @@ const UserProfile = () => {
       }
     };
     fetchUser();
-  }, []);
+  }, [updateAuthUser]);
 
   // Profile picture upload handler
   const handlePictureChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -326,14 +326,14 @@ const UserProfile = () => {
   };
 
   return (
-    <div className="overflow-scroll h-screen">
+    <div className="min-h-screen bg-[#FEF5EA]">
       <ProfileLayout />
-      <main className="mt-3 mx-auto h-full p-4 md:p-10">
-        <div className="flex md:border rounded-[15px] border-[#FFC37B] p-5 flex-col lg:flex-row gap-0 md:gap-12">
+      <main className="mt-1 mx-auto h-full w-full max-w-[1200px] p-4 md:p-10 pt-2 md:pt-2 pb-16 md:pb-20">
+        <div className="flex border border-[#F4E3C9] rounded-[20px] bg-white p-4 md:p-7 flex-col lg:flex-row gap-4 lg:gap-8 shadow-sm">
           {/* SIDE PANEL COMPONENT */}
           <UserProfileSidePanel pages={pages} />
           {/* FORM CONTENT */}
-          <div className="flex-1 md:border-l overflow-scroll md:border-orange-200 md:pl-12 md:pt-0">
+          <div className="flex-1 min-w-0 lg:border-l border-[#F4E3C9] overflow-hidden lg:pl-8 lg:pt-0">
             <h2 className="text-lg md:text-xl md:mb-6 mb-4 font-semibold text-[#4A3728]">Profile Information</h2>
             {loading || error ? (
               <div className="space-y-6 animate-pulse">
@@ -367,7 +367,7 @@ const UserProfile = () => {
                     )}
                   </div>
                   <div className="flex-1">
-                    <label className="px-5 py-2 bg-white border border-orange-200 rounded-lg text-sm shadow-sm hover:border-orange-300 transition cursor-pointer inline-block">
+                    <label className="px-5 py-2 bg-white border border-[#F4E3C9] rounded-full text-sm shadow-sm hover:bg-[#FEF5EA] transition cursor-pointer inline-block">
                       <input
                         type="file"
                         accept="image/*"
@@ -405,7 +405,7 @@ const UserProfile = () => {
                           value={firstName}
                           onChange={(e) => setFirstName(e.target.value)}
                           disabled={nameChangeSaving}
-                          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 disabled:bg-gray-100 text-sm"
+                          className="w-full px-4 py-2 border border-[#F4E3C9] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#FFC37B] disabled:bg-[#FEF5EA] text-sm text-[#060B13]"
                         />
                       </div>
                       <div>
@@ -417,7 +417,7 @@ const UserProfile = () => {
                           value={lastName}
                           onChange={(e) => setLastName(e.target.value)}
                           disabled={nameChangeSaving}
-                          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 disabled:bg-gray-100 text-sm"
+                          className="w-full px-4 py-2 border border-[#F4E3C9] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#FFC37B] disabled:bg-[#FEF5EA] text-sm text-[#060B13]"
                         />
                       </div>
 
@@ -445,14 +445,14 @@ const UserProfile = () => {
                             !firstName.trim() ||
                             !lastName.trim()
                           }
-                          className="px-4 py-2 bg-orange-500 text-white rounded-lg text-sm hover:bg-orange-600 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                          className="px-5 py-2 bg-[#F49B31] text-white rounded-full text-sm hover:bg-[#d88429] transition disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                           {nameChangeSaving ? "Saving..." : "Save Name"}
                         </button>
                         <button
                           onClick={handleCancelEditName}
                           disabled={nameChangeSaving}
-                          className="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg text-sm hover:bg-gray-300 transition disabled:opacity-50"
+                          className="px-5 py-2 bg-[#FEF5EA] text-[#4A3728] rounded-full text-sm hover:bg-[#fae9d4] transition disabled:opacity-50"
                         >
                           Cancel
                         </button>
@@ -474,7 +474,7 @@ const UserProfile = () => {
                       <button
                         onClick={() => setEditingName(true)}
                         disabled={!nameChangeStatus.canChangeName}
-                        className="px-4 py-2 bg-white border border-orange-200 rounded-lg text-sm hover:border-orange-300 transition disabled:opacity-50 disabled:cursor-not-allowed disabled:text-gray-400"
+                        className="px-5 py-2 bg-white border border-[#F4E3C9] rounded-full text-sm text-[#4A3728] hover:bg-[#FEF5EA] transition disabled:opacity-50 disabled:cursor-not-allowed disabled:text-gray-400"
                       >
                         Edit Name
                       </button>
@@ -516,7 +516,7 @@ const UserProfile = () => {
                         )}
                       </div>
                       <div className="flex-1">
-                        <label className="px-5 py-2 bg-white border border-orange-200 rounded-lg text-sm shadow-sm hover:border-orange-300 transition cursor-pointer inline-block">
+                        <label className="px-5 py-2 bg-white border border-[#F4E3C9] rounded-full text-sm shadow-sm hover:bg-[#FEF5EA] transition cursor-pointer inline-block">
                           <input
                             type="file"
                             accept="image/*"
@@ -557,7 +557,7 @@ const UserProfile = () => {
                             value={alias}
                             onChange={(e) => setAlias(e.target.value)}
                             disabled={aliasSaving}
-                            className="w-full px-5 py-3 border border-gray-300 rounded-[9px] focus:outline-none focus:ring-2 focus:ring-orange-500 disabled:bg-gray-100 text-base"
+                            className="w-full px-5 py-3 border border-[#F4E3C9] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#FFC37B] disabled:bg-[#FEF5EA] text-base text-[#060B13]"
                             placeholder="Enter your alias"
                           />
                           {aliasError && (
@@ -570,14 +570,14 @@ const UserProfile = () => {
                             <button
                               onClick={handleSaveAlias}
                               disabled={aliasSaving || !alias.trim()}
-                              className="px-4 py-2 bg-orange-500 text-white rounded-lg text-sm hover:bg-orange-600 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                              className="px-5 py-2 bg-[#F49B31] text-white rounded-full text-sm hover:bg-[#d88429] transition disabled:opacity-50 disabled:cursor-not-allowed"
                             >
                               {aliasSaving ? "Saving..." : "Save Alias"}
                             </button>
                             <button
                               onClick={handleCancelEditAlias}
                               disabled={aliasSaving}
-                              className="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg text-sm hover:bg-gray-300 transition disabled:opacity-50"
+                              className="px-5 py-2 bg-[#FEF5EA] text-[#4A3728] rounded-full text-sm hover:bg-[#fae9d4] transition disabled:opacity-50"
                             >
                               Cancel
                             </button>
@@ -586,15 +586,15 @@ const UserProfile = () => {
                       ) : (
                         // View mode
                         <div className="space-y-3">
-                          <div className="bg-orange-50 border border-orange-300 rounded-[9px] px-5 py-3">
-                            <p className="text-base text-black font-poppins">{alias || "Not set"}</p>
+                          <div className="bg-[#FEF5EA] border border-[#F4E3C9] rounded-xl px-5 py-3">
+                            <p className="text-base text-[#060B13] font-poppins">{alias || "Not set"}</p>
                           </div>
                           <p className="text-xs text-gray-500">
                             Your alias can be changed every 30 days
                           </p>
                           <button
                             onClick={() => setEditingAlias(true)}
-                            className="px-4 py-2 bg-white border border-orange-200 rounded-lg text-sm hover:border-orange-300 transition"
+                            className="px-5 py-2 bg-white border border-[#F4E3C9] rounded-full text-sm text-[#4A3728] hover:bg-[#FEF5EA] transition"
                           >
                             Edit Alias
                           </button>

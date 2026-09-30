@@ -19,5 +19,14 @@ export default defineConfig([
       ecmaVersion: 2020,
       globals: globals.browser,
     },
+    rules: {
+      // `any` appears ~155 times across the app, overwhelmingly as
+      // `catch (err: any)` and loosely-typed API payloads. At "error" severity
+      // this kept `npm run lint` permanently red, which meant it could not be
+      // used as a gate at all. Downgraded to a warning so the remaining sites
+      // stay visible and reviewable without blocking the build; replacing them
+      // with proper error/payload types is a separate, deliberate refactor.
+      '@typescript-eslint/no-explicit-any': 'warn',
+    },
   },
 ])

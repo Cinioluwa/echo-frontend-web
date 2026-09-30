@@ -20,7 +20,6 @@ import PingActionsDropdown from "./PingActionsDropdown";
 import ImageCarousel from "../shared/ImageCarousel";
 import type { Ping } from "../../api/types";
 import { categoryImages } from "../CategoryImages";
-import { Tooltip } from "../Tooltip";
 import SurgeIcon from "../shared/SurgeIcon";
 
 const waveIcon = "/assets/icon/wave.svg";
@@ -185,7 +184,6 @@ const UnifiedPingCard = ({
                 ].join(" ")}
               >
                 <span
-                  title={authorName}
                   className="font-['Poppins',sans-serif] font-semibold text-[clamp(12px,3vw,15px)] text-black leading-normal truncate whitespace-nowrap max-w-[95px] xs:max-w-[140px] sm:max-w-none"
                 >
                   {authorName}
@@ -214,17 +212,11 @@ const UnifiedPingCard = ({
                 if (!badgeConfig) return null;
 
                 return (
-                  <Tooltip
-                    content="Current acknowledgement status of this post."
-                    position="left"
-                    delay={0.2}
-                  >
-                    <img
-                      src={badgeConfig.svg}
-                      alt={badgeConfig.label}
-                      className="h-[22px] sm:h-[28px] md:h-[33px] w-auto shrink-0 select-none object-contain"
-                    />
-                  </Tooltip>
+                  <img
+                    src={badgeConfig.svg}
+                    alt={badgeConfig.label}
+                    className="h-[22px] sm:h-[28px] md:h-[33px] w-auto shrink-0 select-none object-contain"
+                  />
                 );
               })()}
               {/* Actions dropdown */}
@@ -290,31 +282,21 @@ const UnifiedPingCard = ({
           ].join(" ")}
         >
           {/* Surge button */}
-          <Tooltip
-            content={
-              hasSurged
-                ? "Remove your surge"
-                : "Surge this issue to show it's important!"
-            }
-            position="right"
-            delay={0.2}
+          <button
+            onClick={handleSurge}
+            disabled={isToggling}
+            aria-label={hasSurged ? "Remove surge" : "Surge"}
+            className={`flex items-center gap-[5px] px-2.5 md:px-3 py-1 md:py-[5px] rounded-[15px] border border-black cursor-pointer transition-colors disabled:opacity-50 ${hasSurged ? "bg-[#F49B31] text-white" : "bg-[#FEF5EA] text-[#4A504E]"}`}
           >
-            <button
-              onClick={handleSurge}
-              disabled={isToggling}
-              aria-label={hasSurged ? "Remove surge" : "Surge"}
-              className={`flex items-center gap-[5px] px-2.5 md:px-3 py-1 md:py-[5px] rounded-[15px] border border-black cursor-pointer transition-colors disabled:opacity-50 ${hasSurged ? "bg-[#F49B31] text-white" : "bg-[#FEF5EA] text-[#4A504E]"}`}
-            >
-              <SurgeIcon
-                width={12}
-                height={16}
-                fill={hasSurged ? "#FFFFFF" : "#F49B31"}
-              />
-              <span className="font-['Poppins',sans-serif] font-semibold text-[13px] md:text-[14px] leading-normal">
-                {surgeCount}
-              </span>
-            </button>
-          </Tooltip>
+            <SurgeIcon
+              width={12}
+              height={16}
+              fill={hasSurged ? "#FFFFFF" : "#F49B31"}
+            />
+            <span className="font-['Poppins',sans-serif] font-semibold text-[13px] md:text-[14px] leading-normal">
+              {surgeCount}
+            </span>
+          </button>
 
           {/* Wave + comment counts */}
           <div className="flex items-center gap-2 md:gap-3.5 flex-wrap justify-end">

@@ -4,9 +4,8 @@
  * Phase: 1 (right-aside CommentsPanel slot added in Phase 3)
  *
  * New layout structure:
- * - NavBar (simplified top bar, fixed on desktop)
+ * - NavBar (top bar; on mobile it hosts the hamburger that opens MobileSideDrawer)
  * - Sidebar (narrower 280px, desktop only)
- * - MobileHeader (mobile only, replaces PageTitleBar)
  * - Main content area (Outlet)
  * - Right aside slot (desktop only):
  *     - /feed          → AnnouncementWidget + Top3Widget (Phase 2)
@@ -20,7 +19,6 @@ import { usePushNotifications } from "../hooks/usePushNotifications";
 import { getSocket, connectSocket } from "../api/socket";
 import NavBar from "./NavBar";
 import SideBar from "./SideBar";
-import MobileHeader from "./MobileHeader";
 import AnnouncementWidget from "./UnifiedFeed/AnnouncementWidget";
 import Top3Widget from "./UnifiedFeed/Top3Widget";
 import CommentsPanel from "./CommentsPanel";
@@ -184,20 +182,19 @@ const Layout = () => {
         </nav>
       </header>
 
-      <div className="md:mt-[70px] w-full flex justify-center">
-        <div className="w-full max-w-[1400px] flex justify-center px-3 sm:px-6 gap-6 relative">
-          {/* Desktop Sidebar — sticky, 244px (persistent across feed and ping detail) */}
-          <aside className="hidden md:block w-[244px] shrink-0 sticky top-[85px] h-[calc(100vh-85px)] overflow-y-auto [scrollbar-width:none] pt-[15px]">
-            <SideBar onCreatePing={() => setShowPingFormModal(true)} />
-          </aside>
+      <div className="md:mt-[70px] w-full px-3 sm:px-6">
+        {/* Shared design container — same 1322px width and same padding as NavBar's
+            inner bar, so the logo sits on the sidebar's left edge and the profile
+            icon on the right aside's right edge. */}
+        <div className="max-w-[1322px] mx-auto relative">
+          <div className="flex gap-6">
+            {/* Desktop Sidebar — sticky, 244px (persistent across feed and ping detail) */}
+            <aside className="hidden md:block w-[244px] shrink-0 sticky top-[85px] h-[calc(100vh-85px)] overflow-y-auto [scrollbar-width:none] pt-[15px]">
+              <SideBar onCreatePing={() => setShowPingFormModal(true)} />
+            </aside>
 
-          {/* Main content area */}
-          <div className="flex-1 w-full max-w-[720px] min-w-0">
-            {/* Mobile header — replaces PageTitleBar, mobile only */}
-            <div className="md:hidden">
-              <MobileHeader />
-            </div>
-
+            {/* Main content area */}
+            <div className="flex-1 min-w-0">
             <PingCreatorProvider expandPingCreator={() => { }}>
               <main className="mt-[15px] lg:mt-5 w-full">
                 <Outlet context={{ showPingFormModal, setShowPingFormModal, announcement, top3 }} />
@@ -215,9 +212,10 @@ const Layout = () => {
             </aside>
           )}
 
-          {/* Ping Detail right aside — CommentsPanel (Phase 3) */}
+          {/* Ping Detail right aside — desktop only (>=1100px).
+              Tablet/mobile use PingDetail's inline comments + bottom-sheet drawer. */}
           {pingDetailId && (
-            <aside className="hidden lg:flex w-[360px] shrink-0 sticky top-[85px] pt-[15px] pb-4 flex-col gap-[15px] max-h-[calc(100vh-85px)]">
+            <aside className="hidden min-[1100px]:flex w-[360px] shrink-0 sticky top-[85px] pt-[15px] pb-4 flex-col gap-[15px] max-h-[calc(100vh-85px)]">
               {(() => {
                 const isOwner = ping?.isAnonymous
                   ? (ping.isOwner ?? false)
@@ -255,6 +253,7 @@ const Layout = () => {
               })()}
             </aside>
           )}
+          </div>
         </div>
       </div>
 

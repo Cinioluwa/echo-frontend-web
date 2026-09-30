@@ -139,7 +139,6 @@ const Top3Item: React.FC<Top3ItemProps> = ({ ping, index }) => {
         type="button"
         onClick={handleSurge}
         disabled={isToggling}
-        title={hasSurged ? "Remove your surge" : "Surge this ping"}
         className="flex items-center gap-[3px] shrink-0 p-1 rounded-md hover:bg-black/5 active:scale-95 transition-all cursor-pointer disabled:opacity-50"
       >
         <SurgeIcon

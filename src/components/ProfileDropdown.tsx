@@ -28,16 +28,19 @@ const ProfileDropdown = () => {
         dropdownRef.current &&
         !dropdownRef.current.contains(event.target as Node)
       ) {
+        event.preventDefault();
+        event.stopPropagation();
+        event.stopImmediatePropagation();
         setIsOpen(false);
       }
     };
 
     if (isOpen) {
-      document.addEventListener("mousedown", handleClickOutside);
+      document.addEventListener("click", handleClickOutside, true);
     }
 
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("click", handleClickOutside, true);
     };
   }, [isOpen]);
 
@@ -58,11 +61,8 @@ const ProfileDropdown = () => {
   
   if (isLoading) {
     return (
-      <div className="inline-flex items-center gap-2.5">
-        <div className="animate-pulse flex items-center gap-2.5">
-          <div className="h-4 w-24 bg-gray-300 rounded hidden md:block" />
-          <div className="w-[25px] h-[25px] md:w-[50px] md:h-[50px] bg-gray-300 rounded-full" />
-        </div>
+      <div className="inline-flex items-center">
+        <div className="w-[25px] h-[25px] md:w-[50px] md:h-[50px] bg-gray-300 rounded-full animate-pulse" />
       </div>
     );
   }
@@ -73,36 +73,22 @@ const ProfileDropdown = () => {
     <div className="relative inline-flex items-center" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="inline-flex items-center gap-[5px] cursor-pointer"
+        aria-label="Open profile menu"
+        className="inline-flex items-center cursor-pointer"
       >
-        {/* Desktop: full user info */}
-        <div className="text-right hidden md:block">
-          <p className="text-[#926B3D] text-[12px] font-medium leading-normal font-['Poppins',sans-serif]">
-            Welcome back!
-          </p>
-          <p className="text-[14px] text-black font-medium leading-normal font-['Poppins',sans-serif]">
+        {/* Avatar + desktop-only user name */}
+        <div className="flex items-center gap-2">
+          <p className="hidden md:block max-w-[140px] truncate text-[14px] text-black font-medium leading-normal font-['Poppins',sans-serif]">
             {fullName}
           </p>
+          <UserAvatar
+            user={user}
+            size="md"
+            responsive
+            bgColor="bg-[#f49b31]"
+            className="hover:bg-[#f49b31]-300 transition-colors"
+          />
         </div>
-
-        {/* Mobile: truncated user info */}
-        <div className="text-right block md:hidden max-w-[100px]">
-          <p className="text-[#926B3D] text-[10px] font-medium leading-normal font-['Poppins',sans-serif] whitespace-nowrap truncate">
-            Welcome back!
-          </p>
-          <p className="text-[11px] text-black font-medium leading-normal truncate font-['Poppins',sans-serif]">
-            {fullName}
-          </p>
-        </div>
-
-        {/* Avatar */}
-        <UserAvatar
-          user={user}
-          size="md"
-          responsive
-          bgColor="bg-[#f49b31]"
-          className="hover:bg-[#f49b31]-300 transition-colors"
-        />
       </button>
 
       {/* Dropdown Menu */}

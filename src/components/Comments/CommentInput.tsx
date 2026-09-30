@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { FaPlus } from "react-icons/fa6";
 import { useAuthStore } from "../../stores";
 import { commentService } from "../../api/services";
 import userService from "../../api/services/user.service";
@@ -13,13 +14,14 @@ interface Props {
     parentCommentId?: string;
     onCommentAdded?: (comment: Comment) => void;
     onCancel?: () => void;
+    isDrawer?: boolean;
 }
 
 const CommentInput = ({
     targetType,
     targetId,
-    parentCommentId: _parentCommentId,
     onCommentAdded,
+    isDrawer = false,
 }: Props) => {
     const [content, setContent] = useState("");
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -106,7 +108,7 @@ const CommentInput = ({
 
     return (
         <div
-            className={`bg-[#f49b31] flex gap-2.5 ${isFocused ? "items-start" : "items-center"} px-[15px] py-3 rounded-b-[24px] md:rounded-b-[28px] w-full`}
+            className={`bg-[#f49b31] flex gap-2.5 ${isFocused ? "items-start" : "items-center"} px-[15px] py-3 ${isDrawer ? "rounded-b-none" : "rounded-b-[24px] md:rounded-b-[28px]"} w-full`}
             data-node-id="4790:11755"
             ref={containerRef}
         >
@@ -116,7 +118,8 @@ const CommentInput = ({
                     user={user}
                     size="md"
                     className="!w-[38px] !h-[38px] md:!w-[42px] md:!h-[42px]"
-                    bgColor="bg-[#f49b31]"
+                    bgColor="bg-[#FFC37B]"
+                    textColor="text-[#4A3728]"
                 />
             </div>
 
@@ -129,13 +132,13 @@ const CommentInput = ({
                         className="bg-white flex h-[38px] md:h-[42px] items-center px-3.5 rounded-[30px] w-full cursor-pointer hover:bg-gray-50 transition-colors shadow-xs"
                         data-node-id="5210:15041"
                     >
-                        <div className="text-[#626665] text-[13px] md:text-[14px] font-['Poppins',sans-serif] font-normal">
+                        <div className="text-[#626665] text-[13px] md:text-[14px] font-['Poppins',sans-serif] font-normal leading-none">
                             What do you have to say?
                         </div>
                     </button>
                 ) : (
                     /* Active state - textarea with button */
-                    <div className="bg-white flex flex-col gap-2 items-stretch justify-between min-h-[80px] md:min-h-[70px] px-3 py-2.5 rounded-[16px] transition-all duration-200" data-node-id="5210:15043">
+                    <div className="bg-white flex flex-col gap-1.5 items-stretch justify-between min-h-[70px] md:min-h-[64px] px-3 pt-2 pb-1.5 rounded-[16px] transition-all duration-200" data-node-id="5210:15043">
                         <textarea
                             value={content}
                             onChange={(e) => setContent(e.target.value)}
@@ -150,10 +153,11 @@ const CommentInput = ({
                             type="button"
                             onClick={handleSubmit}
                             disabled={isSubmitting || !content.trim()}
-                            className="self-end bg-[#f49b31] inline-flex items-center justify-center px-3 py-1.5 rounded-[16px] text-white text-[12px] font-['Poppins',sans-serif] font-medium leading-none hover:bg-[#d88429] transition-colors disabled:opacity-50 disabled:cursor-not-allowed min-w-[70px] shrink-0 cursor-pointer"
+                            className="self-end bg-[#F49B31] inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-[18px] text-white text-[13px] font-['Poppins',sans-serif] font-medium leading-none hover:bg-[#d88429] transition-colors disabled:opacity-50 disabled:cursor-not-allowed shrink-0 cursor-pointer"
                             data-node-id="5210:15071"
                         >
-                            {isSubmitting ? "..." : "Comment"}
+                            <FaPlus className="w-3.5 h-3.5 text-white" />
+                            <span>{isSubmitting ? "..." : "Comment"}</span>
                         </button>
                     </div>
                 )}

@@ -74,7 +74,7 @@ const AdminProfile = () => {
     };
 
     fetchUserProfile();
-  }, []);
+  }, [updateAuthUser]);
 
   // Handle profile picture upload
   const handlePictureChange = async (

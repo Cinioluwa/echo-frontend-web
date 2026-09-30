@@ -3,7 +3,7 @@ interface Props {
     commentId: string;
 }
 
-const CommentRepliesIndicator = ({ replyCount, commentId: _commentId }: Props) => {
+const CommentRepliesIndicator = ({ replyCount }: Props) => {
     // TODO: Implement click handler to view replies
     const handleViewReplies = () => {
         console.log("View replies functionality to be implemented");

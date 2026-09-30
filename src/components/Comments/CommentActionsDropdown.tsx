@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link2, Flag, Trash2, MoreVertical } from "lucide-react";
@@ -33,7 +33,9 @@ const CommentActionsDropdown = ({
     const menuLabelClass =
         "font-['Poppins',sans-serif] font-medium text-[13px] leading-[1.2] text-black whitespace-nowrap";
 
-    const updatePosition = () => {
+    // Memoized so the effect below can list it as a dependency without
+    // re-subscribing on every render.
+    const updatePosition = useCallback(() => {
         if (!buttonRef.current) return;
         const rect = buttonRef.current.getBoundingClientRect();
         const menuWidth = 172;
@@ -47,7 +49,7 @@ const CommentActionsDropdown = ({
         const left = Math.max(12, Math.min(window.innerWidth - menuWidth - 12, rect.right - menuWidth));
 
         setCoords({ top, left });
-    };
+    }, [isOwner]);
 
     // Close dropdown when clicking outside or scrolling
     useEffect(() => {
@@ -80,7 +82,7 @@ const CommentActionsDropdown = ({
             window.removeEventListener("scroll", handleScrollOrResize, true);
             window.removeEventListener("resize", handleScrollOrResize);
         };
-    }, [isOpen]);
+    }, [isOpen, updatePosition]);
 
     const handleCopyLink = (e: React.MouseEvent) => {
         e.stopPropagation();

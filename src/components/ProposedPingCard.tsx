@@ -13,8 +13,7 @@ const ProposedPingCard = ({
   pingTimeStamp,
   pingTitle,
   pingDescription,
-  pingAuthorName,
-  pingAuthorId: _pingAuthorId
+  pingAuthorName
 }: Props) => {
   console.log(pingTimeStamp);
 

@@ -212,7 +212,7 @@ const PingFormModal = ({
         const uploaded = await uploadService.uploadFiles(pingData.photos, "ping");
         mediaIds = uploaded.map((m) => m.id);
         setUploadProgress(100);
-      } catch (err: any) {
+      } catch {
         setUploadError("Photo upload failed. Please try again.");
         setIsSubmitting(false);
         return;

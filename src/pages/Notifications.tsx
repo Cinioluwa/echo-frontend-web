@@ -206,7 +206,6 @@ const Notifications = () => {
                     {!n.isRead && (
                       <span
                         className="w-2.5 h-2.5 rounded-full bg-[#F49B31] mt-2 shrink-0 animate-pulse"
-                        title="Unread"
                       />
                     )}
                   </button>

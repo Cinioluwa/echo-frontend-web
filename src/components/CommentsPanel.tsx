@@ -111,26 +111,34 @@ const CommentsPanel = ({ pingId, className = "", isDrawer = false, initialCount 
     <div
       ref={panelRef}
       className={`${
-        isDrawer ? "bg-[#FFC37B] rounded-t-[30px] h-full" : "bg-[#FFC37B] rounded-[24px] md:rounded-[28px] h-auto"
+        isDrawer
+          ? "bg-[#FEF5EA] rounded-t-[30px] h-full"
+          : "bg-[#FFC37B] rounded-[24px] md:rounded-[28px] h-auto"
       } flex flex-col w-full overflow-hidden overscroll-contain ${className}`}
     >
       {/* Header */}
       <h2
-        className={`font-[Poppins,sans-serif] font-semibold text-white shrink-0 ${
+        className={`font-[Poppins,sans-serif] font-semibold shrink-0 ${
           isDrawer
-            ? "text-center mb-2 text-[20px] pt-[15px] px-[15px]"
-            : "px-[15px] pt-[17px] bg-[#f49b31] text-lg pb-1.5"
+            ? "text-[#4A3728] text-center text-[20px] pt-[10px] px-[15px] pb-2.5 bg-white border-b border-[#F4E3C9]"
+            : "bg-[#F49B31] text-white px-[14px] py-[16px] text-lg"
         }`}
       >
         Comments
-        <span className="ms-1.5 text-[#626665]">{commentsCount}</span>
+        <span
+          className={`ms-2 inline-flex h-6 min-w-6 items-center justify-center rounded-full px-1.5 text-[13px] font-semibold leading-none tabular-nums ${
+            isDrawer ? "bg-[#F49B31] text-white" : "bg-white text-[#F49B31]"
+          }`}
+        >
+          {commentsCount}
+        </span>
       </h2>
 
       {/* Scrollable comments list */}
       <div
         ref={scrollContainerRef}
         className={`flex-1 min-h-0 overflow-y-auto overscroll-contain [scrollbar-width:none] px-[15px] ${
-          isDrawer ? "" : "pt-3"
+          isDrawer ? "mt-3 pb-3" : "pt-3 pb-4"
         }`}
       >
         <CommentsList
@@ -144,14 +152,15 @@ const CommentsPanel = ({ pingId, className = "", isDrawer = false, initialCount 
 
       {/* Comment input */}
       <div
-        className={`shrink-0 bg-[#f49b31] ${
-          isDrawer ? "px-[15px] py-[15px] border-t border-[#e8b35b]" : ""
+        className={`shrink-0 ${
+          isDrawer ? "bg-[#f49b31] pt-2 border-t border-[#e8b35b]" : "bg-[#f49b31]"
         }`}
       >
         <CommentInput
           targetType="ping"
           targetId={pingId}
           onCommentAdded={handleCommentAdded}
+          isDrawer={isDrawer}
         />
       </div>
     </div>

@@ -4,14 +4,12 @@ import ModerationList from "./ModerationList";
 import AdminHeader from "../AdminHeader";
 import AdminMobileMenu from "../AdminMobileMenu";
 import { ToastContainer, type ToastItem } from "../../shared/Toast";
-import type { ModerationItem as ModerationItemType, FilterType } from "./types";
+import type { ModerationItem as ModerationItemType, FilterType, ModerationActionPayload } from "./types";
 import { useUIStore } from "../../../stores";
 import { adminService } from "../../../api/services/admin.service";
 import type { ReportItem } from "../../../api/types/admin.types";
 
-interface ModerationProps { }
-
-const Moderation: React.FC<ModerationProps> = () => {
+const Moderation: React.FC = () => {
   const [toasts, setToasts] = useState<ToastItem[]>([]);
   const { isSidebarCollapsed } = useUIStore();
   const [reports, setReports] = useState<ReportItem[]>([]);
@@ -69,7 +67,7 @@ const Moderation: React.FC<ModerationProps> = () => {
         timestamp: new Date(report.createdAt).toLocaleDateString(),
       },
       content: targetContent,
-      violationType: report.reason as any || "inappropriate-content",
+      violationType: report.reason || "inappropriate-content",
       reportCount: report.reportCount,
       status: report.status,
     };
@@ -77,7 +75,7 @@ const Moderation: React.FC<ModerationProps> = () => {
 
   const moderationItems: ModerationItemType[] = reports.map(mapReportToModerationItem);
 
-  const handleTakeAction = async (id: string, actionPayload: any) => {
+  const handleTakeAction = async (id: string, actionPayload: ModerationActionPayload) => {
     try {
       setActionLoading(parseInt(id));
       const report = reports.find((r) => r.id.toString() === id);

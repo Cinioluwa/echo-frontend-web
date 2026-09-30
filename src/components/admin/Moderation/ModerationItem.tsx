@@ -1,13 +1,13 @@
 import React, { useState, useRef, useEffect } from "react";
 import ViolationBadge from "./ViolationBadge";
-import type { ModerationItem as ModerationItemType } from "./types";
+import type { ModerationItem as ModerationItemType, ModerationActionPayload } from "./types";
 import { WarnModal, SuspendConfirmModal, SuspendDurationModal, BanModal } from "./TakeActionModals";
 import type { TakeActionType, SuspendDuration } from "./TakeActionModals";
 import { Clock, Ban as Bell, XCircle } from "lucide-react";
 
 interface ModerationItemProps {
     item: ModerationItemType;
-    onTakeAction?: (id: string, actionPayload: any) => void;
+    onTakeAction?: (id: string, actionPayload: ModerationActionPayload) => void;
     onDismiss?: (id: string) => void;
     actionLoading?: boolean;
 }
@@ -34,7 +34,7 @@ const ModerationItem: React.FC<ModerationItemProps> = ({ item, onTakeAction, onD
     };
 
     const confirmAction = (type: TakeActionType, deletePost: boolean, duration?: SuspendDuration) => {
-        let payload: any = { action: type, deletePost };
+        const payload: ModerationActionPayload = { action: type, deletePost };
         if (type === "SUSPEND" && duration) {
             payload.suspendPreset = duration;
         }

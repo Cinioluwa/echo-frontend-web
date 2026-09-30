@@ -9,9 +9,7 @@ import { adminService } from "../../../api/services/admin.service";
 import type { AdminWave } from "../../../api/types/admin.types";
 import { useUIStore } from "../../../stores";
 
-interface FollowUpProps {}
-
-const FollowUp: React.FC<FollowUpProps> = () => {
+const FollowUp: React.FC = () => {
   const [activeFilter, setActiveFilter] = useState<FilterType>("all");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);

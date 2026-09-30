@@ -1,43 +1,36 @@
-import { FaPlus } from "react-icons/fa6";
-import { HiChevronLeft } from "react-icons/hi2";
 import NavBar from "./NavBar";
+import BackButton from "./shared/BackButton";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
-import PingFormModal from "./PingFormModal";
+import { useAuthStore } from "../stores";
 
 const ProfileLayout = () => {
   const navigate = useNavigate();
-  const [showPingModal, setShowPingModal] = useState(false);
-
-  const handleCloseModal = () => {
-    setShowPingModal(false);
-  };
+  const user = useAuthStore((state) => state.user);
+  const isAdmin = user?.role === "ADMIN" || user?.role === "SUPER_ADMIN";
 
   return (
     <div>
       <NavBar />
 
-      <div className="flex justify-between items-center my-4 mx-8">
-        <button
-          className="flex items-center gap-2 bg-white  p-2 md:px-4 md:py-2 rounded-full border border-orange-100 text-sm font-semibold shadow-sm hover:bg-orange-50 transition"
-          onClick={() => navigate("/admin/soundboard")}
-        >
-          <HiChevronLeft size={18} />
-          Go back to feed
-        </button>
-        <button
-          onClick={() => setShowPingModal(true)}
-          className="flex cursor-pointer justify-center text-[13px] items-center gap-[7px] text-white transition-colors overflow-hidden whitespace-nowrap ease-in-out duration-300 rounded-[40px] hover:bg-[#d88429] bg-[#F49B31] py-2.5  px-[15px] text-center"
-        >
-          <FaPlus fontSize={20} />
-          Create a ping
-        </button>
+      <div className="mt-3">
+        <div className="mx-auto w-full max-w-[1200px] px-4 md:px-10 py-0">
+          <div className="flex items-center">
+            {/* Same BackButton as Ping Detail, desktop-sized / mobile-scaled */}
+            <div className="hidden md:flex items-center">
+              <BackButton
+                onClick={() => navigate(isAdmin ? "/admin/soundboard" : "/feed")}
+                className="md:py-2 md:px-4 text-sm font-semibold"
+              />
+            </div>
+            <div className="md:hidden flex items-center">
+              <BackButton
+                onClick={() => navigate(isAdmin ? "/admin/soundboard" : "/feed")}
+                className="p-2 text-[13px] gap-[7px] [&_svg]:w-[18px] [&_svg]:h-[18px] [&_span]:text-[13px]"
+              />
+            </div>
+          </div>
+        </div>
       </div>
-      {showPingModal && (
-        <PingFormModal
-          setPingForm={handleCloseModal}
-        />
-      )}
     </div>
   );
 };

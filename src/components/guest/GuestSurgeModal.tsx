@@ -61,7 +61,7 @@ const GuestSurgeModal = ({ pingId, pingTitle, onClose, onSuccess }: GuestSurgeMo
         const surgeData = await guestService.guestSurgePing(pingId, data.token);
         onSuccess(surgeData.surgeCount);
         onClose();
-      } catch (surgeErr: any) {
+      } catch {
         onSuccess();
         onClose();
       }

@@ -14,7 +14,10 @@ interface SurgeState {
   isToggling: Record<string, boolean>; // Track ongoing requests
 
   // Actions
-  toggleSurge: (type: SurgeType, id: string) => Promise<boolean>;
+  toggleSurge: (
+    type: SurgeType,
+    id: string,
+  ) => Promise<{ surged: boolean; surgeCount?: number }>;
   hasSurged: (type: SurgeType, id: string) => boolean;
   addSurge: (type: SurgeType, id: string) => void;
   removeSurge: (type: SurgeType, id: string) => void;
@@ -37,7 +40,7 @@ export const useSurgeStore = create<SurgeState>()(
 
           // Prevent duplicate requests
           if (get().isToggling[key]) {
-            return get().hasSurged(type, id);
+            return { surged: get().hasSurged(type, id) };
           }
 
           // Mark as toggling
@@ -65,7 +68,10 @@ export const useSurgeStore = create<SurgeState>()(
             const ping = usePingsStore.getState().pingsById[id];
             if (ping) {
               const countChange = wasSurged ? -1 : 1;
-              const newSurgeCount = Math.max(0, ping.surgeCount + countChange);
+              const newSurgeCount = Math.max(
+                0,
+                (ping.surgeCount ?? ping._count?.surges ?? 0) + countChange,
+              );
               usePingsStore.getState().updatePing(id, {
                 surgeCount: newSurgeCount,
                 hasSurged: !wasSurged,
@@ -75,7 +81,10 @@ export const useSurgeStore = create<SurgeState>()(
             const wave = useWavesStore.getState().wavesById[id];
             if (wave) {
               const countChange = wasSurged ? -1 : 1;
-              const newSurgeCount = Math.max(0, wave.surgeCount + countChange);
+              const newSurgeCount = Math.max(
+                0,
+                (wave.surgeCount ?? wave._count?.surges ?? 0) + countChange,
+              );
               useWavesStore.getState().updateWave(id, {
                 surgeCount: newSurgeCount,
                 hasSurged: !wasSurged,
@@ -104,6 +113,9 @@ export const useSurgeStore = create<SurgeState>()(
               if (ping) {
                 usePingsStore.getState().updatePing(id, {
                   hasSurged: response.surged,
+                  ...(response.surgeCount !== undefined && {
+                    surgeCount: response.surgeCount,
+                  }),
                 });
               }
             } else if (type === "wave") {
@@ -111,11 +123,17 @@ export const useSurgeStore = create<SurgeState>()(
               if (wave) {
                 useWavesStore.getState().updateWave(id, {
                   hasSurged: response.surged,
+                  ...(response.surgeCount !== undefined && {
+                    surgeCount: response.surgeCount,
+                  }),
                 });
               }
             }
 
-            return response.surged;
+            return {
+              surged: response.surged,
+              surgeCount: response.surgeCount,
+            };
           } catch (error) {
             console.error(`Error toggling ${type} surge:`, error);
 

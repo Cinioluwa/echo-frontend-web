@@ -87,27 +87,27 @@ const UserPrivacy = () => {
   };
 
   return (
-    <div className="overflow-scroll h-screen">
+    <div className="min-h-screen bg-[#FEF5EA]">
       <ProfileLayout />
-      <main className="mt-3 mx-auto h-full p-4 md:p-10">
-        <div className="flex md:border rounded-[15px] border-[#FFC37B] p-5 flex-col lg:flex-row gap-0 md:gap-12">
+      <main className="mt-1 mx-auto h-full w-full max-w-[1200px] p-4 md:p-10 pt-2 md:pt-2 pb-16 md:pb-20">
+        <div className="flex border border-[#F4E3C9] rounded-[20px] bg-white p-4 md:p-7 flex-col lg:flex-row gap-4 lg:gap-8 shadow-sm">
           {/* SIDE PANEL COMPONENT */}
 
           <UserProfileSidePanel pages={pages} />
 
           {/* FORM CONTENT */}
-          <div className="flex-1 mb-20 md:border-l border-orange-200 md:pl-12 pt-4 md:pt-0">
+          <div className="flex-1 min-w-0 mb-20 lg:border-l border-[#F4E3C9] lg:pl-8 pt-4 lg:pt-0">
             <h2 className="text-lg md:text-xl text-[#4A3728] mb-4 md:mb-6 font-semibold">Email Verification</h2>
 
             {/* Verified Status Banner */}
-            <div className="mb-6 md:mb-8 p-4 md:p-6 bg-[#E8F9F1] border border-[#4ADE80] rounded-2xl flex items-start gap-4">
+            <div className="mb-6 md:mb-8 p-4 md:p-6 bg-[#FEF5EA] border border-[#F4E3C9] rounded-2xl flex items-start gap-4">
               <HiOutlineCheckBadge
-                className="text-[#22C55E] mt-0.5 md:mt-1 shrink-0"
+              className="text-[#F49B31] mt-0.5 md:mt-1 shrink-0"
                 size={22}
               />
               <div>
-                <h3 className="text-[#166534] text-sm md:text-base font-semibold">Email Verified</h3>
-                <p className="text-[#166534]/70 text-xs md:text-sm mt-0.5 md:mt-1">
+              <h3 className="text-[#4A3728] text-sm md:text-base font-semibold">Email Verified</h3>
+              <p className="text-[#6B6259] text-xs md:text-sm mt-0.5 md:mt-1">
                   Your email has been verified. You can now enjoy the full
                   features of ECHO
                 </p>
@@ -134,10 +134,10 @@ const UserPrivacy = () => {
 
             {/* Update Success Message */}
             {updateMessage && updateMessage.type === "success" && (
-              <div className="mb-8 p-6 bg-[#DBEAFE] border border-[#3B82F6] rounded-2xl flex items-start gap-4">
+              <div className="mb-8 p-4 md:p-6 bg-[#FEF5EA] border border-[#F4E3C9] rounded-2xl flex items-start gap-4">
                 <div>
-                  <h3 className="text-[#1E40AF] text-base">Success</h3>
-                  <p className="text-[#1E40AF]/70 text-sm mt-1">
+                  <h3 className="text-[#4A3728] text-base font-semibold">Success</h3>
+                  <p className="text-[#6B6259] text-sm mt-1">
                     {updateMessage.text}
                   </p>
                 </div>

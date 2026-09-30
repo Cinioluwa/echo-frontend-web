@@ -19,6 +19,9 @@ export const PingCreatorProvider = ({ children, expandPingCreator }: PingCreator
     );
 };
 
+// Context files intentionally co-locate the provider and its consumer hook —
+// a standard React pattern that this fast-refresh rule does not account for.
+// eslint-disable-next-line react-refresh/only-export-components
 export const usePingCreator = (): PingCreatorContextType => {
     const context = useContext(PingCreatorContext);
     if (!context) {

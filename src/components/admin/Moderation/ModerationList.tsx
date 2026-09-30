@@ -1,11 +1,11 @@
 import React from "react";
 import ModerationItem from "./ModerationItem";
-import type { ModerationItem as ModerationItemType } from "./types";
+import type { ModerationItem as ModerationItemType, ModerationActionPayload } from "./types";
 
 interface ModerationListProps {
     items: ModerationItemType[];
     isLoading?: boolean;
-    onTakeAction?: (id: string, actionPayload: any) => void;
+    onTakeAction?: (id: string, actionPayload: ModerationActionPayload) => void;
     onDismiss?: (id: string) => void;
     actionLoading?: boolean;
 }

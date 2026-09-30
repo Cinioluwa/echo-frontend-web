@@ -101,12 +101,12 @@ const UserNotification = () => {
   };
 
   return (
-    <div className="overflow-scroll h-screen">
+    <div className="min-h-screen bg-[#FEF5EA]">
       <ProfileLayout />
-      <main className="mt-3 mx-auto h-full p-4 md:p-10">
-        <div className="flex md:border rounded-[15px] border-[#FFC37B] p-5 flex-col lg:flex-row gap-0 md:gap-12">
+      <main className="mt-1 mx-auto h-full w-full max-w-[1200px] p-4 md:p-10 pt-2 md:pt-2 pb-16 md:pb-20">
+        <div className="flex border border-[#F4E3C9] rounded-[20px] bg-white p-4 md:p-7 flex-col lg:flex-row gap-4 lg:gap-8 shadow-sm">
           <UserProfileSidePanel pages={pages} />
-          <div className="flex-1 mb-80 md:border-l border-orange-200 md:pl-12 pt-4 md:pt-0">
+          <div className="flex-1 min-w-0 lg:border-l border-[#F4E3C9] lg:pl-8 pt-4 lg:pt-0">
             <div className="mb-6">
               <h2 className="text-xl text-[#4A3728] mb-1">Notification</h2>
               <p className="text-[#7D7D7D]">Manage how communication is made with you</p>

@@ -4,7 +4,6 @@
  * Used in PingDetail page
  */
 
-import { Tooltip } from "./Tooltip";
 import UserAvatar from "./UserAvatar";
 import { categoryImages } from "./CategoryImages";
 import { calculatePingBadge } from "../utils/badgeUtils";
@@ -158,7 +157,6 @@ const PingCard = ({
                     />
                     <div className="flex flex-col min-w-0">
                         <span
-                            title={authorName}
                             className="font-['Poppins',sans-serif] font-semibold text-[14px] text-black truncate whitespace-nowrap max-w-[95px] xs:max-w-[140px] sm:max-w-none"
                         >
                             {authorName}
@@ -176,17 +174,11 @@ const PingCard = ({
                         if (!badgeConfig) return null;
 
                         return (
-                            <Tooltip
-                                content="Current acknowledgement status of this post."
-                                position="left"
-                                delay={0.2}
-                            >
-                                <img
-                                    src={badgeConfig.svg}
-                                    alt={badgeConfig.label}
-                                    className="h-[22px] sm:h-[28px] md:h-[33px] w-auto shrink-0 select-none object-contain"
-                                />
-                            </Tooltip>
+                            <img
+                                src={badgeConfig.svg}
+                                alt={badgeConfig.label}
+                                className="h-[22px] sm:h-[28px] md:h-[33px] w-auto shrink-0 select-none object-contain"
+                            />
                         );
                     })()}
                     {/* Actions dropdown */}
@@ -282,60 +274,51 @@ const PingCard = ({
             {/* Stats: surge + comments + waves */}
             <div className="flex items-center justify-between gap-[15px]">
                 {/* Surge button */}
-                <Tooltip
-                    content={
-                        hasSurged
-                            ? "Remove your surge"
-                            : "Surge this post to show it's important!"
-                    }
-                    position="right"
-                    delay={0.2}
+                <button
+                    type="button"
+                    onClick={onSurge}
+                    disabled={isToggling}
+                    aria-label={hasSurged ? "Remove surge" : "Surge"}
+                    className={`flex items-center gap-[5px] px-2.5 md:px-3 py-1 md:py-[5px] rounded-[15px] border border-black cursor-pointer transition-colors disabled:opacity-50 ${hasSurged
+                        ? "bg-[#f49b31] text-white"
+                        : "bg-[#fef5ea] text-[#4A504E]"
+                        }`}
                 >
-                    <button
-                        type="button"
-                        onClick={onSurge}
-                        disabled={isToggling}
-                        aria-label={hasSurged ? "Remove surge" : "Surge"}
-                        className={`flex items-center gap-[5px] px-2.5 md:px-3 py-1 md:py-[5px] rounded-[15px] border border-black cursor-pointer transition-colors disabled:opacity-50 ${hasSurged
-                            ? "bg-[#f49b31] text-white"
-                            : "bg-[#fef5ea] text-[#4A504E]"
-                            }`}
-                    >
-                        <SurgeIcon
-                            width={12}
-                            height={16}
-                            fill={hasSurged ? "#FFFFFF" : "#F49B31"}
-                        />
-                        <span className="font-['Poppins',sans-serif] font-semibold text-[13px] md:text-[14px] leading-normal">
-                            {displayedSurgeCount}
-                        </span>
-                    </button>
-                </Tooltip>
+                    <SurgeIcon
+                        width={12}
+                        height={16}
+                        fill={hasSurged ? "#FFFFFF" : "#F49B31"}
+                    />
+                    <span className="font-['Poppins',sans-serif] font-semibold text-[13px] md:text-[14px] leading-normal">
+                        {displayedSurgeCount}
+                    </span>
+                </button>
 
                 <div className="flex items-center gap-1.5 md:gap-3.5 flex-wrap justify-end">
                     {/* Wave count */}
-                    <div className="flex items-center gap-0">
+                    <div className="flex min-h-11 items-center gap-0">
                         <img
                             src={waveIcon}
-                            className="h-[20px] w-[18px] md:h-[27px] md:w-[25px]"
+                            className="h-[24px] w-[24px] md:h-[30px] md:w-[30px]"
                             alt="waveIcon"
                         />
-                        <span className="font-['Inter',sans-serif] font-medium text-[11px] md:text-[14px] text-[#63637B] leading-5 whitespace-nowrap">
+                        <span className="font-['Inter',sans-serif] font-medium text-[12px] md:text-[14px] text-[#63637B] leading-5 whitespace-nowrap">
                             {waveCount} <span className="md:hidden">Waves</span><span className="hidden md:inline">Waves Proposed</span>
                         </span>
                     </div>
 
                     {/* Comment count */}
                     <button
+                        type="button"
                         onClick={onCommentClick}
-                        className="flex items-center gap-1 hover:text-[#F49B31] transition-colors cursor-pointer"
+                        className="flex min-h-11 items-center gap-1.5 rounded-full px-2 hover:text-[#F49B31] active:bg-[#FEF5EA] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#F49B31] transition-colors cursor-pointer"
                     >
                         <img
                             src={commentIcon}
-                            className="h-[14px] w-[14px] md:h-[18px] md:w-[18px]"
+                            className="h-[16px] w-[16px] md:h-[18px] md:w-[18px]"
                             alt="commentIcon"
                         />
-                        <span className="font-['Inter',sans-serif] font-medium text-[11px] md:text-[14px] text-[#63637B] leading-5 whitespace-nowrap">
+                        <span className="font-['Inter',sans-serif] font-medium text-[12px] md:text-[14px] text-[#63637B] leading-5 whitespace-nowrap">
                             {commentCount} Comments
                         </span>
                     </button>

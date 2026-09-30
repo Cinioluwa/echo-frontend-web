@@ -16,8 +16,6 @@ const GeneralSettings: React.FC = () => {
       setLoading(true);
       const settings = await adminService.getOrgSettings();
       setSpaceName(settings.organization.name);
-      if (settings.organization.domain) {
-      }
     } catch (err: any) {
       setError(err?.response?.data?.error || "Failed to load settings");
     } finally {

@@ -59,10 +59,14 @@ const CommentsList = forwardRef<CommentsListHandle, Props>(({ targetType, target
         }
     };
 
+    // Intentionally keyed on the target only: this is a load-once-per-target
+    // effect. `fetchComments` closes over `hasLoadedOnce` (a first-load flag) and
+    // `onCommentsLoaded` (an inline callback from the parent), so listing them
+    // would retrigger the effect on every render and loop forever.
     useEffect(() => {
         setHasLoadedOnce(false);
         fetchComments();
-    }, [targetType, targetId]);
+    }, [targetType, targetId]); // eslint-disable-line react-hooks/exhaustive-deps
 
     const handleDeleteComment = (commentId: string | number) => {
         setComments((prev) => {

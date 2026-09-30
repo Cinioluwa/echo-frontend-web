@@ -21,6 +21,7 @@ interface UserAvatarProps {
     className?: string;
     initialsOnly?: boolean;
     bgColor?: string;
+    textColor?: string;
     pictureUrl?: string; // Custom picture URL (takes precedence over user.profilePicture)
 }
 
@@ -50,6 +51,7 @@ const UserAvatar = ({
     initialsOnly = false,
     responsive = false,
     bgColor = "bg-[#f49b31]",
+    textColor = "text-white",
     pictureUrl,
 }: UserAvatarProps) => {
     const [imageLoadError, setImageLoadError] = useState(false);
@@ -83,7 +85,7 @@ const UserAvatar = ({
             <div
                 className={`${sizeClass} rounded-full ${bgColor} flex items-center justify-center overflow-hidden shrink-0 ${className}`}
             >
-                <User className="w-2/3 h-2/3 text-white" />
+                <User className={`w-2/3 h-2/3 ${textColor}`} />
             </div>
         );
     }
@@ -111,7 +113,7 @@ const UserAvatar = ({
     // Fallback to initials
     return (
         <div
-            className={`${sizeClass} rounded-full ${bgColor} flex items-center justify-center overflow-hidden shrink-0 font-semibold text-white ${className}`}
+            className={`${sizeClass} rounded-full ${bgColor} flex items-center justify-center overflow-hidden shrink-0 font-semibold ${textColor} ${className}`}
         >
             {initials}
         </div>

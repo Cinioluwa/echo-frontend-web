@@ -61,8 +61,12 @@ const surgeService = {
   toggleSurge: async (
     targetType: "ping" | "wave",
     targetId: string
-  ): Promise<{ message: string; surged: boolean }> => {
-    const response = await api.post<{ message: string; surged: boolean }>(
+  ): Promise<{ message: string; surged: boolean; surgeCount?: number }> => {
+    const response = await api.post<{
+      message: string;
+      surged: boolean;
+      surgeCount?: number;
+    }>(
       `/${targetType}s/${targetId}/surge`
     );
     return response.data;

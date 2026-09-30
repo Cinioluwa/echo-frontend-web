@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { useAuthStore } from "../../stores";
 import { authService } from "../../api/services";
@@ -66,13 +66,6 @@ const Verification: React.FC = () => {
     const [verifyError, setVerifyError] = useState<string | null>(null);
 
     useEffect(() => {
-        const token = searchParams.get("token");
-        if (token) {
-            void handleVerifyEmail(token);
-        }
-    }, [searchParams]);
-
-    useEffect(() => {
         if (resendCooldown <= 0) return;
 
         const timer = setTimeout(() => {
@@ -82,7 +75,7 @@ const Verification: React.FC = () => {
         return () => clearTimeout(timer);
     }, [resendCooldown]);
 
-    const handleVerifyEmail = async (token: string) => {
+    const handleVerifyEmail = useCallback(async (token: string) => {
         setVerifying(true);
         setVerifyError(null);
 
@@ -153,7 +146,17 @@ const Verification: React.FC = () => {
         } finally {
             setVerifying(false);
         }
-    };
+    }, [fetchUserProfile, navigate, email]);
+
+    // Declared after `handleVerifyEmail` so the callback is initialized before it
+    // is named in the dependency array (a `const` is in the temporal dead zone
+    // until its declaration is evaluated).
+    useEffect(() => {
+        const token = searchParams.get("token");
+        if (token) {
+            void handleVerifyEmail(token);
+        }
+    }, [searchParams, handleVerifyEmail]);
 
     const handleResendVerification = async () => {
         if (resendCooldown > 0 || isResending || isOffline) return;

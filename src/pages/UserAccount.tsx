@@ -19,7 +19,7 @@ const SignOutButton = () => {
   const logout = useAuthStore((s) => s.logout);
   return (
     <button
-      className="flex items-center gap-2 px-4 md:px-6 py-2 bg-white border border-orange-200 rounded-xl text-xs md:text-sm text-[#4A3728] hover:bg-orange-50 transition"
+      className="flex items-center gap-2 px-5 py-2 bg-white border border-[#F4E3C9] rounded-full text-xs md:text-sm text-[#4A3728] hover:bg-[#FEF5EA] transition"
       onClick={logout}
     >
       <HiOutlineLogout size={16} className="md:size-[18px]" />
@@ -79,16 +79,16 @@ const DeleteAccountButton = () => {
 
 const UserAccount = () => {
   return (
-    <div className="overflow-scroll h-screen">
+    <div className="min-h-screen bg-[#FEF5EA]">
       <ProfileLayout />
-      <main className="mt-3 mx-auto h-full p-4 md:p-10">
-        <div className="flex md:border rounded-[15px] border-[#FFC37B] p-5 flex-col lg:flex-row gap-0 md:gap-12">
+      <main className="mt-1 mx-auto h-full w-full max-w-[1200px] p-4 md:p-10 pt-2 md:pt-2 pb-16 md:pb-20">
+        <div className="flex border border-[#F4E3C9] rounded-[20px] bg-white p-4 md:p-7 flex-col lg:flex-row gap-4 lg:gap-8 shadow-sm">
           {/* SIDE PANEL COMPONENT */}
 
           <UserProfileSidePanel pages={pages} />
 
           {/* FORM CONTENT */}
-          <div className="flex-1 md:border-l border-orange-200 md:pl-12 pt-4 md:pt-0">
+          <div className="flex-1 min-w-0 lg:border-l border-[#F4E3C9] lg:pl-8 pt-4 lg:pt-0">
             {/* Account Section */}
             <section className="mb-8 md:mb-10">
               <h2 className="text-lg md:text-xl text-[#4A3728] mb-0.5 font-semibold">Account</h2>

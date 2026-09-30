@@ -14,13 +14,19 @@ const CountBadge = ({ value }: { value: number }) => {
   const displayValue = value > 99 ? "99+" : String(value);
 
   return (
-    <span className="min-w-[26px] h-[26px] px-1.5 font-semibold text-white text-[11px] leading-none tabular-nums whitespace-nowrap flex justify-center items-center rounded-full bg-[#F49B31] shrink-0">
+    <span className="min-w-[26px] h-[26px] px-1.5 font-medium text-white text-[13px] leading-none tabular-nums whitespace-nowrap flex justify-center items-center rounded-full bg-[#F49B31] shrink-0">
       {displayValue}
     </span>
   );
 };
 
-const Categories = () => {
+const Categories = ({
+  mobile = false,
+  onNavigate,
+}: {
+  mobile?: boolean;
+  onNavigate?: () => void;
+}) => {
   const navigate = useNavigate();
   const location = useLocation();
   const selectedCategoryId = useSearchStore((state) => state.selectedCategoryId);
@@ -48,6 +54,7 @@ const Categories = () => {
     if (location.pathname !== "/feed") {
       navigate("/feed");
     }
+    onNavigate?.();
   }
 
   function handleCategoryClick(category: category) {
@@ -59,6 +66,7 @@ const Categories = () => {
     if (location.pathname !== "/feed") {
       navigate("/feed");
     }
+    onNavigate?.();
   }
 
   if (isLoading) {
@@ -70,42 +78,64 @@ const Categories = () => {
   }
 
   return (
-    <div className="p-2">
-      <header className="my-2.5 pl-2.5 font-[18px]">Category</header>
+    <div className={`w-full overflow-hidden ${
+      mobile
+        ? "rounded-2xl border border-[#F4E3C9] bg-white shadow-sm"
+        : "rounded-[15px] bg-[#FCE0B0]"
+    }`}>
+      <div className={mobile ? "px-4 pt-4 pb-2" : "bg-[#F49B31] px-[14px] py-[16px]"}>
+        <h2 className={`font-['Poppins',sans-serif] font-semibold leading-none ${
+          mobile ? "text-[16px] text-[#4A3728]" : "text-[19px] text-white"
+        }`}>
+          {mobile ? "Categories" : "Category"}
+        </h2>
+      </div>
 
-      <button
-        onClick={handleClick}
-        className={`flex justify-between items-center mb-px py-2.5 px-[15px] ${
-          isAllActive ? "bg-[#FAE9D4] shadow" : "bg-transparent"
-        } w-full rounded-lg font-bold cursor-pointer`}
-      >
-        All Categories
-        <CountBadge value={totalCount || 0} />
-      </button>
+      {/* Body */}
+      <div className={mobile ? "px-2 pb-2" : "px-[10px] pt-[10px] pb-[12px]"}>
+        <button
+          onClick={handleClick}
+          className={`flex items-center justify-between gap-3 w-full min-h-[48px] px-3.5 rounded-[10px] cursor-pointer transition-colors duration-150 ${
+            isAllActive
+              ? mobile ? "bg-[#FEF5EA] text-[#4A3728]" : "bg-white"
+              : mobile ? "text-[#4A3728] hover:bg-[#FEF5EA]" : "hover:bg-white/70"
+          }`}
+        >
+          <span className={`font-['Poppins',sans-serif] font-semibold text-[15px] ${mobile ? "text-[#4A3728]" : "text-black"}`}>
+            All Categories
+          </span>
+          <CountBadge value={totalCount || 0} />
+        </button>
 
-      <div className="">
-        {categories.map((category) => {
-          const isSelected = selectedCategoryId === category.id;
-          return (
-            <button
-              key={category.id}
-              onClick={() => handleCategoryClick(category)}
-              className={`flex justify-between gap-[13px] cursor-pointer font-semibold ${
-                isSelected
-                  ? "bg-[#FAE9D4] opacity-100 shadow"
-                  : "bg-transparent opacity-64 hover:opacity-90"
-              } px-[15px] w-full rounded-lg py-[13px] items-center text-[15px] transition ease-in duration-200`}
-            >
-              <div className="flex gap-[13px] items-center">
-                <span>
-                  <img src={category.labelIcon} />
+        {/* Category rows */}
+        <div>
+          {categories.map((category) => {
+            const isSelected = selectedCategoryId === category.id;
+            return (
+              <button
+                key={category.id}
+                onClick={() => handleCategoryClick(category)}
+                className={`flex items-center justify-between gap-3 w-full min-h-[48px] px-3 rounded-[10px] cursor-pointer transition-colors duration-150 ${
+                  isSelected
+                    ? mobile ? "bg-[#FEF5EA]" : "bg-white"
+                    : mobile ? "hover:bg-[#FEF5EA]" : "hover:bg-white/70"
+                }`}
+              >
+                <span className="flex items-center gap-[13px] min-w-0">
+                  <img
+                    src={category.labelIcon}
+                    alt=""
+                    className="w-[22px] h-[22px] object-contain shrink-0"
+                  />
+                  <span className="font-['Poppins',sans-serif] font-semibold text-[15px] text-[#4A3728] truncate">
+                    {category.label}
+                  </span>
                 </span>
-                <div>{category.label}</div>
-              </div>
-              <CountBadge value={categoryCounts[category.id] || 0} />
-            </button>
-          );
-        })}
+                <CountBadge value={categoryCounts[category.id] || 0} />
+              </button>
+            );
+          })}
+        </div>
       </div>
     </div>
   );

@@ -221,10 +221,12 @@ const ProposeWaveBar = ({ pingId, onWaveProposed }: Props) => {
             placeholder="What's your solution?"
             rows={1}
             disabled={isSubmitting || isUploading}
-            className={`w-full bg-transparent border-0 p-0 text-[13px] md:text-[14px] leading-[1.4] text-black outline-none resize-none font-['Poppins',sans-serif] font-medium placeholder:text-[#9e9e9e] placeholder:font-medium focus:ring-0 transition-[min-height] duration-200 ${
+            className={`w-full bg-transparent border-0 p-0 text-[13px] md:text-[14px] text-black outline-none resize-none font-['Poppins',sans-serif] font-medium placeholder:text-[#9e9e9e] placeholder:font-medium focus:ring-0 transition-[min-height] duration-200 ${
               isActive
-                ? "min-h-[40px] md:min-h-[48px] max-h-[140px] overflow-y-auto"
-                : "min-h-[22px] md:min-h-[24px] max-h-[26px] overflow-hidden"
+                ? "leading-[1.4] min-h-[40px] md:min-h-[48px] max-h-[140px] overflow-y-auto"
+                : // Line-height matches the min-height so the placeholder sits
+                  // vertically centred in the collapsed bar.
+                  "leading-[22px] md:leading-[24px] min-h-[22px] md:min-h-[24px] max-h-[26px] overflow-hidden"
             }`}
           />
 
@@ -244,7 +246,6 @@ const ProposeWaveBar = ({ pingId, onWaveProposed }: Props) => {
                     onClick={() => removeFile(file.id)}
                     disabled={isSubmitting}
                     className="shrink-0 text-[#ffc37b] hover:text-[#F49B31] transition-colors"
-                    title="Remove file"
                   >
                     ✕
                   </button>
@@ -267,7 +268,6 @@ const ProposeWaveBar = ({ pingId, onWaveProposed }: Props) => {
               onClick={handleAttachClick}
               disabled={isSubmitting || isUploading}
               className="shrink-0 size-6 md:size-[30px] flex items-center justify-center hover:opacity-70 transition-opacity disabled:opacity-50 cursor-pointer"
-              title="Attach file"
             >
               <img
                 src={attachIcon}

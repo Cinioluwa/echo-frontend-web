@@ -58,7 +58,7 @@ const WaitingRoom: React.FC = () => {
         };
 
         initializeWaitingRoom();
-    }, []);
+    }, [user, fetchUserProfile, navigate]);
 
     useEffect(() => {
         if (!isLoading && user) {

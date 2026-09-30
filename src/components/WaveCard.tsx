@@ -16,7 +16,6 @@ import DeleteConfirmationModal from "./DeleteConfirmationModal";
 import WaveActionsDropdown from "./WaveActionsDropdown";
 import { calculateWaveBadge } from "../utils/badgeUtils";
 import type { Wave, Media } from "../api/types";
-import { Tooltip } from "./Tooltip";
 import ImageLightbox from "./shared/ImageLightbox";
 import { useEditWindow } from "../hooks";
 import { getEditErrorMessage } from "../utils/editErrors";
@@ -28,6 +27,7 @@ import SurgeIcon from "./shared/SurgeIcon";
 interface WaveCardProps {
   wave: Wave;
   isOwner: boolean;
+  onSurgeCountChange?: (waveId: number, surgeCount: number) => void;
   onDelete?: (id: number) => void;
   allWavesForPing?: Wave[]; // All waves for the parent Ping (needed for Community Pick calculation)
   onRefresh?: () => void;
@@ -82,7 +82,7 @@ const getWaveMedia = (wave: Wave): Media[] => {
 // ─── WaveCard Component ─────────────────────────────────────────────────────
 
 const WaveCard = React.memo(
-  ({ wave, isOwner, onDelete, allWavesForPing = [], onRefresh }: WaveCardProps) => {
+  ({ wave, isOwner, onSurgeCountChange, onDelete, allWavesForPing = [], onRefresh }: WaveCardProps) => {
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
     const [lightboxSrc, setLightboxSrc] = useState<string | null>(null);
@@ -100,13 +100,8 @@ const WaveCard = React.memo(
     );
 
     const authorName = getAuthorName(currentWave);
-    const initialHasSurged = currentWave.hasSurged ?? false;
-    const baseSurgeCount =
+    const surgeCount =
       currentWave.surgeCount ?? currentWave._count?.surges ?? 0;
-    const surgeCount = Math.max(
-      0,
-      baseSurgeCount + (hasSurged ? 1 : 0) - (initialHasSurged ? 1 : 0),
-    );
     const waveMedia = getWaveMedia(currentWave);
     const imageMedia = waveMedia.filter((item) =>
       item.mimeType?.startsWith("image/"),
@@ -163,7 +158,10 @@ const WaveCard = React.memo(
       e.stopPropagation();
       if (isToggling) return;
       try {
-        await toggleSurge("wave", String(wave.id));
+        const result = await toggleSurge("wave", String(wave.id));
+        if (result.surgeCount !== undefined) {
+          onSurgeCountChange?.(wave.id, result.surgeCount);
+        }
       } catch (err) {
         console.error("Wave surge failed:", err);
       }
@@ -216,7 +214,6 @@ const WaveCard = React.memo(
               />
               <div className="flex flex-col min-w-0">
                 <span
-                  title={authorName}
                   className="font-['Poppins',sans-serif] font-semibold text-[13px] sm:text-[14px] text-black truncate max-w-[95px] xs:max-w-[140px] sm:max-w-none leading-snug whitespace-nowrap"
                 >
                   {authorName}
@@ -229,16 +226,11 @@ const WaveCard = React.memo(
 
             <div className="flex items-center gap-1 shrink-0">
               {badgeConfig && (
-                <Tooltip
-                  content={`Status: ${badgeConfig.label}`}
-                  position="left"
-                >
-                  <img
-                    src={badgeConfig.svg}
-                    alt={badgeConfig.label}
-                    className="h-[22px] sm:h-[28px] md:h-[33px] w-auto shrink-0 select-none object-contain"
-                  />
-                </Tooltip>
+                <img
+                  src={badgeConfig.svg}
+                  alt={badgeConfig.label}
+                  className="h-[22px] sm:h-[28px] md:h-[33px] w-auto shrink-0 select-none object-contain"
+                />
               )}
               <WaveActionsDropdown
                 waveId={wave.id}
@@ -357,36 +349,27 @@ const WaveCard = React.memo(
             </div>
           )}
 
-          {/* Footer: Surge button at the bottom right */}
-          <div className="flex items-center justify-end w-full pt-0.5">
-            <Tooltip
-              content={
-                hasSurged
-                  ? "Remove your surge"
-                  : "Surge this post to show it's important!"
-              }
-              position="left"
+          {/* Footer: surge button aligned with the card content */}
+          <div className="flex w-full items-center justify-start pt-0.5">
+            <button
+              type="button"
+              onClick={handleSurge}
+              disabled={isToggling}
+              aria-label={hasSurged ? "Remove surge" : "Surge"}
+              className={`flex items-center gap-[5px] px-2.5 md:px-3 py-1 md:py-[5px] rounded-[15px] border border-black cursor-pointer transition-colors duration-200 disabled:opacity-50 ${hasSurged
+                ? "bg-[#F49B31] text-white"
+                : "bg-[#FEF5EA] text-[#4A504E]"
+                }`}
             >
-              <button
-                type="button"
-                onClick={handleSurge}
-                disabled={isToggling}
-                aria-label={hasSurged ? "Remove surge" : "Surge"}
-                className={`flex items-center gap-[5px] px-2.5 md:px-3 py-1 md:py-[5px] rounded-[15px] border border-black cursor-pointer transition-colors duration-200 disabled:opacity-50 ${hasSurged
-                  ? "bg-[#F49B31] text-white"
-                  : "bg-[#FEF5EA] text-[#4A504E]"
-                  }`}
-              >
-                <SurgeIcon
-                  width={12}
-                  height={16}
-                  fill={hasSurged ? "#FFFFFF" : "#F49B31"}
-                />
-                <span className="font-['Poppins',sans-serif] font-semibold text-[13px] md:text-[14px] leading-normal">
-                  {surgeCount}
-                </span>
-              </button>
-            </Tooltip>
+              <SurgeIcon
+                width={12}
+                height={16}
+                fill={hasSurged ? "#FFFFFF" : "#F49B31"}
+              />
+              <span className="font-['Poppins',sans-serif] font-semibold text-[13px] md:text-[14px] leading-normal">
+                {surgeCount}
+              </span>
+            </button>
           </div>
         </div>
 

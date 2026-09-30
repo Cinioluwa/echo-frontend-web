@@ -106,7 +106,7 @@ const UnifiedFeed = () => {
       .catch((err) => {
         console.error("Failed to fetch top 3 pings:", err);
       });
-  }, [debouncedQuery, selectedCategoryId, fetchPings]);
+  }, [debouncedQuery, selectedCategoryId, fetchPings, organizationId]);
 
   // ── WebSocket event wiring (Phase 11) ───────────────────────────────────────
   useEffect(() => {

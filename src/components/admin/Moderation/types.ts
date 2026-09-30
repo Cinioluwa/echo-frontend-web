@@ -2,6 +2,8 @@
  * Moderation Types
  */
 
+import type { ReportActionDto } from "../../../api/types/admin.types";
+
 export type ViolationType =
   | "inappropriate-content"
   | "misinformation"
@@ -29,3 +31,14 @@ export interface ModerationItem {
 }
 
 export type FilterType = "all" | "pending" | "resolved" | "dismissed" | "active-suspensions";
+
+/**
+ * Payload emitted by `ModerationItem` when an admin confirms an action.
+ *
+ * Extends `ReportActionDto` — which is what the reports API expects — with the
+ * client-side-only `deletePost` flag that `Moderation` strips before calling the
+ * API.
+ */
+export interface ModerationActionPayload extends ReportActionDto {
+  deletePost: boolean;
+}

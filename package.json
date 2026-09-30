@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
+    "@lottiefiles/dotlottie-react": "^0.19.16",
     "@tailwindcss/vite": "^4.1.16",
     "axios": "^1.13.2",
     "framer-motion": "^12.29.2",
@@ -34,9 +35,9 @@
     "@redux-devtools/extension": "^3.3.0",
     "@tailwindcss/postcss": "^4.1.16",
     "@types/node": "^24.6.0",
-    "@vercel/node": "^2.15.0",
     "@types/react": "^19.1.16",
     "@types/react-dom": "^19.1.9",
+    "@vercel/node": "^2.15.0",
     "@vitejs/plugin-react": "^5.0.4",
     "autoprefixer": "^10.4.21",
     "eslint": "^9.36.0",

@@ -15,7 +15,7 @@ interface Props {
     isLoading?: boolean;
 }
 
-const MarkAsResolvedBar = ({ pingId: _pingId, onResolved, isLoading = false }: Props) => {
+const MarkAsResolvedBar = ({ onResolved, isLoading = false }: Props) => {
     const [showConfirmation, setShowConfirmation] = useState(false);
     const [isProcessing, setIsProcessing] = useState(false);
 

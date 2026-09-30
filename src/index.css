@@ -8,6 +8,93 @@
   --font-poppins: "Poppins", sans-serif;
   --font-andada: "Andada Pro", serif;
   --font-baloo: "Baloo Bhai 2", cursive, sans-serif;
+
+  /* ── Custom animations ──────────────────────────────────────────────────────
+     Migrated here from tailwind.config.js. Tailwind v4 does not auto-detect a
+     JavaScript config (it must be opted into with `@config`), so the entries in
+     that file were never emitted and every `animate-*` utility below was a no-op.
+     Defining them in `@theme` is the v4-native way to register custom
+     animations/keyframes.                                                      */
+  --animate-fade-in: fade-in 0.3s ease-out;
+  --animate-fade-in-up: fade-in-up 0.4s ease-out;
+  --animate-slide-down: slide-down 0.3s ease-out;
+  --animate-slide-up: slide-up 0.5s ease-out;
+  --animate-scale-in: scale-in 0.3s ease-out;
+  --animate-bounce-subtle: bounce-subtle 2s ease-in-out infinite;
+  /* Used by ToastNotification (was referenced but never defined anywhere). */
+  --animate-slide-in: slide-in 0.3s ease-out;
+
+  @keyframes fade-in {
+    0% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+
+  @keyframes fade-in-up {
+    0% {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes slide-down {
+    0% {
+      transform: translateY(-100%);
+    }
+    100% {
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes slide-up {
+    0% {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes scale-in {
+    0% {
+      opacity: 0;
+      transform: scale(0.9);
+    }
+    100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  @keyframes bounce-subtle {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-5px);
+    }
+  }
+
+  @keyframes slide-in {
+    0% {
+      opacity: 0;
+      transform: translateX(24px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
 }
 
 body {

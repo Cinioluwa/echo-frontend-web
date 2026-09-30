@@ -39,7 +39,7 @@ const UserProfileSidePanel = ({ pages }: Pages) => {
   ];
 
   return (
-    <aside className="w-full lg:w-56 flex lg:flex-col gap-2 overflow-x-auto no-scrollbar py-2 md:py-0 mb-6 md:mb-0">
+    <aside className="w-full lg:w-56 lg:shrink-0 flex lg:flex-col gap-2 overflow-x-auto no-scrollbar py-2 md:py-0 mb-2 lg:mb-0">
       {menuItems.map((item) => (
         <button
           key={item.label}
@@ -54,10 +54,10 @@ const UserProfileSidePanel = ({ pages }: Pages) => {
               navigate("/user/account");
             }
           }}
-          className={`flex items-center md:my-1 gap-3 md:gap-5 cursor-pointer px-4 md:px-7 py-2 md:py-3 rounded-xl whitespace-nowrap transition-all shrink-0 ${
+          className={`flex min-h-11 items-center gap-3 cursor-pointer px-4 py-2.5 lg:my-1 lg:gap-4 lg:px-5 lg:py-3 rounded-xl whitespace-nowrap transition-colors shrink-0 ${
             item.active
-              ? "bg-[#E8A355] text-white shadow-lg shadow-orange-200"
-              : "bg-[#FEF5EA] hover:bg-orange-100"
+              ? "bg-[#F49B31] text-white"
+              : "bg-[#FEF5EA] text-[#4A3728] hover:bg-[#fae9d4]"
           }`}
         >
           {item.icon}

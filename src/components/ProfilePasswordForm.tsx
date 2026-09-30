@@ -19,7 +19,7 @@ const ProfilePasswordForm = () => {
   return (
     <form onSubmit={handleSubmit} className="mt-8 md:mt-10">
       <h2 className="text-lg md:text-xl text-[#4A3728] mb-1 font-semibold">Change Password</h2>
-      <p className="text-xs md:text-sm text-gray-400 mb-4 md:mb-6">Update your account password</p>
+      <p className="text-xs md:text-sm text-[#6B6259] mb-4 md:mb-6">Update your account password</p>
 
       <div className="space-y-4">
         <div className="flex flex-col md:flex-row gap-4">
@@ -28,7 +28,7 @@ const ProfilePasswordForm = () => {
             placeholder="Old Password"
             value={currentPassword}
             onChange={e => setCurrentPassword(e.target.value)}
-            className="flex-1 p-3 md:p-4 bg-[#FFFBF5] border border-orange-100 rounded-xl text-sm italic focus:outline-none focus:ring-1 focus:ring-orange-200"
+            className="flex-1 p-3 md:p-4 bg-[#FEF5EA] border border-[#F4E3C9] rounded-xl text-sm text-[#060B13] focus:outline-none focus:ring-2 focus:ring-[#FFC37B]"
             required
             minLength={6}
           />
@@ -37,13 +37,13 @@ const ProfilePasswordForm = () => {
             placeholder="New Password"
             value={newPassword}
             onChange={e => setNewPassword(e.target.value)}
-            className="flex-1 p-3 md:p-4 bg-[#FFFBF5] border border-orange-100 rounded-xl text-sm italic focus:outline-none focus:ring-1 focus:ring-orange-200"
+            className="flex-1 p-3 md:p-4 bg-[#FEF5EA] border border-[#F4E3C9] rounded-xl text-sm text-[#060B13] focus:outline-none focus:ring-2 focus:ring-[#FFC37B]"
             required
             minLength={8}
           />
           <button
             type="submit"
-            className="px-6 py-3 md:py-4 bg-[#E8A355] text-white rounded-xl text-sm font-semibold shadow-md hover:bg-[#d49246] transition md:w-auto disabled:opacity-60"
+            className="px-6 py-3 bg-[#F49B31] text-white rounded-full text-sm font-semibold hover:bg-[#d88429] transition md:w-auto disabled:opacity-60"
             disabled={loading || !currentPassword || !newPassword}
           >
             {loading ? "Changing..." : "Update Password"}

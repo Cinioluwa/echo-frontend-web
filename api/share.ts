@@ -95,8 +95,8 @@ function generateOGPage(
   shareUrl: string,
   webBase: string,
 ): string {
-  let title = escapeHtml(data.title);
-  let descriptionText = escapeHtml(data.description || "");
+  const title = escapeHtml(data.title);
+  const descriptionText = escapeHtml(data.description || "");
 
   // Trim the final description to 200 characters so it fits social previews cleanly
   const maxDescLength = 200;
