@@ -16,14 +16,29 @@ window.addEventListener('vite:preloadError', (event) => {
   tryAutoReloadForChunkError(event);
 });
 
-// Register Service Worker for Web Push notifications
-// Must be at /service-worker.js (root scope) so Vite can serve it unmodified.
+// Register Service Worker for Web Push notifications in production only
+// In development, unregister and purge cache so Vite HMR and pre-bundled chunks don't conflict
 if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/service-worker.js').catch((err) => {
-      console.warn('[SW] Registration failed:', err);
+  if (import.meta.env.PROD) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/service-worker.js').catch((err) => {
+        console.warn('[SW] Registration failed:', err);
+      });
     });
-  });
+  } else {
+    navigator.serviceWorker.getRegistrations().then((registrations) => {
+      for (const registration of registrations) {
+        registration.unregister();
+      }
+    });
+    if ('caches' in window) {
+      caches.keys().then((keys) => {
+        for (const key of keys) {
+          caches.delete(key);
+        }
+      });
+    }
+  }
 }
 
 createRoot(document.getElementById('root')!).render(
