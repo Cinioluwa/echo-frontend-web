@@ -193,13 +193,16 @@ const InlinePingCreator = forwardRef<InlinePingCreatorHandle>((_, ref) => {
     try {
       const createdPing = await pingService.createPing({
         title: pingData.title.trim(),
-        content: pingData.description.trim(),
+        content: pingData.description.trim() || undefined,
         categoryId: pingData.categoryId,
         isAnonymous: pingData.anonymous,
         mediaIds: mediaIds.length > 0 ? mediaIds : undefined,
       });
 
       usePingsStore.getState().addPing(createdPing);
+      window.dispatchEvent(
+        new CustomEvent("echo:ping-created", { detail: createdPing })
+      );
       handleCancel();
     } catch (err: any) {
       setUploadError("Failed to submit. Please try again.");

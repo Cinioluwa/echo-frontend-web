@@ -225,6 +225,9 @@ const PingFormModal = ({
       });
 
       usePingsStore.getState().addPing(createdPing);
+      window.dispatchEvent(
+        new CustomEvent("echo:ping-created", { detail: createdPing })
+      );
 
       const newPingFormDetails: PingFormDetails = {
         cat: pingData.categoryName.trim(),

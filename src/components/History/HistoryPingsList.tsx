@@ -41,6 +41,16 @@ const HistoryPingsList = ({ isLoading: parentIsLoading = false }: HistoryPingsLi
             })
             .catch(() => setError("Failed to load your pings"))
             .finally(() => setIsLoading(false));
+
+        const handleNewPing = (e: Event) => {
+            const customEvent = e as CustomEvent<Ping>;
+            if (customEvent.detail) {
+                setPings((prev) => [customEvent.detail, ...prev]);
+            }
+        };
+
+        window.addEventListener("echo:ping-created", handleNewPing);
+        return () => window.removeEventListener("echo:ping-created", handleNewPing);
     }, []);
 
     const loadMore = async () => {
