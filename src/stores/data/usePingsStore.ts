@@ -288,19 +288,22 @@ export const usePingsStore = create<PingsState>()(
       },
 
       removePing: (id: string) => {
-        let removedPing: Ping | undefined;
+        let categoryId: number | undefined;
 
         set((state) => {
-          removedPing = state.pingsById[id];
+          const ping = state.pingsById[id];
+          if (ping?.category?.id) {
+            categoryId = ping.category.id;
+          }
           delete state.pingsById[id];
           state.pings = state.pings.filter((p) => p.id.toString() !== id);
         });
 
         // Decrement category count for the removed ping's category
-        if (removedPing?.category?.id) {
+        if (categoryId) {
           useSearchStore
             .getState()
-            .decrementCategoryCount(removedPing.category.id);
+            .decrementCategoryCount(categoryId);
         }
       },
 

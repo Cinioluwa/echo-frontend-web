@@ -175,7 +175,7 @@ export interface Ping {
 
 export interface CreatePingRequest {
   title: string;
-  content: string;
+  content?: string;
   categoryId: number;
   hashtag?: string;
   isAnonymous?: boolean;

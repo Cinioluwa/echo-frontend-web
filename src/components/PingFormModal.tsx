@@ -172,10 +172,6 @@ const PingFormModal = ({
       newErrors.title = "Title is required";
     }
 
-    if (!pingData.description.trim()) {
-      newErrors.description = "Description is required";
-    }
-
     if (!pingData.categoryId || pingData.categoryId === 0) {
       newErrors.category = "Please select a category";
     }
@@ -222,7 +218,7 @@ const PingFormModal = ({
     try {
       const createdPing = await pingService.createPing({
         title: pingData.title.trim(),
-        content: pingData.description.trim(),
+        content: pingData.description.trim() || undefined,
         categoryId: pingData.categoryId,
         isAnonymous: pingData.anonymous,
         mediaIds,
