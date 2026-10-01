@@ -75,10 +75,14 @@ const HistorySurgedList = ({ isLoading: parentIsLoading = false }: HistorySurged
         );
     }
 
+    const handleDeletePing = (deletedId: number) => {
+        setPings((prev) => prev.filter((p) => p.id !== deletedId));
+    };
+
     return (
         <div className="flex flex-col gap-[15px]">
             {pings.map((ping) => (
-                <UnifiedPingCard key={ping.id} ping={ping} />
+                <UnifiedPingCard key={ping.id} ping={ping} onDelete={handleDeletePing} />
             ))}
             {hasNextPage && (
                 <button

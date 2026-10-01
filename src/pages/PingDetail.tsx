@@ -59,6 +59,7 @@ const PingDetail = () => {
   );
 
   const [itemToDelete, setItemToDelete] = useState<{ type: "Ping" | "Wave", id: number } | null>(null);
+  const [isDeletingItem, setIsDeletingItem] = useState(false);
 
   const [ping, setPing] = useState<Ping | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -229,34 +230,40 @@ const PingDetail = () => {
   const confirmDelete = async () => {
     if (!itemToDelete) return;
     const target = itemToDelete;
-    // Instantly dismiss modal and remove from state/store
-    setItemToDelete(null);
 
+    setIsDeletingItem(true);
     if (target.type === "Wave") {
-      setWaves((prev) => prev.filter((w) => w.id !== target.id));
-      if (pingId) {
-        const curPing = usePingsStore.getState().pingsById[pingId];
-        if (curPing?._count) {
-          usePingsStore.getState().updatePing(pingId, {
-            _count: {
-              ...curPing._count,
-              waves: Math.max(0, curPing._count.waves - 1),
-            },
-          });
-        }
-      }
       try {
         await waveService.deleteWave(String(target.id));
+        setWaves((prev) => prev.filter((w) => w.id !== target.id));
+        if (pingId) {
+          const curPing = usePingsStore.getState().pingsById[pingId];
+          if (curPing?._count) {
+            usePingsStore.getState().updatePing(pingId, {
+              _count: {
+                ...curPing._count,
+                waves: Math.max(0, curPing._count.waves - 1),
+              },
+            });
+          }
+        }
+        setItemToDelete(null);
       } catch (err) {
         console.error("Failed to delete Wave:", err);
+      } finally {
+        setIsDeletingItem(false);
       }
     } else if (target.type === "Ping") {
-      usePingsStore.getState().removePing(String(pingId));
-      navigate("/feed");
+      const idToDelete = String(target.id || pingId);
       try {
-        await pingService.deletePing(String(pingId));
+        await pingService.deletePing(idToDelete);
+        usePingsStore.getState().removePing(idToDelete);
+        setItemToDelete(null);
+        navigate("/feed");
       } catch (err) {
         console.error("Failed to delete Ping:", err);
+      } finally {
+        setIsDeletingItem(false);
       }
     }
   };
@@ -508,6 +515,7 @@ const PingDetail = () => {
           itemType={itemToDelete.type}
           onConfirm={confirmDelete}
           onCancel={() => setItemToDelete(null)}
+          isLoading={isDeletingItem}
         />
       )}
     </div>

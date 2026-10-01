@@ -75,6 +75,10 @@ const HistoryPingsList = ({ isLoading: parentIsLoading = false }: HistoryPingsLi
         );
     }
 
+    const handleDeletePing = (deletedId: number) => {
+        setPings((prev) => prev.filter((p) => p.id !== deletedId));
+    };
+
     return (
         <div className="flex flex-col gap-[15px]">
             {pings.map((ping) => (
@@ -82,6 +86,7 @@ const HistoryPingsList = ({ isLoading: parentIsLoading = false }: HistoryPingsLi
                     key={ping.id}
                     ping={ping}
                     isHistoryContext
+                    onDelete={handleDeletePing}
                 />
             ))}
             {pagination.hasNextPage && (

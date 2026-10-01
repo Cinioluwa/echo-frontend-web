@@ -29,6 +29,7 @@ interface UnifiedPingCardProps {
   isHistoryContext?: boolean;
   weeklyTop3Ids?: number[];
   wavePreviewMode?: "embedded-only" | "fetch-if-missing";
+  onDelete?: (pingId: number) => void;
 }
 
 const UnifiedPingCard = ({
@@ -36,6 +37,7 @@ const UnifiedPingCard = ({
   isHistoryContext = false,
   weeklyTop3Ids = [],
   wavePreviewMode = "fetch-if-missing",
+  onDelete,
 }: UnifiedPingCardProps) => {
   const navigate = useNavigate();
   const currentUser = useAuthStore((state) => state.user);
@@ -117,10 +119,12 @@ const UnifiedPingCard = ({
   };
 
   const handleDeleteConfirm = async () => {
+    const pingId = currentPing.id;
     setShowDeleteModal(false);
-    usePingsStore.getState().removePing(String(currentPing.id));
+    usePingsStore.getState().removePing(String(pingId));
+    onDelete?.(pingId);
     try {
-      await pingService.deletePing(String(currentPing.id));
+      await pingService.deletePing(String(pingId));
     } catch (err) {
       console.error("Failed to delete ping:", err);
     }

@@ -33,7 +33,7 @@ import {
 } from "../api/services";
 import type { Announcement, Ping } from "../api/types";
 import MarkAsResolvedBar from "./MarkAsResolvedBar";
-import { useAuthStore, usePingsStore, useNotificationStore } from "../stores";
+import { useAuthStore, usePingsStore, useNotificationStore, useSearchStore } from "../stores";
 
 const Layout = () => {
   const location = useLocation();
@@ -114,6 +114,21 @@ const Layout = () => {
     publicService.getSoundboard({ sort: "trending", top: 3 }).then((res) => {
       setTop3(res.data);
     });
+  }, [isFeedPage]);
+
+  // Ensure category counts and user surge status are hydrated if loading outside /feed
+  useEffect(() => {
+    if (isFeedPage) return;
+    const searchState = useSearchStore.getState();
+    const pingsState = usePingsStore.getState();
+    if (
+      searchState.totalCount === 0 &&
+      Object.keys(searchState.categoryCounts).length === 0 &&
+      !pingsState.isLoading &&
+      pingsState.pings.length === 0
+    ) {
+      pingsState.fetchPings({ sort: "trending" });
+    }
   }, [isFeedPage]);
 
   // Fetch ping data when on ping detail page
