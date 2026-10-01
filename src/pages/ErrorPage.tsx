@@ -240,12 +240,38 @@ const ErrorPageContent: React.FC<ErrorPageContentProps> = ({
     );
 };
 
+class SafeErrorPageBoundary extends React.Component<
+    { fallback: React.ReactNode; children: React.ReactNode },
+    { hasError: boolean }
+> {
+    state = { hasError: false };
+    static getDerivedStateFromError() {
+        return { hasError: true };
+    }
+    render() {
+        if (this.state.hasError) return this.props.fallback;
+        return this.props.children;
+    }
+}
+
 /**
  * Connected router component that safely extracts route error context and navigation
  */
 const ErrorPageInRouter: React.FC<ErrorPageProps> = (props) => {
-    const navigate = useNavigate();
-    const routeError = useRouteError();
+    let navigate: ((to: any) => void) | null = null;
+    let routeError: unknown = undefined;
+
+    try {
+        navigate = useNavigate();
+    } catch {
+        navigate = null;
+    }
+
+    try {
+        routeError = useRouteError();
+    } catch {
+        routeError = undefined;
+    }
 
     return (
         <ErrorPageContent
@@ -261,10 +287,19 @@ const ErrorPageInRouter: React.FC<ErrorPageProps> = (props) => {
  * inside React Router, an errorElement, or as a standalone component inside AppErrorBoundary.
  */
 const ErrorPage: React.FC<ErrorPageProps> = (props) => {
-    const inRouter = useInRouterContext();
+    let inRouter = false;
+    try {
+        inRouter = Boolean(useInRouterContext());
+    } catch {
+        inRouter = false;
+    }
 
     if (inRouter) {
-        return <ErrorPageInRouter {...props} />;
+        return (
+            <SafeErrorPageBoundary fallback={<ErrorPageContent {...props} />}>
+                <ErrorPageInRouter {...props} />
+            </SafeErrorPageBoundary>
+        );
     }
 
     return <ErrorPageContent {...props} />;

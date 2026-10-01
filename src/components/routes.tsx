@@ -184,6 +184,7 @@ const router = createBrowserRouter([
 
   // Main app routes — nested under Layout
   {
+    errorElement: <ErrorPage />,
     element: (
       <ProtectedRoute>
         <Layout />

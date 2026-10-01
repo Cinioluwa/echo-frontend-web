@@ -103,6 +103,19 @@
         var splashEl = document.getElementById('echo-splash');
         if (splashEl) splashEl.style.display = 'flex';
       }
+      // On localhost, immediately unregister service workers and clear cache before Vite scripts execute
+      if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+        if ('serviceWorker' in navigator) {
+          navigator.serviceWorker.getRegistrations().then(function(regs) {
+            regs.forEach(function(r) { r.unregister(); });
+          });
+        }
+        if ('caches' in window) {
+          caches.keys().then(function(keys) {
+            keys.forEach(function(k) { caches.delete(k); });
+          });
+        }
+      }
     </script>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
