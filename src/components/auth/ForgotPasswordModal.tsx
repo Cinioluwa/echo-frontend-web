@@ -172,28 +172,21 @@ const ForgotPasswordModal: React.FC<ForgotPasswordModalProps> = ({ isOpen, onClo
                                     className="text-[22px] sm:text-[24px] font-semibold text-black mb-2"
                                     style={{ fontFamily: "Poppins, sans-serif" }}
                                 >
-                                    Check Your Email
+                                    Check Your Inbox
                                 </h2>
 
                                 <p
-                                    className="text-sm text-gray-500 mb-2"
+                                    className="text-sm text-gray-600 mb-4"
                                     style={{ fontFamily: "Poppins, sans-serif" }}
                                 >
-                                    We've sent a password reset link to:
-                                </p>
-
-                                <p
-                                    className="text-sm font-medium text-[#4A3728] mb-6"
-                                    style={{ fontFamily: "Poppins, sans-serif" }}
-                                >
-                                    {email}
+                                    If an account exists for <span className="font-semibold text-[#4A3728]">{email}</span>, you will receive a password reset link shortly.
                                 </p>
 
                                 <p
                                     className="text-xs text-gray-400 mb-6"
                                     style={{ fontFamily: "Poppins, sans-serif" }}
                                 >
-                                    The link will expire in 24 hours. If you don't see the email, check your spam folder.
+                                    The link will expire in 24 hours. If you don't receive an email within a few minutes, please check your spam folder or confirm your email address.
                                 </p>
 
                                 {/* Done Button */}
