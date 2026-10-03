@@ -85,7 +85,6 @@ const UnifiedFeed = () => {
   const [weeklyTop3Ids, setWeeklyTop3Ids] = useState<number[]>([]);
   const [institutionStatus, setInstitutionStatus] =
     useState<InstitutionStatus | null>(null);
-  const [institutionStatusError, setInstitutionStatusError] = useState<string | null>(null);
   const [representativePings, setRepresentativePings] = useState<Ping[]>([]);
   const [representativeLoading, setRepresentativeLoading] = useState(false);
   const [representativeError, setRepresentativeError] = useState<string | null>(null);
@@ -103,18 +102,15 @@ const UnifiedFeed = () => {
   const refreshInstitutionStatus = useCallback(async () => {
     if (!organizationId) {
       setInstitutionStatus(null);
-      setInstitutionStatusError(null);
       return;
     }
 
     try {
       const status = await organizationService.getInstitutionStatus(organizationId);
       setInstitutionStatus(status);
-      setInstitutionStatusError(null);
     } catch (err) {
       console.error("Failed to fetch institution status:", err);
       setInstitutionStatus(null);
-      setInstitutionStatusError("Institution leadership status is temporarily unavailable.");
     }
   }, [organizationId]);
 
@@ -305,11 +301,6 @@ const UnifiedFeed = () => {
           onClaimSpace={() => setClaimModalOpen(true)}
           onRecommendLeader={() => setInviteModalOpen(true)}
         />
-      )}
-      {institutionStatusError && (
-        <p role="status" className="rounded-xl border border-black/10 bg-white px-4 py-3 font-['Inter',sans-serif] text-sm text-black/60">
-          {institutionStatusError}
-        </p>
       )}
 
       {/* Inline ping creator */}
