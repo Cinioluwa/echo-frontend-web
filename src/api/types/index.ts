@@ -46,6 +46,21 @@ export interface User {
     logoUrl?: string;
     domain?: string | null;
   };
+  representativeProfile?: {
+    title?: string | null;
+    canAssign: boolean;
+    canRespond: boolean;
+    canAcknowledge?: boolean;
+    canResolve: boolean;
+    canExport?: boolean;
+    canManageReps?: boolean;
+    bodyId?: number | null;
+    departmentId?: number | null;
+    scopeLevel?: number | null;
+    scopeHall?: string | null;
+    responsibilities?: string;
+    isActive: boolean;
+  } | null;
   userPreference?: UserPreference;
 }
 
@@ -157,6 +172,7 @@ export interface Ping {
   isAnonymous?: boolean; // Whether this ping was posted anonymously
   anonymousAlias?: string | null; // Custom name for anonymous posts
   anonymousProfilePicture?: string | null; // Avatar URL for anonymous posts
+  acknowledgedAt?: string | null;
   resolvedAt?: string; // Timestamp when ping was marked as resolved
   isEdited?: boolean; // true if content was edited after original creation
   createdAt: string;
@@ -171,6 +187,21 @@ export interface Ping {
   };
   media?: Media[];
   officialResponse?: OfficialResponse;
+  targetDepartmentId?: number | null;
+  targetDepartment?: {
+    id: number;
+    name: string;
+    code: string;
+  } | null;
+  targetLevel?: number | null;
+  targetHall?: string | null;
+  assignedToUserId?: number | null;
+  assignedToBodyId?: number | null;
+  assignedToUser?: User | null;
+  assignedToBody?: {
+    id: number;
+    name: string;
+  } | null;
 }
 
 export interface CreatePingRequest {
@@ -180,6 +211,9 @@ export interface CreatePingRequest {
   hashtag?: string;
   isAnonymous?: boolean;
   mediaIds?: number[];
+  targetDepartmentId?: number;
+  targetLevel?: number;
+  targetHall?: string;
 }
 
 export interface UpdatePingRequest {
@@ -365,6 +399,7 @@ export interface PingQueryParams extends PaginationParams {
   authorId?: string;
   search?: string;
   hasWave?: boolean; // Filter pings that have proposed waves
+  departmentId?: number;
 }
 
 // ==================== Error Types ====================
@@ -522,7 +557,10 @@ export type NotificationType =
   | 'MODERATION_WARNING'
   | 'MODERATION_SUSPENSION'
   | 'MODERATION_BAN'
-  | 'MODERATION_IDENTITY_DISCLOSURE_REQUESTED';
+  | 'MODERATION_IDENTITY_DISCLOSURE_REQUESTED'
+  | 'INSTITUTION_LEADER_RECOMMENDED'
+  | 'FOUNDING_AGREEMENT_READY'
+  | 'INSTITUTION_CLAIMED';
 
 export interface AppNotification {
   id: number | string;

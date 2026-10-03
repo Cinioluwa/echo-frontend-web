@@ -4,6 +4,8 @@ import LoadingFallback from "./LoadingFallback";
 
 interface AdminRouteProps {
     children: React.ReactNode;
+    allowRepresentativeManager?: boolean;
+    allowActiveRepresentative?: boolean;
 }
 
 /**
@@ -11,7 +13,11 @@ interface AdminRouteProps {
  * Wrapper for routes that require admin privileges
  * Redirects to soundBoard if user is not an admin or not authenticated
  */
-const AdminRoute: React.FC<AdminRouteProps> = ({ children }) => {
+const AdminRoute: React.FC<AdminRouteProps> = ({
+    children,
+    allowRepresentativeManager = false,
+    allowActiveRepresentative = false,
+}) => {
     const { isAuthenticated, isLoading, user } = useAuthStore();
     const location = useLocation();
 
@@ -28,8 +34,17 @@ const AdminRoute: React.FC<AdminRouteProps> = ({ children }) => {
 
     // Check if user has admin role
     const isAdmin = user.role === "ADMIN" || user.role === "SUPER_ADMIN";
+    const isActiveRepresentative =
+        user.role === "REPRESENTATIVE" &&
+        user.representativeProfile?.isActive === true;
+    const isRepresentativeManager =
+        allowRepresentativeManager &&
+        isActiveRepresentative &&
+        user.representativeProfile?.canManageReps === true;
+    const isAllowedRepresentative =
+        (allowActiveRepresentative && isActiveRepresentative) || isRepresentativeManager;
 
-    if (!isAdmin) {
+    if (!isAdmin && !isAllowedRepresentative) {
         console.warn("AdminRoute: User does not have admin privileges, redirecting to soundBoard");
         return <Navigate to="/soundBoard" replace />;
     }

@@ -5,6 +5,8 @@ import AnnouncementModal from "../../components/admin/AnnouncementModal";
 import AdminSoundboard from "../../components/admin/AdminSoundboard/AdminSoundboard";
 import { AdminPageProvider, type AdminPage } from "../../contexts/AdminPageContext";
 import { adminService } from "../../api/services/admin.service";
+import { useAuthStore } from "../../stores";
+import RepresentativeAdminInbox from "./RepresentativeAdminInbox";
 
 /**
  * AdminSoundboardPage
@@ -12,6 +14,7 @@ import { adminService } from "../../api/services/admin.service";
  */
 const AdminSoundboardPage: React.FC = () => {
     const location = useLocation();
+    const user = useAuthStore((state) => state.user);
     const [showAnnouncementModal, setShowAnnouncementModal] = useState(false);
 
     const getCurrentPage = (): AdminPage => {
@@ -67,9 +70,13 @@ const AdminSoundboardPage: React.FC = () => {
         }
     };
 
+    if (user?.role === "REPRESENTATIVE") {
+        return <RepresentativeAdminInbox />;
+    }
+
     return (
         <AdminPageProvider initialPage={getCurrentPage()}>
-            <div className="min-h-full w-screen">
+            <div className="min-h-full w-full min-w-0">
                 <AdminLayout />
 
                 <AdminSoundboard

@@ -1,125 +1,128 @@
-import React from "react";
+import { useEffect } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import { useAdminPage } from "../../contexts/AdminPageContext";
+import { useLocation } from "react-router-dom";
+import { Building2, X } from "lucide-react";
+import { useAuthStore } from "../../stores";
 
-const soundboard = "/assets/icon/admin-soundboard.svg";
-const moderation = "/assets/icon/moderation.svg";
-const followUp = "/assets/icon/followup.svg";
-const setting = "/assets/icon/admin-settings.svg";
-const profile = "/assets/icon/gear.svg";
 interface Props {
   setMenu: React.Dispatch<React.SetStateAction<boolean>>;
   menu: boolean;
 }
 
 const AdminMobileMenu = ({ setMenu, menu }: Props) => {
-  const { pages, setCurrentPage } = useAdminPage();
-
-  const iconClass = (active: boolean) =>
-    `w-5 h-5 ${active ? "brightness-0 invert" : ""}`;
-
+  const location = useLocation();
+  const user = useAuthStore((state) => state.user);
+  const isRepresentative = user?.role === "REPRESENTATIVE" && user.representativeProfile?.isActive === true;
+  const isRepresentativeManager = isRepresentative && user?.representativeProfile?.canManageReps === true;
+  const currentPage = location.pathname.toLowerCase();
   function handleClick() {
     setMenu(false);
   }
 
+  useEffect(() => {
+    if (menu) setMenu(false);
+    // Close the drawer after navigation.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location.pathname]);
+
+  useEffect(() => {
+    if (!menu) return;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setMenu(false);
+    };
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [menu, setMenu]);
+
+  const items = isRepresentative
+    ? [
+        { label: "Representative inbox", to: "/admin/soundboard", icon: "/assets/icon/admin-soundboard.svg" },
+        ...(isRepresentativeManager
+          ? [{ label: "Institution", to: "/admin/institution", icon: null }]
+          : []),
+      ]
+    : [
+        { label: "Soundboard", to: "/admin/soundboard", icon: "/assets/icon/admin-soundboard.svg" },
+        { label: "Follow up", to: "/admin/followUp", icon: "/assets/icon/followup.svg" },
+        { label: "Moderation", to: "/admin/moderation", icon: "/assets/icon/moderation.svg" },
+        { label: "Admin Settings", to: "/admin/settings", icon: "/assets/icon/admin-settings.svg" },
+        { label: "Institution", to: "/admin/institution", icon: null },
+      ];
+
   return (
-    <div
-      onClick={handleClick}
-      className={`${menu ? "opacity-100" : "opacity-0 pointer-events-none"
-        } fixed transition-opacity duration-300 z-20 ease-in inset-0 bg-black/40 md:hidden`}
-    >
-      <div
-        onClick={(e) => e.stopPropagation()}
-        className={`${menu ? "translate-x-0" : "-translate-x-full"
-          } transition-transform transform duration-300 ease-in-out w-[190px] top-[100px] flex flex-col gap-[15px] bg-white p-2 rounded-r-xl absolute left-0  py-[15px]`}
-      >
-        <Link to={"/admin/soundboard"}>
-          <button
-            onClick={() => {
-              setCurrentPage("soundboard");
-              handleClick();
-            }}
-            className={`flex items-center ${pages.soundboard
-              ? "bg-[#FFC37B] border-0"
-              : "bg-transparent border-2"
-              }  gap-3 py-[9px] w-full transition  cursor-pointer  ease-in-out duration-700 text-[15px] border-[#F49B31] rounded-[25px]`}
+    <AnimatePresence>
+      {menu && (
+        <>
+          <motion.button
+            type="button"
+            aria-label="Close admin menu"
+            onClick={handleClick}
+            className="fixed inset-0 z-40 bg-black/40 md:hidden"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+          />
+          <motion.aside
+            role="dialog"
+            aria-modal="true"
+            aria-label="Admin navigation"
+            className="fixed inset-y-0 left-0 z-50 flex h-dvh w-[min(88vw,360px)] flex-col overflow-y-auto bg-[#FEF5EA] shadow-2xl md:hidden"
+            initial={{ x: "-100%" }}
+            animate={{ x: 0 }}
+            exit={{ x: "-100%" }}
+            transition={{ type: "tween", ease: [0.22, 0.61, 0.36, 1], duration: 0.28 }}
           >
-            <span className="ml-6">
-              <img src={soundboard} alt="" className={iconClass(pages.soundboard)} />
-            </span>
-            Soundboard
-          </button>
-        </Link>
-        <Link to={"/admin/followUp"}>
-          <button
-            onClick={() => {
-              setCurrentPage("followUp");
-              handleClick();
-            }}
-            className={`flex items-center ${pages.followUp
-              ? "bg-[#FFC37B] border-0"
-              : "bg-transparent border-2"
-              }  gap-3 py-[9px] text-[15px] transition w-full cursor-pointer  ease-in-out duration-700 border-[#F49B31] rounded-[25px]`}
-          >
-            <span className="ml-6">
-              <img src={followUp} alt="" className={iconClass(pages.followUp)} />
-            </span>
-            Follow Up
-          </button>
-        </Link>
-        <Link to={"/admin/moderation"}>
-          <button
-            onClick={() => {
-              setCurrentPage("moderation");
-              handleClick();
-            }}
-            className={`flex items-center ${pages.moderation
-              ? "bg-[#FFC37B] border-0"
-              : "bg-transparent border-2"
-              }  gap-3 py-[9px] w-full transition cursor-pointer ease-in-out duration-700 text-[15px] border-[#F49B31] rounded-[25px]`}
-          >
-            <span className="ml-6">
-              <img src={moderation} alt="" className={iconClass(pages.moderation)} />
-            </span>
-            Moderation
-          </button>
-        </Link>
-        <Link to={"/admin/settings"}>
-          <button
-            onClick={() => {
-              setCurrentPage("settings");
-              handleClick();
-            }}
-            className={`flex items-center ${pages.settings
-              ? "bg-[#FFC37B] border-0"
-              : "bg-transparent border-2"
-              }  gap-3 py-[9px] w-full transition cursor-pointer ease-in-out duration-700 text-[15px] border-[#F49B31] rounded-[25px]`}
-          >
-            <span className="ml-6">
-              <img src={setting} alt="" className={iconClass(pages.settings)} />
-            </span>
-            Settings
-          </button>
-        </Link>
-        <Link to={"/admin/profile"}>
-          <button
-            onClick={() => {
-              setCurrentPage("profile");
-              handleClick();
-            }}
-            className={`flex items-center ${pages.profile
-              ? "bg-[#FFC37B] border-0"
-              : "bg-transparent border-2"
-              }  gap-3 py-[9px] w-full transition cursor-pointer ease-in-out duration-700 text-[15px] border-[#F49B31] rounded-[25px]`}
-          >
-            <span className="ml-6">
-              <img src={profile} alt="" className={iconClass(pages.profile)} />
-            </span>
-            Profile
-          </button>
-        </Link>
-      </div>
-    </div>
+            <div className="sticky top-0 z-10 flex items-center justify-between border-b border-[#F4E3C9] bg-[#FEF5EA] px-5 py-4">
+              <div className="flex items-center gap-2">
+                <img src="/assets/images/Echo Logo_black.svg" alt="" className="h-6 w-[22px] brightness-0 contrast-200" />
+                <span className="font-['Poppins',sans-serif] text-xl font-bold leading-none text-black">Echo</span>
+              </div>
+              <button
+                type="button"
+                onClick={handleClick}
+                aria-label="Close menu"
+                className="flex h-10 w-10 items-center justify-center rounded-full bg-white text-[#4A3728] shadow-sm transition-colors hover:bg-[#fae9d4]"
+              >
+                <X size={20} />
+              </button>
+            </div>
+            <nav className="flex-1 px-4 py-5">
+              <div className="flex flex-col gap-3">
+                {items.map(({ label, to, icon }) => {
+                  const active = currentPage === to.toLowerCase() ||
+                    (to === "/admin/soundboard" && currentPage.startsWith("/admin/soundboard/"));
+                  return (
+                    <Link
+                      key={to}
+                      to={to}
+                      onClick={handleClick}
+                      aria-current={active ? "page" : undefined}
+                      className={`flex w-full items-center gap-3 rounded-full border border-[#F49B31] px-5 py-3 text-left text-[15px] font-semibold transition-colors ${
+                        active ? "border-0 bg-[#FFC37B] text-[#212121]" : "bg-white text-[#212121] hover:bg-[#FEF5EA]"
+                      }`}
+                    >
+                      {icon ? (
+                        <img src={icon} alt="" className={`h-5 w-5 shrink-0 ${active ? "brightness-0" : ""}`} />
+                      ) : (
+                        <Building2 className={`h-5 w-5 shrink-0 ${active ? "text-[#212121]" : "text-[#F49B31]"}`} aria-hidden="true" />
+                      )}
+                      {label}
+                    </Link>
+                  );
+                })}
+              </div>
+            </nav>
+          </motion.aside>
+        </>
+      )}
+    </AnimatePresence>
   );
 };
 

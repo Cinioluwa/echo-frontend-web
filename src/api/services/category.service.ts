@@ -24,6 +24,16 @@ const categoryService = {
       : (response.data as any)?.data || [];
     return data;
   },
+
+  create: async (name: string): Promise<CategoryData> => {
+    const response = await api.post<CategoryData>("/categories", { name });
+    return response.data;
+  },
+
+  updateName: async (id: number, name: string): Promise<CategoryData> => {
+    const response = await api.patch<CategoryData>(`/categories/${id}`, { name });
+    return response.data;
+  },
 };
 
 export default categoryService;

@@ -9,6 +9,9 @@ import UserAvatar from "./UserAvatar";
 import { useAuthStore } from "../stores";
 import type { CategoryData } from "../api/types/index";
 import { checkPingContent } from "../utils/contentModeration";
+import OptionalPingContext, {
+  type OptionalPingContextValue,
+} from "./OptionalPingContext";
 
 interface Props {
   children?: ReactNode;
@@ -37,6 +40,7 @@ interface PingData {
   categoryName: string;
   anonymous: boolean;
   photos: File[];
+  context: OptionalPingContextValue;
 }
 
 const getErrorMessage = (err: any): string => {
@@ -73,6 +77,7 @@ const PingFormModal = ({
     categoryName: "",
     anonymous: false,
     photos: [],
+    context: { targetDepartmentId: null, targetLevel: null, targetHall: "" },
   });
 
   // UI state
@@ -222,6 +227,15 @@ const PingFormModal = ({
         categoryId: pingData.categoryId,
         isAnonymous: pingData.anonymous,
         mediaIds,
+        ...(pingData.context.targetDepartmentId
+          ? { targetDepartmentId: pingData.context.targetDepartmentId }
+          : {}),
+        ...(pingData.context.targetLevel
+          ? { targetLevel: pingData.context.targetLevel }
+          : {}),
+        ...(pingData.context.targetHall.trim()
+          ? { targetHall: pingData.context.targetHall.trim() }
+          : {}),
       });
 
       usePingsStore.getState().addPing(createdPing);
@@ -274,6 +288,7 @@ const PingFormModal = ({
       categoryName: "",
       anonymous: false,
       photos: [],
+      context: { targetDepartmentId: null, targetLevel: null, targetHall: "" },
     });
   };
 
@@ -335,6 +350,13 @@ const PingFormModal = ({
           {errors.category && (
             <p className="text-red-500 text-xs">{errors.category}</p>
           )}
+
+          <OptionalPingContext
+            value={pingData.context}
+            onChange={(context) =>
+              setPingData((prev) => ({ ...prev, context }))
+            }
+          />
 
           {/* Title Input */}
           <div className="flex px-4 md:px-[27px] py-1.5 md:py-3 border-2 border-[#FFC37B] rounded-[20px] focus-within:border-[#F49B31] focus-within:shadow-md transition-all duration-200 bg-white w-full h-[36px] md:h-[50px]">

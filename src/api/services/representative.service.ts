@@ -37,6 +37,21 @@ export interface TopWavesResponse {
   data: Wave[];
 }
 
+export interface AssignPingRequest {
+  assignedToUserId?: number;
+  assignedToBodyId?: number;
+}
+
+export interface RepresentativeRosterMember {
+  profileId: number;
+  userId: number;
+  firstName: string | null;
+  lastName: string | null;
+  email: string;
+  body?: { id: number; name: string } | null;
+  department?: { id: number; name: string; code: string } | null;
+}
+
 /**
  * Representative Service
  * Handles representative-only operations (requires REPRESENTATIVE role)
@@ -96,6 +111,24 @@ const representativeService = {
       data
     );
     return response.data;
+  },
+
+  assignPing: async (
+    pingId: number,
+    data: AssignPingRequest,
+  ): Promise<{ message: string; ping: Ping }> => {
+    const response = await api.post<{ message: string; ping: Ping }>(
+      `/representatives/pings/${pingId}/assign`,
+      data,
+    );
+    return response.data;
+  },
+
+  getRoster: async (): Promise<RepresentativeRosterMember[]> => {
+    const response = await api.get<{ data: RepresentativeRosterMember[] }>(
+      "/representatives/roster",
+    );
+    return response.data.data;
   },
 };
 

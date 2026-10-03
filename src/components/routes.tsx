@@ -58,6 +58,7 @@ const RequestSubmitted = lazyWithRetry(() => import("../pages/auth/RequestSubmit
 const AllVerified = lazyWithRetry(() => import("../pages/auth/AllVerified"));
 const WaitingRoom = lazyWithRetry(() => import("../pages/auth/WaitingRoom"));
 const ResetPassword = lazyWithRetry(() => import("../pages/auth/ResetPassword"));
+const InstitutionAgreement = lazyWithRetry(() => import("../pages/auth/InstitutionAgreement"));
 
 // Lazy load main app pages (new unified architecture)
 const UnifiedFeed = lazyWithRetry(() => import("../pages/UnifiedFeed"));
@@ -74,6 +75,7 @@ const ModerationPage = lazyWithRetry(() => import("../pages/admin/ModerationPage
 const AdminPingDetailPage = lazyWithRetry(() => import("../pages/admin/AdminPingDetailPage"));
 const AdminSoundboardPage = lazyWithRetry(() => import("../pages/admin/AdminSoundboardPage"));
 const AdminSettingsPage = lazyWithRetry(() => import("../pages/admin/AdminSettingsPage"));
+const InstitutionWorkspace = lazyWithRetry(() => import("../pages/admin/InstitutionWorkspace"));
 
 // Lazy load admin components
 const UserProfile = lazyWithRetry(() => import("../pages/UserProfile"));
@@ -181,6 +183,10 @@ const router = createBrowserRouter([
     path: "/reset-password",
     element: withSuspense(ResetPassword),
   },
+  {
+    path: "/onboarding/institution-agreement",
+    element: withSuspense(InstitutionAgreement),
+  },
 
   // Main app routes — nested under Layout
   {
@@ -275,7 +281,7 @@ const router = createBrowserRouter([
       {
         path: "soundboard",
         element: (
-          <AdminRoute>
+          <AdminRoute allowActiveRepresentative>
             {withSuspense(AdminSoundboardPage)}
           </AdminRoute>
         ),
@@ -309,6 +315,14 @@ const router = createBrowserRouter([
         element: (
           <AdminRoute>
             {withSuspense(AdminSettingsPage)}
+          </AdminRoute>
+        ),
+      },
+      {
+        path: "institution",
+        element: (
+          <AdminRoute allowRepresentativeManager>
+            {withSuspense(InstitutionWorkspace)}
           </AdminRoute>
         ),
       },

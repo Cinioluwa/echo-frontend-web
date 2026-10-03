@@ -16,6 +16,9 @@ import UserAvatar from "./UserAvatar";
 import { ChevronDown, Trash2 } from "lucide-react";
 import { FaLink } from "react-icons/fa6";
 import type { CategoryData } from "../api/types/index";
+import OptionalPingContext, {
+  type OptionalPingContextValue,
+} from "./OptionalPingContext";
 
 type ExpansionState = "collapsed" | "expanded";
 
@@ -30,6 +33,7 @@ interface PingData {
   categoryName: string;
   anonymous: boolean;
   photos: File[];
+  context: OptionalPingContextValue;
 }
 
 const InlinePingCreator = forwardRef<InlinePingCreatorHandle>((_, ref) => {
@@ -44,6 +48,7 @@ const InlinePingCreator = forwardRef<InlinePingCreatorHandle>((_, ref) => {
     categoryName: "",
     anonymous: false,
     photos: [],
+    context: { targetDepartmentId: null, targetLevel: null, targetHall: "" },
   });
 
   // UI state
@@ -114,6 +119,7 @@ const InlinePingCreator = forwardRef<InlinePingCreatorHandle>((_, ref) => {
       categoryName: "",
       anonymous: false,
       photos: [],
+      context: { targetDepartmentId: null, targetLevel: null, targetHall: "" },
     });
     setErrors({});
     setUploadError(null);
@@ -197,6 +203,15 @@ const InlinePingCreator = forwardRef<InlinePingCreatorHandle>((_, ref) => {
         categoryId: pingData.categoryId,
         isAnonymous: pingData.anonymous,
         mediaIds: mediaIds.length > 0 ? mediaIds : undefined,
+        ...(pingData.context.targetDepartmentId
+          ? { targetDepartmentId: pingData.context.targetDepartmentId }
+          : {}),
+        ...(pingData.context.targetLevel
+          ? { targetLevel: pingData.context.targetLevel }
+          : {}),
+        ...(pingData.context.targetHall.trim()
+          ? { targetHall: pingData.context.targetHall.trim() }
+          : {}),
       });
 
       usePingsStore.getState().addPing(createdPing);
@@ -284,6 +299,13 @@ const InlinePingCreator = forwardRef<InlinePingCreatorHandle>((_, ref) => {
             </div>
           )}
         </div>
+
+        <OptionalPingContext
+          value={pingData.context}
+          onChange={(context) =>
+            setPingData((prev) => ({ ...prev, context }))
+          }
+        />
 
         {errors.category && (
           <p className="text-red-500 text-xs">{errors.category}</p>

@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, type ReactNode } from "react";
 
-export type AdminPage = "soundboard" | "followUp" | "moderation" | "settings" | "profile";
+export type AdminPage = "soundboard" | "followUp" | "moderation" | "settings" | "institution" | "profile";
 
 interface AdminPageContextType {
     currentPage: AdminPage;
@@ -10,6 +10,7 @@ interface AdminPageContextType {
         followUp: boolean;
         moderation: boolean;
         settings: boolean;
+        institution: boolean;
         profile: boolean;
     };
 }
@@ -31,6 +32,7 @@ export const AdminPageProvider: React.FC<{ children: ReactNode; initialPage?: Ad
         followUp: currentPage === "followUp",
         moderation: currentPage === "moderation",
         settings: currentPage === "settings",
+        institution: currentPage === "institution",
         profile: currentPage === "profile",
     };
 

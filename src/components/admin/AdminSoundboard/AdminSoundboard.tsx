@@ -7,7 +7,6 @@ import { useUIStore } from "../../../stores";
 import PingIndexModal from "./PingIndexModal";
 import { motion } from "framer-motion";
 import AdminHeader from "../AdminHeader";
-import AdminMobileMenu from "../AdminMobileMenu";
 import { adminService } from "../../../api/services/admin.service";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer } from "../../shared/Toast";
@@ -37,7 +36,6 @@ const AdminSoundboard: React.FC<AdminSoundboardProps> = ({
 }) => {
     const { isSidebarCollapsed } = useUIStore();
     const navigate = useNavigate();
-    const [openMenu, setOpenMenu] = useState(false);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [toasts, setToasts] = useState<ToastItem[]>([]);
@@ -180,33 +178,36 @@ const AdminSoundboard: React.FC<AdminSoundboardProps> = ({
 
     return (
         <>
-            <div className={`flex min-h-screen bg-[#fae9d4] m-0 ${isSidebarCollapsed ? "md:ms-[80px]" : "md:ms-[230px]"} transition-all duration-300`} data-node-id="admin-soundboard-page">
-                <div className="flex-1 w-full bg-[#fcfcfc]">
+            <div className={`flex min-h-screen min-w-0 bg-[#fcfcfc] m-0 ${isSidebarCollapsed ? "md:ms-[80px]" : "md:ms-[230px]"} transition-all duration-300`} data-node-id="admin-soundboard-page">
+                <div className="min-w-0 flex-1 bg-[#fcfcfc]">
                     <div className="px-3 sm:px-5 pt-5 sm:pt-[30px] pb-3 sm:pb-5">
-                        <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 sm:gap-0">
-                            <div className="flex flex-col gap-1 sm:gap-2">
-                                <h1 className="hidden md:block text-[#212121] font-semibold text-[24px] sm:text-[28px] leading-[26px] sm:leading-[30.8px] tracking-[-0.5px]">
+                        <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between lg:gap-0">
+                            <div className="flex min-w-0 flex-col gap-1 sm:gap-2">
+                                <h1 className="hidden md:block font-poppins font-bold text-[24px] sm:text-[32px] leading-normal text-black">
                                     Soundboard
                                 </h1>
-                                <AdminHeader title="Soundboard" setOpenMenu={setOpenMenu} openMenu={openMenu} />
+                                <AdminHeader title="Soundboard" />
+                                <p className="font-poppins font-medium text-[13px] sm:text-[16px] leading-normal text-[#8b8e8d]">
+                                    See the issues and community activity that need institutional attention.
+                                </p>
                             </div>
 
-                            <div className="flex gap-2 flex-wrap sm:flex-nowrap">
+                            <div className="grid w-full grid-cols-2 gap-2 lg:w-auto lg:shrink-0">
                                 <motion.button
                                     onClick={handleExportClick}
-                                    className="border border-[#f49b31] rounded-lg px-3 sm:px-[15px] py-2 sm:py-[9px] flex items-center gap-1 sm:gap-2 hover:bg-[#F49B31] text-[#f49b31] hover:text-white transition-colors text-xs sm:text-[12px]"
+                                    className="min-w-0 whitespace-nowrap border border-[#f49b31] rounded-lg px-1.5 sm:px-3 lg:px-[15px] py-2 sm:py-[9px] flex items-center justify-center gap-1 sm:gap-2 hover:bg-[#F49B31] text-[#f49b31] hover:text-white transition-colors text-[10px] sm:text-xs"
                                     whileHover="hover"
                                 >
                                     <motion.img src="/assets/icon/Export.svg" alt="Export Icon" className="w-[13px] h-[13px]" variants={iconVariants} />
-                                    <span className="font-medium hidden sm:inline">Export</span>
+                                    <span className="font-medium">Export</span>
                                 </motion.button>
 
                                 <button
                                     onClick={onPublishAnnouncement}
-                                    className="bg-[#ffc37b] hover:bg-[#ffb347] border border-[#f49b31] rounded-lg px-3 sm:px-[15px] py-2 sm:py-[9px] flex items-center gap-1 sm:gap-2 transition-colors text-xs sm:text-[12px]"
+                                    className="min-w-0 whitespace-nowrap bg-[#ffc37b] hover:bg-[#ffb347] border border-[#f49b31] rounded-lg px-1.5 sm:px-3 lg:px-[15px] py-2 sm:py-[9px] flex items-center justify-center gap-1 sm:gap-2 transition-colors text-[10px] sm:text-xs"
                                 >
                                     <img src="/assets/icon/cross.svg" alt="Announcement Icon" className="w-[13px] h-[13px]" />
-                                    <span className="text-[#212121] font-medium hidden sm:inline">Publish Announcement</span>
+                                    <span className="text-[#212121] font-medium">Publish Announcement</span>
                                 </button>
                             </div>
                         </div>
@@ -237,7 +238,7 @@ const AdminSoundboard: React.FC<AdminSoundboardProps> = ({
                                     />
                                 </div>
 
-                                <div className="flex flex-wrap sm:flex-nowrap gap-5">
+                                <div className="grid min-w-0 grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
                                     <StatCard
                                         title="Resolution Rate"
                                         value={resolutionRate.value}
@@ -269,8 +270,6 @@ const AdminSoundboard: React.FC<AdminSoundboardProps> = ({
                     </div>
                 </div>
             </div>
-            <AdminMobileMenu setMenu={setOpenMenu} menu={openMenu} />
-
             {selectedCategory && (
                 <PingIndexModal
                     category={selectedCategory}

@@ -41,7 +41,7 @@ const IssuesByCategoryCard: React.FC<IssuesByCategoryCardProps> = ({
             </h3>
 
             {/* Categories Grid */}
-            <div className="grid grid-cols-2 gap-5">
+            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
                 {categories.map((category, index) => (
                     <div
                         key={index}

@@ -1,13 +1,13 @@
 import AdminSideBar from "./AdminSideBar";
-import NavBar from "../NavBar";
+import AdminMobileNavBar from "./AdminMobileNavBar";
 
 const AdminLayout = () => {
   return (
     <div className="relative md:fixed z-50">
       {/* Top NavBar — fixed on desktop, static on mobile */}
-      <header className="z-20 md:hidden w-screen ">
+      <header className="z-20 w-full md:hidden">
         <nav>
-          <NavBar />
+          <AdminMobileNavBar />
         </nav>
       </header>
       <aside className="">

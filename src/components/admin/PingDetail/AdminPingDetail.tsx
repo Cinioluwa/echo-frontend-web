@@ -248,13 +248,16 @@ const AdminPingDetail: React.FC<AdminPingDetailProps> = ({ pingId: propPingId })
     const categoryIcon = (categoryImages as Record<string, string>)[categoryName] || (categoryImages as Record<string, string>).General;
     return (
         <div className={`m-0 ${isSidebarCollapsed ? "md:ms-[80px]" : "md:ms-[230px]"} flex flex-col gap-4 sm:gap-6 items-start px-3 sm:px-6 py-6 sm:py-8 relative transition-all duration-300`}>
-            <div className="flex items-center justify-between w-full mb-2">
-                <h1 className="font-poppins font-semibold text-[24px] sm:text-[28px] leading-normal text-black">
+            <div className="flex w-full flex-col items-start gap-1 sm:gap-2">
+                <h1 className="font-poppins font-bold text-[24px] sm:text-[32px] leading-normal text-black">
                     Ping Details
                 </h1>
+                <p className="font-poppins font-medium text-[13px] sm:text-[16px] leading-normal text-[#8b8e8d]">
+                    Review this Ping’s details, official response, and progress.
+                </p>
             </div>
 
-            <div className="flex flex-col lg:flex-row gap-4 sm:gap-6 w-full">
+            <div className="flex min-w-0 w-full flex-col gap-4 sm:gap-6 lg:flex-row">
                 <div className="flex-1 flex flex-col gap-4 sm:gap-6">
                     <div className="flex items-center justify-between w-full">
                         <button
@@ -380,7 +383,7 @@ const AdminPingDetail: React.FC<AdminPingDetailProps> = ({ pingId: propPingId })
                     </div>
                 </div>
 
-                <div className="w-full lg:w-[320px] sm:w-[300px] flex flex-col gap-3 sm:gap-4">
+                <div className="w-full min-w-0 lg:w-[320px] lg:shrink-0 flex flex-col gap-3 sm:gap-4">
                     <CommentsPanel comments={pingData.comments || []} />
                     <StatusTimeline events={detail.statusEvents || []} />
                 </div>

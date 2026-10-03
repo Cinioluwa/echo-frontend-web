@@ -14,8 +14,7 @@ for bugs.
 ## 2. Frontend (`c:\echo-frontend-web`)
 
 ```bash
-npm install
-copy .env.example .env      # Windows cmd
+npm install                 # only if dependencies are not installed
 ```
 
 Only one env var is actually read by the Vite app:
@@ -27,44 +26,60 @@ VITE_API_BASE_URL=http://127.0.0.1:3000/api
 The `NEXT_PUBLIC_*` entries in `.env.example` are Next.js leftovers — this app
 never reads them.
 
-Start (detached, logs to disk):
+Start the app:
 
 ```bash
-powershell -NoProfile -ExecutionPolicy Bypass -File scripts\start-dev-server.ps1
+npm run dev -- --host 127.0.0.1 --port 5173
 ```
 
-Stop:
+Open `http://127.0.0.1:5173`. Stop the foreground process with `Ctrl+C`.
+
+The institutional marketing page is served separately from
+`C:\Echo Landing Page V3` on port 5175:
+
+```powershell
+cd C:\Echo Landing Page V3
+& 'C:\echo-frontend-web\node_modules\.bin\vite.cmd' --host 127.0.0.1 --port 5175
+```
+
+Open `http://127.0.0.1:5175/institutions.html`.
+
+## 3. Superadmin dashboard (`C:\echo-superadmin`)
+
+The separate Superadmin app now has a **Claim Review** page. Run it against the
+local backend API with a process-scoped environment override (the checked-in
+`.env` currently points at the hosted API):
+
+```powershell
+cd C:\echo-superadmin
+$env:VITE_API_BASE_URL = "http://127.0.0.1:3000"
+npm run dev -- --host 127.0.0.1 --port 5174
+```
+
+Open `http://127.0.0.1:5174`. The local backend must be running, and you need a
+`SUPER_ADMIN` account to sign in. In **Claim Review**, use **Authorize & send
+agreement** for verified claims; the claim is not activated until the signer
+accepts the agreement.
+
+## 4. Backend (`C:\echo-backend`)
+
+The local PostgreSQL service is expected at `localhost:5433`. If the local
+database has not yet been synced with the current Prisma schema, run this only
+when `DATABASE_URL` points to your local development database:
 
 ```bash
-powershell -NoProfile -ExecutionPolicy Bypass -File scripts\stop-dev-server.ps1
+npx prisma db push --skip-generate
 ```
 
-Logs: `dev-server.log`, `dev-server-err.log` (git-ignored).
+Start the API:
 
-> **Use `http://localhost:5173`, not `127.0.0.1:5173`.** Vite binds the IPv6
-> loopback (`[::1]`), so the IPv4 address refuses the connection. Add
-> `server: { host: "127.0.0.1" }` to `vite.config.ts` if you need IPv4.
-
-## 3. Backend (`C:\echo-backend`)
-
-Install once — the repo shipped with an incomplete `node_modules` (`node-cron`
-was missing, which crashed startup):
-
-```bash
-cd /d C:\echo-backend && npm install
+```powershell
+$env:FRONTEND_URL = "http://127.0.0.1:5173"
+npm run dev
 ```
 
-Start both Postgres and the API (detached):
-
-```bash
-powershell -NoProfile -ExecutionPolicy Bypass -File C:\echo-backend\scripts\start-local.ps1
-```
-
-Stop the API (add `-IncludePostgres` to also stop the DB):
-
-```bash
-powershell -NoProfile -ExecutionPolicy Bypass -File C:\echo-backend\scripts\stop-local.ps1
-```
+Stop the foreground process with `Ctrl+C`. PostgreSQL runs as the local
+`postgresql-x64-18` Windows service.
 
 Verify:
 
@@ -79,7 +94,7 @@ Seed / refresh test data (safe to re-run — all upserts):
 cd /d C:\echo-backend && node scripts\setup-multitenancy-tests.js
 ```
 
-## 4. Test credentials
+## 5. Test credentials
 
 Password for all accounts: **`password123`**
 
@@ -90,13 +105,31 @@ Password for all accounts: **`password123`**
 | Test University B | `testunivb.edu` | `adminb@testunivb.edu` (ADMIN), `studentb@testunivb.edu` (USER) |
 
 CU has 7 seeded pings and 8 waves; Orgs A and B have their own categories and
-zero pings (useful for tenant-isolation testing — see §8).
+zero pings (useful for tenant-isolation testing — see §9).
+
+For the institution claim/review flow, this local database also has an isolated
+unclaimed test institution:
+
+| Institution | User | Password |
+| --- | --- | --- |
+| Echo Claim Test University (`claimtest.echo.test`) | `claimant@claimtest.echo.test` (verified member) | `EchoLocalTest2026!` |
+| Echo Claim Test University (`claimtest.echo.test`) | `reviewer@claimtest.echo.test` (SUPER_ADMIN) | `EchoAdminLocal2026!` |
+
+These are local-only test credentials. The previous walkthrough completed the
+fixture as a Founding Partner; reset it or create another institution to replay
+the claim flow. Recommendations to non-users use `hello@mail.echo-ng.com`.
+Agreement email and other messages to Echo users use
+`notifications@echo-ng.com`; they also receive the agreement in-app. Configure
+`RESEND_API_KEY` (or SMTP credentials) in the backend environment to test actual
+delivery. Without a configured transport, claim authorization still delivers the
+agreement through the claimant's Echo notifications, while external
+recommendation requests show an email-delivery error.
 
 > `src/pages/Login.tsx` also shows quick-fill buttons when the URL contains
 > `?demoOrg=<name>` (password `EchoDemo2026!`). Those target the self-serve demo
 > tenants, not the local seed above.
 
-## 5. Quality gates
+## 6. Quality gates
 
 ```bash
 npm run lint     # ESLint 9 flat config
@@ -104,31 +137,38 @@ npm run build    # tsc -b (typecheck) + vite production build
 npm run preview  # serve the production build
 ```
 
-**Verified baseline:** `npm run build` passes with no TypeScript errors;
-`npm run lint` exits 0 with 147 warnings and **0 errors**.
+**Current verification:** the frontend production build passes. Targeted ESLint
+for the changed frontend files passes with warnings; full `npm run lint` still
+reports three pre-existing conditional-hook errors in `src/pages/ErrorPage.tsx`.
+The superadmin Vite build passes, while its `npm run build` is blocked by two
+pre-existing `TS1294` errors in `src/api/client.ts`.
 
-## 6. Gotchas that will waste your time
+The backend TypeScript build and 15 focused institution-flow integration tests
+pass. All 38 migrations apply successfully to an empty local validation
+database.
+
+## 7. Gotchas that will waste your time
 
 - **Login is rate-limited to 5 attempts / 15 min per IP.** Once exhausted it
   returns 429 and *every* account stops working, which looks like a broken seed
-  or a wrong password. Restart the backend (`stop-local.ps1` then
-  `start-local.ps1`) to clear the in-memory limiter while developing.
-- **`localhost:5173`, not `127.0.0.1:5173`** (see §2).
+  or a wrong password. Restart `npm run dev` to clear the in-memory limiter.
+- **Use `http://127.0.0.1:5173`** with the host binding shown in §2.
 - **Health endpoints are at the root**, not under `/api`.
 - **`api/share.ts` + the `vercel.json` rewrites only run on Vercel.** Share-link
   Open-Graph previews are not exercised by `npm run dev`.
 - Redis is not running, so the backend logs "Redis unavailable" and falls back
   to in-memory rate-limit stores. Expected and harmless locally.
 
-## 7. Route map for manual testing
+## 8. Route map for manual testing
 
 | Route | Access | What to check |
 | --- | --- | --- |
 | `/login` (`/`) | public | Form validation, forgot-password modal, offline banner |
-| `/signUp`, `/signup` | public | Validation, consent text, error mapping (`SignUpError`) |
+| `/signUp`, `/signup` | public | Validation, institutional email registration |
 | `/verification` | public | Token consumption, resend cooldown |
 | `/find-institution`, `/institution-found`, `/make-request`, `/request-submitted` | public | Multi-step flow, back navigation |
-| `/waiting-room`, `/all-verified` | public | Status messaging |
+| `/waiting-room`, `/all-verified` | public | Status messaging and institution confirmation |
+| `/onboarding/institution-agreement?claimId=…&token=…&orgId=…` | public/token | Agreement integrity, signature, and activation |
 | `/reset-password` | public | Invalid/expired token handling |
 | `/feed`, `/feed/:pingId` | auth | Infinite scroll, skeletons, "load more", category/author names |
 | `/guest/feed/:pingId` | public | Unauthenticated deep-link + redirect from `/feed/:pingId` |
@@ -136,6 +176,7 @@ npm run preview  # serve the production build
 | `/notifications` | auth | Read/unread, pagination |
 | `/user/profile`, `/user/account`, `/user/privacy`, `/user/notification` | auth | Forms + optimistic updates |
 | `/admin/soundboard`, `/admin/followUp`, `/admin/moderation`, `/admin/settings` | ADMIN | Moderation actions, bulk ops |
+| `/admin/institution` | ADMIN | Departments, representative bodies, delegation and permissions |
 | `/super-admin/*` | SUPER_ADMIN | Tables, destructive-action confirmations |
 | `/terms`, `/privacy` | public | Static copy |
 | `/soundBoard`, `/stream`, `/waveHistory` | public | Legacy redirects to `/feed` / `/history` |
@@ -146,7 +187,7 @@ deep-links) and routes non-active / org-less users to `/waiting-room`,
 `/find-institution` or `/verification`. `AdminRoute` / `SuperAdminRoute` gate the
 admin surfaces.
 
-## 8. Bug-hunting checklist
+## 9. Bug-hunting checklist
 
 - **Tenant isolation:** log in as `studenta@testuniva.edu` — expect 0 pings and
   only that org's 2 categories. Anything leaking from Covenant University is a bug.
@@ -159,12 +200,12 @@ admin surfaces.
 - Session expiry: clear `authToken` in localStorage; the 401 interceptor should
   redirect exactly once (no loop).
 - Modal/report flows (`WaveActionModal`, `ReportModal`, `CommentActionsDropdown`)
-  — verify the entrance animations actually play (see §9, bug 1).
+  — verify the entrance animations actually play (see §10, bug 1).
 - Responsive: mobile nav (hamburger in the top bar opens `MobileSideDrawer`;
   `AdminMobileMenu` on admin pages), safe-area insets, PWA standalone splash.
 - Accessibility: tab order, focus rings, `aria-*` on modals/dropdowns.
 
-## 9. Bugs found and fixed during setup
+## 10. Bugs found and fixed during setup
 
 1. **Every custom Tailwind animation was a silent no-op.** `tailwind.config.js`
    declared keyframes/animations, but Tailwind v4 does not auto-detect a JS
@@ -202,7 +243,7 @@ admin surfaces.
    (`studentA@…`), so lookups missed. Seed, existing rows and README are now
    lowercase.
 
-## 10. Visual verification harness (Playwright)
+## 11. Visual verification harness (Playwright)
 
 Playwright's Chromium is installed at
 `%LOCALAPPDATA%\ms-playwright` and the package lives in the backend repo
@@ -229,7 +270,7 @@ run performs one login, so if a run fails with a 429, restart the backend first.
 
 Baseline for `assert-ui.mjs`: **19 passed, 0 failed.**
 
-## 11. Known issues left open
+## 12. Known issues left open
 
 - **`src/pages/MobileSignUp.tsx` is unreachable** — no route references it
   (`routes.tsx` maps only `SignUp` to `/signUp` and `/signup`). It also hardcodes

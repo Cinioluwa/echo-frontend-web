@@ -26,7 +26,7 @@ const StatCard: React.FC<StatCardProps> = ({
 
     return (
         <div
-            className={`bg-white border border-[rgba(244,155,49,0.3)] rounded-xl p-6 flex flex-col justify-between min-w-[300px] md:w-4/12  w-full gap-2.5 ${className}`}
+            className={`bg-white border border-[rgba(244,155,49,0.3)] rounded-xl p-6 flex min-w-0 w-full flex-col justify-between gap-2.5 ${className}`}
             data-node-id="stat-card"
         >
             {/* Title */}

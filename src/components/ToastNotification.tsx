@@ -23,6 +23,9 @@ const ICONS: Partial<Record<NotificationType, string>> = {
   MODERATION_SUSPENSION: '🚫',
   MODERATION_BAN: '⛔',
   MODERATION_IDENTITY_DISCLOSURE_REQUESTED: '🔒',
+  INSTITUTION_LEADER_RECOMMENDED: '🏛️',
+  FOUNDING_AGREEMENT_READY: '📝',
+  INSTITUTION_CLAIMED: '🏛️',
 };
 
 // ─── Single Toast ──────────────────────────────────────────────────────────────

@@ -1,226 +1,174 @@
-/**
- * ClaimSpaceModal
- * Figma ref: 4033:9279 (desktop), 4171:12085 (mobile)
- * Phase: 2
- *
- * Modal for claiming institutional leadership.
- * Echo logo at top, title "Take the lead", identity fields, submit button.
- */
-
 import { useState } from "react";
 import { useAuthStore } from "../stores";
 import { organizationService } from "../api/services";
 
 interface ClaimSpaceModalProps {
-    isOpen: boolean;
-    onClose: () => void;
-    institutionName?: string;
-    organizationId: number | null;
+  isOpen: boolean;
+  onClose: () => void;
+  onSubmitted?: () => void;
+  institutionName?: string;
+  organizationId: number | null;
 }
 
 const ClaimSpaceModal = ({
-    isOpen,
-    onClose,
-    institutionName = "Your Institution",
-    organizationId,
+  isOpen,
+  onClose,
+  onSubmitted,
+  institutionName = "your institution",
+  organizationId,
 }: ClaimSpaceModalProps) => {
-    const user = useAuthStore((state) => state.user);
+  const user = useAuthStore((state) => state.user);
+  const [role, setRole] = useState("");
+  const [department, setDepartment] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-    const [email, setEmail] = useState(user?.email ?? "");
-    const [firstName, setFirstName] = useState("");
-    const [lastName, setLastName] = useState("");
-    const [password, setPassword] = useState("");
-    const [role, setRole] = useState("");
-    const [department, setDepartment] = useState("");
-    const [isSubmitting, setIsSubmitting] = useState(false);
-    const [error, setError] = useState<string | null>(null);
+  if (!isOpen) return null;
 
-    if (!isOpen) return null;
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setError(null);
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        if (!organizationId) return;
-        setIsSubmitting(true);
-        setError(null);
-        try {
-            await organizationService.claimOrganization(organizationId, {
-                email,
-                firstName,
-                lastName,
-                password,
-                metadata: { role, department },
-            });
-            onClose();
-        } catch (err: unknown) {
-            const status = (err as { response?: { status?: number } })?.response?.status;
-            if (status === 409) {
-                setError("This organisation has already been claimed or your request is pending review.");
-            } else if (status === 403) {
-                setError("Your email domain does not match this organisation's domain.");
-            } else {
-                setError("Failed to submit claim. Please try again.");
-            }
-        } finally {
-            setIsSubmitting(false);
-        }
-    };
+    if (!organizationId || !user) {
+      setError("We couldn't confirm your account or institution. Please sign in again and retry.");
+      return;
+    }
 
-    return (
-        <div
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="claim-space-title"
-            onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
-        >
-            <div className="bg-white rounded-[30px] p-[50px] flex flex-col gap-[30px] items-center w-full max-w-[480px]">
-                {/* Echo Logo */}
-                <div className="flex items-center gap-[5.6px] justify-center">
-                    <img
-                        src="/assets/images/echo-logo-coloured.png"
-                        alt="Echo Logo"
-                        className="h-[30px] w-auto"
-                        onError={(e) => {
-                            (e.currentTarget as HTMLImageElement).style.display = "none";
-                        }}
-                    />
-                    <span className="font-['Poppins',sans-serif] font-bold text-[33.75px] text-[#FFC37B] leading-normal">
-                        Echo
-                    </span>
-                </div>
+    setSubmitting(true);
+    try {
+      await organizationService.submitLeadershipClaim(organizationId, {
+        role: role.trim(),
+        ...(department.trim() ? { department: department.trim() } : {}),
+      });
+      setSubmitted(true);
+      onSubmitted?.();
+    } catch (requestError) {
+      console.error("Failed to submit institution claim:", requestError);
+      const responseError = (
+        requestError as { response?: { status?: number; data?: { error?: string; message?: string } } }
+      )?.response;
+      setError(
+        responseError?.data?.error ||
+          responseError?.data?.message ||
+          (responseError?.status === 409
+            ? "A claim for this institution is already under review."
+            : "We couldn't submit your claim. Please try again."),
+      );
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
-                {/* Header */}
-                <div className="flex flex-col gap-2.5 items-center text-center w-full">
-                    <h2
-                        id="claim-space-title"
-                        className="font-['Poppins',sans-serif] font-semibold text-[28px] text-black leading-9 w-full"
-                    >
-                        Take the lead
-                    </h2>
-                    <p className="font-['Poppins',sans-serif] font-medium text-[16px] text-[#4A504E] opacity-[0.69] leading-[21px] w-full">
-                        Verify your identity and claim {institutionName}'s dashboard
-                    </p>
-                </div>
-
-                {/* Form */}
-                <form onSubmit={handleSubmit} className="flex flex-col gap-5 items-center w-full">
-                    <div className="flex flex-col gap-[15px] items-center w-full">
-                        {/* Email */}
-                        <div className="bg-[#FBFBFB] border border-[#CACACA] rounded-xl flex items-center gap-[13px] h-[59px] px-[21px] py-[11px] w-full">
-                            <svg className="w-[26px] h-[26px] shrink-0" fill="none" viewBox="0 0 26 26" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                                <rect x="3" y="6" width="20" height="14" rx="2" stroke="#F49B31" strokeWidth="1.5" />
-                                <path d="M3 9l10 7 10-7" stroke="#F49B31" strokeWidth="1.5" strokeLinecap="round" />
-                            </svg>
-                            <div className="w-px h-[38px] bg-[#CACACA] shrink-0" />
-                            <input
-                                type="email"
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
-                                placeholder="Enter Email..."
-                                required
-                                className="flex-1 font-['Poppins',sans-serif] italic font-medium text-[13px] text-[#626665] bg-transparent outline-none"
-                            />
-                        </div>
-
-                        {/* First Name */}
-                        <div className="bg-[#FBFBFB] border border-[#CACACA] rounded-xl flex items-center gap-[13px] h-[59px] px-[21px] py-[11px] w-full">
-                            <svg className="w-[26px] h-[26px] shrink-0" fill="none" viewBox="0 0 26 26" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                                <circle cx="13" cy="8" r="5" stroke="#F49B31" strokeWidth="1.5" />
-                                <path d="M3 22c0-4.418 4.477-8 10-8s10 3.582 10 8" stroke="#F49B31" strokeWidth="1.5" strokeLinecap="round" />
-                            </svg>
-                            <div className="w-px h-[38px] bg-[#CACACA] shrink-0" />
-                            <input
-                                type="text"
-                                value={firstName}
-                                onChange={(e) => setFirstName(e.target.value)}
-                                placeholder="Enter First Name..."
-                                required
-                                className="flex-1 font-['Poppins',sans-serif] italic font-medium text-[13px] text-[#626665] bg-transparent outline-none"
-                            />
-                        </div>
-
-                        {/* Last Name */}
-                        <div className="bg-[#FBFBFB] border border-[#CACACA] rounded-xl flex items-center gap-[13px] h-[59px] px-[21px] py-[11px] w-full">
-                            <svg className="w-[26px] h-[26px] shrink-0" fill="none" viewBox="0 0 26 26" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                                <circle cx="13" cy="8" r="5" stroke="#F49B31" strokeWidth="1.5" />
-                                <path d="M3 22c0-4.418 4.477-8 10-8s10 3.582 10 8" stroke="#F49B31" strokeWidth="1.5" strokeLinecap="round" />
-                            </svg>
-                            <div className="w-px h-[38px] bg-[#CACACA] shrink-0" />
-                            <input
-                                type="text"
-                                value={lastName}
-                                onChange={(e) => setLastName(e.target.value)}
-                                placeholder="Enter Last Name..."
-                                required
-                                className="flex-1 font-['Poppins',sans-serif] italic font-medium text-[13px] text-[#626665] bg-transparent outline-none"
-                            />
-                        </div>
-
-                        {/* Password */}
-                        <div className="bg-[#FBFBFB] border border-[#CACACA] rounded-xl flex items-center gap-[13px] h-[59px] px-[21px] py-[11px] w-full">
-                            <svg className="w-[26px] h-[26px] shrink-0" fill="none" viewBox="0 0 26 26" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                                <rect x="5" y="11" width="16" height="11" rx="2" stroke="#F49B31" strokeWidth="1.5" />
-                                <path d="M9 11V7a4 4 0 018 0v4" stroke="#F49B31" strokeWidth="1.5" strokeLinecap="round" />
-                            </svg>
-                            <div className="w-px h-[38px] bg-[#CACACA] shrink-0" />
-                            <input
-                                type="password"
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                                placeholder="Enter Password..."
-                                required
-                                className="flex-1 font-['Poppins',sans-serif] italic font-medium text-[13px] text-[#626665] bg-transparent outline-none"
-                            />
-                        </div>
-
-                        {/* Role (Job Title) */}
-                        <div className="bg-[#FBFBFB] border border-[#CACACA] rounded-xl flex items-center gap-[13px] h-[59px] px-[21px] py-[11px] w-full">
-                            <svg className="w-[26px] h-[26px] shrink-0" fill="none" viewBox="0 0 26 26" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                                <rect x="3" y="9" width="20" height="14" rx="2" stroke="#F49B31" strokeWidth="1.5" />
-                                <path d="M9 9V7a4 4 0 018 0v2" stroke="#F49B31" strokeWidth="1.5" strokeLinecap="round" />
-                            </svg>
-                            <div className="w-px h-[38px] bg-[#CACACA] shrink-0" />
-                            <input
-                                type="text"
-                                value={role}
-                                onChange={(e) => setRole(e.target.value)}
-                                placeholder="Enter Job Title..."
-                                className="flex-1 font-['Poppins',sans-serif] italic font-medium text-[13px] text-[#626665] bg-transparent outline-none"
-                            />
-                        </div>
-
-                        {/* Department */}
-                        <div className="bg-[#FBFBFB] border border-[#CACACA] rounded-xl flex items-center gap-[13px] h-[59px] px-[21px] py-[11px] w-full">
-                            <svg className="w-[26px] h-[26px] shrink-0" fill="none" viewBox="0 0 26 26" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                                <rect x="3" y="5" width="20" height="18" rx="2" stroke="#F49B31" strokeWidth="1.5" />
-                                <path d="M3 10h20" stroke="#F49B31" strokeWidth="1.5" strokeLinecap="round" />
-                                <path d="M10 5V3M16 5V3" stroke="#F49B31" strokeWidth="1.5" strokeLinecap="round" />
-                            </svg>
-                            <div className="w-px h-[38px] bg-[#CACACA] shrink-0" />
-                            <input
-                                type="text"
-                                value={department}
-                                onChange={(e) => setDepartment(e.target.value)}
-                                placeholder="Enter Department..."
-                                className="flex-1 font-['Poppins',sans-serif] italic font-medium text-[13px] text-[#626665] bg-transparent outline-none"
-                            />
-                        </div>
-                    </div>
-
-                    {error && <p className="text-red-500 text-[13px] text-center w-full">{error}</p>}
-
-                    {/* Submit */}
-                    <button
-                        type="submit"
-                        disabled={isSubmitting}
-                        className="bg-[#F49B31] text-[#FFFEFE] font-['Poppins',sans-serif] font-medium text-[14px] leading-3.5 px-[50px] py-[15px] rounded-lg cursor-pointer hover:bg-[#d88429] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                        {isSubmitting ? "Submitting..." : "Submit"}
-                    </button>
-                </form>
-            </div>
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/45 p-4"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="claim-space-title"
+      onClick={(event) => {
+        if (event.target === event.currentTarget) onClose();
+      }}
+    >
+      <section className="max-h-[90vh] w-full max-w-[520px] overflow-y-auto rounded-[20px] border border-black/10 bg-[#FEF5EA] p-5 shadow-xl sm:p-8">
+        <div className="mb-6 flex items-center justify-between">
+          <span className="font-['Poppins',sans-serif] text-xl font-bold text-[#101010]">Echo</span>
+          <button
+            type="button"
+            onClick={onClose}
+            aria-label="Close claim request"
+            className="rounded-full p-2 text-black/55 hover:bg-white"
+          >
+            ✕
+          </button>
         </div>
-    );
+
+        {submitted ? (
+          <div role="status" aria-live="polite">
+            <p className="font-['Inter',sans-serif] text-xs font-semibold uppercase tracking-[0.16em] text-[#E8911A]">
+              Claim submitted
+            </p>
+            <h2 id="claim-space-title" className="mt-2 font-['Poppins',sans-serif] text-2xl font-bold">
+              Thank you.
+            </h2>
+            <p className="mt-3 font-['Inter',sans-serif] leading-7 text-black/70">
+              Echo's team will review your request for {institutionName}. We'll email you when there's an update. The institution remains in review until the agreement is signed.
+            </p>
+            <button
+              type="button"
+              onClick={onClose}
+              className="mt-6 rounded-full bg-[#F49B31] px-6 py-3 font-['Inter',sans-serif] font-semibold text-white hover:bg-[#E8911A]"
+            >
+              Done
+            </button>
+          </div>
+        ) : (
+          <>
+            <p className="font-['Inter',sans-serif] text-xs font-semibold uppercase tracking-[0.16em] text-[#E8911A]">
+              Institution leadership
+            </p>
+            <h2 id="claim-space-title" className="mt-2 font-['Poppins',sans-serif] text-2xl font-bold">
+              Request to lead {institutionName}
+            </h2>
+            <p className="mt-3 font-['Inter',sans-serif] leading-7 text-black/70">
+              Your account and verified institutional email will be included with this request. Echo reviews each claim before inviting an authorized representative to sign the Founding Institution Agreement.
+            </p>
+
+            {user && (
+              <div className="mt-5 rounded-2xl border border-black/10 bg-white p-4 font-['Inter',sans-serif] text-sm">
+                <p className="font-medium">{user.firstName} {user.lastName}</p>
+                <p className="mt-1 text-black/60">{user.email}</p>
+              </div>
+            )}
+
+            <form onSubmit={handleSubmit} className="mt-5 space-y-4">
+              <label className="block font-['Inter',sans-serif] text-sm font-medium">
+                Official title / position
+                <input
+                  required
+                  maxLength={160}
+                  autoComplete="organization-title"
+                  value={role}
+                  onChange={(event) => setRole(event.target.value)}
+                  placeholder="Dean of Student Affairs"
+                  className="mt-2 w-full rounded-xl border border-black/15 bg-white px-4 py-3 outline-none focus:border-[#F49B31] focus:ring-2 focus:ring-[#FFC37B]"
+                />
+              </label>
+              <label className="block font-['Inter',sans-serif] text-sm font-medium">
+                Department (optional)
+                <input
+                  maxLength={160}
+                  value={department}
+                  onChange={(event) => setDepartment(event.target.value)}
+                  placeholder="Student Affairs"
+                  className="mt-2 w-full rounded-xl border border-black/15 bg-white px-4 py-3 outline-none focus:border-[#F49B31] focus:ring-2 focus:ring-[#FFC37B]"
+                />
+              </label>
+
+              {error && <p role="alert" className="rounded-xl border border-red-200 bg-red-50 p-3 font-['Inter',sans-serif] text-sm text-red-800">{error}</p>}
+
+              <div className="flex flex-wrap gap-3 pt-2">
+                <button
+                  type="submit"
+                  disabled={submitting}
+                  className="rounded-full bg-[#F49B31] px-6 py-3 font-['Inter',sans-serif] font-semibold text-white hover:bg-[#E8911A] disabled:cursor-wait disabled:opacity-60"
+                >
+                  {submitting ? "Submitting…" : "Submit for review"}
+                </button>
+                <button
+                  type="button"
+                  onClick={onClose}
+                  className="rounded-full border border-black/15 bg-white px-6 py-3 font-['Inter',sans-serif] font-medium text-black/70 hover:bg-black/5"
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </>
+        )}
+      </section>
+    </div>
+  );
 };
 
 export default ClaimSpaceModal;

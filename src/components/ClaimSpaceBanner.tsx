@@ -1,123 +1,56 @@
-/**
- * ClaimSpaceBanner
- * Figma ref: 4162:11232 (desktop), 4175:12497 (mobile)
- * Phase: 2
- *
- * Dismissible banner shown at top of feed when institution has no leader.
- * Desktop: inline row with text + two CTA buttons.
- * Mobile: full-width with X dismiss button.
- */
-
-import { useState } from "react";
+import { ArrowUpRight, Building2, UserRoundPlus } from "lucide-react";
+import type { InstitutionStatus } from "../api/services/organization.service";
 
 interface ClaimSpaceBannerProps {
+  status: InstitutionStatus;
   onClaimSpace: () => void;
-  onInviteLeader: () => void;
+  onRecommendLeader: () => void;
 }
 
-// TODO: API — check if institution has a leader (GET /api/organization/:id/leader)
-// TODO: API — only show banner if no leader exists
-
 const ClaimSpaceBanner = ({
+  status,
   onClaimSpace,
-  onInviteLeader,
+  onRecommendLeader,
 }: ClaimSpaceBannerProps) => {
-  const [dismissed, setDismissed] = useState(() => {
-    try {
-      return sessionStorage.getItem("claimSpaceBannerDismissed") === "true";
-    } catch {
-      return false;
-    }
-  });
-
-  const handleDismiss = () => {
-    try {
-      sessionStorage.setItem("claimSpaceBannerDismissed", "true");
-    } catch {
-      // ignore
-    }
-    setDismissed(true);
-  };
-
-  if (dismissed) return null;
+  if (status.claimStatus === "FOUNDING_PARTNER") return null;
 
   return (
-    <div className="bg-[#FEF5EA] rounded-[13px] w-full relative">
-      {/* ── Mobile layout (column: text → buttons row) ── */}
-      {/* Figma ref: 4175:12497 — 367×92px, text at top, two buttons side-by-side, X at top-right */}
-      <div className="flex flex-col md:hidden  px-5 py-[25px] gap-[13px]">
-        {/* X dismiss — absolute top-right */}
-        <button
-          onClick={handleDismiss}
-          aria-label="Dismiss banner"
-          className="absolute top-1.5 right-3 text-black/40 hover:text-black/70 transition-colors text-[14px] leading-none cursor-pointer"
-        >
-          ✕
-        </button>
-
-        {/* Text */}
-        <p className="font-['Poppins',sans-serif] text-center font-medium text-[14px] leading-[18px] text-black opacity-[0.69] pr-6">
-          This space is waiting for a{" "}
-          <span className="text-[#F49B31] not-italic ">Leader</span>.
-        </p>
-
-        {/* Two CTA buttons — side by side (each ~158.5px, 34px tall) */}
-        <div className="flex items-center  gap-[8.5px]">
-          <button
-            onClick={onClaimSpace}
-            className="flex-1 bg-[#F49B31] text-white font-['Poppins',sans-serif] font-medium text-[11px] py-2 px-1 rounded-lg cursor-pointer hover:bg-[#d88429] transition-colors flex items-center justify-center"
-          >
-            That's me — Claim this space
-          </button>
-          <button
-            onClick={onInviteLeader}
-            className="flex-1 bg-[#F49B31] text-white font-['Poppins',sans-serif] font-medium text-[11px] py-2 px-1 rounded-lg cursor-pointer hover:bg-[#d88429] transition-colors flex items-center justify-center"
-          >
-            Know someone? Invite them
-          </button>
+    <section
+      aria-label={`${status.organizationName} institution claim`}
+      className="flex w-full min-w-0 flex-col gap-4 rounded-2xl border border-[#E8D6BF] bg-white px-4 py-4 shadow-sm sm:px-5"
+    >
+      <div className="flex min-w-0 items-start gap-3">
+        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#FEF5EA] text-[#A85C08]">
+          <Building2 size={20} aria-hidden="true" />
+        </span>
+        <div className="min-w-0">
+          <h2 className="break-words font-['Poppins',sans-serif] text-sm font-semibold text-[#101010] [overflow-wrap:anywhere] sm:text-base">
+            {status.organizationName} hasn&apos;t claimed its Echo space yet.
+          </h2>
+          <p className="mt-0.5 font-['Inter',sans-serif] text-xs leading-5 text-black/60 sm:text-sm">
+            Are you a leader, or know someone who should claim it?
+          </p>
         </div>
       </div>
 
-      {/* ── Desktop layout (row: text + buttons + X dismiss) ── */}
-      {/* Figma ref: 4162:11232 — 762×80px inline row */}
-      <div className="hidden md:flex flex-col xl:flex-row items-center justify-between px-5 py-[15px] gap-2.5">
+      <div className="grid w-full min-w-0 grid-cols-[repeat(auto-fit,minmax(min(100%,_220px),_1fr))] gap-2">
         <button
-          onClick={handleDismiss}
-          aria-label="Dismiss banner"
-          className="absolute top-1.5 xl:hidden right-3 text-black/40 hover:text-black/70 transition-colors text-[18px] leading-none cursor-pointer"
+          type="button"
+          onClick={onClaimSpace}
+          className="inline-flex min-h-10 min-w-0 items-center justify-center gap-1.5 whitespace-nowrap rounded-full bg-[#F49B31] px-3 py-2.5 text-center font-['Inter',sans-serif] text-sm font-semibold leading-5 text-white transition hover:bg-[#E8911A] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#A85C08] sm:px-5"
         >
-          ✕
+          Claim institution <ArrowUpRight size={15} aria-hidden="true" />
         </button>
-        {/* Text */}
-        <p className="font-['Poppins',sans-serif] text-center font-medium text-[20px] leading-[25px] text-black opacity-[0.69]">
-          This space is waiting for a{" "}
-          <span className="text-[#F49B31]">Leader</span>.
-        </p>
-
-        {/* CTA buttons + X dismiss */}
-        <div className="flex flex-col justify-between 2xl:flex-row items-center gap-2.5">
-          <button
-            onClick={onClaimSpace}
-            className="bg-[#F49B31] text-white font-['Poppins',sans-serif] font-medium text-[14px] px-[15px] py-[15px] rounded-[15px] whitespace-nowrap cursor-pointer hover:bg-[#d88429] transition-colors flex items-center justify-center"
-          >
-            That's me — Claim this space
-          </button>
-          <button
-            onClick={onInviteLeader}
-            className="bg-[#F49B31] text-white font-['Poppins',sans-serif] font-medium text-[14px] px-[15px] py-[15px] rounded-[15px] whitespace-nowrap cursor-pointer hover:bg-[#d88429] transition-colors flex items-center justify-center"
-          >
-            Know someone? Invite them
-          </button>
-        </div>
         <button
-          onClick={handleDismiss}
-          aria-label="Dismiss banner"
-          className="text-black/40 hidden xl:block hover:text-black/70 transition-colors ml-1 text-[18px] leading-none shrink-0 cursor-pointer"
+          type="button"
+          onClick={onRecommendLeader}
+          className="inline-flex min-h-10 min-w-0 items-center justify-center gap-1.5 whitespace-nowrap rounded-full border border-black/15 bg-white px-3 py-2.5 text-center font-['Inter',sans-serif] text-sm font-semibold leading-5 text-[#75420B] transition hover:border-[#F49B31] hover:bg-[#FEF5EA] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#F49B31] sm:px-4"
         >
-          ✕
+          <UserRoundPlus size={15} aria-hidden="true" />
+          Recommend someone
         </button>
       </div>
-    </div>
+    </section>
   );
 };
 

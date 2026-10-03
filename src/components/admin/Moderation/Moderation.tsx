@@ -2,7 +2,6 @@ import React, { useState, useEffect, useCallback } from "react";
 import ModerationCard from "./ModerationCard";
 import ModerationList from "./ModerationList";
 import AdminHeader from "../AdminHeader";
-import AdminMobileMenu from "../AdminMobileMenu";
 import { ToastContainer, type ToastItem } from "../../shared/Toast";
 import type { ModerationItem as ModerationItemType, FilterType, ModerationActionPayload } from "./types";
 import { useUIStore } from "../../../stores";
@@ -16,7 +15,6 @@ const Moderation: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [activeFilter, setActiveFilter] = useState<FilterType>("all");
-  const [openMenu, setOpenMenu] = useState(false);
   const [actionLoading, setActionLoading] = useState<number | null>(null);
   const [analytics, setAnalytics] = useState<{ pendingReview: number; resolvedThisWeek: number; activeSuspensions: number } | null>(null);
 
@@ -114,13 +112,13 @@ const Moderation: React.FC = () => {
   return (
     <div className="w-full min-h-screen bg-[#FCFCFC] relative" data-node-id="moderation-page">
       <ToastContainer toasts={toasts} onDismiss={removeToast} />
-      <div className={`m-0 ${isSidebarCollapsed ? "md:ms-[80px]" : "md:ms-[230px]"} flex flex-col gap-4 sm:gap-6 items-start px-3 sm:px-6 py-6 sm:py-8 relative transition-all duration-300`}>
+      <div className={`m-0 min-w-0 ${isSidebarCollapsed ? "md:ms-[80px]" : "md:ms-[230px]"} flex flex-col gap-4 sm:gap-6 items-start px-3 sm:px-6 py-6 sm:py-8 relative transition-all duration-300`}>
         <div className="flex flex-col gap-1 sm:gap-2 items-start relative w-full">
-          <h1 className="hidden md:block font-poppins font-semibold text-[24px] sm:text-[28px] leading-normal text-black">
+          <h1 className="hidden md:block font-poppins font-bold text-[24px] sm:text-[32px] leading-normal text-black">
             Moderation
           </h1>
-          <AdminHeader title="Moderation" setOpenMenu={setOpenMenu} openMenu={openMenu} />
-          <p className="font-poppins font-medium text-[13px] sm:text-[15px] leading-normal text-[#5e5c58]">
+          <AdminHeader title="Moderation" />
+          <p className="font-poppins font-medium text-[13px] sm:text-[16px] leading-normal text-[#8b8e8d]">
             Flagged posts from your community awaiting your review
           </p>
         </div>
@@ -143,12 +141,12 @@ const Moderation: React.FC = () => {
           />
         </div>
 
-        <div className="flex items-center gap-2 self-end">
+        <div className="flex w-full max-w-full items-center justify-end gap-2 self-end overflow-x-auto">
           {(["all", "pending", "resolved", "dismissed"] as FilterType[]).map((f) => (
             <button
               key={f}
               onClick={() => setActiveFilter(f)}
-              className={`px-3 py-1.5 rounded-lg font-poppins font-semibold text-[12px] transition-colors ${activeFilter === f
+              className={`shrink-0 whitespace-nowrap px-3 py-1.5 rounded-lg font-poppins font-semibold text-[12px] transition-colors ${activeFilter === f
                 ? "bg-[#f49b31] text-white"
                 : "bg-white border border-[#f49b31] text-[#f49b31] hover:bg-[#fef5ea]"
                 }`}
@@ -174,7 +172,6 @@ const Moderation: React.FC = () => {
           />
         </div>
       </div>
-      <AdminMobileMenu setMenu={setOpenMenu} menu={openMenu} />
     </div>
   );
 };

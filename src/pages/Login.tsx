@@ -132,11 +132,20 @@ const Login = () => {
    */
   const redirectUser = (user: User) => {
     console.log("redirectUser called with:", { role: user.role, status: user.status, orgId: user.organizationId });
+    const requestedPath = new URLSearchParams(window.location.search).get("returnTo");
+    const safeRequestedPath =
+      requestedPath?.startsWith("/") && !requestedPath.startsWith("//")
+        ? requestedPath
+        : null;
 
     // Admin users - go to admin feed
     if (user.role === "ADMIN" || user.role === "SUPER_ADMIN") {
       console.log("→ Redirecting to /admin/feed (ADMIN)");
-      navigate("/admin/soundboard");
+      navigate(
+        safeRequestedPath?.startsWith("/admin/")
+          ? safeRequestedPath
+          : "/admin/soundboard",
+      );
       return;
     }
 
@@ -169,6 +178,11 @@ const Login = () => {
       const fromPathname = location.state?.from?.pathname;
       const fromSearch = location.state?.from?.search || "";
       const from = fromPathname ? fromPathname + fromSearch : null;
+
+      if (safeRequestedPath && !safeRequestedPath.startsWith("/admin/")) {
+        navigate(safeRequestedPath);
+        return;
+      }
 
       if (from && from !== "/login") {
         navigate(from);

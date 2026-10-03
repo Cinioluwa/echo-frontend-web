@@ -18,6 +18,8 @@ import {
   Megaphone,
   AlertTriangle,
   CheckCircle2,
+  Building2,
+  FileSignature,
 } from 'lucide-react';
 import { useNotificationStore } from '../stores/ui/useNotificationStore';
 import type { NotificationType } from '../api/types';
@@ -52,6 +54,9 @@ const TYPE_META: Partial<
   MODERATION_SUSPENSION: { icon: AlertTriangle, label: 'Account suspended' },
   MODERATION_BAN: { icon: AlertTriangle, label: 'Account banned' },
   MODERATION_IDENTITY_DISCLOSURE_REQUESTED: { icon: AlertTriangle, label: 'Identity disclosure requested' },
+  INSTITUTION_LEADER_RECOMMENDED: { icon: Building2, label: 'Institution leader recommendation' },
+  FOUNDING_AGREEMENT_READY: { icon: FileSignature, label: 'Founding agreement ready' },
+  INSTITUTION_CLAIMED: { icon: Building2, label: 'Institution claimed' },
 };
 
 const Notifications = () => {

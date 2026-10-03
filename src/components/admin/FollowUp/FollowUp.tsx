@@ -2,7 +2,6 @@ import React, { useState, useEffect, useCallback } from "react";
 import FollowUpFilterTabs from "./FollowUpFilterTabs";
 import FollowUpList from "./FollowUpList";
 import AdminHeader from "../AdminHeader";
-import AdminMobileMenu from "../AdminMobileMenu";
 import { ToastContainer, type ToastItem } from "../../shared/Toast";
 import type { FollowUpItem as FollowUpItemType, FilterType } from "./types";
 import { adminService } from "../../../api/services/admin.service";
@@ -13,7 +12,6 @@ const FollowUp: React.FC = () => {
   const [activeFilter, setActiveFilter] = useState<FilterType>("all");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [openMenu, setOpenMenu] = useState(false);
   const [allWaves, setAllWaves] = useState<AdminWave[]>([]);
   const [, setActionLoading] = useState<string | null>(null);
   const [toasts, setToasts] = useState<ToastItem[]>([]);
@@ -189,12 +187,12 @@ const FollowUp: React.FC = () => {
 
   return (
     <>
-      <div className={`m-0 ${isSidebarCollapsed ? "md:ms-[80px]" : "md:ms-[230px]"} flex flex-col gap-4 sm:gap-6 items-start px-3 sm:px-6 py-6 sm:py-8 relative transition-all duration-300`}>
+      <div className={`m-0 min-w-0 ${isSidebarCollapsed ? "md:ms-[80px]" : "md:ms-[230px]"} flex flex-col gap-4 sm:gap-6 items-start px-3 sm:px-6 py-6 sm:py-8 relative transition-all duration-300`}>
         <div className="flex flex-col gap-1 sm:gap-2 items-start relative w-full">
           <h1 className="hidden md:block font-poppins font-bold text-[24px] sm:text-[32px] leading-normal text-black">
             Follow Up
           </h1>
-          <AdminHeader title="Follow Up" setOpenMenu={setOpenMenu} openMenu={openMenu} />
+          <AdminHeader title="Follow Up" />
           <p className="font-poppins font-medium text-[13px] sm:text-[16px] leading-normal text-[#8b8e8d]">
             Tasks that need your attention to keep the community moving forward
           </p>
@@ -218,8 +216,6 @@ const FollowUp: React.FC = () => {
           <FollowUpList items={items} isLoading={loading} />
         </div>
       </div>
-      <AdminMobileMenu setMenu={setOpenMenu} menu={openMenu} />
-      
       {/* Reject Modal */}
       {rejectModalWaveId !== null && (
         <div className="fixed inset-0 z-[200] bg-black/50 flex items-center justify-center p-4">
