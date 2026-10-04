@@ -87,12 +87,15 @@ const RepresentativeAdminInbox = () => {
   const handleExport = () => {
     const csvCell = (value: unknown) => `"${String(value ?? "").replace(/"/g, '""')}"`;
     const rows = [
-      ["ID", "Title", "Category", "Status", "Submitted"],
+      ["ID", "Title", "Category", "Status", "Surges", "Waves", "Comments", "Submitted"],
       ...pings.map((ping) => [
         ping.id,
         ping.title,
         ping.category?.name ?? "Uncategorized",
         ping.status,
+        ping._count?.surges ?? ping.surgeCount ?? 0,
+        ping._count?.waves ?? (ping.waves?.length ?? 0),
+        ping._count?.comments ?? (ping.comments?.length ?? 0),
         new Date(ping.createdAt).toISOString(),
       ]),
     ];

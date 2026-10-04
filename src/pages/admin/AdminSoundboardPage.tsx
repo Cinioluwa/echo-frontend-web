@@ -42,15 +42,16 @@ const AdminSoundboardPage: React.FC = () => {
             }
 
             // Build CSV
-            const headers = ["ID", "Title", "Category", "Status", "Author", "Surges", "Waves", "Created At"];
+            const headers = ["ID", "Title", "Category", "Status", "Author", "Surges", "Waves", "Comments", "Created At"];
             const rows = pings.map((p: any) => [
                 p.id,
                 `"${(p.title || "").replace(/"/g, '""')}"`,
                 `"${(p.category?.name || "Uncategorized").replace(/"/g, '""')}"`,
                 p.status || "",
                 `"${(p.author?.firstName ? `${p.author.firstName} ${p.author.lastName}` : "Anonymous").replace(/"/g, '""')}"`,
-                p.surgeCount ?? 0,
-                p.wavesCount ?? 0,
+                p._count?.surges ?? p.surgeCount ?? 0,
+                p._count?.waves ?? p.waveCount ?? p.wavesCount ?? 0,
+                p._count?.comments ?? 0,
                 new Date(p.createdAt).toLocaleDateString(),
             ]);
 

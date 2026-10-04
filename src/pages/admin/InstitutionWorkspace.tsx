@@ -2,13 +2,9 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   Building2,
   ChevronRight,
-  GraduationCap,
   Layers,
   MapPin,
-  Plus,
-  ShieldCheck,
   Sliders,
-  UserCheck,
   Users,
   X,
 } from "lucide-react";
