@@ -389,7 +389,7 @@ const UnifiedFeed = () => {
                 wavePreviewMode="embedded-only"
               />
               <div className="absolute inset-0 group-hover:bg-black/6 cursor-pointer pointer-events-none rounded-[10px]" />
-              {isRepresentative && canAssignPings && (
+              {isViewingScope && canAssignPings && (
                 <div className="relative z-10 -mt-1 flex justify-end px-3 pb-3">
                   <button
                     type="button"
