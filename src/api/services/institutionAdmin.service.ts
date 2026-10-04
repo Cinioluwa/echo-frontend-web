@@ -51,12 +51,33 @@ export interface InstitutionContextOptions {
   levels: number[];
 }
 
+/**
+ * Coerces an unknown value into a real array.
+ *
+ * The web client and the API are deployed independently, so an older backend
+ * can legitimately return a payload that omits fields the current client
+ * expects (for example `halls`). Callers map over these lists during render,
+ * so a missing field must never become `undefined`.
+ */
+function toArray<T>(value: unknown): T[] {
+  return Array.isArray(value) ? (value as T[]) : [];
+}
+
+const normalizeContextOptions = (
+  data: Partial<InstitutionContextOptions> | null | undefined,
+): InstitutionContextOptions => ({
+  departments: toArray(data?.departments),
+  bodies: toArray(data?.bodies),
+  halls: toArray<string>(data?.halls),
+  levels: toArray<number>(data?.levels),
+});
+
 const institutionAdminService = {
   getContextOptions: async (organizationId: number): Promise<InstitutionContextOptions> => {
     const response = await api.get<InstitutionContextOptions>(
       `/public/organizations/${organizationId}/context-options`,
     );
-    return response.data;
+    return normalizeContextOptions(response.data);
   },
 
   updateContextOptions: async (data: {
@@ -72,7 +93,7 @@ const institutionAdminService = {
 
   getDepartments: async (): Promise<AcademicDepartment[]> => {
     const response = await api.get<{ departments: AcademicDepartment[] }>("/admin/departments");
-    return response.data.departments;
+    return toArray<AcademicDepartment>(response.data?.departments);
   },
 
   createDepartment: async (data: { name: string; code: string }): Promise<AcademicDepartment> => {
@@ -82,7 +103,7 @@ const institutionAdminService = {
 
   getBodies: async (): Promise<RepresentativeBody[]> => {
     const response = await api.get<{ bodies: RepresentativeBody[] }>("/admin/bodies");
-    return response.data.bodies;
+    return toArray<RepresentativeBody>(response.data?.bodies);
   },
 
   createBody: async (data: {

@@ -19,6 +19,11 @@ interface SelectOption {
   label: string;
 }
 
+/** Coerces an untrusted API value into a real array so render-time maps are safe. */
+function toArray<T>(value: unknown): T[] {
+  return Array.isArray(value) ? (value as T[]) : [];
+}
+
 const ContextDropdown = ({
   label,
   value,
@@ -123,9 +128,12 @@ const OptionalPingContext = ({ value, onChange }: OptionalPingContextProps) => {
       .getContextOptions(organizationId)
       .then((options) => {
         if (cancelled) return;
-        setDepartments(options.departments);
-        setHalls(options.halls);
-        setLevels(options.levels);
+        // The API payload is network data, so each list is coerced to an array.
+        // A missing field must not become `undefined`, because departmentOptions,
+        // levelOptions and hallOptions map over them during render.
+        setDepartments(toArray(options?.departments));
+        setHalls(toArray(options?.halls));
+        setLevels(toArray(options?.levels));
         setContextError(null);
       })
       .catch((error: unknown) => {
