@@ -84,9 +84,16 @@ const institutionAdminService = {
     halls: string[];
     levels: number[];
   }): Promise<Pick<InstitutionContextOptions, "halls" | "levels">> => {
+    // Both fields must always be present — the API validates them as required
+    // arrays, and sending undefined produces a 400 that reads as "cannot save".
+    const halls = toArray<string>(data?.halls).map((hall) => String(hall).trim()).filter(Boolean);
+    const levels = toArray<number>(data?.levels)
+      .map((level) => Number(level))
+      .filter((level) => Number.isInteger(level) && level > 0);
+
     const response = await api.patch<Pick<InstitutionContextOptions, "halls" | "levels">>(
       "/admin/context-options",
-      data,
+      { halls, levels },
     );
     return response.data;
   },
