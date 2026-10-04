@@ -70,12 +70,13 @@ const AdminSideBar: React.FC<AdminSidebarProps> = ({
   };
 
   const getBadgeFromOrg = () => {
-    if (!user?.organization?.name) return "ADMIN";
+    const prefix = user?.role === "REPRESENTATIVE" ? "REP" : "ADMIN";
+    if (!user?.organization?.name) return prefix;
     const words = user.organization.name.split(" ");
     if (words.length > 1) {
-      return `ADMIN.${words[0][0]}${words[1][0]}`.toUpperCase();
+      return `${prefix}.${words[0][0]}${words[1][0]}`.toUpperCase();
     }
-    return `ADMIN.${user.organization.name.substring(0, 2)}`.toUpperCase();
+    return `${prefix}.${user.organization.name.substring(0, 2)}`.toUpperCase();
   };
 
   const displayFullName = user ? `${user.firstName} ${user.lastName}` : (userName || "Admin");

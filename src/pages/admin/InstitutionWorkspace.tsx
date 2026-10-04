@@ -690,14 +690,20 @@ const InstitutionWorkspace = () => {
                                     </div>
                                   </td>
                                   <td className="py-3.5 text-right">
-                                    <button
-                                      type="button"
-                                      onClick={() => handleRemoveRepresentative(rep.id)}
-                                      disabled={saving}
-                                      className="rounded-full border border-red-200 px-3 py-1 text-xs font-medium text-red-600 hover:bg-red-50 disabled:opacity-50"
-                                    >
-                                      Remove
-                                    </button>
+                                    {rep.userId === user?.id ? (
+                                      <span className="inline-flex rounded-full bg-black/5 px-3 py-1 font-poppins text-xs font-medium text-black/40">
+                                        You
+                                      </span>
+                                    ) : (
+                                      <button
+                                        type="button"
+                                        onClick={() => handleRemoveRepresentative(rep.id)}
+                                        disabled={saving}
+                                        className="rounded-full border border-red-200 px-3 py-1 text-xs font-medium text-red-600 hover:bg-red-50 disabled:opacity-50"
+                                      >
+                                        Remove
+                                      </button>
+                                    )}
                                   </td>
                                 </tr>
                               ))}
@@ -1097,13 +1103,19 @@ const InstitutionWorkspace = () => {
                         </div>
 
                         <div className="flex items-center gap-2 self-end sm:self-center">
-                          <button
-                            type="button"
-                            onClick={() => handleRemoveRepresentative(rep.id)}
-                            className="rounded-full border border-red-200 px-3 py-1 text-xs font-semibold text-red-600 hover:bg-red-50"
-                          >
-                            Remove
-                          </button>
+                          {rep.userId === user?.id ? (
+                            <span className="rounded-full bg-black/5 px-3 py-1 font-poppins text-xs font-medium text-black/40">
+                              You
+                            </span>
+                          ) : (
+                            <button
+                              type="button"
+                              onClick={() => handleRemoveRepresentative(rep.id)}
+                              className="rounded-full border border-red-200 px-3 py-1 text-xs font-semibold text-red-600 hover:bg-red-50"
+                            >
+                              Remove
+                            </button>
+                          )}
                         </div>
                       </div>
                     ))}
