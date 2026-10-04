@@ -4,7 +4,7 @@ import type { Organization } from "../types/index";
 export interface InstitutionStatus {
   organizationId: number;
   organizationName: string;
-  claimStatus: "UNCLAIMED" | "FOUNDING_PARTNER";
+  claimStatus: "UNCLAIMED" | "FOUNDING_PARTNER" | "VERIFIED";
   hasLeader: boolean;
   hasActiveRepresentatives: boolean;
 }

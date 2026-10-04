@@ -279,7 +279,7 @@ const UnifiedFeed = () => {
   return (
     <div className="flex flex-col gap-[15px] pb-10 w-full max-w-[720px] mx-auto">
       {/* ClaimSpaceBanner */}
-      {institutionStatus?.claimStatus === "UNCLAIMED" && (
+      {institutionStatus?.claimStatus === "UNCLAIMED" && !institutionStatus?.hasLeader && (
         <ClaimSpaceBanner
           status={institutionStatus}
           onClaimSpace={() => setClaimModalOpen(true)}

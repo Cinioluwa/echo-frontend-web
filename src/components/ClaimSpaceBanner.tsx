@@ -6,13 +6,18 @@ interface ClaimSpaceBannerProps {
   onClaimSpace: () => void;
   onRecommendLeader: () => void;
 }
-
 const ClaimSpaceBanner = ({
   status,
   onClaimSpace,
   onRecommendLeader,
 }: ClaimSpaceBannerProps) => {
-  if (status.claimStatus === "FOUNDING_PARTNER") return null;
+  if (
+    status.claimStatus === "FOUNDING_PARTNER" ||
+    status.claimStatus === "VERIFIED" ||
+    status.hasLeader
+  ) {
+    return null;
+  }
 
   return (
     <section
