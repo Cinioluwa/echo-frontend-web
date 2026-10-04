@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "../stores";
-import { User, LogOut, Settings, HelpCircle } from 'lucide-react';
+import { User, LogOut, Settings, HelpCircle, Briefcase } from 'lucide-react';
 
 const UserInfo = () => {
   const user = useAuthStore((state) => state.user);
@@ -141,6 +141,22 @@ const UserInfo = () => {
             <Settings className="w-[18px] h-[18px] md:w-5 md:h-5 text-gray-600" />
             <span className="font-medium text-[13px] md:text-[15px] text-black">Profile Settings</span>
           </button>
+
+          {/* Representative Workspace (for active representatives or admins) */}
+          {(user.role === "REPRESENTATIVE" || user.role === "ADMIN" || user.role === "SUPER_ADMIN") && (
+            <button
+              onClick={() => {
+                setIsDropdownOpen(false);
+                navigate("/admin/soundboard");
+              }}
+              className="w-full px-3.5 md:px-4 py-2.5 md:py-3 flex items-center gap-2.5 md:gap-3 hover:bg-[#FEF5EA] transition-colors text-left text-[#A85C08]"
+            >
+              <Briefcase className="w-[18px] h-[18px] md:w-5 md:h-5 text-[#A85C08]" />
+              <span className="font-medium text-[13px] md:text-[15px]">
+                {user.role === "REPRESENTATIVE" ? "Representative Workspace" : "Admin Soundboard"}
+              </span>
+            </button>
+          )}
 
           {/* Help */}
           <button
