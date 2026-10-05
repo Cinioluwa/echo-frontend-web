@@ -503,7 +503,7 @@ const AdminPingDetail: React.FC<AdminPingDetailProps> = ({ pingId: propPingId, m
                             disabled={acknowledging}
                             className="flex h-[39px] w-full items-center justify-center gap-2 rounded-[20px] bg-[#f49b31] font-['Baloo_Bhai_2',sans-serif] text-[14px] font-bold uppercase text-white hover:bg-[#e68a1f] disabled:opacity-50"
                         >
-                            <img src="/assets/images/eye_svgrepo.com.svg" alt="" className="size-5 brightness-0 invert" />
+                            <img src="/assets/icon/followup-acknowledged.svg" alt="" className="size-5 brightness-0 invert" />
                             {acknowledging ? "..." : "Acknowledge"}
                         </button>
                     )}
