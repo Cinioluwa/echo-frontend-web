@@ -45,16 +45,34 @@ const ClaimSpaceModal = ({
       onSubmitted?.();
     } catch (requestError) {
       console.error("Failed to submit institution claim:", requestError);
-      const responseError = (
-        requestError as { response?: { status?: number; data?: { error?: string; message?: string } } }
-      )?.response;
-      setError(
-        responseError?.data?.error ||
-          responseError?.data?.message ||
-          (responseError?.status === 409
-            ? "A claim for this institution is already under review."
-            : "We couldn't submit your claim. Please try again."),
-      );
+      const responseData = (
+        requestError as {
+          response?: {
+            status?: number;
+            data?: {
+              error?: string;
+              message?: string;
+              details?: Array<{ field?: string; message: string }> | string;
+            };
+          };
+        }
+      )?.response?.data;
+      const status = (requestError as any)?.response?.status;
+
+      let errorMessage: string;
+      if (Array.isArray(responseData?.details) && responseData.details.length > 0) {
+        errorMessage = responseData.details.map((d) => d.message).join(", ");
+      } else if (typeof responseData?.details === "string") {
+        errorMessage = responseData.details;
+      } else {
+        errorMessage =
+          responseData?.error ||
+          responseData?.message ||
+          (status === 409
+            ? "A claim for this institution is already under review or has verified leadership."
+            : "We couldn't submit your claim. Please try again.");
+      }
+      setError(errorMessage);
     } finally {
       setSubmitting(false);
     }

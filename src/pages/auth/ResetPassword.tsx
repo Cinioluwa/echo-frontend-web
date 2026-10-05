@@ -86,16 +86,16 @@ const ResetPassword = () => {
                 navigate("/login", { state: { message: "Password reset successful. Please log in." } });
             }, 2000);
         } catch (err: any) {
-            const errorMessage =
-                err?.response?.data?.error ||
-                err?.response?.data?.message ||
-                "Failed to reset password. Please try again.";
+            const data = err?.response?.data;
+            let errorMessage = data?.error || data?.message;
+            if (Array.isArray(data?.details) && data.details.length > 0) {
+                errorMessage = data.details.map((d: any) => d.message).join(", ");
+            }
 
-            // Handle specific error codes
-            if (err?.response?.status === 400) {
-                setError("The reset link has expired. Please request a new one.");
+            if (!errorMessage && (err?.response?.status === 400 || err?.response?.status === 404)) {
+                setError("The reset link has expired or is invalid. Please request a new one.");
             } else {
-                setError(errorMessage);
+                setError(errorMessage || "Failed to reset password. Please try again.");
             }
         } finally {
             setLoading(false);

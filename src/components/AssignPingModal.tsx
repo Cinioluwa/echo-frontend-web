@@ -90,9 +90,29 @@ const AssignPingModal = ({
     } catch (requestError) {
       console.error("Failed to assign Ping:", requestError);
       const responseData = (
-        requestError as { response?: { data?: { error?: string; message?: string } } }
+        requestError as {
+          response?: {
+            data?: {
+              error?: string;
+              message?: string;
+              details?: Array<{ field?: string; message: string }> | string;
+            };
+          };
+        }
       )?.response?.data;
-      setError(responseData?.error || responseData?.message || "We couldn't route this Ping. Please try again.");
+
+      let errorMessage: string;
+      if (Array.isArray(responseData?.details) && responseData.details.length > 0) {
+        errorMessage = responseData.details.map((d) => d.message).join(", ");
+      } else if (typeof responseData?.details === "string") {
+        errorMessage = responseData.details;
+      } else {
+        errorMessage =
+          responseData?.error ||
+          responseData?.message ||
+          "We couldn't route this Ping. Please try again.";
+      }
+      setError(errorMessage);
     } finally {
       setSubmitting(false);
     }

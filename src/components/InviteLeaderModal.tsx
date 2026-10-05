@@ -45,9 +45,29 @@ const InviteLeaderModal = ({
     } catch (requestError) {
       console.error("Failed to submit campus leadership nomination:", requestError);
       const responseData = (
-        requestError as { response?: { data?: { error?: string; message?: string } } }
+        requestError as {
+          response?: {
+            data?: {
+              error?: string;
+              message?: string;
+              details?: Array<{ field?: string; message: string }> | string;
+            };
+          };
+        }
       )?.response?.data;
-      setError(responseData?.error || responseData?.message || "We couldn't send this nomination. Please try again.");
+
+      let errorMessage: string;
+      if (Array.isArray(responseData?.details) && responseData.details.length > 0) {
+        errorMessage = responseData.details.map((d) => d.message).join(", ");
+      } else if (typeof responseData?.details === "string") {
+        errorMessage = responseData.details;
+      } else {
+        errorMessage =
+          responseData?.error ||
+          responseData?.message ||
+          "We couldn't send this recommendation. Please verify the information and try again.";
+      }
+      setError(errorMessage);
     } finally {
       setSubmitting(false);
     }
@@ -94,6 +114,7 @@ const InviteLeaderModal = ({
               <label className="block font-['Inter',sans-serif] text-sm font-medium">
                 Leader&apos;s email
                 <input required type="email" maxLength={200} autoComplete="email" value={leaderEmail} onChange={(event) => setLeaderEmail(event.target.value)} className="mt-2 w-full rounded-xl border border-black/15 bg-white px-4 py-3 outline-none focus:border-[#F49B31] focus:ring-2 focus:ring-[#FFC37B]" />
+                <span className="mt-1 block text-xs font-normal text-black/50">Institutional or personal email address</span>
               </label>
               <label className="block font-['Inter',sans-serif] text-sm font-medium">
                 Note (optional)
