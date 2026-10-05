@@ -51,7 +51,6 @@ const AdminMobileMenu = ({ setMenu, menu }: Props) => {
         { label: "Soundboard", to: "/admin/soundboard", icon: "/assets/icon/admin-soundboard.svg" },
         { label: "Follow up", to: "/admin/followUp", icon: "/assets/icon/followup.svg" },
         { label: "Moderation", to: "/admin/moderation", icon: "/assets/icon/moderation.svg" },
-        { label: "Admin Settings", to: "/admin/settings", icon: "/assets/icon/admin-settings.svg" },
         { label: "Institution", to: "/admin/institution", icon: null },
       ];
 
@@ -63,7 +62,7 @@ const AdminMobileMenu = ({ setMenu, menu }: Props) => {
             type="button"
             aria-label="Close admin menu"
             onClick={handleClick}
-            className="fixed inset-0 z-40 bg-black/40 md:hidden"
+            className="fixed inset-0 z-40 bg-black/40 min-[1131px]:hidden"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -73,7 +72,7 @@ const AdminMobileMenu = ({ setMenu, menu }: Props) => {
             role="dialog"
             aria-modal="true"
             aria-label="Admin navigation"
-            className="fixed inset-y-0 left-0 z-50 flex h-dvh w-[min(88vw,360px)] flex-col overflow-y-auto bg-[#FEF5EA] shadow-2xl md:hidden"
+            className="fixed inset-y-0 left-0 z-50 flex h-dvh w-[min(88vw,360px)] flex-col overflow-y-auto bg-[#FEF5EA] shadow-2xl min-[1131px]:hidden"
             initial={{ x: "-100%" }}
             animate={{ x: 0 }}
             exit={{ x: "-100%" }}

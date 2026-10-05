@@ -1,81 +1,43 @@
 import React, { useState } from "react";
+import { X } from "lucide-react";
 import type { Wave } from "../../../api/types/index";
-import { CheckCircle, FileScan, XCircle, Clock, Zap, CheckCheck } from "lucide-react";
 import WaveActionModal from "./WaveActionModal";
+import BadgeTooltip from "../../BadgeTooltip";
+import type { PingDetailPermissions, WaveActionStatus } from "./types";
+import formatTimeAgo from "../../../utils/formatTimeAgo";
 
 interface AdminWaveCardProps {
     wave: Wave;
-    onUpdateStatus: (id: number, status: "APPROVED" | "REJECTED" | "UNDER_REVIEW", reason?: string) => Promise<void>;
+    rank: 0 | 1;
+    permissions: PingDetailPermissions;
+    onUpdateStatus: (id: number, status: WaveActionStatus, reason?: string) => Promise<void>;
 }
 
-type WaveStatus = "POSTED" | "UNDER_REVIEW" | "APPROVED" | "REJECTED" | "IN_PROGRESS" | "COMPLETED" | "ON_HOLD";
+const actionBase =
+    "flex h-[39px] w-[123px] shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-[15px] font-poppins text-[13px] font-semibold uppercase transition-opacity hover:opacity-80 disabled:cursor-not-allowed disabled:opacity-50 max-[500px]:w-[68px] max-[500px]:gap-1 max-[500px]:text-[9px]";
 
-/**
- * Status badge config — matches the Wave Indicators Figma component (node 4291:9699)
- * Labels and descriptions taken directly from the Figma design.
- */
-const statusConfig: Record<WaveStatus, { label: string; bg: string; text: string; description: string }> = {
-    POSTED: {
-        label: "Proposed",
-        bg: "#EEF2FF",
-        text: "#4F46E5",
-        description: "Submitted and waiting to be reviewed.",
-    },
-    UNDER_REVIEW: {
-        label: "Under Review",
-        bg: "#FEF9C3",
-        text: "#92400E",
-        description: "Currently being evaluated by leadership.",
-    },
-    APPROVED: {
-        label: "Approved",
-        bg: "#DCFCE7",
-        text: "#166534",
-        description: "Greenlit for action by leadership.",
-    },
-    IN_PROGRESS: {
-        label: "In Progress",
-        bg: "#DBEAFE",
-        text: "#1E40AF",
-        description: "Work has begun. Change is on the way.",
-    },
-    REJECTED: {
-        label: "Rejected",
-        bg: "#FEE2E2",
-        text: "#991B1B",
-        description: "Leadership decided not to move forward.",
-    },
-    COMPLETED: {
-        label: "Completed",
-        bg: "#F0FDF4",
-        text: "#14532D",
-        description: "Fully implemented. The community made this happen.",
-    },
-    ON_HOLD: {
-        label: "On Hold",
-        bg: "#F3F4F6",
-        text: "#374151",
-        description: "Paused — no action currently being taken.",
-    },
-};
-
-const AdminWaveCard: React.FC<AdminWaveCardProps> = ({ wave, onUpdateStatus }) => {
-    const [activeAction, setActiveAction] = useState<"APPROVED" | "REJECTED" | "UNDER_REVIEW" | null>(null);
+const AdminWaveCard: React.FC<AdminWaveCardProps> = ({ wave, rank, permissions, onUpdateStatus }) => {
+    const [activeAction, setActiveAction] = useState<WaveActionStatus | null>(null);
     const [isUpdating, setIsUpdating] = useState(false);
 
-    const status = (wave.status || "POSTED") as WaveStatus;
-    const config = statusConfig[status] || statusConfig.POSTED;
+    const status = wave.status || "POSTED";
+    const featured = rank === 0;
 
-    // Only allow status changes on actionable states
-    const canApprove = status === "POSTED" || status === "UNDER_REVIEW";
-    const canReject = status === "POSTED" || status === "UNDER_REVIEW" || status === "APPROVED";
-    const canReview = status === "POSTED";
+    const canModerate = permissions.canModerateWaves;
+    const canProgress = permissions.canUpdateWaveProgress;
+    const canApprove = canModerate && (status === "POSTED" || status === "UNDER_REVIEW");
+    const canReject = canModerate && (status === "POSTED" || status === "UNDER_REVIEW" || status === "APPROVED");
+    const canReview = canModerate && status === "POSTED";
+    const canStart = canProgress && status === "APPROVED";
+    const canComplete = canProgress && status === "IN_PROGRESS";
+    const hasActions = canApprove || canReject || canReview || canStart || canComplete;
 
-    const date = new Date(wave.createdAt);
-    const formattedDate =
-        date.toLocaleDateString("en-US", { month: "short", day: "numeric" }) +
-        ", " +
-        date.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" });
+    const timestamp = formatTimeAgo(wave.createdAt);
+
+    const authorName = wave.author ? `${wave.author.firstName} ${wave.author.lastName}` : "Anonymous";
+    const avatar =
+        wave.author?.profilePicture ||
+        `https://ui-avatars.com/api/?name=${wave.author?.firstName || "A"}+${wave.author?.lastName || "U"}&background=random&size=106`;
 
     const handleConfirm = async (reason?: string) => {
         if (!activeAction) return;
@@ -88,105 +50,106 @@ const AdminWaveCard: React.FC<AdminWaveCardProps> = ({ wave, onUpdateStatus }) =
     };
 
     return (
-        <div className="bg-white rounded-xl border border-[#ECECEC] overflow-hidden flex flex-col w-full shadow-sm">
-            <div className="p-4 flex flex-col gap-3">
-                {/* Top: Author + Status Badge */}
-                <div className="flex justify-between items-start">
-                    <div className="flex gap-2.5 items-center">
-                        <img
-                            src={
-                                wave.author?.profilePicture ||
-                                `https://ui-avatars.com/api/?name=${wave.author?.firstName || "A"}+${wave.author?.lastName || "U"}&background=random&size=80`
-                            }
-                            alt={wave.author?.firstName || "Anonymous"}
-                            className="w-9 h-9 rounded-full object-cover flex-shrink-0"
-                        />
-                        <div className="flex flex-col">
-                            <span className="font-poppins font-semibold text-[13px] text-black leading-tight">
-                                {wave.author
-                                    ? `${wave.author.firstName} ${wave.author.lastName}`
-                                    : "Anonymous"}
-                            </span>
-                            <span className="font-poppins text-[11px] text-[#8b8e8d]">{formattedDate}</span>
-                        </div>
-                    </div>
-
-                    {/* Status badge — per Figma Wave Indicators spec */}
-                    <span
-                        className="flex-shrink-0 inline-flex items-center gap-1 px-2.5 py-1 rounded-full font-poppins font-semibold text-[10px] tracking-wide"
-                        style={{ backgroundColor: config.bg, color: config.text }}
-                    >
-                        {status === "COMPLETED" && <CheckCheck className="w-3 h-3" />}
-                        {status === "IN_PROGRESS" && <Zap className="w-3 h-3" />}
-                        {status === "UNDER_REVIEW" && <Clock className="w-3 h-3" />}
-                        {config.label}
-                    </span>
+        <div
+            className={`flex w-full min-w-0 flex-col gap-[17px] rounded-[10px] bg-[#fefefe] px-4 py-5 sm:px-[27.5px] sm:py-[23px] ${featured ? "border-[1.5px] border-[#f49b31]" : ""}`}
+        >
+            <div className="flex min-w-0 items-center gap-2 sm:gap-4 max-[500px]:gap-1">
+                <img src={avatar} alt={authorName} className="size-10 shrink-0 rounded-full object-cover sm:size-[53px] max-[500px]:size-8" />
+                <div className="flex min-w-0 flex-1 flex-col items-start">
+                    <p className="max-w-full truncate whitespace-nowrap font-poppins text-[12px] font-semibold text-black sm:text-[15px] max-[500px]:text-[10px]">{authorName}</p>
+                    <p className="whitespace-nowrap font-poppins text-[9px] font-medium text-[#8b8e8d] sm:text-[13px] max-[500px]:text-[8px]">{timestamp}</p>
                 </div>
-
-                {/* Body: Solution text */}
-                <p className="font-poppins text-[13px] text-[#1a1a1a] leading-relaxed whitespace-pre-wrap">{wave.solution}</p>
-
-                {/* Status description — from Figma Wave Indicators */}
-                <p className="font-poppins text-[11px] text-[#8b8e8d] italic leading-snug">{config.description}</p>
-
-                {/* Rejection reason if applicable */}
-                {status === "REJECTED" && (wave as any).rejectionReason && (
-                    <div className="bg-[#fef2f2] border border-[#fca5a5] rounded-lg px-3 py-2">
-                        <span className="font-poppins text-[11px] text-[#991b1b]">
-                            Reason: {(wave as any).rejectionReason}
+                <div className="flex max-w-[48%] shrink-0 flex-nowrap items-center justify-end gap-1 overflow-hidden sm:max-w-[52%] sm:gap-[5px] max-[500px]:max-w-[46%]">
+                    {status !== "POSTED" && (
+                        <BadgeTooltip badgeKey={status}>
+                            <span className="max-w-full truncate whitespace-nowrap rounded-[23px] bg-[#fef5ea] px-1 py-1 font-poppins text-[8px] font-medium capitalize text-[#f49b31] sm:px-3 sm:text-[12px]">
+                                {status.replace("_", " ").toLowerCase()}
+                            </span>
+                        </BadgeTooltip>
+                    )}
+                    <BadgeTooltip badgeKey={featured ? "COMMUNITY_PICK" : "ALTERNATIVE"}>
+                        <span className="flex min-w-0 items-center gap-0.5 rounded-[23px] border-[1.5px] border-[#626665] bg-[#fefefe] px-1 py-1 font-poppins text-[8px] font-medium text-black sm:gap-[7.5px] sm:px-[16.5px] sm:py-1.5 sm:text-[13.5px]">
+                            <img
+                                src={featured ? "/assets/icon/dot-yellow.svg" : "/assets/icon/dot-blue.svg"}
+                                alt=""
+                                className="size-[6px] sm:size-[7.5px]"
+                            />
+                            <span className="truncate whitespace-nowrap">{featured ? "Community Pick" : "Alternative"}</span>
                         </span>
-                    </div>
-                )}
+                    </BadgeTooltip>
+                </div>
             </div>
 
-            {/* Divider */}
-            <div className="w-full h-px bg-[#F0F0F0]" />
+            <p className="whitespace-pre-wrap text-justify font-poppins text-[14px] font-medium text-[#626665]">
+                {wave.solution}
+            </p>
 
-            {/* Bottom: Actions + Surge Count */}
-            <div className="p-3 px-4 flex justify-between items-center bg-[#fefdfa]">
-                <div className="flex gap-2 flex-wrap">
+            {status === "REJECTED" && (wave as any).rejectionReason && (
+                <p className="rounded-[10px] border border-[#eb5050] bg-[rgba(255,132,132,0.15)] px-3 py-2 font-poppins text-[12px] text-[#b01212]">
+                    Reason: {(wave as any).rejectionReason}
+                </p>
+            )}
+
+            <div className="h-px w-full bg-[#ffc37b]/60" />
+
+            <div className="flex min-w-0 flex-row items-center gap-2">
+                <div className="flex min-w-0 flex-1 flex-nowrap items-center gap-[10px] overflow-x-auto pb-1 max-[500px]:gap-1.5">
                     {canApprove && (
                         <button
                             onClick={() => setActiveAction("APPROVED")}
                             disabled={isUpdating}
-                            className="flex items-center gap-1.5 px-3.5 py-1.5 bg-[#f49b31] rounded-lg hover:bg-[#e68a1f] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                            className={`${actionBase} bg-[#f49b31] text-white`}
                         >
-                            <CheckCircle className="w-3.5 h-3.5 text-white" />
-                            <span className="font-poppins font-semibold text-[11px] text-white">Approve</span>
-                        </button>
-                    )}
-                    {canReview && (
-                        <button
-                            onClick={() => setActiveAction("UNDER_REVIEW")}
-                            disabled={isUpdating}
-                            className="flex items-center gap-1.5 px-3.5 py-1.5 border border-[#f49b31] bg-white rounded-lg hover:bg-[#fef5ea] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                        >
-                            <FileScan className="w-3.5 h-3.5 text-[#f49b31]" />
-                            <span className="font-poppins font-semibold text-[11px] text-[#f49b31]">Review</span>
+                            <img src="/assets/images/approve.svg" alt="" className="size-4 max-[500px]:size-3" />
+                            Approve
                         </button>
                     )}
                     {canReject && (
                         <button
                             onClick={() => setActiveAction("REJECTED")}
                             disabled={isUpdating}
-                            className="flex items-center gap-1.5 px-3.5 py-1.5 bg-white border border-[#fca5a5] rounded-lg hover:bg-red-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                            className={`${actionBase} border border-[#eb5050] bg-[rgba(255,132,132,0.15)] text-[#eb5050]`}
                         >
-                            <XCircle className="w-3.5 h-3.5 text-[#ef4444]" />
-                            <span className="font-poppins font-semibold text-[11px] text-[#ef4444]">Reject</span>
+                            <X className="size-4 max-[500px]:size-3" />
+                            Reject
                         </button>
                     )}
-                    {/* Terminal states — no further actions */}
-                    {(status === "COMPLETED" || status === "ON_HOLD") && (
-                        <span className="font-poppins text-[11px] text-[#8b8e8d] italic self-center">
-                            No further actions available
-                        </span>
+                    {canReview && (
+                        <button
+                            onClick={() => setActiveAction("UNDER_REVIEW")}
+                            disabled={isUpdating}
+                            className={`${actionBase} border border-[#f49b31] bg-[#fef5ea] text-[#f49b31]`}
+                        >
+                            <img src="/assets/icon/review.svg" alt="" className="size-4 max-[500px]:size-3" />
+                            Review
+                        </button>
                     )}
+                    {canStart && (
+                        <button
+                            onClick={() => setActiveAction("IN_PROGRESS")}
+                            disabled={isUpdating}
+                            className={`${actionBase} w-auto border border-[#f49b31] bg-[#fef5ea] px-4 text-[#f49b31]`}
+                        >
+                            Mark in progress
+                        </button>
+                    )}
+                    {canComplete && (
+                        <button
+                            onClick={() => setActiveAction("COMPLETED")}
+                            disabled={isUpdating}
+                            className={`${actionBase} w-auto bg-[#f49b31] px-4 text-white`}
+                        >
+                            Mark completed
+                        </button>
+                    )}
+                    {!hasActions && <span className="font-poppins text-[12px] font-medium text-[#8b8e8d]" />}
                 </div>
 
-                {/* Surge count */}
-                <div className="flex items-center gap-1.5 bg-[#fef5ea] px-3 py-1.5 rounded-md border border-[#ffd7a8] flex-shrink-0">
-                    <img src="/assets/images/surge.svg" alt="Surge" className="w-3.5 h-3.5" />
-                    <span className="font-poppins font-bold text-[13px] text-[#f49b31]">{wave.surgeCount}</span>
+                <div className="ml-auto flex shrink-0 items-center gap-1">
+                    <img src="/assets/images/surge.svg" alt="Surges" className="h-[23px] w-[14px]" />
+                    <span className="font-poppins text-[28px] font-semibold leading-none text-[#f49b31]">
+                        {wave.surgeCount}
+                    </span>
                 </div>
             </div>
 

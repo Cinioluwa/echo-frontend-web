@@ -23,7 +23,7 @@ const NavBar = () => {
   return (
     <>
       {/* Desktop app bar */}
-      <div className="hidden bg-[#FFC37B] px-3 sm:px-6 py-1.5 md:block md:py-2.5 relative">
+      <div className="hidden bg-[#FFC37B] px-3 sm:px-6 py-1.5 min-[1131px]:block min-[1131px]:py-2.5 relative">
         {/* Same max-width as Layout's content row so the logo sits on the sidebar's
             left edge and the profile icon on the right aside's right edge. */}
         <div className="max-w-[1322px] mx-auto flex items-center justify-between gap-2">
@@ -51,9 +51,9 @@ const NavBar = () => {
       </div>
 
       {/* Keep the same compact mobile bar available at the top and while scrolling */}
-      <div className="h-[64px] md:hidden" aria-hidden="true" />
+      <div className="h-[64px] min-[1131px]:hidden" aria-hidden="true" />
       <div
-        className="md:hidden fixed top-[10px] left-3 right-3 z-30 rounded-[22px] bg-[#FFC37B]/95 shadow-lg backdrop-blur"
+        className="min-[1131px]:hidden fixed top-[10px] left-3 right-3 z-30 rounded-[22px] bg-[#FFC37B]/95 shadow-lg backdrop-blur"
       >
         <div className="flex items-center justify-between gap-2 px-3 py-2">
           {/* Mobile: hamburger trigger inside a white circle */}

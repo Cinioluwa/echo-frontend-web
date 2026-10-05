@@ -6,9 +6,19 @@ import { ToastContainer, type ToastItem } from "../../shared/Toast";
 import type { FollowUpItem as FollowUpItemType, FilterType } from "./types";
 import { adminService } from "../../../api/services/admin.service";
 import type { AdminWave } from "../../../api/types/admin.types";
-import { useUIStore } from "../../../stores";
+import { useUIStore, useAuthStore } from "../../../stores";
+import representativeService from "../../../api/services/representative.service";
+import formatTimeAgo from "../../../utils/formatTimeAgo";
 
-const FollowUp: React.FC = () => {
+interface FollowUpProps {
+  mode?: "admin" | "rep";
+}
+
+const FollowUp: React.FC<FollowUpProps> = ({ mode = "admin" }) => {
+  const isRep = mode === "rep";
+  const repProfile = useAuthStore((s) => s.user?.representativeProfile);
+  const canModerate = !isRep || !!repProfile?.canModerateWaves;
+  const canProgress = !isRep || !!repProfile?.canUpdateWaveProgress;
   const [activeFilter, setActiveFilter] = useState<FilterType>("all");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -30,14 +40,18 @@ const FollowUp: React.FC = () => {
     try {
       if (!isSilent) setLoading(true);
       setError(null);
-      const result = await adminService.getWaves({ limit: 100 });
-      setAllWaves(result.data);
+      if (isRep) {
+        setAllWaves((await representativeService.getAssignedWaves({ limit: 100 })) as AdminWave[]);
+      } else {
+        const result = await adminService.getWaves({ limit: 100 });
+        setAllWaves(result.data);
+      }
     } catch (err: any) {
       setError(err?.response?.data?.error || err.message || "Failed to load follow-ups");
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [isRep]);
 
   useEffect(() => {
     fetchWaves();
@@ -81,12 +95,14 @@ const FollowUp: React.FC = () => {
 
     return {
       id: wave.id.toString(),
+      pingId: wave.ping?.id,
+      href: wave.ping?.id ? (isRep ? `/inbox/${wave.ping.id}` : `/admin/soundboard/${wave.ping.id}`) : undefined,
       title: wave.ping?.title || wave.solution,
       category: wave.ping?.category?.name || "",
       author: {
         name: wave.author ? `${wave.author.firstName} ${wave.author.lastName}` : "Anonymous",
         avatar: `https://ui-avatars.com/api/?name=${wave.author?.firstName || "A"}+${wave.author?.lastName || "U"}&background=random`,
-        timestamp: new Date(wave.createdAt).toLocaleDateString(),
+        timestamp: formatTimeAgo(wave.createdAt),
       },
       description: wave.solution,
       status: isAcknowledged ? "acknowledged" : isApproved ? "approved" : isUnderReview ? "under_review" : isInProgress ? "in_progress" : "posted",
@@ -95,12 +111,12 @@ const FollowUp: React.FC = () => {
         pingAuthor: {
           name: `${wave.author?.firstName || "A"} ${wave.author?.lastName || "U"}`,
           avatar: `https://ui-avatars.com/api/?name=${wave.author?.firstName || "A"}+${wave.author?.lastName || "U"}&background=random`,
-          timestamp: new Date(wave.ping.createdAt).toLocaleDateString(),
+          timestamp: formatTimeAgo(wave.ping.createdAt),
         },
         surgeCount: wave.surgeCount,
       } : {}),
       actions: {
-        ...(isApproved ? {
+        ...(isApproved && canProgress ? {
           primary: {
             label: "Mark as Completed",
             onClick: () => handleUpdateWaveStatus(wave.id, "COMPLETED"),
@@ -112,7 +128,7 @@ const FollowUp: React.FC = () => {
             variant: "outline-orange" as const,
           },
         } : {}),
-        ...(isUnderReview ? {
+        ...(isUnderReview && canModerate ? {
           primary: {
             label: "Approve",
             onClick: () => handleUpdateWaveStatus(wave.id, "APPROVED"),
@@ -127,14 +143,14 @@ const FollowUp: React.FC = () => {
             variant: "red" as const,
           },
         } : {}),
-        ...(isInProgress ? {
+        ...(isInProgress && canProgress ? {
           primary: {
             label: "Mark as Completed",
             onClick: () => handleUpdateWaveStatus(wave.id, "COMPLETED"),
             variant: "orange" as const,
           },
         } : {}),
-        ...(isAcknowledged ? {
+        ...(isAcknowledged && !isRep ? {
           primary: {
             label: "Mark Resolved",
             onClick: () => handleResolvePing(wave.ping.id),
@@ -187,12 +203,12 @@ const FollowUp: React.FC = () => {
 
   return (
     <>
-      <div className={`m-0 min-w-0 ${isSidebarCollapsed ? "md:ms-[80px]" : "md:ms-[230px]"} flex flex-col gap-4 sm:gap-6 items-start px-3 sm:px-6 py-6 sm:py-8 relative transition-all duration-300`}>
+      <div className={`m-0 min-w-0 ${isRep ? "" : isSidebarCollapsed ? "min-[1131px]:ms-[102px]" : "min-[1131px]:ms-[230px]"} flex flex-col gap-4 sm:gap-6 items-start px-3 sm:px-6 py-6 sm:py-8 relative transition-all duration-300`}>
         <div className="flex flex-col gap-1 sm:gap-2 items-start relative w-full">
-          <h1 className="hidden md:block font-poppins font-bold text-[24px] sm:text-[32px] leading-normal text-black">
+          <h1 className={`${isRep ? "block" : "hidden min-[1131px]:block"} font-poppins font-bold text-[24px] sm:text-[32px] leading-normal text-black`}>
             Follow Up
           </h1>
-          <AdminHeader title="Follow Up" />
+          {!isRep && <AdminHeader title="Follow Up" />}
           <p className="font-poppins font-medium text-[13px] sm:text-[16px] leading-normal text-[#8b8e8d]">
             Tasks that need your attention to keep the community moving forward
           </p>

@@ -6,6 +6,7 @@
 
 import UserAvatar from "./UserAvatar";
 import { categoryImages } from "./CategoryImages";
+import BadgeTooltip from "./BadgeTooltip";
 import { calculatePingBadge } from "../utils/badgeUtils";
 import PingActionsDropdown from "./UnifiedFeed/PingActionsDropdown";
 import ImageCarousel from "./shared/ImageCarousel";
@@ -17,6 +18,7 @@ import { useState } from "react";
 import { pingService } from "../api/services";
 import { useAuthStore } from "../stores";
 import SurgeIcon from "./shared/SurgeIcon";
+import formatTimeAgo from "../utils/formatTimeAgo";
 
 interface PingCardProps {
     ping: Ping;
@@ -36,23 +38,6 @@ interface PingCardProps {
 
 const waveIcon = "/assets/icon/wave.svg";
 const commentIcon = "/assets/icon/comment.svg";
-
-const formatTimestamp = (dateString: string) => {
-    const now = new Date();
-    const date = new Date(dateString);
-    const diffMs = now.getTime() - date.getTime();
-    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-    if (diffDays === 0) {
-        const h = Math.floor(diffMs / (1000 * 60 * 60));
-        if (h === 0) {
-            const m = Math.floor(diffMs / (1000 * 60));
-            return m <= 1 ? "Just now" : `${m}m ago`;
-        }
-        return `${h}h ago`;
-    }
-    if (diffDays < 30) return `${diffDays}d ago`;
-    return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
-};
 
 const getAuthorName = (ping: Ping) => {
     // If anonymous, use the alias
@@ -162,7 +147,7 @@ const PingCard = ({
                             {authorName}
                         </span>
                         <span className="font-['Poppins',sans-serif] font-medium text-[8px] text-black whitespace-nowrap">
-                            {formatTimestamp(ping.createdAt)}
+                            {formatTimeAgo(ping.createdAt)}
                         </span>
                     </div>
                 </div>
@@ -173,13 +158,11 @@ const PingCard = ({
                         const badgeConfig = calculatePingBadge(ping, weeklyTop3Ids);
                         if (!badgeConfig) return null;
 
-                        return (
-                            <img
+                        return (<BadgeTooltip badgeKey={badgeConfig.type as string}><img
                                 src={badgeConfig.svg}
                                 alt={badgeConfig.label}
                                 className="h-[22px] sm:h-[28px] md:h-[33px] w-auto shrink-0 select-none object-contain"
-                            />
-                        );
+                            /></BadgeTooltip>);
                     })()}
                     {/* Actions dropdown */}
                     <PingActionsDropdown

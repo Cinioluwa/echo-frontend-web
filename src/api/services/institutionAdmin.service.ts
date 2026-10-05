@@ -21,6 +21,8 @@ export interface RepresentativeBody {
 export interface RepresentativePermissions {
   canRespond: boolean;
   canAcknowledge: boolean;
+  canModerateWaves: boolean;
+  canUpdateWaveProgress: boolean;
   canAssign: boolean;
   canResolve: boolean;
   canExport: boolean;

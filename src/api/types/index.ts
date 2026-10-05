@@ -51,10 +51,13 @@ export interface User {
     canAssign: boolean;
     canRespond: boolean;
     canAcknowledge?: boolean;
+    canModerateWaves?: boolean;
+    canUpdateWaveProgress?: boolean;
     canResolve: boolean;
     canExport?: boolean;
     canManageReps?: boolean;
     bodyId?: number | null;
+    body?: { departmentId: number | null } | null;
     departmentId?: number | null;
     scopeLevel?: number | null;
     scopeHall?: string | null;

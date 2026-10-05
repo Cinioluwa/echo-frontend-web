@@ -12,6 +12,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuthStore, useSurgeStore, usePingsStore } from "../../stores";
 import { pingService } from "../../api/services";
+import BadgeTooltip from "../BadgeTooltip";
 import { calculatePingBadge } from "../../utils/badgeUtils";
 import InlineWavePreview from "./InlineWavePreview";
 import DeleteConfirmationModal from "../DeleteConfirmationModal";
@@ -21,6 +22,7 @@ import ImageCarousel from "../shared/ImageCarousel";
 import type { Ping } from "../../api/types";
 import { categoryImages } from "../CategoryImages";
 import SurgeIcon from "../shared/SurgeIcon";
+import formatTimeAgo from "../../utils/formatTimeAgo";
 
 const waveIcon = "/assets/icon/wave.svg";
 const commentIcon = "/assets/icon/comment.svg";
@@ -30,6 +32,7 @@ interface UnifiedPingCardProps {
   weeklyTop3Ids?: number[];
   wavePreviewMode?: "embedded-only" | "fetch-if-missing";
   onDelete?: (pingId: number) => void;
+  detailBasePath?: string;
 }
 
 const UnifiedPingCard = ({
@@ -38,6 +41,7 @@ const UnifiedPingCard = ({
   weeklyTop3Ids = [],
   wavePreviewMode = "fetch-if-missing",
   onDelete,
+  detailBasePath = "/feed",
 }: UnifiedPingCardProps) => {
   const navigate = useNavigate();
   const currentUser = useAuthStore((state) => state.user);
@@ -68,15 +72,7 @@ const UnifiedPingCard = ({
         ? `${currentPing.author.firstName} ${currentPing.author.lastName}`
         : "Anonymous";
 
-  const timestamp = currentPing.createdAt
-    ? new Date(currentPing.createdAt).toLocaleDateString("en-US", {
-      month: "short",
-      day: "numeric",
-      year: undefined,
-      hour: "2-digit",
-      minute: "2-digit",
-    })
-    : "";
+  const timestamp = formatTimeAgo(currentPing.createdAt);
 
   const categoryName = currentPing.category?.name || "";
   const categoryIcon = categoryImages[categoryName];
@@ -95,7 +91,7 @@ const UnifiedPingCard = ({
   const commentCount = currentPing._count?.comments || 0;
 
   const handleCardClick = () => {
-    navigate(`/feed/${currentPing.id}`);
+    navigate(`${detailBasePath}/${currentPing.id}`);
   };
 
   const handleSurge = async (e: React.MouseEvent) => {
@@ -110,7 +106,7 @@ const UnifiedPingCard = ({
 
   const handleCommentandWaveClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    navigate(`/feed/${currentPing.id}`);
+    navigate(`${detailBasePath}/${currentPing.id}`);
   };
 
   const handleDelete = (e: React.MouseEvent) => {
@@ -215,13 +211,11 @@ const UnifiedPingCard = ({
                 );
                 if (!badgeConfig) return null;
 
-                return (
-                  <img
+                return (<BadgeTooltip badgeKey={badgeConfig.type as string}><img
                     src={badgeConfig.svg}
                     alt={badgeConfig.label}
                     className="h-[22px] sm:h-[28px] md:h-[33px] w-auto shrink-0 select-none object-contain"
-                  />
-                );
+                  /></BadgeTooltip>);
               })()}
               {/* Actions dropdown */}
               <PingActionsDropdown

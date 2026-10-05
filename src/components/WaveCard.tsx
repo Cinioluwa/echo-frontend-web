@@ -14,6 +14,7 @@ import { useSurgeStore, useWavesStore } from "../stores";
 import UserAvatar from "./UserAvatar";
 import DeleteConfirmationModal from "./DeleteConfirmationModal";
 import WaveActionsDropdown from "./WaveActionsDropdown";
+import BadgeTooltip from "./BadgeTooltip";
 import { calculateWaveBadge } from "../utils/badgeUtils";
 import type { Wave, Media } from "../api/types";
 import ImageLightbox from "./shared/ImageLightbox";
@@ -23,6 +24,7 @@ import { EditedLabel } from "../utils/editedLabel";
 import { waveService } from "../api/services";
 import { useAuthStore } from "../stores";
 import SurgeIcon from "./shared/SurgeIcon";
+import formatTimeAgo from "../utils/formatTimeAgo";
 
 interface WaveCardProps {
   wave: Wave;
@@ -34,23 +36,6 @@ interface WaveCardProps {
 }
 
 // ─── Helper Functions (Module-level for performance) ───────────────────────
-
-const formatTimestamp = (dateString: string) => {
-  const now = new Date();
-  const date = new Date(dateString);
-  const diffMs = now.getTime() - date.getTime();
-  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-  if (diffDays === 0) {
-    const h = Math.floor(diffMs / (1000 * 60 * 60));
-    if (h === 0) {
-      const m = Math.floor(diffMs / (1000 * 60));
-      return m <= 1 ? "Just now" : `${m}m ago`;
-    }
-    return `${h}h ago`;
-  }
-  if (diffDays < 30) return `${diffDays}d ago`;
-  return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
-};
 
 const getAuthorName = (wave: Wave) => {
   // If anonymous, use the alias
@@ -219,18 +204,18 @@ const WaveCard = React.memo(
                   {authorName}
                 </span>
                 <span className="font-['Poppins',sans-serif] font-medium text-[10px] text-[#8B8E8D] leading-tight whitespace-nowrap">
-                  {formatTimestamp(wave.createdAt)}
+                  {formatTimeAgo(wave.createdAt)}
                 </span>
               </div>
             </div>
 
             <div className="flex items-center gap-1 shrink-0">
               {badgeConfig && (
-                <img
+                <BadgeTooltip badgeKey={badgeConfig.type as string}><img
                   src={badgeConfig.svg}
                   alt={badgeConfig.label}
                   className="h-[22px] sm:h-[28px] md:h-[33px] w-auto shrink-0 select-none object-contain"
-                />
+                /></BadgeTooltip>
               )}
               <WaveActionsDropdown
                 waveId={wave.id}

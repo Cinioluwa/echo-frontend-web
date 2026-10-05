@@ -12,6 +12,7 @@
 import { lazy, Suspense, type ComponentType } from "react";
 import { createBrowserRouter, Navigate } from "react-router-dom";
 import LoadingFallback from "./auth/LoadingFallback";
+import RepresentativeRoute from "./auth/RepresentativeRoute";
 import AdminRoute from "./auth/AdminRoute";
 import SuperAdminRoute from "./auth/SuperAdminRoute";
 import ProtectedRoute from "./auth/ProtectedRoute";
@@ -63,6 +64,9 @@ const InstitutionAgreement = lazyWithRetry(() => import("../pages/auth/Instituti
 // Lazy load main app pages (new unified architecture)
 const UnifiedFeed = lazyWithRetry(() => import("../pages/UnifiedFeed"));
 const PingDetail = lazyWithRetry(() => import("../pages/PingDetail"));
+const RepInbox = lazyWithRetry(() => import("../pages/RepInbox"));
+const RepPingDetail = lazyWithRetry(() => import("../components/admin/PingDetail/AdminPingDetail").then((m) => ({ default: () => <m.default mode="rep" /> })));
+const RepFollowUp = lazyWithRetry(() => import("../components/admin/FollowUp/FollowUp").then((m) => ({ default: () => <m.default mode="rep" /> })));
 const History = lazyWithRetry(() => import("../pages/History"));
 const Notifications = lazyWithRetry(() => import("../pages/Notifications"));
 
@@ -74,7 +78,6 @@ const FollowUpPage = lazyWithRetry(() => import("../pages/admin/FollowUpPage"));
 const ModerationPage = lazyWithRetry(() => import("../pages/admin/ModerationPage"));
 const AdminPingDetailPage = lazyWithRetry(() => import("../pages/admin/AdminPingDetailPage"));
 const AdminSoundboardPage = lazyWithRetry(() => import("../pages/admin/AdminSoundboardPage"));
-const AdminSettingsPage = lazyWithRetry(() => import("../pages/admin/AdminSettingsPage"));
 const InstitutionWorkspace = lazyWithRetry(() => import("../pages/admin/InstitutionWorkspace"));
 
 // Lazy load admin components
@@ -214,6 +217,15 @@ const router = createBrowserRouter([
         element: withSuspense(History),
       },
       {
+        path: "",
+        element: <RepresentativeRoute />,
+        children: [
+          { path: "inbox", element: withSuspense(RepInbox) },
+          { path: "inbox/:pingId", element: withSuspense(RepPingDetail) },
+          { path: "follow-up", element: withSuspense(RepFollowUp) },
+        ],
+      },
+      {
         path: "notifications",
         element: withSuspense(Notifications),
       },
@@ -312,11 +324,7 @@ const router = createBrowserRouter([
       },
       {
         path: "settings",
-        element: (
-          <AdminRoute>
-            {withSuspense(AdminSettingsPage)}
-          </AdminRoute>
-        ),
+        element: <Navigate to="/admin/institution" replace />,
       },
       {
         path: "institution",

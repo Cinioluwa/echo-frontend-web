@@ -16,6 +16,7 @@
  * not through this component.
  */
 import type { Wave } from "../api/types";
+import BadgeTooltip from "./BadgeTooltip";
 
 interface WaveStatusIndicatorProps {
     wave?: Wave;
@@ -84,8 +85,8 @@ const WaveStatusIndicator = ({
     if (!config) return null;
 
     return (
-        <div
-            className={`inline-flex items-center gap-1.5 px-[15px] py-[7px] border border-[#626665] rounded-[23px] ${className}`}
+<BadgeTooltip badgeKey={statusValue as string}>
+<div className={`inline-flex items-center gap-1.5 px-[15px] py-[7px] border border-[#626665] rounded-[23px] ${className}`}
         >
             {/* Colored status dot */}
             <span
@@ -98,7 +99,8 @@ const WaveStatusIndicator = ({
                 {config.label}
             </span>
         </div>
-    );
+</BadgeTooltip>
+);
 };
 
 export default WaveStatusIndicator;

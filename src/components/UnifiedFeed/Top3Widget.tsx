@@ -112,9 +112,18 @@ const Top3Item: React.FC<Top3ItemProps> = ({ ping, index }) => {
         className="w-[30px] h-[30px] rounded-full flex items-center justify-center shrink-0 overflow-hidden"
       >
         <UserAvatar
-          user={typeof currentPing.author === "object" ? currentPing.author : null}
+          user={
+            !currentPing.isAnonymous && typeof currentPing.author === "object"
+              ? currentPing.author
+              : null
+          }
           size="sm"
-          initialsOnly
+          initialsOnly={!(currentPing.isAnonymous && currentPing.anonymousProfilePicture)}
+          pictureUrl={
+            currentPing.isAnonymous && currentPing.anonymousProfilePicture
+              ? currentPing.anonymousProfilePicture
+              : undefined
+          }
           bgColor="bg-transparent"
           className="text-[10px]! font-bold text-white"
         />
@@ -129,9 +138,11 @@ const Top3Item: React.FC<Top3ItemProps> = ({ ping, index }) => {
         <span
           className={`font-['Poppins',sans-serif] font-normal text-[9px] truncate leading-tight ${config.authorColor}`}
         >
-          {typeof currentPing.author === "object" && currentPing.author
-            ? `${currentPing.author.firstName} ${currentPing.author.lastName}`
-            : "Anonymous"}
+          {currentPing.isAnonymous && currentPing.anonymousAlias
+            ? currentPing.anonymousAlias
+            : typeof currentPing.author === "object" && currentPing.author
+              ? `${currentPing.author.firstName} ${currentPing.author.lastName}`
+              : "Anonymous"}
         </span>
       </div>
       {/* Surge count (interactive with optimistic update) */}

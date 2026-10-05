@@ -178,12 +178,12 @@ const AdminSoundboard: React.FC<AdminSoundboardProps> = ({
 
     return (
         <>
-            <div className={`flex min-h-screen min-w-0 bg-[#fcfcfc] m-0 ${isSidebarCollapsed ? "md:ms-[80px]" : "md:ms-[230px]"} transition-all duration-300`} data-node-id="admin-soundboard-page">
+            <div className={`flex min-h-screen min-w-0 bg-[#fcfcfc] m-0 ${isSidebarCollapsed ? "min-[1131px]:ms-[102px]" : "min-[1131px]:ms-[230px]"} transition-all duration-300`} data-node-id="admin-soundboard-page">
                 <div className="min-w-0 flex-1 bg-[#fcfcfc]">
                     <div className="px-3 sm:px-5 pt-5 sm:pt-[30px] pb-3 sm:pb-5">
                         <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between lg:gap-0">
                             <div className="flex min-w-0 flex-col gap-1 sm:gap-2">
-                                <h1 className="hidden md:block font-poppins font-bold text-[24px] sm:text-[32px] leading-normal text-black">
+                                <h1 className="hidden min-[1131px]:block font-poppins font-bold text-[24px] sm:text-[32px] leading-normal text-black">
                                     Soundboard
                                 </h1>
                                 <AdminHeader title="Soundboard" />

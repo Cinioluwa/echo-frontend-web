@@ -20,6 +20,8 @@ export type FilterType =
 
 export interface FollowUpItem {
   id: string;
+  pingId?: number;
+  href?: string;
   title: string;
   category: string;
   categoryIcon?: string;

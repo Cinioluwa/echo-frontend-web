@@ -209,18 +209,18 @@ const SignUp: React.FC = () => {
       <AuthLayout>
         <AuthCard>
           {/* Title */}
-          <div className="text-center w-full">
+          <div className="flex flex-col gap-2.5 items-center text-center w-full">
             <h1
-              className="text-[22px] sm:text-[26px] md:text-[28px] font-semibold text-[#4a504e] mb-2.5"
-              style={{ fontFamily: 'Poppins, sans-serif' }}
+              className="text-[22px] sm:text-[26px] md:text-[28px] leading-7 sm:leading-8 md:leading-9 text-black"
+              style={{ fontFamily: "Poppins, sans-serif", fontWeight: 600 }}
             >
-              Sign up to Echo
+              Create your Echo account
             </h1>
             <p
-              className="text-[12px] sm:text-[13px] text-[#838383] font-normal"
-              style={{ fontFamily: 'Poppins, sans-serif' }}
+              className="text-[14px] sm:text-base leading-5 sm:leading-[21px] text-[#4a504e] opacity-[0.69]"
+              style={{ fontFamily: "Poppins, sans-serif", fontWeight: 500 }}
             >
-              Create waves, rally support, track change
+              Create waves, rally support and drive change on campus.
             </p>
           </div>
 
@@ -237,15 +237,6 @@ const SignUp: React.FC = () => {
           {/* <div className="w-full">
             <GoogleButton onClick={handleGoogleSignUp} disabled={loading || isOffline} loading={loading} />
           </div> */}
-
-          {/* Divider */}
-          <div className="w-full flex items-center gap-3 sm:gap-4">
-            <div className="flex-1 h-px bg-[#e0e0e0]"></div>
-            <span className="text-[12px] sm:text-[13px] text-[#838383] font-normal" style={{ fontFamily: 'Poppins, sans-serif' }}>
-              or
-            </span>
-            <div className="flex-1 h-px bg-[#e0e0e0]"></div>
-          </div>
 
           {/* Sign Up Form */}
           <form onSubmit={handleSubmitSignUp} className="w-full flex flex-col gap-3.5 sm:gap-4 md:gap-5">
@@ -363,6 +354,9 @@ const SignUp: React.FC = () => {
             </AuthButton>
           </form>
 
+          {/* Footer (ends with divider) */}
+          <AuthFooter />
+
           {/* Login Link */}
           <div className="text-center">
             <p className="text-[12px] sm:text-[13px] text-[#838383]" style={{ fontFamily: 'Poppins, sans-serif' }}>
@@ -372,9 +366,6 @@ const SignUp: React.FC = () => {
               </Link>
             </p>
           </div>
-
-          {/* Footer */}
-          <AuthFooter />
         </AuthCard>
       </AuthLayout>
     </>

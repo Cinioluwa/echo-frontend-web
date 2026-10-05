@@ -13,8 +13,8 @@ const AdminMobileNavBar = () => {
 
   return (
     <>
-      <div className="h-[64px] md:hidden" aria-hidden="true" />
-      <div className="fixed left-3 right-3 top-[10px] z-30 rounded-[22px] bg-[#FFC37B]/95 shadow-lg backdrop-blur md:hidden">
+      <div className="h-[64px] min-[1131px]:hidden" aria-hidden="true" />
+      <div className="fixed left-3 right-3 top-[10px] z-30 rounded-[22px] bg-[#FFC37B]/95 shadow-lg backdrop-blur min-[1131px]:hidden">
         <div className="relative flex items-center justify-between gap-2 px-3 py-2">
           <button
             type="button"

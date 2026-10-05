@@ -19,13 +19,13 @@ const AuthFooter: React.FC<AuthFooterProps> = ({
         <div className={`flex flex-col gap-2.5 items-center px-3 sm:px-5 w-full ${className}`}>
             {showTerms && (
                 <div
-                    className="flex flex-col gap-2.5 items-center text-center text-xs sm:text-sm leading-3.5"
+                    className="flex flex-col gap-1.5 items-center text-center text-xs leading-relaxed"
                     style={{ fontFamily: 'Poppins, sans-serif', fontWeight: 500 }}
                 >
                     <p className="text-[#838383]">
-                        By creating an account, you agree to Echo
+                        By creating an account, you agree to Echo&apos;s
                     </p>
-                    <div className="flex gap-1 text-[#f49b31]">
+                    <div className="flex flex-wrap justify-center gap-1 text-sm font-semibold text-[#f49b31]">
                         <a
                             href="https://www.echo-ng.com/terms"
                             target="_blank"
@@ -34,7 +34,7 @@ const AuthFooter: React.FC<AuthFooterProps> = ({
                         >
                             Terms of Use
                         </a>
-                        <span>and</span>
+                        <span className="font-medium text-[#838383]">and</span>
                         <a
                             href="https://www.echo-ng.com/privacy"
                             target="_blank"

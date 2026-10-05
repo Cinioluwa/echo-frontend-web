@@ -62,10 +62,10 @@ const FollowUpFilterTabs: React.FC<FollowUpFilterTabsProps> = ({
 }) => {
     return (
         <div
-            className="flex gap-1.5 sm:gap-2.5 items-center justify-start sm:justify-center relative shrink-0 w-full overflow-x-auto pb-2 scrollbar-none"
+            className="flex gap-1.5 sm:gap-2.5 items-center relative shrink-0 w-full overflow-x-auto pb-2 scrollbar-none"
             data-node-id="5627:16785"
         >
-            {filterDefs.map((filter) => {
+            {filterDefs.map((filter, index) => {
                 const isActive = activeFilter === filter.id;
                 const count = counts[filter.id] ?? 0;
 
@@ -73,7 +73,7 @@ const FollowUpFilterTabs: React.FC<FollowUpFilterTabsProps> = ({
                     <button
                         key={filter.id}
                         onClick={() => onFilterChange(filter.id)}
-                        className={`flex gap-[6px] sm:gap-[9px] items-center justify-center px-3 sm:px-[18px] py-1.5 sm:py-[9px] relative shrink-0 rounded-[22.5px] whitespace-nowrap transition-all text-xs sm:text-sm border-[1.8px] border-solid ${
+                        className={`${index === 0 ? "ml-auto" : ""} ${index === filterDefs.length - 1 ? "mr-auto" : ""} flex gap-[6px] sm:gap-[9px] items-center justify-center px-3 sm:px-[18px] py-1.5 sm:py-[9px] relative shrink-0 rounded-[22.5px] whitespace-nowrap transition-all text-xs sm:text-sm border-[1.8px] border-solid ${
                             isActive
                                 ? "bg-[#f49b31] border-[#f49b31] hover:bg-[#e28a20]"
                                 : "bg-[#fef5ea] border-[#f49b31] hover:bg-[#fdecd8]"

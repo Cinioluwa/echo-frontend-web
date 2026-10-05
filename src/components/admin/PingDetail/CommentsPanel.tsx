@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import { MessageCircle } from "lucide-react";
+import { createPortal } from "react-dom";
+import { MessageCircle, X } from "lucide-react";
 import UserAvatar from "../../UserAvatar";
 import type { Comment } from "../../../api/types";
-import api from "../../../api/axios.config";
 
 interface AdminCommentsPanelProps {
     comments: Comment[];
@@ -58,50 +58,6 @@ const getAvatarUrl = (comment: Comment) => {
     return undefined;
 };
 
-const SurgeButton = ({ comment }: { comment: Comment }) => {
-    const [surgeCount, setSurgeCount] = useState(comment.surgeCount ?? 0);
-    const [hasSurged, setHasSurged] = useState(comment.hasSurged ?? false);
-    const [isToggling, setIsToggling] = useState(false);
-
-    const handleSurge = async () => {
-        if (isToggling) return;
-        setIsToggling(true);
-        try {
-            const response = await api.post<{ surged: boolean; surgeCount?: number }>(
-                `/comments/${comment.id}/surge`
-            );
-            setHasSurged(response.data.surged);
-            if (typeof response.data.surgeCount === "number") {
-                setSurgeCount(response.data.surgeCount);
-            } else {
-                setSurgeCount((prev) => prev + (response.data.surged ? 1 : -1));
-            }
-        } catch (err) {
-            console.error("Error toggling comment surge:", err);
-        } finally {
-            setIsToggling(false);
-        }
-    };
-
-    return (
-        <button
-            type="button"
-            onClick={handleSurge}
-            disabled={isToggling}
-            aria-label={hasSurged ? "Remove surge" : "Surge"}
-            className={`flex items-center gap-[2.25px] px-[7.5px] py-[5.25px] rounded-[18px] border-[0.75px] border-black cursor-pointer transition-all duration-200 disabled:opacity-50 text-[11px] font-['Baloo_Bhai_2',sans-serif] font-bold uppercase leading-none ${hasSurged
-                    ? "bg-[#f49b31] text-white border-[#f49b31]"
-                    : "bg-white text-black"
-                }`}
-        >
-            <svg width="7.5" height="12" viewBox="0 0 8 13" fill="none" xmlns="http://www.w3.org/2000/svg" className="shrink-0">
-                <path d="M4 1L0.5 7.5H3.5V12L7.5 5.5H4.5L4 1Z" fill="currentColor" />
-            </svg>
-            <span>{surgeCount}</span>
-        </button>
-    );
-};
-
 const CommentCard = ({ comment }: { comment: CommentWithReplies }) => {
     const [showReplies, setShowReplies] = useState(false);
     const authorName = getAuthorName(comment);
@@ -135,8 +91,6 @@ const CommentCard = ({ comment }: { comment: CommentWithReplies }) => {
                     </p>
 
                     <div className="flex gap-[5px] items-center">
-                        <SurgeButton comment={comment} />
-
                         {replyCount > 0 && (
                             <button
                                 type="button"
@@ -191,13 +145,13 @@ const ReplyCard = ({ reply }: { reply: Comment }) => {
                     {reply.content}
                 </p>
 
-                <SurgeButton comment={reply} />
             </div>
         </div>
     );
 };
 
 const AdminCommentsPanel: React.FC<AdminCommentsPanelProps> = ({ comments }) => {
+    const [open, setOpen] = React.useState(false);
     const topLevelComments = comments.filter(
         (c) => !c.parentCommentId || c.parentCommentId === null
     );
@@ -207,25 +161,76 @@ const AdminCommentsPanel: React.FC<AdminCommentsPanelProps> = ({ comments }) => 
         replies: comments.filter((c) => c.parentCommentId === comment.id),
     }));
 
+    React.useEffect(() => {
+        if (!open) return;
+        const onKey = (e: KeyboardEvent) => e.key === "Escape" && setOpen(false);
+        document.addEventListener("keydown", onKey);
+        const prev = document.body.style.overflow;
+        document.body.style.overflow = "hidden";
+        return () => {
+            document.removeEventListener("keydown", onKey);
+            document.body.style.overflow = prev;
+        };
+    }, [open]);
+
+    const visible = commentsWithReplies.slice(0, 2);
+
     return (
-        <div className="bg-[#F49B31] rounded-xl flex flex-col gap-2 sm:gap-3">
-            <h3 className="font-poppins pt-3 px-3 sm:pt-4 sm:px-4 font-semibold text-[16px] sm:text-[18px] text-white rounded-t-xl">
+        <div className="flex flex-col overflow-hidden rounded-[24px] bg-[#ffc37b] md:rounded-[28px]">
+            <h3 className="bg-[#f49b31] px-[14px] py-4 font-poppins text-lg font-semibold text-white">
                 Comments
-                {topLevelComments.length > 0 && (
-                    <span className="ms-1.5 text-[#626665]">{topLevelComments.length}</span>
-                )}
+                <span className="ms-2 inline-flex h-6 min-w-6 items-center justify-center rounded-full bg-white px-1.5 text-[13px] font-semibold leading-none tabular-nums text-[#f49b31]">
+                    {commentsWithReplies.length}
+                </span>
             </h3>
-            <div className="flex flex-col gap-2 px-3 sm:px-4 sm:gap-3 max-h-[250px] sm:max-h-[300px] overflow-y-auto bg-[#ffc37b] py-2">
-                {commentsWithReplies.length === 0 ? (
-                    <p className="text-center text-white text-[13px] py-4">No comments yet</p>
+            <div className="flex flex-col gap-2 px-3 pt-3 pb-3">
+                {visible.length === 0 ? (
+                    <p className="py-4 text-center text-[13px] text-white">No comments yet</p>
                 ) : (
-                    commentsWithReplies.map((comment) => (
-                        <CommentCard key={comment.id} comment={comment} />
-                    ))
+                    visible.map((comment) => <CommentCard key={comment.id} comment={comment} />)
                 )}
             </div>
+            {commentsWithReplies.length > 2 && (
+                <div className="flex justify-center bg-[#f49b31] p-3">
+                    <button
+                        onClick={() => setOpen(true)}
+                        className="rounded-[20px] border border-[#ffcd84] bg-white px-4 py-2 font-poppins text-[13px] font-semibold text-[#f49b31]"
+                    >
+                        View all {commentsWithReplies.length} Comments →
+                    </button>
+                </div>
+            )}
+
+            {open &&
+                createPortal(
+                    <div className="fixed inset-0 z-[100] flex items-end justify-center md:items-center">
+                        <div className="absolute inset-0 bg-black/50" onClick={() => setOpen(false)} />
+                        <div className="relative flex max-h-[85vh] w-full flex-col overflow-hidden rounded-t-[24px] bg-[#ffc37b] md:max-h-[80vh] md:max-w-[520px] md:rounded-[20px]">
+                            <div className="flex items-center justify-between bg-[#f49b31] px-[14px] py-4">
+                                <h3 className="font-poppins text-lg font-semibold text-white">
+                                    Comments
+                                    <span className="ms-2 inline-flex h-6 min-w-6 items-center justify-center rounded-full bg-white px-1.5 text-[13px] font-semibold leading-none tabular-nums text-[#f49b31]">
+                                        {commentsWithReplies.length}
+                                    </span>
+                                </h3>
+                                <button
+                                    onClick={() => setOpen(false)}
+                                    aria-label="Close comments"
+                                    className="rounded-full p-1 text-white hover:bg-white/20"
+                                >
+                                    <X size={20} />
+                                </button>
+                            </div>
+                            <div className="flex flex-col gap-2 overflow-y-auto px-3 pt-3 pb-4">
+                                {commentsWithReplies.map((comment) => (
+                                    <CommentCard key={comment.id} comment={comment} />
+                                ))}
+                            </div>
+                        </div>
+                    </div>,
+                    document.body
+                )}
         </div>
     );
 };
-
 export default AdminCommentsPanel;

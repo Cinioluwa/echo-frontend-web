@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Check, X, Loader2 } from "lucide-react";
 
 interface WaveActionModalProps {
-    action: "APPROVED" | "REJECTED" | "UNDER_REVIEW";
+    action: "APPROVED" | "REJECTED" | "UNDER_REVIEW" | "IN_PROGRESS" | "COMPLETED";
     onConfirm: (reason?: string) => Promise<void>;
     onCancel: () => void;
 }
@@ -40,6 +40,16 @@ const WaveActionModal: React.FC<WaveActionModalProps> = ({ action, onConfirm, on
         return (
             <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 animate-fade-in font-poppins">
                 <div className="bg-white rounded-[30px] w-[350px] p-8 flex flex-col items-center justify-center gap-6 shadow-2xl animate-scale-in">
+                    {(action === "IN_PROGRESS" || action === "COMPLETED") && (
+                        <>
+                            <div className="w-[80px] h-[80px] rounded-full border-[4px] border-[#f49b31] flex items-center justify-center animate-bounce-subtle">
+                                <Check className="w-10 h-10 text-[#f49b31]" strokeWidth={3.5} />
+                            </div>
+                            <h3 className="font-bold text-[24px] text-black text-center tracking-tight">
+                                {action === "COMPLETED" ? "Completed!" : "In Progress!"}
+                            </h3>
+                        </>
+                    )}
                     {action === "APPROVED" && (
                         <>
                             <div className="w-[80px] h-[80px] rounded-full border-[4px] border-[#f49b31] flex items-center justify-center animate-bounce-subtle">
@@ -87,6 +97,36 @@ const WaveActionModal: React.FC<WaveActionModalProps> = ({ action, onConfirm, on
                     </div>
                 )}
 
+                {(action === "IN_PROGRESS" || action === "COMPLETED") && (
+                    <>
+                        <div className="w-[80px] h-[80px] rounded-full border-[4px] border-[#f49b31] flex items-center justify-center">
+                            <span className="text-[#f49b31] font-bold text-[48px] leading-none -mt-1 font-sans">!</span>
+                        </div>
+
+                        <h3 className="font-bold text-[20px] text-center text-[#282828] leading-[26px]">
+                            {action === "COMPLETED"
+                                ? "Mark this wave as Completed?"
+                                : "Mark this wave as In Progress?"}
+                        </h3>
+
+                        <div className="flex gap-4 w-full mt-2">
+                            <button
+                                onClick={handleConfirm}
+                                disabled={isLoading}
+                                className="flex-1 py-3 bg-[#f49b31] hover:bg-[#e68a1f] text-white font-bold text-[16px] rounded-[15px] transition-all duration-200 active:scale-95 disabled:opacity-50 flex items-center justify-center"
+                            >
+                                {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : "Yes"}
+                            </button>
+                            <button
+                                onClick={onCancel}
+                                disabled={isLoading}
+                                className="flex-1 py-3 border-2 border-[#f49b31] text-[#f49b31] bg-transparent hover:bg-[#fef5ea] font-bold text-[16px] rounded-[15px] transition-all duration-200 active:scale-95 disabled:opacity-50"
+                            >
+                                No
+                            </button>
+                        </div>
+                    </>
+                )}
                 {/* APPROVED Action */}
                 {action === "APPROVED" && (
                     <>

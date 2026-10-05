@@ -10,15 +10,12 @@
  */
 
 import { useCallback, useEffect, useState } from "react";
-import { useOutletContext, useSearchParams, useNavigate, Link } from "react-router-dom";
+import { useOutletContext, useSearchParams, useNavigate } from "react-router-dom";
 import { useShallow } from "zustand/react/shallow";
 import { publicService, organizationService } from "../api/services";
-import representativeService from "../api/services/representative.service";
-import institutionAdminService from "../api/services/institutionAdmin.service";
 import { getSocket } from "../api/socket";
 import ClaimSpaceBanner from "../components/ClaimSpaceBanner";
 import ClaimSpaceModal from "../components/ClaimSpaceModal";
-import AssignPingModal from "../components/AssignPingModal";
 import InlinePingCreator from "../components/InlinePingCreator";
 import InviteLeaderModal from "../components/InviteLeaderModal";
 import OnboardingOverlay from "../components/onboarding/OnboardingOverlay";
@@ -85,21 +82,6 @@ const UnifiedFeed = () => {
   const [weeklyTop3Ids, setWeeklyTop3Ids] = useState<number[]>([]);
   const [institutionStatus, setInstitutionStatus] =
     useState<InstitutionStatus | null>(null);
-  const [representativePings, setRepresentativePings] = useState<Ping[]>([]);
-  const [representativeLoading, setRepresentativeLoading] = useState(false);
-  const [representativeError, setRepresentativeError] = useState<string | null>(null);
-  const [representativeHasNextPage, setRepresentativeHasNextPage] = useState(false);
-  const [representativePage, setRepresentativePage] = useState(1);
-  const [assigningPing, setAssigningPing] = useState<Ping | null>(null);
-  const [representativeScope, setRepresentativeScope] = useState<string[]>([]);
-  const [feedViewMode, setFeedViewMode] = useState<"all" | "scope">("all");
-  const isRepresentative = user?.role === "REPRESENTATIVE";
-  const canAssignPings =
-    user?.role === "ADMIN" ||
-    user?.role === "SUPER_ADMIN" ||
-    (user?.representativeProfile?.isActive === true &&
-      user.representativeProfile.canAssign === true);
-
   const refreshInstitutionStatus = useCallback(async () => {
     if (!organizationId) {
       setInstitutionStatus(null);
@@ -119,36 +101,6 @@ const UnifiedFeed = () => {
     void refreshInstitutionStatus();
   }, [refreshInstitutionStatus]);
 
-  const loadRepresentativePings = useCallback((page = 1) => {
-    setRepresentativeLoading(true);
-    setRepresentativeError(null);
-    return representativeService
-      .getSubmittedPings({ page, limit: 20 })
-      .then((response) => {
-        setRepresentativePings((current) =>
-          page === 1 ? response.data : [...current, ...response.data]
-        );
-        setRepresentativePage(page);
-        setRepresentativeHasNextPage(response.pagination.hasNextPage);
-      })
-      .catch((requestError: unknown) => {
-        console.error("Failed to load the representative inbox:", requestError);
-        const responseData = (
-          requestError as { response?: { data?: { error?: string; message?: string } } }
-        )?.response?.data;
-        setRepresentativeError(
-          responseData?.error || responseData?.message || "We couldn't load your representative inbox."
-        );
-        if (page === 1) setRepresentativePings([]);
-      })
-      .finally(() => setRepresentativeLoading(false));
-  }, []);
-
-  useEffect(() => {
-    if (!isRepresentative) return;
-    void loadRepresentativePings(1);
-  }, [isRepresentative, loadRepresentativePings]);
-
   // ── Fetch campus data on mount / search change (Hydrates category counts) ──
   useEffect(() => {
     fetchPings({
@@ -167,43 +119,6 @@ const UnifiedFeed = () => {
         console.error("Failed to fetch top 3 pings:", err);
       });
   }, [debouncedQuery, selectedCategoryId, fetchPings, organizationId]);
-
-  useEffect(() => {
-    if (!isRepresentative || !organizationId) {
-      setRepresentativeScope([]);
-      return;
-    }
-
-    let cancelled = false;
-    institutionAdminService
-      .getContextOptions(organizationId)
-      .then((context) => {
-        if (cancelled) return;
-        const profile = user?.representativeProfile;
-        const bodyName = context.bodies.find((body) => body.id === profile?.bodyId)?.name;
-        const departmentName = context.departments.find(
-          (department) => department.id === profile?.departmentId,
-        )?.name;
-        const scopes = [
-          bodyName,
-          departmentName,
-          profile?.responsibilities === "*"
-            ? "All categories"
-            : profile?.responsibilities?.split(",").filter(Boolean).join(", "),
-          profile?.scopeLevel ? `${profile.scopeLevel}L` : null,
-          profile?.scopeHall || null,
-        ].filter((value): value is string => Boolean(value));
-        setRepresentativeScope(scopes);
-      })
-      .catch((scopeError: unknown) => {
-        console.error("Failed to load representative scope labels:", scopeError);
-        if (!cancelled) setRepresentativeScope([]);
-      });
-
-    return () => {
-      cancelled = true;
-    };
-  }, [isRepresentative, organizationId, user?.representativeProfile]);
 
   // ── WebSocket event wiring (Phase 11) ───────────────────────────────────────
   useEffect(() => {
@@ -234,29 +149,9 @@ const UnifiedFeed = () => {
   }, []);
 
   // ── Infinite scroll handler ─────────────────────────────────────────────────
-  const isViewingScope = isRepresentative && feedViewMode === "scope";
-  const visiblePings = isViewingScope ? representativePings : pings;
-  const feedLoading = isViewingScope ? representativeLoading : isLoading;
-  const feedError = isViewingScope ? representativeError : error;
-
   const handleLoadMore = useCallback(() => {
-    if (isViewingScope) {
-      if (!representativeHasNextPage || representativeLoading) return;
-      void loadRepresentativePings(representativePage + 1);
-      return;
-    }
-
     if (hasNextPage && !isLoading) fetchNextPage();
-  }, [
-    isViewingScope,
-    representativeHasNextPage,
-    representativeLoading,
-    representativePage,
-    loadRepresentativePings,
-    hasNextPage,
-    isLoading,
-    fetchNextPage,
-  ]);
+  }, [hasNextPage, isLoading, fetchNextPage]);
 
   // ── onboarding Overlay controller ─────────────────────────────────────────────────
   const [openOnboarding, setOpenOnboarding] = useState(false);
@@ -290,77 +185,8 @@ const UnifiedFeed = () => {
       {/* Inline ping creator */}
       <InlinePingCreator />
 
-      {/* Representative Feed Switcher */}
-      {isRepresentative && (
-        <div className="flex items-center justify-between gap-3 rounded-2xl border border-[#ffd7a8] bg-[#FEF5EA] p-2 shadow-sm">
-          <div className="flex gap-2">
-            <button
-              type="button"
-              onClick={() => setFeedViewMode("all")}
-              className={`rounded-full px-5 py-2 font-['Inter',sans-serif] text-xs font-semibold transition-all ${
-                feedViewMode === "all"
-                  ? "bg-[#101010] text-white shadow-sm"
-                  : "bg-transparent text-black/65 hover:bg-white hover:text-[#101010]"
-              }`}
-            >
-              Campus Feed
-            </button>
-            <button
-              type="button"
-              onClick={() => setFeedViewMode("scope")}
-              className={`flex items-center gap-2 rounded-full px-5 py-2 font-['Inter',sans-serif] text-xs font-semibold transition-all ${
-                feedViewMode === "scope"
-                  ? "bg-[#F49B31] text-white shadow-sm"
-                  : "bg-transparent text-black/65 hover:bg-white hover:text-[#A85C08]"
-              }`}
-            >
-              <span>Representative Queue</span>
-              {representativePings.length > 0 && (
-                <span
-                  className={`rounded-full px-2 py-0.5 text-[10px] font-bold ${
-                    feedViewMode === "scope"
-                      ? "bg-white/25 text-white"
-                      : "bg-[#F49B31]/15 text-[#A85C08]"
-                  }`}
-                >
-                  {representativePings.length}
-                </span>
-              )}
-            </button>
-          </div>
-          <Link
-            to="/admin/soundboard"
-            className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 font-['Inter',sans-serif] text-xs font-semibold text-[#A85C08] hover:underline"
-          >
-            Full Workspace →
-          </Link>
-        </div>
-      )}
-
-      {/* Scope banner when in scope view */}
-      {isViewingScope && (
-        <section className="rounded-2xl border border-black/10 bg-white px-5 py-4">
-          <div className="flex flex-wrap items-start justify-between gap-3">
-            <div>
-              <p className="font-['Inter',sans-serif] text-xs font-semibold uppercase tracking-[0.15em] text-[#A85C08]">Representative inbox</p>
-              <h2 className="mt-1 font-['Poppins',sans-serif] text-lg font-semibold text-[#101010]">Viewing issues for your assigned scope</h2>
-              {representativeScope.length > 0 && (
-                <p className="mt-1 font-['Inter',sans-serif] text-sm leading-6 text-black/65">{representativeScope.join(" · ")}</p>
-              )}
-              <p className="mt-1 font-['Inter',sans-serif] text-xs leading-5 text-black/55">This queue includes issues in your scope and issues explicitly assigned to you or your body.</p>
-            </div>
-            <Link
-              to="/admin/soundboard"
-              className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-[#D1C0A9] bg-[#FEF5EA] px-4 py-2 font-['Inter',sans-serif] text-xs font-semibold text-[#A85C08] hover:bg-[#faebd7]"
-            >
-              Open Full Workspace
-            </Link>
-          </div>
-        </section>
-      )}
-
       {/* Mobile-only Top Widgets (Desktop renders these in Layout's right aside) */}
-      {!isViewingScope && (
+      {(
         <div className="lg:hidden flex flex-col gap-[15px]">
           <AnnouncementWidget announcement={announcement} />
           <Top3Widget pings={top3} />
@@ -368,20 +194,20 @@ const UnifiedFeed = () => {
       )}
 
       {/* ── Feed list ── */}
-      {feedError && visiblePings.length === 0 ? (
+      {error && pings.length === 0 ? (
         <div role="alert" className="rounded-2xl border border-red-200 bg-white p-5 font-['Inter',sans-serif] text-sm text-red-800">
-          {feedError}
+          {error}
         </div>
-      ) : feedLoading && visiblePings.length === 0 ? (
+      ) : isLoading && pings.length === 0 ? (
         <UnifiedFeedSkeleton />
-      ) : visiblePings.length === 0 ? (
+      ) : pings.length === 0 ? (
         <div className="text-center py-16 text-[#4A504E] text-sm">
-          {isViewingScope ? "No issues are currently assigned to your scope." : "No pings yet. Be the first to raise an issue!"}
+          No pings yet. Be the first to raise an issue!
         </div>
       ) : (
         <div className="flex flex-col gap-[15px] w-full">
-          {feedError && <p role="alert" className="rounded-xl border border-red-200 bg-white p-3 font-['Inter',sans-serif] text-sm text-red-800">{feedError}</p>}
-          {visiblePings.map((ping) => (
+          {error && <p role="alert" className="rounded-xl border border-red-200 bg-white p-3 font-['Inter',sans-serif] text-sm text-red-800">{error}</p>}
+          {pings.map((ping) => (
             <div className="relative group" key={ping.id}>
               <UnifiedPingCard
                 ping={ping}
@@ -389,28 +215,17 @@ const UnifiedFeed = () => {
                 wavePreviewMode="embedded-only"
               />
               <div className="absolute inset-0 group-hover:bg-black/6 cursor-pointer pointer-events-none rounded-[10px]" />
-              {isViewingScope && canAssignPings && (
-                <div className="relative z-10 -mt-1 flex justify-end px-3 pb-3">
-                  <button
-                    type="button"
-                    onClick={() => setAssigningPing(ping)}
-                    className="rounded-full border border-black/10 bg-white px-4 py-2 font-['Inter',sans-serif] text-xs font-semibold text-[#A85C08] hover:bg-[#FEF5EA]"
-                  >
-                    Assign / Route
-                  </button>
-                </div>
-              )}
             </div>
           ))}
 
           {/* Load more */}
-          {(isViewingScope ? representativeHasNextPage : hasNextPage) && (
+          {hasNextPage && (
             <button
               onClick={handleLoadMore}
-              disabled={feedLoading}
+              disabled={isLoading}
               className="mx-auto mt-2 px-6 py-2 bg-[#FEF5EA] border border-[#F49B31] rounded-[15px] text-[#F49B31] font-semibold text-[14px] hover:bg-[#FAE9D4] transition-colors disabled:opacity-50"
             >
-              {feedLoading ? "Loading…" : "Load more"}
+              {isLoading ? "Loading…" : "Load more"}
             </button>
           )}
         </div>
@@ -430,17 +245,6 @@ const UnifiedFeed = () => {
         organizationId={organizationId}
         institutionName={institutionStatus?.organizationName}
       />
-      <AssignPingModal
-        ping={assigningPing}
-        organizationId={organizationId}
-        onClose={() => setAssigningPing(null)}
-        onAssigned={(updatedPing) => {
-          setRepresentativePings((current) =>
-            current.map((ping) => ping.id === updatedPing.id ? updatedPing : ping),
-          );
-        }}
-      />
-
       {/* Conditionally Rendered  */}
       {openOnboarding && (
         <OnboardingOverlay

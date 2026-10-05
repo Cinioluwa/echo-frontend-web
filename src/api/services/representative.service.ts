@@ -124,6 +124,28 @@ const representativeService = {
     return response.data;
   },
 
+  getAssignedPings: async (
+    params?: PaginationParams & { status?: string },
+  ): Promise<PaginatedResponse<Ping>> => {
+    const response = await api.get<PaginatedResponse<Ping>>(
+      "/representatives/pings/submitted",
+      { params: { ...params, assigned: "me" } },
+    );
+    return response.data;
+  },
+
+  getAssignedWaves: async (params?: { limit?: number; status?: string }): Promise<any[]> => {
+    const response = await api.get<{ data: any[] }>("/representatives/waves/assigned", { params });
+    return response.data.data;
+  },
+
+  urgePingResolution: async (pingId: number): Promise<{ message: string }> => {
+    const response = await api.post<{ message: string }>(
+      `/representatives/pings/${pingId}/urge-resolve`,
+    );
+    return response.data;
+  },
+
   getRoster: async (): Promise<RepresentativeRosterMember[]> => {
     const response = await api.get<{ data: RepresentativeRosterMember[] }>(
       "/representatives/roster",

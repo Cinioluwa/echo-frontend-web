@@ -3,11 +3,10 @@ import AdminHeader from "../AdminHeader";
 import { useUIStore } from "../../../stores";
 import GeneralSettings from "./GeneralSettings";
 import MemberManagement from "./MemberManagement";
-import CategoryManagement from "./CategoryManagement";
 import RulesSettings from "./RulesSettings";
 import { User } from "lucide-react";
 
-type SettingTab = "general" | "members" | "categories" | "rules";
+type SettingTab = "general" | "members" | "rules";
 
 const AdminSettings: React.FC = () => {
     const [activeTab, setActiveTab] = useState<SettingTab>("general");
@@ -21,11 +20,11 @@ const AdminSettings: React.FC = () => {
 
     return (
         <>
-            <div className={`m-0 min-w-0 ${isSidebarCollapsed ? "md:ms-[80px]" : "md:ms-[230px]"} flex flex-col gap-6 items-start px-4 sm:px-8 py-6 sm:py-8 relative min-h-screen pb-24 z-0 transition-all duration-300`}>
+            <div className={`m-0 min-w-0 ${isSidebarCollapsed ? "min-[1131px]:ms-[102px]" : "min-[1131px]:ms-[230px]"} flex flex-col gap-6 items-start px-4 sm:px-8 py-6 sm:py-8 relative min-h-screen pb-24 z-0 transition-all duration-300`}>
                 {/* Header Row */}
                 <div className="flex flex-col gap-2 items-start relative w-full border-b border-[#ffd7a8] pb-4">
                     <div className="flex w-full flex-col items-start gap-1 sm:gap-2">
-                        <h1 className="hidden md:block font-poppins font-bold text-[24px] sm:text-[32px] leading-normal text-black">
+                        <h1 className="hidden min-[1131px]:block font-poppins font-bold text-[24px] sm:text-[32px] leading-normal text-black">
                             Admin Settings
                         </h1>
                         <AdminHeader title="Admin Settings" />
@@ -55,15 +54,6 @@ const AdminSettings: React.FC = () => {
                         Member Management
                     </button>
 
-                    {/* Category Management Tab */}
-                    <button
-                        onClick={() => setActiveTab("categories")}
-                        className={tabClass(activeTab === "categories")}
-                    >
-                        <img src="/assets/icon/admin-soundboard.svg" alt="Category Management Icon" className={`w-4 h-4 shrink-0 ${activeTab === "categories" ? "brightness-0 invert" : ""}`} />
-                        Category Management
-                    </button>
-
                     {/* Rules Tab */}
                     <button
                         onClick={() => setActiveTab("rules")}
@@ -78,7 +68,6 @@ const AdminSettings: React.FC = () => {
                 <div className="relative z-10 min-w-0 w-full rounded-[20px] p-5 sm:p-8 min-h-[400px]">
                     {activeTab === "general" && <GeneralSettings />}
                     {activeTab === "members" && <MemberManagement />}
-                    {activeTab === "categories" && <CategoryManagement />}
                     {activeTab === "rules" && <RulesSettings />}
                 </div>
             </div>

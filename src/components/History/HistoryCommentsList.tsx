@@ -15,6 +15,7 @@ import { LoadingSpinner } from "../shared/LoadingSpinner";
 import { EmptyState } from "../shared/EmptyState";
 import { userService } from "../../api/services";
 import UserAvatar from "../UserAvatar";
+import formatTimeAgo from "../../utils/formatTimeAgo";
 
 // ---------------------------------------------------------------------------
 // Extended Comment type that includes embedded ping context from the API
@@ -118,14 +119,7 @@ const CommentedPingCard = ({ comment }: CommentedPingCardProps) => {
             ? `${ping.author.firstName} ${ping.author.lastName}`
             : "Anonymous";
 
-    const pingTimestamp = ping?.createdAt
-        ? new Date(ping.createdAt).toLocaleDateString("en-US", {
-            month: "short",
-            day: "numeric",
-            hour: "2-digit",
-            minute: "2-digit",
-        })
-        : "";
+    const pingTimestamp = ping?.createdAt ? formatTimeAgo(ping.createdAt) : "";
 
     const commentTimestamp = new Date(comment.createdAt).toLocaleDateString("en-US", {
         month: "short",

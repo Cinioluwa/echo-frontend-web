@@ -1,17 +1,22 @@
-import React, { useState, useEffect, useCallback } from "react";
-import { useParams } from "react-router-dom";
-import { TrendingUp, MessageSquare, Radio, CheckCircle2, ArrowLeft, Send } from "lucide-react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
+import { Navigate, useParams } from "react-router-dom";
+import { TrendingUp, MessageSquare, Radio, CheckCircle2, Send } from "lucide-react";
 import { categoryImages } from "../../CategoryImages";
 import KPICard from "./KPICard";
 import CommentsPanel from "./CommentsPanel";
 import StatusTimeline from "./StatusTimeline";
-import type { StatusEvent, RelatedPing } from "./types";
+import type { StatusEvent, RelatedPing, PingDetailPermissions, WaveActionStatus } from "./types";
 import AdminPingWaves from "./AdminPingWaves";
 import { motion } from "framer-motion";
 import pingService from "../../../api/services/ping.service";
 import { adminService } from "../../../api/services/admin.service";
-import type { Ping } from "../../../api/types/index";
-import { useUIStore } from "../../../stores";
+import type { Ping, User } from "../../../api/types/index";
+import { useAuthStore } from "../../../stores";
+import representativeService from "../../../api/services/representative.service";
+import RelatedPings from "./RelatedPings";
+import { getRelatedTitleScore } from "./relatedPingMatching";
+import BadgeTooltip from "../../BadgeTooltip";
+import formatTimeAgo from "../../../utils/formatTimeAgo";
 
 export type AdminBadgeType =
     | "SURGING_NOW"
@@ -84,15 +89,14 @@ interface PingDetailData {
     mediaUrl?: string;
     surgeCount: number;
     surgeDelta?: string;
-    surgeDeltaIcon?: string;
     unresolvedFor: string;
     statusEvents: StatusEvent[];
-    relatedPings: RelatedPing[];
     officialResponse?: { content: string; createdAt: string; author: { firstName: string; lastName: string } } | null;
 }
 
 interface AdminPingDetailProps {
     pingId?: string;
+    mode?: "admin" | "rep";
 }
 
 const iconVariants = {
@@ -103,57 +107,131 @@ const iconVariants = {
     }
 };
 
-const responseVariants = {
-    initial: { height: 50 },
-    active: {
-        height: 90,
-        transition: { duration: 0.1 }
-    }
+const ADMIN_PERMISSIONS: PingDetailPermissions = {
+    canRespond: true,
+    canAcknowledge: true,
+    canModerateWaves: true,
+    canUpdateWaveProgress: true,
+    canUrgeResolve: false,
 };
 
-const resposeButtonVariants = {
-    initial: { opacity: 0, scale: 0.95, pointerEvents: 'none' },
-    active: {
-        opacity: 1,
-        scale: 1,
-        pointerEvents: 'auto',
-        transition: { duration: 0.1, delay: 0.05 }
+const pingIsInRepresentativeScope = (ping: Ping, user: User | null | undefined) => {
+    const profile = user?.representativeProfile;
+    if (!user || !profile?.isActive) return false;
+    if (
+        ping.assignedToUserId === user.id ||
+        (!!profile.bodyId && ping.assignedToBodyId === profile.bodyId)
+    ) {
+        return true;
     }
+    const categories =
+        profile.responsibilities && profile.responsibilities !== "*"
+            ? profile.responsibilities.split(",").map((name) => name.trim()).filter(Boolean)
+            : null;
+    const departmentId = profile.departmentId ?? profile.body?.departmentId ?? null;
+    return (
+        (!departmentId || ping.targetDepartmentId === departmentId) &&
+        (profile.scopeLevel == null || ping.targetLevel === profile.scopeLevel) &&
+        (!profile.scopeHall || ping.targetHall === profile.scopeHall) &&
+        (!categories || categories.includes(ping.category?.name ?? ""))
+    );
 };
 
-const AdminPingDetail: React.FC<AdminPingDetailProps> = ({ pingId: propPingId }) => {
+const AdminPingDetail: React.FC<AdminPingDetailProps> = ({ pingId: propPingId, mode = "admin" }) => {
     const routeParams = useParams<{ pingId: string }>();
     const pingId = propPingId || routeParams.pingId;
-    const { isSidebarCollapsed } = useUIStore();
+    const user = useAuthStore((s) => s.user);
+
+    const permissions = useMemo<PingDetailPermissions>(() => {
+        if (mode === "admin") return ADMIN_PERMISSIONS;
+        const profile = user?.representativeProfile;
+        const active = !!profile?.isActive;
+        return {
+            canRespond: active && !!profile?.canRespond,
+            canAcknowledge: active && !!profile?.canAcknowledge,
+            canModerateWaves: active && !!profile?.canModerateWaves,
+            canUpdateWaveProgress: active && !!profile?.canUpdateWaveProgress,
+            canUrgeResolve: active,
+        };
+    }, [mode, user]);
 
     const [pingData, setPingData] = useState<Ping | null>(null);
+    const [relatedPings, setRelatedPings] = useState<RelatedPing[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
-    const [isResponseActive, setIsResponseActive] = useState(false);
     const [responseText, setResponseText] = useState("");
+    const [responseFocused, setResponseFocused] = useState(false);
     const [postingResponse, setPostingResponse] = useState(false);
+    const [acknowledging, setAcknowledging] = useState(false);
+    const [urging, setUrging] = useState(false);
+    const [notice, setNotice] = useState<string | null>(null);
+    const [redirectToUserDetail, setRedirectToUserDetail] = useState(false);
 
     const fetchPing = useCallback(async () => {
         if (!pingId) return;
         try {
-            if (!pingData) setLoading(true);
             const data = await pingService.getPingById(pingId);
+            if (mode === "rep" && !pingIsInRepresentativeScope(data, user)) {
+                setRedirectToUserDetail(true);
+                return;
+            }
             setPingData(data);
+            setError(null);
         } catch (err: any) {
             setError(err?.response?.data?.error || err.message || "Failed to load ping");
         } finally {
             setLoading(false);
         }
-    }, [pingId, pingData]);
+    }, [pingId, mode, user]);
 
     useEffect(() => {
+        setLoading(true);
         fetchPing();
     }, [fetchPing]);
+
+    const categoryForRelated = pingData?.category?.name;
+    const currentId = pingData?.id;
+    const currentTitle = pingData?.title || "";
+    useEffect(() => {
+        if (!categoryForRelated || !currentId) return;
+        let cancelled = false;
+        pingService
+            .getPingsByCategory(categoryForRelated, { limit: 50 })
+            .then((res) => {
+                if (cancelled) return;
+                const scored = res.data
+                    .filter((p) => p.id !== currentId)
+                    .map((p) => ({ ping: p, score: getRelatedTitleScore(currentTitle, p.title) }))
+                    .filter(({ score }) => score >= 0.3)
+                    .sort((a, b) =>
+                        b.score - a.score ||
+                        b.ping.surgeCount - a.ping.surgeCount ||
+                        b.ping.createdAt.localeCompare(a.ping.createdAt),
+                    )
+                    .slice(0, 3);
+                setRelatedPings(
+                    scored.map(({ ping }) => ({
+                        id: ping.id.toString(),
+                        category: ping.category?.name || categoryForRelated,
+                        title: ping.title,
+                        waveCount: ping.surgeCount,
+                    })),
+                );
+            })
+            .catch((relatedError) => {
+                console.error("Failed to load related pings:", relatedError);
+                if (!cancelled) setRelatedPings([]);
+            });
+        return () => {
+            cancelled = true;
+        };
+    }, [categoryForRelated, currentId, currentTitle]);
 
     const mapPingToDetailData = (ping: Ping): PingDetailData => {
         const ageMs = Date.now() - new Date(ping.createdAt).getTime();
         const ageDays = Math.floor(ageMs / (1000 * 60 * 60 * 24));
         const diff = ping.surgeCount - (ping._count?.surges ?? 0);
+        const ackBy = mode === "admin" ? "Admin" : "Representative";
 
         return {
             id: ping.id.toString(),
@@ -163,20 +241,18 @@ const AdminPingDetail: React.FC<AdminPingDetailProps> = ({ pingId: propPingId })
             author: {
                 name: ping.author ? `${ping.author.firstName} ${ping.author.lastName}` : (ping.anonymousAlias || "Anonymous"),
                 avatar: ping.author?.profilePicture || `https://ui-avatars.com/api/?name=${ping.author?.firstName || "A"}+${ping.author?.lastName || "U"}&background=random`,
-                timestamp: new Date(ping.createdAt).toLocaleDateString(),
+                timestamp: formatTimeAgo(ping.createdAt),
             },
             badges: ping.surgeCount > 100 ? ["SURGING_NOW"] : [],
             mediaUrl: ping.media?.[0]?.url,
             surgeCount: ping.surgeCount,
-            surgeDelta: diff > 0 ? `+${diff} today` : undefined,
-            surgeDeltaIcon: diff > 0 ? "↑" : undefined,
-            unresolvedFor: `${ageDays} day${ageDays !== 1 ? 's' : ''}`,
+            surgeDelta: diff > 0 ? `↑ +${diff} today` : undefined,
+            unresolvedFor: `${ageDays} day${ageDays !== 1 ? "s" : ""}`,
             statusEvents: [
                 { status: "Ping Posted", timestamp: new Date(ping.createdAt).toLocaleString() },
-                ...((ping as any).acknowledgedAt ? [{ status: "Acknowledged by Admin", timestamp: new Date((ping as any).acknowledgedAt).toLocaleString() }] : []),
+                ...((ping as any).acknowledgedAt ? [{ status: `Acknowledged by ${ackBy}`, timestamp: new Date((ping as any).acknowledgedAt).toLocaleString() }] : []),
                 ...(ping.resolvedAt ? [{ status: "Resolved", timestamp: new Date(ping.resolvedAt).toLocaleString() }] : []),
             ],
-            relatedPings: [],
             officialResponse: ping.officialResponse ? {
                 content: ping.officialResponse.content,
                 createdAt: ping.officialResponse.createdAt,
@@ -197,16 +273,42 @@ const AdminPingDetail: React.FC<AdminPingDetailProps> = ({ pingId: propPingId })
                 content: responseText.trim(),
             });
             setResponseText("");
-            setIsResponseActive(false);
+            setResponseFocused(false);
             await fetchPing();
         } catch (err: any) {
-            setError(err?.response?.data?.error || "Failed to post response");
+            setNotice(err?.response?.data?.error || "Failed to post response");
         } finally {
             setPostingResponse(false);
         }
     };
 
-    const handleUpdateWaveStatus = async (id: number, status: "APPROVED" | "REJECTED" | "UNDER_REVIEW", reason?: string) => {
+    const handleAcknowledge = async () => {
+        if (!pingId) return;
+        try {
+            setAcknowledging(true);
+            await adminService.acknowledgePing(parseInt(pingId));
+            await fetchPing();
+        } catch (err: any) {
+            setNotice(err?.response?.data?.error || "Failed to acknowledge ping");
+        } finally {
+            setAcknowledging(false);
+        }
+    };
+
+    const handleUrgeResolve = async () => {
+        if (!pingId) return;
+        try {
+            setUrging(true);
+            const res = await representativeService.urgePingResolution(parseInt(pingId));
+            setNotice(res.message || "The author has been asked to mark this ping as resolved.");
+        } catch (err: any) {
+            setNotice(err?.response?.data?.error || "Failed to send reminder");
+        } finally {
+            setUrging(false);
+        }
+    };
+
+    const handleUpdateWaveStatus = async (id: number, status: WaveActionStatus, reason?: string) => {
         try {
             await adminService.updateWaveStatus(id, { status, reason });
             await fetchPing();
@@ -218,16 +320,20 @@ const AdminPingDetail: React.FC<AdminPingDetailProps> = ({ pingId: propPingId })
 
     if (loading) {
         return (
-            <div className={`m-0 ${isSidebarCollapsed ? "md:ms-[80px]" : "md:ms-[230px]"} flex items-center justify-center h-[400px] transition-all duration-300`}>
-                <div className="animate-spin w-12 h-12 border-4 border-[#f49b31] border-t-transparent rounded-full" />
+            <div className="flex h-[400px] items-center justify-center">
+                <div className="h-12 w-12 animate-spin rounded-full border-4 border-[#f49b31] border-t-transparent" />
             </div>
         );
     }
 
+    if (redirectToUserDetail) {
+        return <Navigate to={`/feed/${pingId}`} replace />;
+    }
+
     if (error) {
         return (
-            <div className={`m-0 ${isSidebarCollapsed ? "md:ms-[80px]" : "md:ms-[230px]"} p-6 transition-all duration-300`}>
-                <div className="p-4 bg-red-50 border border-red-200 rounded-lg text-red-700">
+            <div className="p-6">
+                <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-red-700">
                     {error}
                     <button onClick={fetchPing} className="ml-2 underline">Retry</button>
                 </div>
@@ -237,8 +343,8 @@ const AdminPingDetail: React.FC<AdminPingDetailProps> = ({ pingId: propPingId })
 
     if (!pingData) {
         return (
-            <div className={`m-0 ${isSidebarCollapsed ? "md:ms-[80px]" : "md:ms-[230px]"} p-6 transition-all duration-300`}>
-                <div className="p-4 bg-gray-50 border border-gray-200 rounded-lg text-gray-500">Ping not found</div>
+            <div className="p-6">
+                <div className="rounded-lg border border-gray-200 bg-gray-50 p-4 text-gray-500">Ping not found</div>
             </div>
         );
     }
@@ -246,146 +352,170 @@ const AdminPingDetail: React.FC<AdminPingDetailProps> = ({ pingId: propPingId })
     const detail = mapPingToDetailData(pingData);
     const categoryName = detail.category?.name || "General";
     const categoryIcon = (categoryImages as Record<string, string>)[categoryName] || (categoryImages as Record<string, string>).General;
-    return (
-        <div className={`m-0 ${isSidebarCollapsed ? "md:ms-[80px]" : "md:ms-[230px]"} flex flex-col gap-4 sm:gap-6 items-start px-3 sm:px-6 py-6 sm:py-8 relative transition-all duration-300`}>
-            <div className="flex w-full flex-col items-start gap-1 sm:gap-2">
-                <h1 className="font-poppins font-bold text-[24px] sm:text-[32px] leading-normal text-black">
-                    Ping Details
-                </h1>
-                <p className="font-poppins font-medium text-[13px] sm:text-[16px] leading-normal text-[#8b8e8d]">
-                    Review this Ping’s details, official response, and progress.
-                </p>
-            </div>
+    const isAcknowledged = !!(pingData as any).acknowledgedAt || (pingData as any).progressStatus === "ACKNOWLEDGED";
+    const isResolved = !!pingData.resolvedAt;
+    const canPostResponse = permissions.canRespond && !detail.officialResponse;
 
-            <div className="flex min-w-0 w-full flex-col gap-4 sm:gap-6 lg:flex-row">
-                <div className="flex-1 flex flex-col gap-4 sm:gap-6">
-                    <div className="flex items-center justify-between w-full">
+    return (
+        <div className="flex w-full min-w-0 flex-col items-start gap-5 px-3 py-6 sm:px-5">
+            <h1 className="font-poppins text-[28px] font-semibold leading-[30.8px] tracking-[-0.5px] text-black">
+                Ping Details
+            </h1>
+
+            {notice && (
+                <div className="flex w-full items-center justify-between rounded-[10px] border border-[#f49b31] bg-[#fef5ea] px-4 py-2 font-poppins text-[13px] font-medium text-[#171717]">
+                    <span>{notice}</span>
+                    <button onClick={() => setNotice(null)} className="ml-3 text-[#f49b31]">Dismiss</button>
+                </div>
+            )}
+
+            <div className="flex w-full min-w-0 flex-col gap-[25px] min-[1131px]:flex-row min-[1131px]:items-start">
+                <div className="flex min-w-0 flex-1 flex-col gap-5">
+                    <div className="flex w-full items-center justify-between">
                         <button
                             onClick={handleGoBack}
-                            className="bg-white hover:bg-[#fef5ea] border border-[#e0e0e0] rounded-[20px] px-4 sm:px-5 py-2 sm:py-2.5 flex items-center gap-2 transition-colors"
+                            className="flex items-center gap-2 rounded-[20px] bg-[#fefefe] px-[15px] py-[10px] transition-colors hover:bg-[#fef5ea]"
                         >
-                            <ArrowLeft color="black" size={20} />
-                            <p className="font-poppins font-semibold text-[12px] sm:text-[13px] text-black">Go back</p>
+                            <img src="/assets/icon/back-arrow.svg" alt="" className="size-5" />
+                            <span className="font-poppins text-[13px] font-semibold text-black">Go back</span>
                         </button>
                         <motion.button
-                            className="border border-[#f49b31] rounded-lg px-3 sm:px-[15px] py-2 sm:py-[9px] flex items-center gap-1 sm:gap-2 hover:bg-[#F49B31] text-[#f49b31] hover:text-white transition-colors text-xs sm:text-[12px]"
+                            className="flex items-center gap-2 rounded-lg border border-[#f49b31] bg-[#fef5ea] px-[15px] py-[9px] text-[#f49b31] transition-colors hover:bg-[#f49b31] hover:text-white"
                             whileHover="hover"
                         >
-                            <motion.img src="/assets/icon/Export.svg" alt="Export Icon" className="w-[13px] h-[13px]" variants={iconVariants} />
-                            <span className="font-medium hidden sm:inline">Export</span>
+                            <motion.img src="/assets/icon/Export.svg" alt="" className="size-3" variants={iconVariants} />
+                            <span className="font-poppins text-[12px] font-medium">Export</span>
                         </motion.button>
                     </div>
 
-                    <div className="bg-white rounded-[10px] p-4 sm:p-5 flex flex-col gap-3 sm:gap-4">
-                        <div className="flex flex-col sm:flex-row sm:items-start gap-3 sm:gap-4 pb-3 sm:pb-4 border-b border-[#e0e0e0]">
+                    <div className="flex flex-col gap-[18px] rounded-[10px] bg-[#fefefe] px-5 py-[15px]">
+                        <div className="flex min-w-0 items-center gap-2 sm:gap-4 max-[500px]:gap-1">
                             <img
                                 src={detail.author.avatar}
                                 alt={detail.author.name}
-                                className="w-[45px] sm:w-[53px] h-[45px] sm:h-[53px] rounded-full object-cover shrink-0"
+                                className="size-10 shrink-0 rounded-full object-cover sm:size-[53px] max-[500px]:size-8"
                             />
-                            <div className="flex-1 flex flex-col gap-1">
-                                <p className="font-poppins font-semibold text-[13px] sm:text-[15px] text-black">
-                                    {detail.author.name}
-                                </p>
-                                <p className="font-poppins font-medium text-[11px] sm:text-[13px] text-[#8b8e8d]">
-                                    {detail.author.timestamp}
-                                </p>
+                            <div className="flex min-w-0 flex-1 flex-col items-start">
+                                <p className="max-w-full truncate whitespace-nowrap font-poppins text-[13px] font-semibold text-black sm:text-[15px] max-[500px]:text-[11px]">{detail.author.name}</p>
+                                <p className="whitespace-nowrap font-poppins text-[9px] font-medium text-[#8b8e8d] sm:text-[13px] max-[500px]:text-[8px]">{detail.author.timestamp}</p>
                             </div>
-                            <div className="flex items-center gap-2 flex-wrap sm:flex-nowrap">
+                            <div className="flex max-w-[44%] shrink-0 flex-nowrap items-center justify-end gap-1">
                                 {detail.badges?.map((badgeKey: string) => {
                                     const badge = badgeConfigs[badgeKey as AdminBadgeType];
                                     if (!badge) return null;
                                     return (
-                                        <span
-                                            key={badgeKey}
-                                            className="flex items-center gap-[7.5px] rounded-[28.75px] px-[15px] py-1 font-poppins font-medium text-[10px] sm:text-[11px] whitespace-nowrap transition-all"
-                                            style={{ backgroundColor: badge.bgColor, color: badge.textColor }}
-                                        >
-                                            {badge.icon} {badge.label}
-                                        </span>
+                                        <BadgeTooltip key={badgeKey} badgeKey={badgeKey}>
+                                            <span
+                                                className="flex max-w-full items-center gap-1 overflow-hidden whitespace-nowrap rounded-[28.75px] px-1.5 py-[3px] font-poppins text-[9px] font-medium sm:gap-[7.5px] sm:px-[18.75px] sm:text-[13.75px]"
+                                                style={{ backgroundColor: badge.bgColor, color: badge.textColor }}
+                                            >
+                                                {badge.icon} <span className="truncate">{badge.label}</span>
+                                            </span>
+                                        </BadgeTooltip>
                                     );
                                 })}
                             </div>
                         </div>
 
                         <div className="flex items-center gap-2">
-                            {categoryIcon ? (
-                                <img src={categoryIcon} alt={categoryName} className="w-3.5 h-3.5 object-contain" />
-                            ) : (
-                                <span>📁</span>
-                            )}
-                            <p className="font-poppins font-medium text-[12px] sm:text-[14px] text-[#626665]">{categoryName}</p>
+                            {categoryIcon && <img src={categoryIcon} alt="" className="size-5 object-contain" />}
+                            <p className="font-poppins text-[15px] font-medium text-[#171717]">{categoryName}</p>
                         </div>
 
-                        <h2 className="font-poppins font-semibold text-[15px] sm:text-[16px] text-black">{detail.title}</h2>
-                        <p className="font-poppins font-medium text-[12px] sm:text-[14px] text-[#626665] text-justify leading-relaxed">{detail.content}</p>
+                        <h2 className="font-poppins text-[16px] font-semibold text-black">{detail.title}</h2>
+                        <p className="text-justify font-poppins text-[15px] font-medium text-[#626665]">{detail.content}</p>
 
                         {detail.mediaUrl && (
-                            <div className="bg-black rounded-lg overflow-hidden aspect-video">
-                                <img src={detail.mediaUrl} alt="Ping content" className="w-full h-full object-cover" />
+                            <div className="aspect-[4096/2548] w-full overflow-hidden rounded-[10px] bg-black">
+                                <img src={detail.mediaUrl} alt="Ping content" className="h-full w-full object-cover" />
                             </div>
                         )}
                     </div>
 
-                    <div className="bg-[#FFC37B] rounded-[15px] pt-2.5 sm:pt-2.5 flex flex-col gap-3">
-                        <div className="flex items-center gap-2.5 px-2.5 sm:px-2.5">
-                            <img src="/assets/icon/official-response.svg" className="w-5 h-5" alt="Official Response Icon" />
-                            <h3 className="font-poppins font-semibold text-[14px] sm:text-[18px] text-black">
-                                Official Response
-                            </h3>
-                        </div>
-
-                        {detail.officialResponse ? (
-                            <div className="bg-white p-5 rounded-b-[15px]">
-                                <div className="flex items-center gap-2 mb-2">
-                                    <span className="font-poppins font-semibold text-[13px] text-[#f49b31]">
-                                        {detail.officialResponse.author.firstName} {detail.officialResponse.author.lastName}
-                                    </span>
-                                    <span className="text-[#8b8e8d] text-[11px]">
-                                        {new Date(detail.officialResponse.createdAt).toLocaleDateString()}
-                                    </span>
+                    {(canPostResponse || detail.officialResponse) && (
+                        <div className="flex flex-col gap-[10px] rounded-[15px] bg-white p-[10px]">
+                            <h3 className="font-poppins text-[18px] font-medium text-black">Official Response</h3>
+                            {detail.officialResponse ? (
+                                <div className="rounded-[15px] bg-[#fef5ea] p-4">
+                                    <div className="mb-2 flex items-center gap-2">
+                                        <span className="font-poppins text-[13px] font-semibold text-[#f49b31]">
+                                            {detail.officialResponse.author.firstName} {detail.officialResponse.author.lastName}
+                                        </span>
+                                        <span className="text-[11px] text-[#8b8e8d]">
+                                            {new Date(detail.officialResponse.createdAt).toLocaleDateString()}
+                                        </span>
+                                    </div>
+                                    <p className="font-poppins text-[13px] text-[#212121]">{detail.officialResponse.content}</p>
                                 </div>
-                                <p className="font-poppins text-[13px] text-[#212121]">{detail.officialResponse.content}</p>
-                            </div>
-                        ) : (
-                            <div className="relative flex flex-col gap-2 overflow-hidden">
-                                <motion.textarea
-                                    variants={responseVariants}
-                                    onHoverStart={() => setIsResponseActive(true)}
-                                    onHoverEnd={() => !responseText && setIsResponseActive(false)}
-                                    onFocus={() => setIsResponseActive(true)}
-                                    onBlur={() => !responseText && setIsResponseActive(false)}
-                                    animate={isResponseActive ? "active" : "initial"}
-                                    value={responseText}
-                                    onChange={(e) => setResponseText(e.target.value)}
-                                    placeholder="Post an update visible to all students"
-                                    className="bg-white h-[50px] resize-none border border-[#ffc37b] rounded-[15px] ps-4 pe-[170px] py-3 font-poppins font-medium text-[12px] sm:text-[14px] placeholder-[#9e9e9e] outline-none focus:border-[#f49b31]"
-                                />
-                                <motion.button
-                                    variants={resposeButtonVariants}
-                                    animate={isResponseActive ? "active" : "initial"}
-                                    onClick={handlePostResponse}
-                                    disabled={postingResponse || !responseText.trim()}
-                                    className="absolute right-1 bottom-1 bg-[#fef5ea] hover:bg-[#fef0e0] border border-[#f49b31] rounded-[20px] px-4 py-2 flex items-center justify-center gap-2 font-poppins font-bold text-[11px] sm:text-[12px] uppercase text-[#f49b31] disabled:opacity-50"
+                            ) : (
+                                <div
+                                    className={`flex w-full gap-2 rounded-[20px] border-2 border-[#ffc37b] bg-[#fefefe] p-[5px] ${
+                                        responseFocused ? "flex-col" : "h-[50px] items-center pl-5"
+                                    }`}
                                 >
-                                    <Send /> {postingResponse ? "..." : "Post response"}
-                                </motion.button>
-                            </div>
-                        )}
+                                    <input
+                                        value={responseText}
+                                        onChange={(e) => setResponseText(e.target.value)}
+                                        onFocus={() => setResponseFocused(true)}
+                                        onClick={() => setResponseFocused(true)}
+                                        placeholder="Post an update visible to all students"
+                                        className="min-w-0 flex-1 bg-transparent font-poppins text-[14px] font-medium text-black outline-none placeholder:text-[#9e9e9e]"
+                                    />
+                                    {responseFocused && (
+                                        <div className="flex justify-end">
+                                            <button
+                                                onClick={handlePostResponse}
+                                                disabled={postingResponse || !responseText.trim()}
+                                                className="flex shrink-0 items-center gap-1 rounded-[20px] border border-black bg-[#fef5ea] px-[10px] py-[3px] font-['Baloo_Bhai_2',sans-serif] text-[14px] font-bold uppercase text-black disabled:opacity-50"
+                                            >
+                                                <Send className="size-[22px]" />
+                                                {postingResponse ? "..." : "Post response"}
+                                            </button>
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+                        </div>
+                    )}
+
+                    <div className="flex w-full flex-col gap-5 sm:flex-row">
+                        <KPICard icon="/assets/images/surge.svg" label="Surge count" value={detail.surgeCount} delta={detail.surgeDelta} />
+                        <KPICard label="Unresolved for" value={detail.unresolvedFor} />
                     </div>
 
-                    <div className="flex flex-col sm:flex-row gap-3 w-full">
-                        <KPICard icon="⚡" label="Surge count" value={detail.surgeCount} delta={detail.surgeDelta} deltaIcon={detail.surgeDeltaIcon} />
-                        <KPICard icon="" label="Unresolved For" value={detail.unresolvedFor} />
-                    </div>
-                    <div className="w-full">
-                        <AdminPingWaves waves={pingData.waves || []} onUpdateWaveStatus={handleUpdateWaveStatus} />
-                    </div>
+                    <AdminPingWaves
+                        waves={pingData.waves || []}
+                        permissions={permissions}
+                        onUpdateWaveStatus={handleUpdateWaveStatus}
+                    />
                 </div>
 
-                <div className="w-full min-w-0 lg:w-[320px] lg:shrink-0 flex flex-col gap-3 sm:gap-4">
+                <div className="flex w-full min-w-0 flex-col gap-[15px] min-[1131px]:w-[381px] min-[1131px]:shrink-0">
                     <CommentsPanel comments={pingData.comments || []} />
                     <StatusTimeline events={detail.statusEvents || []} />
+                    <RelatedPings
+                        pings={relatedPings}
+                        detailBasePath={mode === "rep" ? "/inbox" : "/admin/soundboard"}
+                    />
+                    {permissions.canAcknowledge && !isAcknowledged && !isResolved && (
+                        <button
+                            onClick={handleAcknowledge}
+                            disabled={acknowledging}
+                            className="flex h-[39px] w-full items-center justify-center gap-2 rounded-[20px] bg-[#f49b31] font-['Baloo_Bhai_2',sans-serif] text-[14px] font-bold uppercase text-white hover:bg-[#e68a1f] disabled:opacity-50"
+                        >
+                            <img src="/assets/images/eye_svgrepo.com.svg" alt="" className="size-5 brightness-0 invert" />
+                            {acknowledging ? "..." : "Acknowledge"}
+                        </button>
+                    )}
+                    {permissions.canUrgeResolve && !isResolved && (
+                        <button
+                            onClick={handleUrgeResolve}
+                            disabled={urging}
+                            className="flex h-[39px] w-full items-center justify-center gap-2 rounded-[20px] border border-[#f49b31] bg-[#fef5ea] font-['Baloo_Bhai_2',sans-serif] text-[14px] font-bold uppercase text-[#f49b31] hover:bg-[#fdebd2] disabled:opacity-50"
+                        >
+                            {urging ? "..." : "Urge author to resolve"}
+                        </button>
+                    )}
                 </div>
             </div>
         </div>

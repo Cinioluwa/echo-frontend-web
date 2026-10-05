@@ -1,12 +1,11 @@
 import React, { useState } from "react";
-import { useLocation } from "react-router-dom";
+import { Navigate, useLocation } from "react-router-dom";
 import AdminLayout from "../../components/admin/AdminLayout";
 import AnnouncementModal from "../../components/admin/AnnouncementModal";
 import AdminSoundboard from "../../components/admin/AdminSoundboard/AdminSoundboard";
 import { AdminPageProvider, type AdminPage } from "../../contexts/AdminPageContext";
 import { adminService } from "../../api/services/admin.service";
 import { useAuthStore } from "../../stores";
-import RepresentativeAdminInbox from "./RepresentativeAdminInbox";
 
 /**
  * AdminSoundboardPage
@@ -72,7 +71,7 @@ const AdminSoundboardPage: React.FC = () => {
     };
 
     if (user?.role === "REPRESENTATIVE") {
-        return <RepresentativeAdminInbox />;
+        return <Navigate to="/inbox" replace />;
     }
 
     return (

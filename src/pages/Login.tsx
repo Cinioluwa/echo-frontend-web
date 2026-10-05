@@ -289,13 +289,13 @@ const Login = () => {
               className="text-[22px] sm:text-[26px] md:text-[28px] leading-7 sm:leading-8 md:leading-9 text-black"
               style={{ fontFamily: "Poppins, sans-serif", fontWeight: 600 }}
             >
-              Enter the Pulse
+              Welcome back
             </h1>
             <p
               className="text-[14px] sm:text-base leading-5 sm:leading-[21px] text-[#4a504e] opacity-[0.69]"
               style={{ fontFamily: "Poppins, sans-serif", fontWeight: 500 }}
             >
-              Pick up where you left off at your institution
+              Log in to see what&apos;s happening at your institution.
             </p>
           </div>
 
@@ -402,25 +402,25 @@ const Login = () => {
           <div className="flex flex-col gap-4 sm:gap-5 items-center px-3 sm:px-5 w-full">
             {/* Terms and Privacy */}
             <div
-              className="flex flex-col gap-3 sm:gap-[15px] items-center text-center text-xs sm:text-sm leading-3.5"
+              className="flex flex-col gap-1.5 items-center text-center text-xs leading-relaxed"
               style={{ fontFamily: "Poppins, sans-serif", fontWeight: 500 }}
             >
-              <p className="text-[#838383]">By creating an account, you agree to Echo</p>
-              <div className="flex gap-1 text-[#f49b31]">
+              <p className="text-[#838383]">By continuing, you agree to Echo&apos;s</p>
+              <div className="flex flex-wrap justify-center gap-1 text-sm">
                 <a
                   href="https://www.echo-ng.com/terms"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="hover:text-[#e08a2a] transition-colors"
+                  className="font-semibold text-[#f49b31] hover:text-[#e08a2a] transition-colors"
                 >
                   Terms of Use
                 </a>
-                <span>and</span>
+                <span className="text-[#838383]">and</span>
                 <a
                   href="https://www.echo-ng.com/privacy"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="hover:text-[#e08a2a] transition-colors"
+                  className="font-semibold text-[#f49b31] hover:text-[#e08a2a] transition-colors"
                 >
                   Privacy Policy
                 </a>

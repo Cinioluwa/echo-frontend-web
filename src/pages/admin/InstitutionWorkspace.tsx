@@ -4,6 +4,7 @@ import {
   ChevronRight,
   Layers,
   MapPin,
+  Settings,
   Sliders,
   Users,
   X,
@@ -13,6 +14,9 @@ import { categoryService } from "../../api/services";
 import type { CategoryData } from "../../api/types";
 import AdminLayout from "../../components/admin/AdminLayout";
 import AdminHeader from "../../components/admin/AdminHeader";
+import GeneralSettings from "../../components/admin/AdminSettings/GeneralSettings";
+import MemberManagement from "../../components/admin/AdminSettings/MemberManagement";
+import RulesSettings from "../../components/admin/AdminSettings/RulesSettings";
 import { AdminPageProvider } from "../../contexts/AdminPageContext";
 import institutionAdminService, {
   type AcademicDepartment,
@@ -21,11 +25,21 @@ import institutionAdminService, {
   type RepresentativeProfile,
 } from "../../api/services/institutionAdmin.service";
 
-type WorkspaceTab = "departments" | "bodies" | "representatives" | "categories" | "context";
+type WorkspaceTab =
+  | "departments"
+  | "bodies"
+  | "representatives"
+  | "categories"
+  | "context"
+  | "organization"
+  | "members"
+  | "rules";
 
 const initialPermissions: RepresentativePermissions = {
   canRespond: false,
   canAcknowledge: false,
+  canModerateWaves: false,
+  canUpdateWaveProgress: false,
   canAssign: false,
   canResolve: false,
   canExport: false,
@@ -40,6 +54,8 @@ const InstitutionWorkspace = () => {
     user?.role === "REPRESENTATIVE" &&
     user.representativeProfile?.isActive === true &&
     user.representativeProfile.canManageReps === true;
+  const canManageOrganizationSettings =
+    user?.role === "ADMIN" || user?.role === "SUPER_ADMIN";
 
   const [activeTab, setActiveTab] = useState<WorkspaceTab>(
     isRepresentativeManager ? "representatives" : "departments",
@@ -338,19 +354,19 @@ const InstitutionWorkspace = () => {
         <AdminLayout />
         <main
           className={`min-h-screen min-w-0 bg-[#FCFCFC] px-4 py-6 sm:px-8 sm:py-8 ${
-            isSidebarCollapsed ? "md:ms-[80px]" : "md:ms-[230px]"
+            isSidebarCollapsed ? "min-[1131px]:ms-[102px]" : "min-[1131px]:ms-[230px]"
           } transition-all duration-300 pb-24`}
         >
           <div className="mx-auto flex min-w-0 w-full max-w-6xl flex-col items-start gap-6">
             {/* Header Row */}
             <div className="flex flex-col gap-2 items-start relative w-full border-b border-[#ffd7a8] pb-4">
               <div className="flex w-full flex-col items-start gap-1 sm:gap-2">
-                <h1 className="hidden md:block font-poppins font-bold text-[24px] sm:text-[32px] leading-normal text-black">
-                  Institution Management
+                <h1 className="hidden min-[1131px]:block font-poppins font-bold text-[24px] sm:text-[32px] leading-normal text-black">
+                  Institution
                 </h1>
-                <AdminHeader title="Institution Management" />
+                <AdminHeader title="Institution" />
                 <p className="font-poppins font-medium text-[13px] sm:text-[16px] leading-normal text-[#8b8e8d]">
-                  Configure academic departments, representative bodies (like AEIES), scoping, and Ping context.
+                  Manage your institution, members, representative teams, categories, and posting rules.
                 </p>
               </div>
             </div>
@@ -410,6 +426,37 @@ const InstitutionWorkspace = () => {
                 <Sliders className="w-4 h-4 shrink-0" />
                 Delegation & Scope
               </button>
+              {canManageOrganizationSettings && (
+                <>
+                  <button
+                    role="tab"
+                    aria-selected={activeTab === "organization"}
+                    onClick={() => setActiveTab("organization")}
+                    className={tabClass("organization")}
+                  >
+                    <Building2 className="w-4 h-4 shrink-0" />
+                    Profile
+                  </button>
+                  <button
+                    role="tab"
+                    aria-selected={activeTab === "members"}
+                    onClick={() => setActiveTab("members")}
+                    className={tabClass("members")}
+                  >
+                    <Users className="w-4 h-4 shrink-0" />
+                    Members
+                  </button>
+                  <button
+                    role="tab"
+                    aria-selected={activeTab === "rules"}
+                    onClick={() => setActiveTab("rules")}
+                    className={tabClass("rules")}
+                  >
+                    <Settings className="w-4 h-4 shrink-0" />
+                    Posting rules
+                  </button>
+                </>
+              )}
             </div>
 
             {/* Alerts */}
@@ -446,6 +493,21 @@ const InstitutionWorkspace = () => {
               </div>
             ) : (
               <div className="w-full">
+                {activeTab === "organization" && canManageOrganizationSettings && (
+                  <section className="rounded-[20px] border border-[#ffd7a8] bg-white p-5 sm:p-8">
+                    <GeneralSettings />
+                  </section>
+                )}
+                {activeTab === "members" && canManageOrganizationSettings && (
+                  <section className="rounded-[20px] border border-[#ffd7a8] bg-white p-5 sm:p-8">
+                    <MemberManagement />
+                  </section>
+                )}
+                {activeTab === "rules" && canManageOrganizationSettings && (
+                  <section className="rounded-[20px] border border-[#ffd7a8] bg-white p-5 sm:p-8">
+                    <RulesSettings />
+                  </section>
+                )}
                 {/* ────────── TAB: ACADEMIC UNITS (DEPARTMENTS) ────────── */}
                 {activeTab === "departments" && (
                   <section className="flex flex-col gap-6 w-full animate-fade-in">
@@ -1465,6 +1527,8 @@ const InstitutionWorkspace = () => {
                         ["canAssign", "Can assign issues to reps/bodies"],
                         ["canRespond", "Can publish official responses"],
                         ["canAcknowledge", "Can acknowledge issues"],
+                        ["canModerateWaves", "Can approve, reject or review waves"],
+                        ["canUpdateWaveProgress", "Can mark waves in progress or completed"],
                         ["canResolve", "Can resolve issues"],
                         ["canExport", "Can export data to CSV"],
                         ["canManageReps", "Can manage other reps"],

@@ -2,29 +2,12 @@ import { motion } from "framer-motion";
 import { FiX, FiChevronDown } from "react-icons/fi";
 import type { Ping } from "../../api/types/index";
 import { selectedPingVariants } from "./animations";
+import formatTimeAgo from "../../utils/formatTimeAgo";
 
 interface Props {
     ping: Ping;
     onDeselect: () => void;
 }
-
-/**
- * Format timestamp to readable date
- * Example: "May 30, 11:00am"
- */
-const formatTimestamp = (dateString: string): string => {
-    const date = new Date(dateString);
-    const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-
-    const month = months[date.getMonth()];
-    const day = date.getDate();
-    const hours = date.getHours();
-    const minutes = date.getMinutes().toString().padStart(2, '0');
-    const ampm = hours >= 12 ? 'pm' : 'am';
-    const displayHours = hours % 12 || 12;
-
-    return `${month} ${day}, ${displayHours}:${minutes}${ampm}`;
-};
 
 /**
  * SelectedPingCard Component
@@ -70,7 +53,7 @@ const SelectedPingCard = ({ ping, onDeselect }: Props) => {
                             }
                         </p>
                         <p className="text-[10px] text-[#7D7D7D]">
-                            {formatTimestamp(ping.createdAt)}
+                            {formatTimeAgo(ping.createdAt)}
                         </p>
                     </div>
 

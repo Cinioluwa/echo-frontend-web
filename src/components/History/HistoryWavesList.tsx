@@ -21,6 +21,7 @@ import { categoryImages } from "../CategoryImages";
 import { LoadingSpinner } from "../shared/LoadingSpinner";
 import { EmptyState } from "../shared/EmptyState";
 import { waveService } from "../../api/services";
+import formatTimeAgo from "../../utils/formatTimeAgo";
 
 interface HistoryWavesListProps {
     isLoading?: boolean;
@@ -106,14 +107,7 @@ const WaveHistoryCard = ({ wave, onDelete }: WaveHistoryCardProps) => {
                     ? wave.author
                     : "Anonymous";
 
-    const timestamp = wave.createdAt
-        ? new Date(wave.createdAt).toLocaleDateString("en-US", {
-            month: "short",
-            day: "numeric",
-            hour: "2-digit",
-            minute: "2-digit",
-        })
-        : "";
+    const timestamp = formatTimeAgo(wave.createdAt);
 
     const categoryName = wave.ping?.category?.name || wave.category?.name || "";
     const categoryIcon = categoryImages[categoryName];

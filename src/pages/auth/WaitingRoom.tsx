@@ -165,7 +165,7 @@ const WaitingRoom: React.FC = () => {
                         >
                             Terms of Use
                         </a>
-                        <span>and</span>
+                        <span className="text-[#838383]">and</span>
                         <a
                             href="https://www.echo-ng.com/privacy"
                             target="_blank"

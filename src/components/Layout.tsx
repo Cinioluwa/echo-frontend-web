@@ -191,20 +191,20 @@ const Layout = () => {
   return (
     <div className="min-h-screen">
       {/* Top NavBar — fixed on desktop, static on mobile */}
-      <header className="z-20 md:fixed md:top-0 w-full">
+      <header className="z-20 min-[1131px]:fixed min-[1131px]:top-0 w-full">
         <nav>
           <NavBar />
         </nav>
       </header>
 
-      <div className="md:mt-[70px] w-full px-3 sm:px-6">
+      <div className="min-[1131px]:mt-[70px] w-full px-3 sm:px-6">
         {/* Shared design container — same 1322px width and same padding as NavBar's
             inner bar, so the logo sits on the sidebar's left edge and the profile
             icon on the right aside's right edge. */}
         <div className="max-w-[1322px] mx-auto relative">
           <div className="flex gap-6">
             {/* Desktop Sidebar — sticky, 244px (persistent across feed and ping detail) */}
-            <aside className="hidden md:block w-[244px] shrink-0 sticky top-[85px] h-[calc(100vh-85px)] overflow-y-auto [scrollbar-width:none] pt-[15px]">
+            <aside className="hidden min-[1131px]:block w-[244px] shrink-0 sticky top-[85px] h-[calc(100vh-85px)] overflow-y-auto [scrollbar-width:none] pt-[15px]">
               <SideBar onCreatePing={() => setShowPingFormModal(true)} />
             </aside>
 

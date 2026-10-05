@@ -1,4 +1,5 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import type { FollowUpItem as FollowUpItemType } from "./types";
 
 interface FollowUpItemProps {
@@ -93,10 +94,18 @@ const getStatusBadgeConfig = (status: string) => {
 
 const FollowUpItem: React.FC<FollowUpItemProps> = ({ item }) => {
     const statusConfig = getStatusBadgeConfig(item.status);
+    const navigate = useNavigate();
+
+    const handleOpen = (e: React.MouseEvent) => {
+        if (!item.href) return;
+        if ((e.target as HTMLElement).closest("button, a")) return;
+        navigate(item.href);
+    };
 
     return (
         <div
-            className="flex flex-col items-start relative shrink-0 w-full rounded-[10px] overflow-hidden"
+            onClick={handleOpen}
+            className={`flex flex-col items-start relative shrink-0 w-full rounded-[10px] overflow-hidden ${item.href ? "cursor-pointer" : ""}`}
             data-node-id={`followup-item-${item.id}`}
         >
             {/* Header section */}

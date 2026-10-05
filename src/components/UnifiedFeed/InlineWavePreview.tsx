@@ -13,6 +13,7 @@ import { waveService } from "../../api/services";
 import UserAvatar from "../UserAvatar";
 import type { Wave } from "../../api/types";
 import SurgeIcon from "../shared/SurgeIcon";
+import formatTimeAgo from "../../utils/formatTimeAgo";
 
 type WavePreviewMode = "embedded-only" | "fetch-if-missing";
 
@@ -98,14 +99,7 @@ const InlineWavePreview = ({
                                     ? wave.author
                                     : "Anonymous";
 
-                    const timestamp = wave.createdAt
-                        ? new Date(wave.createdAt).toLocaleDateString("en-US", {
-                            month: "short",
-                            day: "numeric",
-                            hour: "2-digit",
-                            minute: "2-digit",
-                        })
-                        : "";
+                    const timestamp = formatTimeAgo(wave.createdAt);
 
                     return (
                         <div

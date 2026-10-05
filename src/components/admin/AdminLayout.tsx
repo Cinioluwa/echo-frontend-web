@@ -3,9 +3,9 @@ import AdminMobileNavBar from "./AdminMobileNavBar";
 
 const AdminLayout = () => {
   return (
-    <div className="relative md:fixed z-50">
+    <div className="relative z-50 min-[1131px]:fixed">
       {/* Top NavBar — fixed on desktop, static on mobile */}
-      <header className="z-20 w-full md:hidden">
+      <header className="z-20 w-full min-[1131px]:hidden">
         <nav>
           <AdminMobileNavBar />
         </nav>

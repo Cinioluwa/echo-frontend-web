@@ -58,7 +58,7 @@ export interface WaveBadgeConfig {
 
 // ─── Ping Badge Types ───────────────────────────────────────────────────────
 
-export type PingBadgeType = "TOP_3" | "ACKNOWLEDGED" | "RESOLVED" | null;
+export type PingBadgeType = "OPEN" | "TOP_3" | "ACKNOWLEDGED" | "RESOLVED" | null;
 
 export interface PingBadgeConfig {
   type: PingBadgeType;
@@ -225,7 +225,16 @@ export function calculatePingBadge(
     };
   }
 
-  // No badge applies
+  // Priority 4: Open - no official action yet
+  if (!ping.officialResponse && !ping.acknowledgedAt) {
+    return {
+      type: "OPEN",
+      label: "Open",
+      color: BADGE_COLORS.GREY,
+      svg: pingOpen,
+    };
+  }
+
   return null;
 }
 

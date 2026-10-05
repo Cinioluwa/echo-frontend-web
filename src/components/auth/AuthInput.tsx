@@ -139,7 +139,7 @@ const AuthInput = forwardRef<HTMLInputElement, AuthInputProps>(
         return (
             <div className={className}>
                 <div className={`
-          bg-[#fbfbfb] border rounded-xl
+          w-full min-w-0 box-border bg-[#fbfbfb] border rounded-xl
           h-[50px] sm:h-[55px] md:h-[59px]
           flex items-center gap-2.5 sm:gap-3 md:gap-[13px]
           px-[15px] sm:px-[18px] md:px-[21px] py-[11px]
@@ -176,7 +176,7 @@ const AuthInput = forwardRef<HTMLInputElement, AuthInputProps>(
                         aria-invalid={!!error}
                         aria-describedby={errorId}
                         className="
-              flex-1 bg-transparent border-none outline-none
+              min-w-0 flex-1 bg-transparent border-none outline-none
               text-[12px] sm:text-[13px] text-[#4a504e]
               placeholder:text-[#737373] placeholder:italic
               disabled:cursor-not-allowed

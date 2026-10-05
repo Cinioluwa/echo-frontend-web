@@ -29,3 +29,13 @@ export interface RelatedPing {
   title: string;
   waveCount: number;
 }
+
+export interface PingDetailPermissions {
+    canRespond: boolean;
+    canAcknowledge: boolean;
+    canModerateWaves: boolean;
+    canUpdateWaveProgress: boolean;
+    canUrgeResolve: boolean;
+}
+
+export type WaveActionStatus = "APPROVED" | "REJECTED" | "UNDER_REVIEW" | "IN_PROGRESS" | "COMPLETED";

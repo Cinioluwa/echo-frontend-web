@@ -7,30 +7,20 @@ interface StatusTimelineProps {
 
 const StatusTimeline: React.FC<StatusTimelineProps> = ({ events }) => {
     return (
-        <div className="bg-[#fef5ea] border border-[#ffc37b] rounded-xl p-3 sm:p-4 flex flex-col gap-3 sm:gap-4">
-            <h3 className="font-poppins font-semibold text-[16px] sm:text-[18px] text-black">
-                Status Timeline
-            </h3>
-            <div className="flex flex-col gap-2 sm:gap-3">
+        <div className="flex flex-col gap-3 rounded-xl border border-[#f49b31] bg-white p-[21px]">
+            <h3 className="font-poppins text-[18px] font-semibold text-black">Status Timeline</h3>
+            <div className="flex flex-col">
                 {events.map((event, idx) => (
-                    <div key={idx} className="flex gap-2 sm:gap-3 items-start">
-                        <div className="flex flex-col items-center">
-                            <div className="w-3 h-3 sm:w-4 sm:h-4 bg-[#f49b31] rounded-full shrink-0 mt-1 sm:mt-1.5" />
-                            {idx < events.length - 1 && (
-                                <div className="w-0.5 h-6 sm:h-8 bg-[#ffc37b] my-1" />
-                            )}
-                        </div>
-                        <div className="flex-1 pt-1">
-                            <p className="font-poppins font-semibold text-[12px] sm:text-[14px] text-black">
-                                {event.status}
-                            </p>
-                            <p className="font-poppins font-medium text-[10px] sm:text-[12px] text-[#8b8e8d]">
-                                {event.timestamp}
-                            </p>
+                    <div
+                        key={idx}
+                        className={`flex items-center gap-3 py-2 ${idx < events.length - 1 ? "border-b-[0.5px] border-[#ffc37b]" : ""}`}
+                    >
+                        <div className="h-[27px] w-[7px] shrink-0 rounded-full bg-[#f49b31]" />
+                        <div className="flex flex-col">
+                            <p className="font-poppins text-[10px] font-medium text-black">{event.status}</p>
+                            <p className="font-poppins text-[8px] text-[#454545]">{event.timestamp}</p>
                             {event.description && (
-                                <p className="font-poppins font-medium text-[10px] sm:text-[11px] text-[#626665] mt-1">
-                                    {event.description}
-                                </p>
+                                <p className="font-poppins text-[8px] text-[#454545]">{event.description}</p>
                             )}
                         </div>
                     </div>

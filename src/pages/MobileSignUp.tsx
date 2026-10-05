@@ -93,7 +93,7 @@ const MobileSignUp = () => {
               Echo: Your Voice at CU
             </span>
             <p className="block font-normal mt-[15px] mb-[15px] text-1xl text-center text-[#838383]">
-              Create waves, rally support, track change
+              Create waves, rally support and drive change on campus.
             </p>
 
             {error && (
@@ -172,14 +172,14 @@ const MobileSignUp = () => {
                 Sign up with email
               </div>
             </form>
-            <p className="text-[#838383] text-center text-[14px]">
-              By creating an account, you agree to Echo
+            <p className="text-[#838383] text-center text-xs leading-relaxed">
+              By creating an account, you agree to Echo&apos;s
             </p>
-            <span className="text-[#F49B31] text-[14px] mt-3">
+            <div className="flex flex-wrap justify-center gap-1 text-sm font-semibold text-[#F49B31] mt-1.5">
               <a href="https://www.echo-ng.com/terms" target="_blank" rel="noopener noreferrer">Terms of Use</a>
-              <span> and </span>
+              <span className="font-medium text-[#838383]">and</span>
               <a href="https://www.echo-ng.com/privacy" target="_blank" rel="noopener noreferrer">Privacy Policy</a>
-            </span>
+            </div>
             <div className=" mb-5 md:mb-5 pt-[30px] border-t border-[#D3CECE] mt-10 self-end w-full">
               <p className="text-center text-[#838383] ">
                 Already have an account?

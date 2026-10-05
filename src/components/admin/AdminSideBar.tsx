@@ -13,7 +13,6 @@ interface AdminSidebarProps {
   onSoundboardClick?: () => void;
   onFollowUpClick?: () => void;
   onModerationClick?: () => void;
-  onAdminSettingsClick?: () => void;
 }
 
 const AdminSideBar: React.FC<AdminSidebarProps> = ({
@@ -24,7 +23,6 @@ const AdminSideBar: React.FC<AdminSidebarProps> = ({
   onSoundboardClick,
   onFollowUpClick,
   onModerationClick,
-  onAdminSettingsClick,
 }) => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -128,17 +126,13 @@ const AdminSideBar: React.FC<AdminSidebarProps> = ({
     <img src="/assets/icon/moderation.svg" alt="Moderation Icon" className={`${navIconClass(currentPage === "moderation")} shrink-0`} />
   );
 
-  const AdminIcon = () => (
-    <img src="/assets/icon/admin-settings.svg" alt="Admin Settings Icon" className={`${navIconClass(currentPage === "settings")} shrink-0`} />
-  );
-
   const CollapseIcon = () => (
     <img src="/assets/icon/expand.svg" alt="Collapse Icon" className={`w-4 h-4 transition-transform duration-300 ease-in-out ${isSidebarCollapsed ? "rotate-180" : ""}`} />
   );
 
   return (
     <div
-      className={`hidden h-screen shrink-0 md:flex bg-[#fef5ea] border-r border-b border-[#f49b31] rounded-br-[20px] px-5 ${isSidebarCollapsed ? "w-[102px]" : "w-[230px]"} flex-col gap-5 overflow-visible pt-5 pb-[30px] transition-[width,padding] duration-300 ease-in-out will-change-[width]`}
+      className={`hidden h-screen shrink-0 min-[1131px]:flex bg-[#fef5ea] border-r border-b border-[#f49b31] rounded-br-[20px] px-5 ${isSidebarCollapsed ? "w-[102px]" : "w-[230px]"} flex-col gap-5 overflow-visible pt-5 pb-[30px] transition-[width,padding] duration-300 ease-in-out will-change-[width]`}
       data-node-id="admin-soundboard-sidebar"
     >
       {/* Logo Section */}
@@ -188,14 +182,6 @@ const AdminSideBar: React.FC<AdminSidebarProps> = ({
               </button>
             </Link>
 
-            <Link to="/admin/settings" onClick={onAdminSettingsClick}>
-              <button className={navButtonClass(currentPage === "settings")}>
-                <div className={navIconWrapperClass(currentPage === "settings")}>
-                  <AdminIcon />
-                </div>
-                <span className={navTextClass(currentPage === "settings")}>Admin Settings</span>
-              </button>
-            </Link>
           </>
         )}
 

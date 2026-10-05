@@ -1,48 +1,43 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import type { RelatedPing } from "./types";
 
 interface RelatedPingsProps {
     pings: RelatedPing[];
+    detailBasePath: string;
 }
 
-const RelatedPings: React.FC<RelatedPingsProps> = ({ pings }) => {
-    const getCategoryColor = (category: string): string => {
-        const colors: Record<string, string> = {
-            "Chapel": "bg-[#ffc37b] text-white",
-            "Hall": "bg-[#ffc37b] text-white",
-            "Academic": "bg-[#ffc37b] text-white",
-        };
-        return colors[category] || "bg-[#ffc37b] text-white";
-    };
+const RelatedPings: React.FC<RelatedPingsProps> = ({ pings, detailBasePath }) => {
+    const navigate = useNavigate();
+    if (pings.length === 0) return null;
 
     return (
-        <div className="bg-white border border-[rgba(244,155,49,0.2)] rounded-xl p-3 sm:p-4 flex flex-col gap-2 sm:gap-3">
-            <h3 className="font-poppins font-semibold text-[16px] sm:text-[18px] text-black">
-                Related Pings
-            </h3>
-            <div className="flex flex-col gap-2 sm:gap-3">
+        <div className="flex flex-col gap-3 rounded-xl border border-[rgba(244,155,49,0.3)] bg-white p-[21px]">
+            <h3 className="font-poppins text-[18px] font-semibold text-black">Related Pings</h3>
+            <div className="flex flex-col gap-2">
                 {pings.map((ping) => (
-                    <div
+                    <button
+                        type="button"
                         key={ping.id}
-                        className="flex items-center justify-between gap-2 p-2 sm:p-3 bg-[#fef5ea] rounded-lg hover:bg-[#fef5ea]/80 transition-colors cursor-pointer"
+                        onClick={() => navigate(`${detailBasePath}/${ping.id}`)}
+                        className="flex h-[55px] cursor-pointer items-center justify-between gap-2 rounded-xl bg-[#fef5ea] p-[7px] transition-colors hover:bg-[#ffe8cf] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#f49b31]"
+                        aria-label={`Open related ping: ${ping.title}`}
                     >
-                        <div className="flex-1 min-w-0 flex flex-col gap-1">
-                            <div className="flex items-center gap-2">
-                                <span className={`px-2 py-0.5 rounded-lg font-poppins font-semibold text-[10px] sm:text-[11px] whitespace-nowrap shrink-0 ${getCategoryColor(ping.category)}`}>
-                                    {ping.category}
-                                </span>
-                            </div>
-                            <p className="font-poppins font-semibold text-[11px] sm:text-[13px] text-black truncate">
+                        <div className="flex min-w-0 flex-1 items-center gap-2">
+                            <span className="rounded-[20px] bg-[#f49b31] px-2 py-0.5 font-['DM_Sans',sans-serif] text-[11px] font-semibold text-[#fef5ea]">
+                                {ping.category}
+                            </span>
+                            <p className="min-w-0 flex-1 truncate font-poppins text-[11px] font-semibold text-black">
                                 {ping.title}
                             </p>
                         </div>
-                        <div className="flex items-center gap-1 shrink-0">
-                            <span className="text-[14px]">⚡</span>
-                            <p className="font-poppins font-semibold text-[12px] sm:text-[14px] text-[#f49b31] whitespace-nowrap">
+                        <div className="flex shrink-0 items-center gap-1">
+                            <img src="/assets/images/surge.svg" alt="" className="h-[14px] w-[9px]" />
+                            <span className="font-poppins text-[14px] font-semibold text-[#f49b31]">
                                 {ping.waveCount}
-                            </p>
+                            </span>
                         </div>
-                    </div>
+                    </button>
                 ))}
             </div>
         </div>
