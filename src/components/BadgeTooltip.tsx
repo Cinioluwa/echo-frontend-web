@@ -1,4 +1,5 @@
-import React, { useEffect, useId, useRef, useState } from "react";
+import React, { useEffect, useId, useRef, useState, useCallback } from "react";
+import { createPortal } from "react-dom";
 
 export const BADGE_DESCRIPTIONS: Record<string, { title: string; description: string }> = {
     OPEN: {
@@ -60,29 +61,62 @@ interface BadgeTooltipProps {
 
 const BadgeTooltip: React.FC<BadgeTooltipProps> = ({ badgeKey, children, className = "" }) => {
     const [open, setOpen] = useState(false);
-    const ref = useRef<HTMLSpanElement>(null);
+    const [coords, setCoords] = useState<{ top: number; left: number } | null>(null);
+    const triggerRef = useRef<HTMLButtonElement>(null);
+    const tooltipRef = useRef<HTMLSpanElement>(null);
     const id = useId();
     const info = BADGE_DESCRIPTIONS[badgeKey];
 
+    const updatePosition = useCallback(() => {
+        if (!triggerRef.current) return;
+        const rect = triggerRef.current.getBoundingClientRect();
+        const tooltipWidth = 220;
+        const tooltipHeight = 110;
+
+        const spaceBelow = window.innerHeight - rect.bottom;
+        const shouldFlipUp = spaceBelow < tooltipHeight && rect.top > tooltipHeight;
+
+        const top = shouldFlipUp ? rect.top - tooltipHeight - 8 : rect.bottom + 8;
+        const left = Math.max(12, Math.min(window.innerWidth - tooltipWidth - 12, rect.right - tooltipWidth));
+
+        setCoords({ top, left });
+    }, []);
+
     useEffect(() => {
         if (!open) return;
+        updatePosition();
+
         const onDown = (e: MouseEvent) => {
-            if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+            const target = e.target as Node;
+            if (
+                triggerRef.current && !triggerRef.current.contains(target) &&
+                tooltipRef.current && !tooltipRef.current.contains(target)
+            ) {
+                setOpen(false);
+            }
         };
         const onKey = (e: KeyboardEvent) => e.key === "Escape" && setOpen(false);
+        const handleScrollOrResize = () => setOpen(false);
+
         document.addEventListener("mousedown", onDown);
         document.addEventListener("keydown", onKey);
+        window.addEventListener("scroll", handleScrollOrResize, true);
+        window.addEventListener("resize", handleScrollOrResize);
+
         return () => {
             document.removeEventListener("mousedown", onDown);
             document.removeEventListener("keydown", onKey);
+            window.removeEventListener("scroll", handleScrollOrResize, true);
+            window.removeEventListener("resize", handleScrollOrResize);
         };
-    }, [open]);
+    }, [open, updatePosition]);
 
     if (!info) return <>{children}</>;
 
     return (
-        <span ref={ref} className={`relative inline-flex ${className}`}>
+        <span className={`inline-flex ${className}`}>
             <button
+                ref={triggerRef}
                 type="button"
                 aria-haspopup="dialog"
                 aria-expanded={open}
@@ -96,18 +130,21 @@ const BadgeTooltip: React.FC<BadgeTooltipProps> = ({ badgeKey, children, classNa
             >
                 {children}
             </button>
-            {open && (
+            {open && coords && createPortal(
                 <span
+                    ref={tooltipRef}
                     id={id}
                     role="dialog"
                     onClick={(e) => e.stopPropagation()}
-                    className="absolute left-0 top-full z-50 mt-2 flex w-[220px] flex-col gap-1 rounded-[12px] border border-[#F49B31] bg-[#FEFEFE] p-3 text-left shadow-lg"
+                    style={{ top: coords.top, left: coords.left }}
+                    className="fixed z-[9999] flex w-[220px] flex-col gap-1 rounded-[12px] border border-[#F49B31] bg-[#FEFEFE] p-3 text-left shadow-lg pointer-events-auto"
                 >
                     <span className="font-poppins text-[13px] font-semibold text-[#171717]">{info.title}</span>
                     <span className="font-poppins text-[12px] font-medium leading-snug text-[#626665]">
                         {info.description}
                     </span>
-                </span>
+                </span>,
+                document.body
             )}
         </span>
     );
