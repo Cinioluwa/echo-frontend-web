@@ -8,7 +8,6 @@ export type FollowUpStatus =
   | "in_progress"
   | "approved"
   | "under_review"
-  | "posted"
   | "acknowledged"
   | "resolved";
 export type FilterType =

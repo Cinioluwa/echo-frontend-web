@@ -18,31 +18,31 @@ const filterDefs: FilterTab[] = [
     {
         id: "all",
         label: "All",
-        icon: "/assets/icon/wave.svg",
+        icon: "/assets/icon/followup-all.png",
         nodeId: "5627:16786"
     },
     {
         id: "approved-waves",
         label: "Approved Waves",
-        icon: "/assets/icon/badge-check.svg",
+        icon: "/assets/icon/followup-approved.svg",
         nodeId: "5627:16795"
     },
     {
         id: "under-review",
         label: "Waves Under Review",
-        icon: "/assets/icon/awaiting-approval.svg",
+        icon: "/assets/icon/followup-review.svg",
         nodeId: "5627:16805"
     },
     {
         id: "acknowledged-pings",
         label: "Acknowledged Pings",
-        icon: "/assets/icon/acknowledged-pings.svg",
+        icon: "/assets/icon/followup-acknowledged.svg",
         nodeId: "5627:16819"
     },
     {
         id: "in-progress",
         label: "Waves in Progress",
-        icon: "/assets/icon/time-alert.svg",
+        icon: "/assets/icon/followup-progress.svg",
         nodeId: "5627:16828"
     },
 ];
@@ -105,7 +105,7 @@ const FollowUpFilterTabs: React.FC<FollowUpFilterTabsProps> = ({
                             className={`flex flex-col items-start px-1 sm:px-[7.2px] py-px sm:py-[1.8px] rounded-[18px] border-[0.5px] border-solid shrink-0 ${
                                 isActive
                                     ? "bg-[#fef5ea] border-[#f49b31] text-[#f49b31]"
-                                    : "bg-[#ffc37b] border-[#f49b31] text-white"
+                                    : "bg-[#fef5ea] border-[#f49b31] text-[#f49b31]"
                             }`}
                             data-node-id={`${filter.nodeId}-badge`}
                         >

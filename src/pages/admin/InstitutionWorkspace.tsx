@@ -357,7 +357,7 @@ const InstitutionWorkspace = () => {
             isSidebarCollapsed ? "min-[1131px]:ms-[102px]" : "min-[1131px]:ms-[230px]"
           } transition-all duration-300 pb-24`}
         >
-          <div className="mx-auto flex min-w-0 w-full max-w-6xl flex-col items-start gap-6">
+          <div className="flex min-w-0 w-full flex-col items-start gap-6">
             {/* Header Row */}
             <div className="flex flex-col gap-2 items-start relative w-full border-b border-[#ffd7a8] pb-4">
               <div className="flex w-full flex-col items-start gap-1 sm:gap-2">

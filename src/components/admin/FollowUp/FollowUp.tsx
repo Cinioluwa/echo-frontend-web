@@ -57,83 +57,99 @@ const FollowUp: React.FC<FollowUpProps> = ({ mode = "admin" }) => {
     fetchWaves();
   }, [fetchWaves]);
 
-  const filterWaves = useCallback((waves: AdminWave[], filter: FilterType): AdminWave[] => {
-    switch (filter) {
-      case "approved-waves":
-        return waves.filter((w) => w.status === "APPROVED");
-      case "under-review":
-        return waves.filter((w) => w.status === "UNDER_REVIEW");
-      case "in-progress":
-        return waves.filter((w) => w.status === "IN_PROGRESS");
-      case "acknowledged-pings":
-        return waves.filter((w) => w.ping.progressStatus === "ACKNOWLEDGED");
-      default:
-        return waves;
-    }
-  }, []);
+  const avatarFor = (first?: string, last?: string) =>
+    `https://ui-avatars.com/api/?name=${first || "A"}+${last || "U"}&background=random`;
 
-  const computeCounts = useCallback((waves: AdminWave[]) => {
-    const approved = waves.filter((w) => w.status === "APPROVED").length;
-    const underReview = waves.filter((w) => w.status === "UNDER_REVIEW").length;
-    const inProgress = waves.filter((w) => w.status === "IN_PROGRESS").length;
-    const acknowledgedPings = waves.filter((w) => w.ping.progressStatus === "ACKNOWLEDGED").length;
+  const buildItems = (waves: AdminWave[]) => {
+    const waveItems: FollowUpItemType[] = [];
+    const ackItems: FollowUpItemType[] = [];
+    const ackPings = new Map<number, AdminWave[]>();
+
+    waves.forEach((w) => {
+      if (w.ping?.progressStatus === "ACKNOWLEDGED") {
+        ackPings.set(w.ping.id, [...(ackPings.get(w.ping.id) || []), w]);
+      }
+      if (w.status === "APPROVED" || w.status === "UNDER_REVIEW" || w.status === "IN_PROGRESS") {
+        waveItems.push(mapWaveToItem(w));
+      }
+    });
+
+    ackPings.forEach((pingWaves) => {
+      const pick = pingWaves
+        .filter((w) => w.status === "POSTED" || w.status === "UNDER_REVIEW")
+        .sort((a, b) => (b._count?.surges ?? b.surgeCount) - (a._count?.surges ?? a.surgeCount))[0];
+      if (pick) ackItems.push(mapAcknowledgedToItem(pick));
+    });
+
+    return { waveItems, ackItems };
+  };
+
+  const waveBase = (wave: AdminWave) => ({
+    pingId: wave.ping?.id,
+    href: wave.ping?.id ? (isRep ? `/inbox/${wave.ping.id}` : `/admin/soundboard/${wave.ping.id}`) : undefined,
+    title: wave.ping?.title || wave.solution,
+    category: wave.ping?.category?.name || "",
+    author: {
+      name: wave.author ? `${wave.author.firstName} ${wave.author.lastName}` : "Anonymous",
+      avatar: avatarFor(wave.author?.firstName, wave.author?.lastName),
+      timestamp: formatTimeAgo(wave.createdAt),
+    },
+    description: wave.solution,
+    waveCount: wave._count?.surges || 0,
+  });
+
+  const mapAcknowledgedToItem = (wave: AdminWave): FollowUpItemType => {
+    const ping = wave.ping;
+    const pingAuthorName = ping.isAnonymous
+      ? ping.anonymousAlias || "Anonymous"
+      : ping.author
+        ? `${ping.author.firstName} ${ping.author.lastName}`
+        : "Anonymous";
     return {
-      all: approved + underReview + inProgress + acknowledgedPings,
-      "approved-waves": approved,
-      "under-review": underReview,
-      "in-progress": inProgress,
-      "acknowledged-pings": acknowledgedPings,
-    };
-  }, []);
-
-  const mapWaveToItem = (wave: AdminWave, filter: FilterType): FollowUpItemType => {
-    const isAcknowledged = filter === "acknowledged-pings" && wave.ping.progressStatus === "ACKNOWLEDGED";
-    const waveStatus = wave.status;
-    const isApproved = waveStatus === "APPROVED";
-    const isUnderReview = waveStatus === "UNDER_REVIEW";
-    const isInProgress = waveStatus === "IN_PROGRESS";
-
-    return {
-      id: wave.id.toString(),
-      pingId: wave.ping?.id,
-      href: wave.ping?.id ? (isRep ? `/inbox/${wave.ping.id}` : `/admin/soundboard/${wave.ping.id}`) : undefined,
-      title: wave.ping?.title || wave.solution,
-      category: wave.ping?.category?.name || "",
-      author: {
-        name: wave.author ? `${wave.author.firstName} ${wave.author.lastName}` : "Anonymous",
-        avatar: `https://ui-avatars.com/api/?name=${wave.author?.firstName || "A"}+${wave.author?.lastName || "U"}&background=random`,
-        timestamp: formatTimeAgo(wave.createdAt),
+      ...waveBase(wave),
+      id: `ping-${ping.id}`,
+      status: "acknowledged",
+      pingAuthor: {
+        name: pingAuthorName,
+        avatar: avatarFor(ping.author?.firstName, ping.author?.lastName),
+        timestamp: formatTimeAgo(ping.createdAt),
       },
-      description: wave.solution,
-      status: isAcknowledged ? "acknowledged" : isApproved ? "approved" : isUnderReview ? "under_review" : isInProgress ? "in_progress" : "posted",
-      waveCount: wave._count?.surges || 0,
-      ...(isAcknowledged ? {
-        pingAuthor: {
-          name: `${wave.author?.firstName || "A"} ${wave.author?.lastName || "U"}`,
-          avatar: `https://ui-avatars.com/api/?name=${wave.author?.firstName || "A"}+${wave.author?.lastName || "U"}&background=random`,
-          timestamp: formatTimeAgo(wave.ping.createdAt),
-        },
-        surgeCount: wave.surgeCount,
-      } : {}),
+      surgeCount: ping.surgeCount ?? 0,
+      actions: canModerate
+        ? {
+            primary: { label: "Approve", onClick: () => handleUpdateWaveStatus(wave.id, "APPROVED"), variant: "orange" },
+            secondary: {
+              label: "Reject",
+              onClick: () => {
+                setRejectModalWaveId(wave.id);
+                setRejectReason("");
+              },
+              variant: "red",
+            },
+            ...(wave.status !== "UNDER_REVIEW"
+              ? { tertiary: { label: "Review", onClick: () => handleUpdateWaveStatus(wave.id, "UNDER_REVIEW"), variant: "outline-orange" as const } }
+              : {}),
+          }
+        : {},
+    };
+  };
+
+  const mapWaveToItem = (wave: AdminWave): FollowUpItemType => {
+    const isApproved = wave.status === "APPROVED";
+    const isUnderReview = wave.status === "UNDER_REVIEW";
+    const isInProgress = wave.status === "IN_PROGRESS";
+
+    return {
+      ...waveBase(wave),
+      id: wave.id.toString(),
+      status: isApproved ? "approved" : isUnderReview ? "under_review" : "in_progress",
       actions: {
         ...(isApproved && canProgress ? {
-          primary: {
-            label: "Mark as Completed",
-            onClick: () => handleUpdateWaveStatus(wave.id, "COMPLETED"),
-            variant: "orange" as const,
-          },
-          secondary: {
-            label: "Mark as Implementing",
-            onClick: () => handleUpdateWaveStatus(wave.id, "IN_PROGRESS"),
-            variant: "outline-orange" as const,
-          },
+          primary: { label: "Mark as Completed", onClick: () => handleUpdateWaveStatus(wave.id, "COMPLETED"), variant: "orange" as const },
+          secondary: { label: "Mark as Implementing", onClick: () => handleUpdateWaveStatus(wave.id, "IN_PROGRESS"), variant: "outline-orange" as const },
         } : {}),
         ...(isUnderReview && canModerate ? {
-          primary: {
-            label: "Approve",
-            onClick: () => handleUpdateWaveStatus(wave.id, "APPROVED"),
-            variant: "orange" as const,
-          },
+          primary: { label: "Approve", onClick: () => handleUpdateWaveStatus(wave.id, "APPROVED"), variant: "orange" as const },
           secondary: {
             label: "Reject",
             onClick: () => {
@@ -144,27 +160,27 @@ const FollowUp: React.FC<FollowUpProps> = ({ mode = "admin" }) => {
           },
         } : {}),
         ...(isInProgress && canProgress ? {
-          primary: {
-            label: "Mark as Completed",
-            onClick: () => handleUpdateWaveStatus(wave.id, "COMPLETED"),
-            variant: "orange" as const,
-          },
-        } : {}),
-        ...(isAcknowledged && !isRep ? {
-          primary: {
-            label: "Mark Resolved",
-            onClick: () => handleResolvePing(wave.ping.id),
-            variant: "orange" as const,
-          },
+          primary: { label: "Mark as Completed", onClick: () => handleUpdateWaveStatus(wave.id, "COMPLETED"), variant: "orange" as const },
         } : {}),
       },
     };
   };
 
-  const filteredWaves = filterWaves(allWaves, activeFilter);
-  const items: FollowUpItemType[] = filteredWaves.map((w) => mapWaveToItem(w, activeFilter));
-  const filterCounts = computeCounts(allWaves);
-
+  const { waveItems, ackItems } = buildItems(allWaves);
+  const byStatus = (s: string) => waveItems.filter((i) => i.status === s);
+  const filterCounts = {
+    all: ackItems.length + waveItems.length,
+    "approved-waves": byStatus("approved").length,
+    "under-review": byStatus("under_review").length,
+    "acknowledged-pings": ackItems.length,
+    "in-progress": byStatus("in_progress").length,
+  };
+  const items: FollowUpItemType[] =
+    activeFilter === "approved-waves" ? byStatus("approved")
+    : activeFilter === "under-review" ? byStatus("under_review")
+    : activeFilter === "in-progress" ? byStatus("in_progress")
+    : activeFilter === "acknowledged-pings" ? ackItems
+    : [...ackItems, ...waveItems];
   const handleUpdateWaveStatus = async (id: number, status: string, reason?: string) => {
     try {
       setActionLoading(id.toString());
@@ -179,19 +195,6 @@ const FollowUp: React.FC<FollowUpProps> = ({ mode = "admin" }) => {
       await fetchWaves(true);
     } catch (err: any) {
       setError(err?.response?.data?.error || err?.response?.data?.message || "Failed to update wave status");
-    } finally {
-      setActionLoading(null);
-    }
-  };
-
-  const handleResolvePing = async (pingId: number) => {
-    try {
-      setActionLoading(pingId.toString());
-      await adminService.resolvePing(pingId);
-      pushToast("ping");
-      await fetchWaves(true);
-    } catch (err: any) {
-      setError(err?.response?.data?.error || err?.response?.data?.message || "Failed to resolve ping");
     } finally {
       setActionLoading(null);
     }

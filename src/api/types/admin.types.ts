@@ -85,7 +85,11 @@ export interface AdminWave {
     id: number;
     title: string;
     progressStatus: string;
+    surgeCount?: number;
     createdAt: string;
+    isAnonymous?: boolean;
+    anonymousAlias?: string | null;
+    author?: { id: number; firstName: string; lastName: string; profilePicture?: string | null } | null;
     category?: { id: number; name: string } | null;
   };
   _count: {

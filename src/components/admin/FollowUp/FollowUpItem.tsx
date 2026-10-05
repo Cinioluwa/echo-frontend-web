@@ -57,7 +57,7 @@ const getStatusBadgeConfig = (status: string) => {
         case "in_progress":
             return {
                 label: "In Progress",
-                dotUrl: "/assets/icon/dot-blue.svg",
+                dotUrl: "/assets/icon/dot-yellow.svg",
             };
         case "approved":
             return {
@@ -68,11 +68,6 @@ const getStatusBadgeConfig = (status: string) => {
             return {
                 label: "Under Review",
                 dotUrl: "/assets/icon/dot-green.svg",
-            };
-        case "posted":
-            return {
-                label: "Posted",
-                dotUrl: "/assets/icon/dot-yellow.svg",
             };
         case "acknowledged":
             return {
@@ -219,6 +214,11 @@ const FollowUpItem: React.FC<FollowUpItemProps> = ({ item }) => {
                     </div>
 
                     {/* Status badge */}
+                    {item.status === "acknowledged" ? (
+                    <div className="bg-[#fef5ea] border-[#f49b31] border-[1.5px] border-solid flex items-center justify-center px-[16.5px] py-1.5 rounded-[23px] shrink-0">
+                        <span className="font-poppins font-medium text-[13.5px] leading-normal text-[#f49b31] whitespace-nowrap">Community Pick</span>
+                    </div>
+                    ) : (
                     <div
                         className="bg-[#fefefe] border-[#626665] border-[1.5px] border-solid flex gap-[9px] items-center justify-center px-[16.5px] py-1.5 relative rounded-[23px] shrink-0"
                         data-node-id="5701:15619"
@@ -232,6 +232,7 @@ const FollowUpItem: React.FC<FollowUpItemProps> = ({ item }) => {
                             {statusConfig.label}
                         </span>
                     </div>
+                    )}
                 </div>
 
                 {/* Description */}
