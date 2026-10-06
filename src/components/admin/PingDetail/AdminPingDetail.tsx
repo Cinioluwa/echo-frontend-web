@@ -16,6 +16,7 @@ import representativeService from "../../../api/services/representative.service"
 import RelatedPings from "./RelatedPings";
 import { getRelatedTitleScore } from "./relatedPingMatching";
 import BadgeTooltip from "../../BadgeTooltip";
+import AssignPingModal from "../../AssignPingModal";
 import formatTimeAgo from "../../../utils/formatTimeAgo";
 
 export type AdminBadgeType =
@@ -113,6 +114,7 @@ const ADMIN_PERMISSIONS: PingDetailPermissions = {
     canModerateWaves: true,
     canUpdateWaveProgress: true,
     canUrgeResolve: false,
+    canAssign: true,
 };
 
 const pingIsInRepresentativeScope = (ping: Ping, user: User | null | undefined) => {
@@ -152,6 +154,7 @@ const AdminPingDetail: React.FC<AdminPingDetailProps> = ({ pingId: propPingId, m
             canModerateWaves: active && !!profile?.canModerateWaves,
             canUpdateWaveProgress: active && !!profile?.canUpdateWaveProgress,
             canUrgeResolve: active,
+            canAssign: active && !!profile?.canAssign,
         };
     }, [mode, user]);
 
@@ -164,6 +167,7 @@ const AdminPingDetail: React.FC<AdminPingDetailProps> = ({ pingId: propPingId, m
     const [postingResponse, setPostingResponse] = useState(false);
     const [acknowledging, setAcknowledging] = useState(false);
     const [urging, setUrging] = useState(false);
+    const [isAssignModalOpen, setIsAssignModalOpen] = useState(false);
     const [notice, setNotice] = useState<string | null>(null);
     const [redirectToUserDetail, setRedirectToUserDetail] = useState(false);
 
@@ -251,6 +255,8 @@ const AdminPingDetail: React.FC<AdminPingDetailProps> = ({ pingId: propPingId, m
             statusEvents: [
                 { status: "Ping Posted", timestamp: new Date(ping.createdAt).toLocaleString() },
                 ...((ping as any).acknowledgedAt ? [{ status: `Acknowledged by ${ackBy}`, timestamp: new Date((ping as any).acknowledgedAt).toLocaleString() }] : []),
+                ...(ping.assignedToUser ? [{ status: `Assigned to ${`${ping.assignedToUser.firstName ?? ""} ${ping.assignedToUser.lastName ?? ""}`.trim() || ping.assignedToUser.email}`, timestamp: (ping as any).assignedAt ? new Date((ping as any).assignedAt).toLocaleString() : "" }] : []),
+                ...(ping.assignedToBody ? [{ status: `Assigned to ${ping.assignedToBody.name}`, timestamp: (ping as any).assignedAt ? new Date((ping as any).assignedAt).toLocaleString() : "" }] : []),
                 ...(ping.resolvedAt ? [{ status: "Resolved", timestamp: new Date(ping.resolvedAt).toLocaleString() }] : []),
             ],
             officialResponse: ping.officialResponse ? {
@@ -507,6 +513,14 @@ const AdminPingDetail: React.FC<AdminPingDetailProps> = ({ pingId: propPingId, m
                             {acknowledging ? "..." : "Acknowledge"}
                         </button>
                     )}
+                    {permissions.canAssign && (
+                        <button
+                            onClick={() => setIsAssignModalOpen(true)}
+                            className="flex h-[39px] w-full items-center justify-center gap-2 rounded-[20px] border border-[#f49b31] bg-[#fef5ea] font-['Baloo_Bhai_2',sans-serif] text-[14px] font-bold uppercase text-[#f49b31] hover:bg-[#fdebd2]"
+                        >
+                            Assign Ping
+                        </button>
+                    )}
                     {permissions.canUrgeResolve && !isResolved && (
                         <button
                             onClick={handleUrgeResolve}
@@ -518,6 +532,18 @@ const AdminPingDetail: React.FC<AdminPingDetailProps> = ({ pingId: propPingId, m
                     )}
                 </div>
             </div>
+
+            {isAssignModalOpen && (
+                <AssignPingModal
+                    ping={pingData}
+                    organizationId={user?.organizationId ?? null}
+                    onClose={() => setIsAssignModalOpen(false)}
+                    onAssigned={(updatedPing) => {
+                        setPingData((prev) => (prev ? { ...prev, ...updatedPing } : updatedPing));
+                        setNotice("Ping assigned successfully.");
+                    }}
+                />
+            )}
         </div>
     );
 };
