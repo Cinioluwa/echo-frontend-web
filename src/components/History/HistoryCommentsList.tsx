@@ -129,7 +129,7 @@ const CommentedPingCard = ({ comment }: CommentedPingCardProps) => {
     });
 
     const categoryName = ping?.category?.name || "";
-    const categoryIcon = categoryImages[categoryName];
+    const categoryIcon = categoryImages[categoryName] || categoryImages.General;
 
     return (
         <div className="bg-[#FEFEFE] rounded-[10px] px-5 py-[15px] flex flex-col gap-[13px] w-full">

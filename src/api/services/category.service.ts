@@ -34,6 +34,17 @@ const categoryService = {
     const response = await api.patch<CategoryData>(`/categories/${id}`, { name });
     return response.data;
   },
+
+  /**
+   * Delete a category (admin only).
+   * The API responds 409 CATEGORY_HAS_PINGS if pings still reference it.
+   */
+  remove: async (id: number): Promise<{ message: string; categoryId: number }> => {
+    const response = await api.delete<{ message: string; categoryId: number }>(
+      `/categories/${id}`,
+    );
+    return response.data;
+  },
 };
 
 export default categoryService;

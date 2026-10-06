@@ -5,7 +5,17 @@ export interface AcademicDepartment {
   name: string;
   code: string;
   isActive?: boolean;
+  collegeId?: number | null;
+  college?: Pick<College, "id" | "name" | "code"> | null;
   _count?: { pings?: number; bodies?: number };
+}
+
+export interface College {
+  id: number;
+  name: string;
+  code: string;
+  isActive?: boolean;
+  _count?: { departments?: number };
 }
 
 export interface RepresentativeBody {
@@ -105,9 +115,46 @@ const institutionAdminService = {
     return toArray<AcademicDepartment>(response.data?.departments);
   },
 
-  createDepartment: async (data: { name: string; code: string }): Promise<AcademicDepartment> => {
-    const response = await api.post<{ department: AcademicDepartment }>("/admin/departments", data);
+  createDepartment: async (data: {
+    name: string;
+    code: string;
+    collegeId?: number;
+  }): Promise<AcademicDepartment> => {
+    const response = await api.post<{ department: AcademicDepartment }>(
+      "/admin/departments",
+      data,
+    );
     return response.data.department;
+  },
+
+  removeDepartment: async (id: number): Promise<{ message: string }> => {
+    const response = await api.delete<{ message: string }>(
+      `/admin/departments/${id}`,
+    );
+    return response.data;
+  },
+
+  getColleges: async (): Promise<College[]> => {
+    const response = await api.get<{ colleges: College[] }>("/admin/colleges");
+    return toArray<College>(response.data?.colleges);
+  },
+
+  createCollege: async (data: {
+    name: string;
+    code: string;
+  }): Promise<College> => {
+    const response = await api.post<{ college: College }>(
+      "/admin/colleges",
+      data,
+    );
+    return response.data.college;
+  },
+
+  removeCollege: async (id: number): Promise<{ message: string }> => {
+    const response = await api.delete<{ message: string }>(
+      `/admin/colleges/${id}`,
+    );
+    return response.data;
   },
 
   getBodies: async (): Promise<RepresentativeBody[]> => {
@@ -122,6 +169,11 @@ const institutionAdminService = {
   }): Promise<RepresentativeBody> => {
     const response = await api.post<{ body: RepresentativeBody }>("/admin/bodies", data);
     return response.data.body;
+  },
+
+  removeBody: async (id: number): Promise<{ message: string }> => {
+    const response = await api.delete<{ message: string }>(`/admin/bodies/${id}`);
+    return response.data;
   },
 
   getRepresentatives: async (): Promise<RepresentativeProfile[]> => {

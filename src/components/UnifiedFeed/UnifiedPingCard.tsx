@@ -75,7 +75,7 @@ const UnifiedPingCard = ({
   const timestamp = formatTimeAgo(currentPing.createdAt);
 
   const categoryName = currentPing.category?.name || "";
-  const categoryIcon = categoryImages[categoryName];
+  const categoryIcon = categoryImages[categoryName] || categoryImages.General;
   const pingImages = currentPing.media?.filter((media) =>
     media.mimeType.startsWith("image/"),
   ) || [];

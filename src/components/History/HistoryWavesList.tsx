@@ -110,7 +110,7 @@ const WaveHistoryCard = ({ wave, onDelete }: WaveHistoryCardProps) => {
     const timestamp = formatTimeAgo(wave.createdAt);
 
     const categoryName = wave.ping?.category?.name || wave.category?.name || "";
-    const categoryIcon = categoryImages[categoryName];
+    const categoryIcon = categoryImages[categoryName] || categoryImages.General;
 
     const surgeCount = wave.surgeCount || wave._count?.surges || 0;
 

@@ -75,7 +75,7 @@ const PingCard = ({
         ping.categoryId && categories[ping.categoryId]
             ? categories[ping.categoryId].name
             : ping.category?.name || "";
-    const categoryIcon = categoryImages[categoryName];
+    const categoryIcon = categoryImages[categoryName] || categoryImages.General;
     const waveCount = ping._count?.waves || 0;
     const initialHasSurged = ping.hasSurged ?? false;
     const displayedSurgeCount = Math.max(

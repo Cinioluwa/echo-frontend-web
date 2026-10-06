@@ -2,24 +2,26 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   Building2,
   ChevronRight,
-  Layers,
-  MapPin,
   Settings,
   Sliders,
+  Trash2,
   Users,
   X,
 } from "lucide-react";
-import { useAuthStore, useUIStore } from "../../stores";
+import { useAuthStore, useCategoriesStore, useUIStore } from "../../stores";
 import { categoryService } from "../../api/services";
 import type { CategoryData } from "../../api/types";
 import AdminLayout from "../../components/admin/AdminLayout";
 import AdminHeader from "../../components/admin/AdminHeader";
+import DeleteConfirmationModal from "../../components/DeleteConfirmationModal";
+import { categoryImages } from "../../components/CategoryImages";
 import GeneralSettings from "../../components/admin/AdminSettings/GeneralSettings";
 import MemberManagement from "../../components/admin/AdminSettings/MemberManagement";
 import RulesSettings from "../../components/admin/AdminSettings/RulesSettings";
 import { AdminPageProvider } from "../../contexts/AdminPageContext";
 import institutionAdminService, {
   type AcademicDepartment,
+  type College,
   type RepresentativeBody,
   type RepresentativePermissions,
   type RepresentativeProfile,
@@ -29,11 +31,15 @@ type WorkspaceTab =
   | "departments"
   | "bodies"
   | "representatives"
-  | "categories"
-  | "context"
   | "organization"
   | "members"
   | "rules";
+
+type PendingDelete =
+  | { kind: "category"; id: number }
+  | { kind: "college"; id: number }
+  | { kind: "department"; id: number }
+  | { kind: "body"; id: number };
 
 const initialPermissions: RepresentativePermissions = {
   canRespond: false,
@@ -61,6 +67,7 @@ const InstitutionWorkspace = () => {
     isRepresentativeManager ? "representatives" : "departments",
   );
   const [departments, setDepartments] = useState<AcademicDepartment[]>([]);
+  const [colleges, setColleges] = useState<College[]>([]);
   const [bodies, setBodies] = useState<RepresentativeBody[]>([]);
   const [representatives, setRepresentatives] = useState<RepresentativeProfile[]>([]);
   const [categories, setCategories] = useState<CategoryData[]>([]);
@@ -74,12 +81,16 @@ const InstitutionWorkspace = () => {
 
   // Modal open states
   const [isAddingDepartment, setIsAddingDepartment] = useState(false);
+  const [isAddingCollege, setIsAddingCollege] = useState(false);
   const [isAddingBody, setIsAddingBody] = useState(false);
   const [isAssigningRep, setIsAssigningRep] = useState(false);
 
   // Form states
   const [departmentName, setDepartmentName] = useState("");
   const [departmentCode, setDepartmentCode] = useState("");
+  const [departmentCollegeId, setDepartmentCollegeId] = useState("");
+  const [collegeName, setCollegeName] = useState("");
+  const [collegeCode, setCollegeCode] = useState("");
   const [bodyName, setBodyName] = useState("");
   const [bodyDepartmentId, setBodyDepartmentId] = useState("");
   const [bodyDescription, setBodyDescription] = useState("");
@@ -96,6 +107,7 @@ const InstitutionWorkspace = () => {
   const [categoryName, setCategoryName] = useState("");
   const [editingCategoryId, setEditingCategoryId] = useState<number | null>(null);
   const [editingCategoryName, setEditingCategoryName] = useState("");
+  const [pendingDelete, setPendingDelete] = useState<PendingDelete | null>(null);
 
   const [hallOptions, setHallOptions] = useState<string[]>([]);
   const [levelOptions, setLevelOptions] = useState<number[]>([]);
@@ -109,15 +121,17 @@ const InstitutionWorkspace = () => {
       if (!organizationId) {
         throw new Error("Your institution context is unavailable.");
       }
-      const [departmentList, bodyList, representativeList, categoryList, contextOptions] =
+      const [departmentList, collegeList, bodyList, representativeList, categoryList, contextOptions] =
         await Promise.all([
           institutionAdminService.getDepartments(),
+          institutionAdminService.getColleges(),
           institutionAdminService.getBodies(),
           institutionAdminService.getRepresentatives(),
           categoryService.getAll(),
           institutionAdminService.getContextOptions(organizationId),
         ]);
       setDepartments(departmentList);
+      setColleges(collegeList);
       setBodies(bodyList);
       setRepresentatives(representativeList);
       setCategories(categoryList);
@@ -186,6 +200,95 @@ const InstitutionWorkspace = () => {
     }
   };
 
+  const saveCategoryChange = async (
+    action: () => Promise<CategoryData>,
+    applyChange: (category: CategoryData) => void,
+    message: string,
+  ): Promise<boolean> => {
+    setSaving(true);
+    setError(null);
+    setNotice(null);
+    try {
+      const category = await action();
+      applyChange(category);
+      useCategoriesStore.getState().upsertCategory({
+        id: category.id,
+        label: category.name,
+        labelIcon: categoryImages[category.name] || categoryImages.General,
+      });
+      useCategoriesStore.getState().invalidateCache();
+      updateNotice(message);
+      return true;
+    } catch (saveError) {
+      console.error("Category management update failed:", saveError);
+      const responseData = (
+        saveError as { response?: { data?: { error?: string; message?: string } } }
+      )?.response?.data;
+      setError(
+        responseData?.error ||
+          responseData?.message ||
+          "We couldn't save this category change. Please check the details and try again.",
+      );
+      return false;
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!pendingDelete) return;
+    const item = pendingDelete;
+    setSaving(true);
+    setError(null);
+    setNotice(null);
+    try {
+      if (item.kind === "category") {
+        await categoryService.remove(item.id);
+        setCategories((current) => current.filter((category) => category.id !== item.id));
+        useCategoriesStore.getState().removeCategory(item.id);
+        useCategoriesStore.getState().invalidateCache();
+        updateNotice("Category deleted successfully.");
+      } else if (item.kind === "college") {
+        await institutionAdminService.removeCollege(item.id);
+        setColleges((current) => current.filter((college) => college.id !== item.id));
+        setDepartments((current) =>
+          current.map((department) =>
+            department.collegeId === item.id
+              ? { ...department, collegeId: null, college: null }
+              : department,
+          ),
+        );
+        updateNotice("College deleted successfully. Its departments are now ungrouped.");
+      } else if (item.kind === "department") {
+        await institutionAdminService.removeDepartment(item.id);
+        setDepartments((current) => current.filter((department) => department.id !== item.id));
+        updateNotice("Department deleted successfully.");
+      } else {
+        await institutionAdminService.removeBody(item.id);
+        setBodies((current) => current.filter((body) => body.id !== item.id));
+        if (selectedBody?.id === item.id) setSelectedBody(null);
+        setRepresentatives((current) =>
+          current.filter((representative) => representative.body?.id !== item.id),
+        );
+        updateNotice("Representative body deleted successfully.");
+      }
+      setPendingDelete(null);
+    } catch (deleteError) {
+      console.error("Institution management delete failed:", deleteError);
+      const responseData = (
+        deleteError as { response?: { data?: { error?: string; message?: string } } }
+      )?.response?.data;
+      setError(
+        responseData?.error ||
+          responseData?.message ||
+          "We couldn't delete this item. Please try again.",
+      );
+      setPendingDelete(null);
+    } finally {
+      setSaving(false);
+    }
+  };
+
   const handleCreateDepartment = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     void runSave(
@@ -193,13 +296,32 @@ const InstitutionWorkspace = () => {
         institutionAdminService.createDepartment({
           name: departmentName.trim(),
           code: departmentCode.trim(),
+          ...(departmentCollegeId ? { collegeId: Number(departmentCollegeId) } : {}),
         }),
       "Department added successfully.",
     ).then((saved) => {
       if (!saved) return;
       setDepartmentName("");
       setDepartmentCode("");
+      setDepartmentCollegeId("");
       setIsAddingDepartment(false);
+    });
+  };
+
+  const handleCreateCollege = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    void runSave(
+      () =>
+        institutionAdminService.createCollege({
+          name: collegeName.trim(),
+          code: collegeCode.trim(),
+        }),
+      "College added successfully.",
+    ).then((saved) => {
+      if (!saved) return;
+      setCollegeName("");
+      setCollegeCode("");
+      setIsAddingCollege(false);
     });
   };
 
@@ -226,18 +348,31 @@ const InstitutionWorkspace = () => {
     event.preventDefault();
     const name = categoryName.trim();
     if (!name) return;
-    void runSave(() => categoryService.create(name), "Category added successfully.").then(
-      (saved) => {
-        if (saved) setCategoryName("");
-      },
-    );
+    void saveCategoryChange(
+      () => categoryService.create(name),
+      (category) =>
+        setCategories((current) =>
+          current.some((existing) => existing.id === category.id)
+            ? current
+            : [...current, category],
+        ),
+      "Category added successfully.",
+    ).then((saved) => {
+      if (saved) setCategoryName("");
+    });
   };
 
   const handleRenameCategory = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (editingCategoryId === null || !editingCategoryName.trim()) return;
-    void runSave(
+    void saveCategoryChange(
       () => categoryService.updateName(editingCategoryId, editingCategoryName.trim()),
+      (updated) =>
+        setCategories((current) =>
+          current.map((category) =>
+            category.id === updated.id ? { ...category, ...updated } : category,
+          ),
+        ),
       "Category renamed successfully.",
     ).then((saved) => {
       if (saved) {
@@ -386,7 +521,7 @@ const InstitutionWorkspace = () => {
                     className={tabClass("departments")}
                   >
                     <Building2 className="w-4 h-4 shrink-0" />
-                    Academic Units
+                    Campus Setup
                   </button>
                   <button
                     role="tab"
@@ -396,24 +531,6 @@ const InstitutionWorkspace = () => {
                   >
                     <Users className="w-4 h-4 shrink-0" />
                     Bodies & Committees
-                  </button>
-                  <button
-                    role="tab"
-                    aria-selected={activeTab === "categories"}
-                    onClick={() => setActiveTab("categories")}
-                    className={tabClass("categories")}
-                  >
-                    <Layers className="w-4 h-4 shrink-0" />
-                    Ping Categories
-                  </button>
-                  <button
-                    role="tab"
-                    aria-selected={activeTab === "context"}
-                    onClick={() => setActiveTab("context")}
-                    className={tabClass("context")}
-                  >
-                    <MapPin className="w-4 h-4 shrink-0" />
-                    Ping Context Choices
                   </button>
                 </>
               )}
@@ -514,10 +631,10 @@ const InstitutionWorkspace = () => {
                     <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                       <div>
                         <h2 className="font-poppins font-semibold text-[18px] text-[#212121]">
-                          Academic Units (Departments)
+                          Campus Setup
                         </h2>
                         <p className="font-poppins text-[12px] text-[#8b8e8d] mt-1">
-                          Configure academic departments on your campus so students can tag their issues accurately.
+                          Manage colleges, departments, Ping categories, and context choices for your institution.
                         </p>
                       </div>
                       <button
@@ -530,9 +647,80 @@ const InstitutionWorkspace = () => {
                     </div>
 
                     <div className="rounded-[20px] border border-[#ffd7a8] bg-white p-6 shadow-sm">
+                      <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                        <div>
+                          <h3 className="font-poppins font-semibold text-[16px] text-[#212121]">
+                            Colleges
+                          </h3>
+                          <p className="mt-1 font-poppins text-xs text-[#8b8e8d]">
+                            Create colleges and assign departments to keep academic units organized.
+                          </p>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => setIsAddingCollege(true)}
+                          className={primaryBtnClass}
+                        >
+                          + Add College
+                        </button>
+                      </div>
+                      {colleges.length ? (
+                        <div className="overflow-x-auto">
+                          <table className="w-full min-w-[520px] border-collapse text-left font-['Inter',sans-serif] text-sm">
+                            <thead>
+                              <tr className="border-b border-[#ffd7a8]/50 text-[#8b8e8d] font-poppins text-xs">
+                                <th className="pb-3 pr-4 font-semibold uppercase tracking-wider">College Name</th>
+                                <th className="pb-3 pr-4 font-semibold uppercase tracking-wider">Code</th>
+                                <th className="pb-3 pr-4 text-right font-semibold uppercase tracking-wider">Departments</th>
+                                <th className="pb-3 text-right font-semibold uppercase tracking-wider">Actions</th>
+                              </tr>
+                            </thead>
+                            <tbody className="divide-y divide-[#ffd7a8]/30">
+                              {colleges.map((college) => (
+                                <tr key={college.id} className="transition-colors hover:bg-[#FEF5EA]/40">
+                                  <td className="py-3.5 pr-4 font-medium text-[#212121]">{college.name}</td>
+                                  <td className="py-3.5 pr-4">
+                                    <span className="inline-block rounded-md bg-[#FEF5EA] px-2.5 py-1 text-xs font-semibold text-[#F49B31]">
+                                      {college.code}
+                                    </span>
+                                  </td>
+                                  <td className="py-3.5 pr-4 text-right font-semibold text-[#454545]">
+                                    {departments.filter((department) => department.collegeId === college.id).length}
+                                  </td>
+                                  <td className="py-3.5 text-right">
+                                    <button
+                                      type="button"
+                                      aria-label={`Delete ${college.name}`}
+                                      onClick={() => setPendingDelete({ kind: "college", id: college.id })}
+                                      className="rounded-full p-2 text-red-600 hover:bg-red-50"
+                                    >
+                                      <Trash2 size={16} />
+                                    </button>
+                                  </td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                      ) : (
+                        <div className="rounded-xl bg-[#FEF5EA] p-6 text-center">
+                          <p className="font-poppins text-sm text-[#75420B]">No colleges added yet.</p>
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="rounded-[20px] border border-[#ffd7a8] bg-white p-6 shadow-sm">
+                      <div className="mb-4">
+                        <h3 className="font-poppins font-semibold text-[16px] text-[#212121]">
+                          Departments
+                        </h3>
+                        <p className="mt-1 font-poppins text-xs text-[#8b8e8d]">
+                          Add departments and optionally place each under its college.
+                        </p>
+                      </div>
                       {departments.length ? (
                         <div className="overflow-x-auto">
-                          <table className="w-full min-w-[500px] border-collapse text-left font-['Inter',sans-serif] text-sm">
+                          <table className="w-full min-w-[720px] border-collapse text-left font-['Inter',sans-serif] text-sm">
                             <thead>
                               <tr className="border-b border-[#ffd7a8]/50 text-[#8b8e8d] font-poppins text-xs">
                                 <th className="pb-3 pr-4 font-semibold uppercase tracking-wider">
@@ -541,8 +729,14 @@ const InstitutionWorkspace = () => {
                                 <th className="pb-3 pr-4 font-semibold uppercase tracking-wider">
                                   Code
                                 </th>
+                                <th className="pb-3 pr-4 font-semibold uppercase tracking-wider">
+                                  College
+                                </th>
                                 <th className="pb-3 text-right font-semibold uppercase tracking-wider">
                                   Active Pings
+                                </th>
+                                <th className="pb-3 text-right font-semibold uppercase tracking-wider">
+                                  Actions
                                 </th>
                               </tr>
                             </thead>
@@ -560,8 +754,21 @@ const InstitutionWorkspace = () => {
                                       {dept.code}
                                     </span>
                                   </td>
+                                  <td className="py-3.5 pr-4 text-[#454545]">
+                                    {dept.college?.code ?? "—"}
+                                  </td>
                                   <td className="py-3.5 text-right font-semibold text-[#454545]">
                                     {dept._count?.pings ?? 0}
+                                  </td>
+                                  <td className="py-3.5 text-right">
+                                    <button
+                                      type="button"
+                                      aria-label={`Delete ${dept.name}`}
+                                      onClick={() => setPendingDelete({ kind: "department", id: dept.id })}
+                                      className="rounded-full p-2 text-red-600 hover:bg-red-50"
+                                    >
+                                      <Trash2 size={16} />
+                                    </button>
                                   </td>
                                 </tr>
                               ))}
@@ -619,8 +826,21 @@ const InstitutionWorkspace = () => {
                                     {body.name}
                                   </h3>
                                 </div>
-                                <div className="rounded-full bg-[#FEF5EA] p-2 text-[#F49B31] group-hover:bg-[#F49B31] group-hover:text-white transition-all">
-                                  <ChevronRight size={16} />
+                                <div className="flex items-center gap-1">
+                                  <button
+                                    type="button"
+                                    aria-label={`Delete ${body.name}`}
+                                    onClick={(event) => {
+                                      event.stopPropagation();
+                                      setPendingDelete({ kind: "body", id: body.id });
+                                    }}
+                                    className="rounded-full p-2 text-red-600 hover:bg-red-50"
+                                  >
+                                    <Trash2 size={16} />
+                                  </button>
+                                  <div className="rounded-full bg-[#FEF5EA] p-2 text-[#F49B31] group-hover:bg-[#F49B31] group-hover:text-white transition-all">
+                                    <ChevronRight size={16} />
+                                  </div>
                                 </div>
                               </div>
 
@@ -784,7 +1004,7 @@ const InstitutionWorkspace = () => {
                 )}
 
                 {/* ────────── TAB: PING CATEGORIES ────────── */}
-                {activeTab === "categories" && (
+                {activeTab === "departments" && (
                   <section className="flex flex-col gap-6 w-full animate-fade-in">
                     <div>
                       <h2 className="font-poppins font-semibold text-[18px] text-[#212121]">
@@ -839,16 +1059,26 @@ const InstitutionWorkspace = () => {
                                     <span className="font-poppins font-medium text-sm text-[#212121]">
                                       {category.name}
                                     </span>
-                                    <button
-                                      type="button"
-                                      onClick={() => {
-                                        setEditingCategoryId(category.id);
-                                        setEditingCategoryName(category.name);
-                                      }}
-                                      className="rounded-full border border-[#ffd7a8] px-3 py-1 text-xs font-semibold text-[#75420B] hover:bg-[#FEF5EA]"
-                                    >
-                                      Rename
-                                    </button>
+                                    <div className="flex shrink-0 items-center gap-1">
+                                      <button
+                                        type="button"
+                                        onClick={() => {
+                                          setEditingCategoryId(category.id);
+                                          setEditingCategoryName(category.name);
+                                        }}
+                                        className="rounded-full border border-[#ffd7a8] px-3 py-1 text-xs font-semibold text-[#75420B] hover:bg-[#FEF5EA]"
+                                      >
+                                        Rename
+                                      </button>
+                                      <button
+                                        type="button"
+                                        aria-label={`Delete ${category.name}`}
+                                        onClick={() => setPendingDelete({ kind: "category", id: category.id })}
+                                        className="rounded-full p-2 text-red-600 hover:bg-red-50"
+                                      >
+                                        <Trash2 size={15} />
+                                      </button>
+                                    </div>
                                   </>
                                 )}
                               </li>
@@ -889,7 +1119,7 @@ const InstitutionWorkspace = () => {
                 )}
 
                 {/* ────────── TAB: PING CONTEXT CHOICES (HALLS & LEVELS) ────────── */}
-                {activeTab === "context" && (
+                {activeTab === "departments" && (
                   <form
                     onSubmit={handleSaveContextOptions}
                     className="flex flex-col gap-6 w-full animate-fade-in"
@@ -1215,7 +1445,7 @@ const InstitutionWorkspace = () => {
               onClick={(e) => e.stopPropagation()}
             >
               <div className="flex items-center justify-between border-b border-[#ffd7a8]/50 pb-3">
-                <h3 className="font-poppins font-bold text-lg text-[#212121]">Add Academic Unit</h3>
+                <h3 className="font-poppins font-bold text-lg text-[#212121]">Add Department</h3>
                 <button
                   type="button"
                   onClick={() => setIsAddingDepartment(false)}
@@ -1248,6 +1478,21 @@ const InstitutionWorkspace = () => {
                     className={inputClass}
                   />
                 </label>
+                <label className="block font-poppins text-xs font-medium text-[#454545]">
+                  College (optional)
+                  <select
+                    value={departmentCollegeId}
+                    onChange={(e) => setDepartmentCollegeId(e.target.value)}
+                    className={inputClass}
+                  >
+                    <option value="">No college</option>
+                    {colleges.map((college) => (
+                      <option key={college.id} value={college.id}>
+                        {college.name} ({college.code})
+                      </option>
+                    ))}
+                  </select>
+                </label>
                 <div className="mt-2 flex justify-end gap-2">
                   <button
                     type="button"
@@ -1258,6 +1503,67 @@ const InstitutionWorkspace = () => {
                   </button>
                   <button type="submit" disabled={saving} className={primaryBtnClass}>
                     {saving ? "Saving…" : "Add Department"}
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
+
+        {/* ────────── MODAL: ADD COLLEGE ────────── */}
+        {isAddingCollege && (
+          <div
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4 animate-fade-in"
+            onClick={() => setIsAddingCollege(false)}
+          >
+            <div
+              className="relative w-full max-w-md rounded-[24px] border border-[#ffd7a8] bg-white p-6 sm:p-8 shadow-xl"
+              onClick={(event) => event.stopPropagation()}
+            >
+              <div className="flex items-center justify-between border-b border-[#ffd7a8]/50 pb-3">
+                <h3 className="font-poppins font-bold text-lg text-[#212121]">Add College</h3>
+                <button
+                  type="button"
+                  onClick={() => setIsAddingCollege(false)}
+                  className="rounded-full p-1 text-black/40 hover:bg-[#FEF5EA]"
+                  aria-label="Close add college dialog"
+                >
+                  <X size={18} />
+                </button>
+              </div>
+              <form onSubmit={handleCreateCollege} className="mt-4 flex flex-col gap-4">
+                <label className="block font-poppins text-xs font-medium text-[#454545]">
+                  College Name
+                  <input
+                    required
+                    maxLength={160}
+                    value={collegeName}
+                    onChange={(event) => setCollegeName(event.target.value)}
+                    placeholder="e.g. College of Engineering"
+                    className={inputClass}
+                  />
+                </label>
+                <label className="block font-poppins text-xs font-medium text-[#454545]">
+                  Short Code
+                  <input
+                    required
+                    maxLength={32}
+                    value={collegeCode}
+                    onChange={(event) => setCollegeCode(event.target.value)}
+                    placeholder="e.g. COE"
+                    className={inputClass}
+                  />
+                </label>
+                <div className="mt-2 flex justify-end gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setIsAddingCollege(false)}
+                    className="rounded-full border border-black/15 px-5 py-2 font-poppins text-sm font-semibold"
+                  >
+                    Cancel
+                  </button>
+                  <button type="submit" disabled={saving} className={primaryBtnClass}>
+                    {saving ? "Saving…" : "Add College"}
                   </button>
                 </div>
               </form>
@@ -1567,6 +1873,22 @@ const InstitutionWorkspace = () => {
               </form>
             </div>
           </div>
+        )}
+        {pendingDelete && (
+          <DeleteConfirmationModal
+            itemType={
+              pendingDelete.kind === "category"
+                ? "Category"
+                : pendingDelete.kind === "college"
+                  ? "College"
+                  : pendingDelete.kind === "department"
+                    ? "Department"
+                    : "Body"
+            }
+            isLoading={saving}
+            onCancel={() => setPendingDelete(null)}
+            onConfirm={() => void handleConfirmDelete()}
+          />
         )}
       </div>
     </AdminPageProvider>

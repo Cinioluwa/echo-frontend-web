@@ -10,7 +10,7 @@ interface DeleteConfirmationModalProps {
     onConfirm: () => void;
     onCancel: () => void;
     isLoading?: boolean;
-    itemType?: "Ping" | "Wave" | "Comment";
+    itemType?: "Ping" | "Wave" | "Comment" | "Category" | "College" | "Department" | "Body";
 }
 
 const DeleteConfirmationModal = ({

@@ -88,10 +88,10 @@ const AdminPingCard = ({ pings, onUpdate }: AdminPingCardProps) => {
         `https://ui-avatars.com/api/?name=${pings.author.firstName}+${pings.author.lastName}&background=f49b31&color=fff&size=80`
       : `https://ui-avatars.com/api/?name=A&background=cacaca&color=fff&size=80`;
 
-  const categoryIcon =
-    pings.category?.name
-      ? (categoryImages as Record<string, string>)[pings.category.name]
-      : null;
+  const categoryIcon = pings.category?.name
+    ? (categoryImages as Record<string, string>)[pings.category.name] ||
+      (categoryImages as Record<string, string>).General
+    : null;
 
   const waveCount = pings._count?.waves ?? 0;
   const commentCount = pings._count?.comments ?? 0;

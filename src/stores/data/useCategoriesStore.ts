@@ -30,6 +30,8 @@ interface CategoriesState {
 
   // Actions
   fetchCategories: (iconMapper?: (name: string) => string) => Promise<void>;
+  upsertCategory: (category: CategoryWithIcon) => void;
+  removeCategory: (id: number) => void;
   invalidateCache: () => void;
   reset: () => void;
 }
@@ -109,6 +111,25 @@ export const useCategoriesStore = create<CategoriesState>()(
             state.isLoading = false;
           });
         }
+      },
+
+      upsertCategory: (category) => {
+        set((state) => {
+          const index = state.categories.findIndex((item) => item.id === category.id);
+          if (index === -1) {
+            state.categories.push(category);
+          } else {
+            state.categories[index] = category;
+          }
+          state.categoriesById[category.id] = category;
+        });
+      },
+
+      removeCategory: (id) => {
+        set((state) => {
+          state.categories = state.categories.filter((category) => category.id !== id);
+          delete state.categoriesById[id];
+        });
       },
 
       invalidateCache: () => {
