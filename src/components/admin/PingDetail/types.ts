@@ -36,6 +36,7 @@ export interface PingDetailPermissions {
     canModerateWaves: boolean;
     canUpdateWaveProgress: boolean;
     canUrgeResolve: boolean;
+    canAssign?: boolean;
 }
 
 export type WaveActionStatus = "APPROVED" | "REJECTED" | "UNDER_REVIEW" | "IN_PROGRESS" | "COMPLETED";
