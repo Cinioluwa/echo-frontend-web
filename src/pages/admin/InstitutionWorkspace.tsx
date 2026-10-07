@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   Building2,
   ChevronRight,
+  Plus,
   Settings,
   Sliders,
   Trash2,
@@ -40,6 +41,12 @@ type PendingDelete =
   | { kind: "college"; id: number }
   | { kind: "department"; id: number }
   | { kind: "body"; id: number };
+
+type DepartmentDraft = { name: string; code: string; collegeId: string };
+type CollegeDraft = { name: string; code: string };
+
+const createDepartmentDraft = (): DepartmentDraft => ({ name: "", code: "", collegeId: "" });
+const createCollegeDraft = (): CollegeDraft => ({ name: "", code: "" });
 
 const initialPermissions: RepresentativePermissions = {
   canRespond: false,
@@ -82,15 +89,17 @@ const InstitutionWorkspace = () => {
   // Modal open states
   const [isAddingDepartment, setIsAddingDepartment] = useState(false);
   const [isAddingCollege, setIsAddingCollege] = useState(false);
+  const [isAddingCategory, setIsAddingCategory] = useState(false);
+  const [isAddingHalls, setIsAddingHalls] = useState(false);
+  const [isAddingLevels, setIsAddingLevels] = useState(false);
   const [isAddingBody, setIsAddingBody] = useState(false);
   const [isAssigningRep, setIsAssigningRep] = useState(false);
 
   // Form states
-  const [departmentName, setDepartmentName] = useState("");
-  const [departmentCode, setDepartmentCode] = useState("");
-  const [departmentCollegeId, setDepartmentCollegeId] = useState("");
-  const [collegeName, setCollegeName] = useState("");
-  const [collegeCode, setCollegeCode] = useState("");
+  const [departmentDrafts, setDepartmentDrafts] = useState<DepartmentDraft[]>([
+    createDepartmentDraft(),
+  ]);
+  const [collegeDrafts, setCollegeDrafts] = useState<CollegeDraft[]>([createCollegeDraft()]);
   const [bodyName, setBodyName] = useState("");
   const [bodyDepartmentId, setBodyDepartmentId] = useState("");
   const [bodyDescription, setBodyDescription] = useState("");
@@ -104,15 +113,15 @@ const InstitutionWorkspace = () => {
   const [selectedCategoryIds, setSelectedCategoryIds] = useState<number[]>([]);
   const [permissions, setPermissions] = useState(initialPermissions);
 
-  const [categoryName, setCategoryName] = useState("");
+  const [categoryDrafts, setCategoryDrafts] = useState<string[]>([""]);
   const [editingCategoryId, setEditingCategoryId] = useState<number | null>(null);
   const [editingCategoryName, setEditingCategoryName] = useState("");
   const [pendingDelete, setPendingDelete] = useState<PendingDelete | null>(null);
 
   const [hallOptions, setHallOptions] = useState<string[]>([]);
   const [levelOptions, setLevelOptions] = useState<number[]>([]);
-  const [hallDraft, setHallDraft] = useState("");
-  const [levelDraft, setLevelDraft] = useState("");
+  const [hallDrafts, setHallDrafts] = useState<string[]>([""]);
+  const [levelDrafts, setLevelDrafts] = useState<string[]>([""]);
 
   const refresh = useCallback(async (): Promise<boolean> => {
     setLoading(true);
@@ -195,6 +204,52 @@ const InstitutionWorkspace = () => {
           "We couldn't save this change. Please check the details and try again.",
       );
       return false;
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const runBatchSave = async <T,>(
+    actions: Array<() => Promise<T>>,
+    applyCreated: (created: T[]) => void,
+    itemName: string,
+    pluralItemName: string,
+  ): Promise<number> => {
+    setSaving(true);
+    setError(null);
+    setNotice(null);
+    const created: T[] = [];
+    let failure: unknown;
+    try {
+      for (const action of actions) {
+        try {
+          created.push(await action());
+        } catch (saveError) {
+          failure = saveError;
+          break;
+        }
+      }
+
+      if (created.length) applyCreated(created);
+      if (created.length === actions.length) {
+        updateNotice(
+          `${created.length} ${created.length === 1 ? itemName : pluralItemName} added successfully.`,
+        );
+      } else {
+        const responseData = (
+          failure as { response?: { data?: { error?: string; message?: string } } }
+        )?.response?.data;
+        const reason =
+          responseData?.error ||
+          responseData?.message ||
+          (failure instanceof Error ? failure.message : "Please check the values and try again.");
+        setError(
+          created.length
+            ? `Added ${created.length} of ${actions.length} ${pluralItemName}. ${reason}`
+            : reason,
+        );
+      }
+      return created.length;
     } finally {
       setSaving(false);
     }
@@ -291,36 +346,73 @@ const InstitutionWorkspace = () => {
 
   const handleCreateDepartment = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    void runSave(
-      () =>
-        institutionAdminService.createDepartment({
-          name: departmentName.trim(),
-          code: departmentCode.trim(),
-          ...(departmentCollegeId ? { collegeId: Number(departmentCollegeId) } : {}),
-        }),
-      "Department added successfully.",
-    ).then((saved) => {
-      if (!saved) return;
-      setDepartmentName("");
-      setDepartmentCode("");
-      setDepartmentCollegeId("");
+    const drafts = departmentDrafts.map((draft) => ({
+      ...draft,
+      name: draft.name.trim(),
+      code: draft.code.trim(),
+    }));
+    if (drafts.some((draft) => !draft.name || !draft.code)) {
+      setError("Enter a name and short code for each department.");
+      return;
+    }
+    const departmentCodes = drafts.map((draft) => draft.code.toUpperCase());
+    if (
+      new Set(departmentCodes).size !== departmentCodes.length ||
+      departmentCodes.some((code) => departments.some((department) => department.code.toUpperCase() === code))
+    ) {
+      setError("Department short codes must be unique.");
+      return;
+    }
+    void runBatchSave(
+      drafts.map(
+        (draft) => () =>
+          institutionAdminService.createDepartment({
+            name: draft.name,
+            code: draft.code,
+            ...(draft.collegeId ? { collegeId: Number(draft.collegeId) } : {}),
+          }),
+      ),
+      (created) => setDepartments((current) => [...current, ...created]),
+      "department",
+      "departments",
+    ).then((createdCount) => {
+      setDepartmentDrafts(
+        createdCount < drafts.length ? drafts.slice(createdCount) : [createDepartmentDraft()],
+      );
       setIsAddingDepartment(false);
     });
   };
 
   const handleCreateCollege = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    void runSave(
-      () =>
-        institutionAdminService.createCollege({
-          name: collegeName.trim(),
-          code: collegeCode.trim(),
-        }),
-      "College added successfully.",
-    ).then((saved) => {
-      if (!saved) return;
-      setCollegeName("");
-      setCollegeCode("");
+    const drafts = collegeDrafts.map((draft) => ({
+      name: draft.name.trim(),
+      code: draft.code.trim(),
+    }));
+    if (drafts.some((draft) => !draft.name || !draft.code)) {
+      setError("Enter a name and short code for each college.");
+      return;
+    }
+    const collegeCodes = drafts.map((draft) => draft.code.toUpperCase());
+    const collegeNames = drafts.map((draft) => draft.name.toLowerCase());
+    if (
+      new Set(collegeCodes).size !== collegeCodes.length ||
+      collegeCodes.some((code) => colleges.some((college) => college.code.toUpperCase() === code)) ||
+      new Set(collegeNames).size !== collegeNames.length ||
+      collegeNames.some((name) => colleges.some((college) => college.name.toLowerCase() === name))
+    ) {
+      setError("College names and short codes must be unique.");
+      return;
+    }
+    void runBatchSave(
+      drafts.map((draft) => () => institutionAdminService.createCollege(draft)),
+      (created) => setColleges((current) => [...current, ...created]),
+      "college",
+      "colleges",
+    ).then((createdCount) => {
+      setCollegeDrafts(
+        createdCount < drafts.length ? drafts.slice(createdCount) : [createCollegeDraft()],
+      );
       setIsAddingCollege(false);
     });
   };
@@ -346,19 +438,38 @@ const InstitutionWorkspace = () => {
 
   const handleCreateCategory = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const name = categoryName.trim();
-    if (!name) return;
-    void saveCategoryChange(
-      () => categoryService.create(name),
-      (category) =>
-        setCategories((current) =>
-          current.some((existing) => existing.id === category.id)
-            ? current
-            : [...current, category],
-        ),
-      "Category added successfully.",
-    ).then((saved) => {
-      if (saved) setCategoryName("");
+    const drafts = categoryDrafts.map((name) => name.trim());
+    if (drafts.some((name) => !name)) {
+      setError("Enter a name for each category.");
+      return;
+    }
+    const categoryNames = drafts.map((name) => name.toLowerCase());
+    if (
+      new Set(categoryNames).size !== categoryNames.length ||
+      categoryNames.some((name) => categories.some((category) => category.name.toLowerCase() === name))
+    ) {
+      setError("Category names must be unique.");
+      return;
+    }
+    void runBatchSave(
+      drafts.map((name) => () => categoryService.create(name)),
+      (created) => {
+        setCategories((current) => [...current, ...created]);
+        const store = useCategoriesStore.getState();
+        created.forEach((category) =>
+          store.upsertCategory({
+            id: category.id,
+            label: category.name,
+            labelIcon: categoryImages[category.name] || categoryImages.General,
+          }),
+        );
+        store.invalidateCache();
+      },
+      "category",
+      "categories",
+    ).then((createdCount) => {
+      setCategoryDrafts(createdCount < drafts.length ? drafts.slice(createdCount) : [""]);
+      setIsAddingCategory(false);
     });
   };
 
@@ -392,6 +503,68 @@ const InstitutionWorkspace = () => {
         }),
       "Ping context choices saved successfully.",
     );
+  };
+
+  const handleCreateHalls = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const drafts = hallDrafts.map((hall) => hall.trim());
+    if (drafts.some((hall) => !hall)) {
+      setError("Enter a name for each hall.");
+      return;
+    }
+    if (new Set(drafts.map((hall) => hall.toLowerCase())).size !== drafts.length) {
+      setError("Each hall name must be unique.");
+      return;
+    }
+    if (
+      drafts.some((draft) =>
+        hallOptions.some((hall) => hall.toLowerCase() === draft.toLowerCase()),
+      )
+    ) {
+      setError("One or more hall names are already configured.");
+      return;
+    }
+    const nextHalls = [...hallOptions, ...drafts];
+    void runSave(
+      () =>
+        institutionAdminService.updateContextOptions({
+          halls: nextHalls,
+          levels: levelOptions,
+        }),
+      "Hall options added successfully.",
+    ).then((saved) => {
+      if (!saved) return;
+      setHallOptions(nextHalls);
+      setHallDrafts([""]);
+      setIsAddingHalls(false);
+    });
+  };
+
+  const handleCreateLevels = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const drafts = levelDrafts.map(Number);
+    if (drafts.some((level) => !Number.isInteger(level) || level < 1)) {
+      setError("Enter a valid positive number for each academic level.");
+      return;
+    }
+    if (new Set(drafts).size !== drafts.length || drafts.some((level) => levelOptions.includes(level))) {
+      setError("Each academic level must be unique.");
+      return;
+    }
+    const nextLevels = [...levelOptions, ...drafts].sort((a, b) => a - b);
+    void runSave(
+      () =>
+        institutionAdminService.updateContextOptions({
+          halls: hallOptions,
+          levels: nextLevels,
+        }),
+      "Academic levels added successfully.",
+    ).then((saved) => {
+      if (!saved) return;
+      setLevelOptions(nextLevels);
+      setLevelDrafts([""]);
+      setIsAddingLevels(false);
+    });
   };
 
   const selectedBodyObj = useMemo(
@@ -637,13 +810,6 @@ const InstitutionWorkspace = () => {
                           Create colleges and organize their departments for your institution.
                         </p>
                       </div>
-                      <button
-                        type="button"
-                        onClick={() => setIsAddingDepartment(true)}
-                        className={primaryBtnClass}
-                      >
-                        + Add Department
-                      </button>
                     </div>
 
                     <div className="rounded-[20px] border border-[#ffd7a8] bg-white p-6 shadow-sm">
@@ -658,7 +824,10 @@ const InstitutionWorkspace = () => {
                         </div>
                         <button
                           type="button"
-                          onClick={() => setIsAddingCollege(true)}
+                          onClick={() => {
+                            setError(null);
+                            setIsAddingCollege(true);
+                          }}
                           className={primaryBtnClass}
                         >
                           + Add College
@@ -710,13 +879,25 @@ const InstitutionWorkspace = () => {
                     </div>
 
                     <div className="rounded-[20px] border border-[#ffd7a8] bg-white p-6 shadow-sm">
-                      <div className="mb-4">
-                        <h3 className="font-poppins font-semibold text-[16px] text-[#212121]">
-                          Departments
-                        </h3>
-                        <p className="mt-1 font-poppins text-xs text-[#8b8e8d]">
-                          Add departments and optionally place each under its college.
-                        </p>
+                      <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                        <div>
+                          <h3 className="font-poppins font-semibold text-[16px] text-[#212121]">
+                            Departments
+                          </h3>
+                          <p className="mt-1 font-poppins text-xs text-[#8b8e8d]">
+                            Add departments and optionally place each under its college.
+                          </p>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setError(null);
+                            setIsAddingDepartment(true);
+                          }}
+                          className={primaryBtnClass}
+                        >
+                          + Add Department
+                        </button>
                       </div>
                       {departments.length ? (
                         <div className="overflow-x-auto">
@@ -1006,17 +1187,28 @@ const InstitutionWorkspace = () => {
                 {/* ────────── TAB: PING CATEGORIES ────────── */}
                 {activeTab === "departments" && (
                   <section className="flex flex-col gap-6 w-full animate-fade-in">
-                    <div>
-                      <h2 className="font-poppins font-semibold text-[18px] text-[#212121]">
-                        Ping Categories
-                      </h2>
-                      <p className="font-poppins text-[12px] text-[#8b8e8d] mt-1">
-                        Categories organize community Pings and define representative responsibilities.
-                      </p>
+                    <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+                      <div>
+                        <h2 className="font-poppins font-semibold text-[18px] text-[#212121]">
+                          Ping Categories
+                        </h2>
+                        <p className="font-poppins text-[12px] text-[#8b8e8d] mt-1">
+                          Categories organize community Pings and define representative responsibilities.
+                        </p>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setError(null);
+                          setIsAddingCategory(true);
+                        }}
+                        className={primaryBtnClass}
+                      >
+                        + Add Category
+                      </button>
                     </div>
 
-                    <div className="grid gap-6 lg:grid-cols-[1.5fr_1fr]">
-                      <div className="rounded-[20px] border border-[#ffd7a8] bg-white p-6 shadow-sm">
+                    <div className="rounded-[20px] border border-[#ffd7a8] bg-white p-6 shadow-sm">
                         {categories.length ? (
                           <ul className="grid gap-2.5 sm:grid-cols-2">
                             {categories.map((category) => (
@@ -1087,33 +1279,6 @@ const InstitutionWorkspace = () => {
                         ) : (
                           <p className="text-sm text-[#8b8e8d]">No categories available.</p>
                         )}
-                      </div>
-
-                      <div className="rounded-[20px] border border-[#ffd7a8] bg-[#FEF5EA]/40 p-6 shadow-sm h-fit">
-                        <h3 className="font-poppins font-semibold text-[#212121]">
-                          Add New Category
-                        </h3>
-                        <form onSubmit={handleCreateCategory} className="mt-4">
-                          <label className="block font-poppins text-xs font-medium text-[#454545]">
-                            Category Name
-                            <input
-                              required
-                              maxLength={100}
-                              value={categoryName}
-                              onChange={(e) => setCategoryName(e.target.value)}
-                              placeholder="e.g. Facilities, Academics"
-                              className={inputClass}
-                            />
-                          </label>
-                          <button
-                            type="submit"
-                            disabled={saving}
-                            className={`${primaryBtnClass} mt-4 w-full`}
-                          >
-                            {saving ? "Saving…" : "+ Add Category"}
-                          </button>
-                        </form>
-                      </div>
                     </div>
                   </section>
                 )}
@@ -1136,37 +1301,24 @@ const InstitutionWorkspace = () => {
                     <div className="grid gap-6 md:grid-cols-2">
                       {/* Halls Card */}
                       <div className="rounded-[20px] border border-[#ffd7a8] bg-white p-6 shadow-sm">
-                        <h3 className="font-poppins font-semibold text-[#212121]">
-                          Halls of Residence
-                        </h3>
-                        <p className="mt-1 font-['Inter',sans-serif] text-xs text-[#8b8e8d]">
-                          Add halls or residential blocks available on your campus.
-                        </p>
-                        <div className="mt-4 flex gap-2">
-                          <input
-                            aria-label="New hall of residence"
-                            maxLength={100}
-                            value={hallDraft}
-                            onChange={(e) => setHallDraft(e.target.value)}
-                            placeholder="e.g. Daniel Hall, Paul Hall"
-                            className={`${inputClass} mt-0`}
-                          />
+                        <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                          <div>
+                            <h3 className="font-poppins font-semibold text-[#212121]">
+                              Halls of Residence
+                            </h3>
+                            <p className="mt-1 font-['Inter',sans-serif] text-xs text-[#8b8e8d]">
+                              Add halls or residential blocks available on your campus.
+                            </p>
+                          </div>
                           <button
                             type="button"
-                            disabled={
-                              saving ||
-                              !hallDraft.trim() ||
-                              hallOptions.some(
-                                (h) => h.toLowerCase() === hallDraft.trim().toLowerCase(),
-                              )
-                            }
                             onClick={() => {
-                              setHallOptions((current) => [...current, hallDraft.trim()]);
-                              setHallDraft("");
+                              setError(null);
+                              setIsAddingHalls(true);
                             }}
-                            className="shrink-0 rounded-full border border-[#f49b31] bg-[#FEF5EA] px-4 py-2 font-poppins text-xs font-semibold text-[#75420B] hover:bg-[#FFC37B] disabled:opacity-50"
+                            className={primaryBtnClass}
                           >
-                            Add Hall
+                            + Add Halls
                           </button>
                         </div>
 
@@ -1199,40 +1351,24 @@ const InstitutionWorkspace = () => {
 
                       {/* Levels Card */}
                       <div className="rounded-[20px] border border-[#ffd7a8] bg-white p-6 shadow-sm">
-                        <h3 className="font-poppins font-semibold text-[#212121]">
-                          Academic Levels
-                        </h3>
-                        <p className="mt-1 font-['Inter',sans-serif] text-xs text-[#8b8e8d]">
-                          Study years available for issue tagging.
-                        </p>
-                        <div className="mt-4 flex gap-2">
-                          <input
-                            aria-label="New academic level"
-                            inputMode="numeric"
-                            value={levelDraft}
-                            onChange={(e) =>
-                              setLevelDraft(e.target.value.replace(/\D/g, "").slice(0, 4))
-                            }
-                            placeholder="e.g. 700"
-                            className={`${inputClass} mt-0`}
-                          />
+                        <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                          <div>
+                            <h3 className="font-poppins font-semibold text-[#212121]">
+                              Academic Levels
+                            </h3>
+                            <p className="mt-1 font-['Inter',sans-serif] text-xs text-[#8b8e8d]">
+                              Study years available for issue tagging.
+                            </p>
+                          </div>
                           <button
                             type="button"
-                            disabled={
-                              saving ||
-                              !levelDraft ||
-                              Number(levelDraft) < 1 ||
-                              levelOptions.includes(Number(levelDraft))
-                            }
                             onClick={() => {
-                              setLevelOptions((current) =>
-                                [...current, Number(levelDraft)].sort((a, b) => a - b),
-                              );
-                              setLevelDraft("");
+                              setError(null);
+                              setIsAddingLevels(true);
                             }}
-                            className="shrink-0 rounded-full border border-[#f49b31] bg-[#FEF5EA] px-4 py-2 font-poppins text-xs font-semibold text-[#75420B] hover:bg-[#FFC37B] disabled:opacity-50"
+                            className={primaryBtnClass}
                           >
-                            Add Level
+                            + Add Levels
                           </button>
                         </div>
 
@@ -1441,7 +1577,7 @@ const InstitutionWorkspace = () => {
             onClick={() => setIsAddingDepartment(false)}
           >
             <div
-              className="relative w-full max-w-md rounded-[24px] border border-[#ffd7a8] bg-white p-6 sm:p-8 shadow-xl"
+              className="relative w-full max-w-xl max-h-[90vh] overflow-y-auto rounded-[24px] border border-[#ffd7a8] bg-white p-6 sm:p-8 shadow-xl"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="flex items-center justify-between border-b border-[#ffd7a8]/50 pb-3">
@@ -1454,45 +1590,100 @@ const InstitutionWorkspace = () => {
                   <X size={18} />
                 </button>
               </div>
-
+              {error && <p role="alert" className="mt-3 text-sm text-red-700">{error}</p>}
               <form onSubmit={handleCreateDepartment} className="mt-4 flex flex-col gap-4">
-                <label className="block font-poppins text-xs font-medium text-[#454545]">
-                  Department Name
-                  <input
-                    required
-                    maxLength={160}
-                    value={departmentName}
-                    onChange={(e) => setDepartmentName(e.target.value)}
-                    placeholder="e.g. Electrical & Information Engineering"
-                    className={inputClass}
-                  />
-                </label>
-                <label className="block font-poppins text-xs font-medium text-[#454545]">
-                  Short Code
-                  <input
-                    required
-                    maxLength={32}
-                    value={departmentCode}
-                    onChange={(e) => setDepartmentCode(e.target.value)}
-                    placeholder="e.g. EIE"
-                    className={inputClass}
-                  />
-                </label>
-                <label className="block font-poppins text-xs font-medium text-[#454545]">
-                  College (optional)
-                  <select
-                    value={departmentCollegeId}
-                    onChange={(e) => setDepartmentCollegeId(e.target.value)}
-                    className={inputClass}
-                  >
-                    <option value="">No college</option>
-                    {colleges.map((college) => (
-                      <option key={college.id} value={college.id}>
-                        {college.name} ({college.code})
-                      </option>
-                    ))}
-                  </select>
-                </label>
+                <div className="max-h-[60vh] space-y-4 overflow-y-auto pr-1">
+                  {departmentDrafts.map((draft, index) => (
+                    <fieldset
+                      key={index}
+                      className="rounded-xl border border-[#ffd7a8]/60 bg-[#FEF5EA]/30 p-4"
+                    >
+                      <div className="mb-3 flex items-center justify-between">
+                        <legend className="font-poppins text-sm font-semibold text-[#212121]">
+                          Department {index + 1}
+                        </legend>
+                        {departmentDrafts.length > 1 && (
+                          <button
+                            type="button"
+                            aria-label={`Remove department ${index + 1}`}
+                            onClick={() =>
+                              setDepartmentDrafts((current) =>
+                                current.filter((_, draftIndex) => draftIndex !== index),
+                              )
+                            }
+                            className="rounded-full p-1.5 text-red-600 hover:bg-red-50"
+                          >
+                            <X size={16} />
+                          </button>
+                        )}
+                      </div>
+                      <label className="block font-poppins text-xs font-medium text-[#454545]">
+                        Department Name
+                        <input
+                          required
+                          maxLength={160}
+                          value={draft.name}
+                          onChange={(event) =>
+                            setDepartmentDrafts((current) =>
+                              current.map((item, draftIndex) =>
+                                draftIndex === index ? { ...item, name: event.target.value } : item,
+                              ),
+                            )
+                          }
+                          placeholder="e.g. Electrical & Information Engineering"
+                          className={inputClass}
+                        />
+                      </label>
+                      <label className="mt-3 block font-poppins text-xs font-medium text-[#454545]">
+                        Short Code
+                        <input
+                          required
+                          maxLength={32}
+                          value={draft.code}
+                          onChange={(event) =>
+                            setDepartmentDrafts((current) =>
+                              current.map((item, draftIndex) =>
+                                draftIndex === index ? { ...item, code: event.target.value } : item,
+                              ),
+                            )
+                          }
+                          placeholder="e.g. EIE"
+                          className={inputClass}
+                        />
+                      </label>
+                      <label className="mt-3 block font-poppins text-xs font-medium text-[#454545]">
+                        College (optional)
+                        <select
+                          value={draft.collegeId}
+                          onChange={(event) =>
+                            setDepartmentDrafts((current) =>
+                              current.map((item, draftIndex) =>
+                                draftIndex === index
+                                  ? { ...item, collegeId: event.target.value }
+                                  : item,
+                              ),
+                            )
+                          }
+                          className={inputClass}
+                        >
+                          <option value="">No college</option>
+                          {colleges.map((college) => (
+                            <option key={college.id} value={college.id}>
+                              {college.name} ({college.code})
+                            </option>
+                          ))}
+                        </select>
+                      </label>
+                    </fieldset>
+                  ))}
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setDepartmentDrafts((current) => [...current, createDepartmentDraft()])}
+                  className="inline-flex w-fit items-center gap-2 rounded-full border border-[#f49b31] bg-[#FEF5EA] px-4 py-2 font-poppins text-xs font-semibold text-[#75420B] hover:bg-[#FFC37B]"
+                >
+                  <Plus size={16} /> Add another department
+                </button>
                 <div className="mt-2 flex justify-end gap-2">
                   <button
                     type="button"
@@ -1502,7 +1693,7 @@ const InstitutionWorkspace = () => {
                     Cancel
                   </button>
                   <button type="submit" disabled={saving} className={primaryBtnClass}>
-                    {saving ? "Saving…" : "Add Department"}
+                    {saving ? "Saving…" : `Add ${departmentDrafts.length} Department${departmentDrafts.length === 1 ? "" : "s"}`}
                   </button>
                 </div>
               </form>
@@ -1517,11 +1708,11 @@ const InstitutionWorkspace = () => {
             onClick={() => setIsAddingCollege(false)}
           >
             <div
-              className="relative w-full max-w-md rounded-[24px] border border-[#ffd7a8] bg-white p-6 sm:p-8 shadow-xl"
+              className="relative w-full max-w-xl max-h-[90vh] overflow-y-auto rounded-[24px] border border-[#ffd7a8] bg-white p-6 sm:p-8 shadow-xl"
               onClick={(event) => event.stopPropagation()}
             >
               <div className="flex items-center justify-between border-b border-[#ffd7a8]/50 pb-3">
-                <h3 className="font-poppins font-bold text-lg text-[#212121]">Add College</h3>
+                <h3 className="font-poppins font-bold text-lg text-[#212121]">Add Colleges</h3>
                 <button
                   type="button"
                   onClick={() => setIsAddingCollege(false)}
@@ -1531,29 +1722,77 @@ const InstitutionWorkspace = () => {
                   <X size={18} />
                 </button>
               </div>
+              {error && <p role="alert" className="mt-3 text-sm text-red-700">{error}</p>}
               <form onSubmit={handleCreateCollege} className="mt-4 flex flex-col gap-4">
-                <label className="block font-poppins text-xs font-medium text-[#454545]">
-                  College Name
-                  <input
-                    required
-                    maxLength={160}
-                    value={collegeName}
-                    onChange={(event) => setCollegeName(event.target.value)}
-                    placeholder="e.g. College of Engineering"
-                    className={inputClass}
-                  />
-                </label>
-                <label className="block font-poppins text-xs font-medium text-[#454545]">
-                  Short Code
-                  <input
-                    required
-                    maxLength={32}
-                    value={collegeCode}
-                    onChange={(event) => setCollegeCode(event.target.value)}
-                    placeholder="e.g. COE"
-                    className={inputClass}
-                  />
-                </label>
+                <div className="max-h-[60vh] space-y-4 overflow-y-auto pr-1">
+                  {collegeDrafts.map((draft, index) => (
+                    <fieldset
+                      key={index}
+                      className="rounded-xl border border-[#ffd7a8]/60 bg-[#FEF5EA]/30 p-4"
+                    >
+                      <div className="mb-3 flex items-center justify-between">
+                        <legend className="font-poppins text-sm font-semibold text-[#212121]">
+                          College {index + 1}
+                        </legend>
+                        {collegeDrafts.length > 1 && (
+                          <button
+                            type="button"
+                            aria-label={`Remove college ${index + 1}`}
+                            onClick={() =>
+                              setCollegeDrafts((current) =>
+                                current.filter((_, draftIndex) => draftIndex !== index),
+                              )
+                            }
+                            className="rounded-full p-1.5 text-red-600 hover:bg-red-50"
+                          >
+                            <X size={16} />
+                          </button>
+                        )}
+                      </div>
+                      <label className="block font-poppins text-xs font-medium text-[#454545]">
+                        College Name
+                        <input
+                          required
+                          maxLength={160}
+                          value={draft.name}
+                          onChange={(event) =>
+                            setCollegeDrafts((current) =>
+                              current.map((item, draftIndex) =>
+                                draftIndex === index ? { ...item, name: event.target.value } : item,
+                              ),
+                            )
+                          }
+                          placeholder="e.g. College of Engineering"
+                          className={inputClass}
+                        />
+                      </label>
+                      <label className="mt-3 block font-poppins text-xs font-medium text-[#454545]">
+                        Short Code
+                        <input
+                          required
+                          maxLength={32}
+                          value={draft.code}
+                          onChange={(event) =>
+                            setCollegeDrafts((current) =>
+                              current.map((item, draftIndex) =>
+                                draftIndex === index ? { ...item, code: event.target.value } : item,
+                              ),
+                            )
+                          }
+                          placeholder="e.g. COE"
+                          className={inputClass}
+                        />
+                      </label>
+                    </fieldset>
+                  ))}
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setCollegeDrafts((current) => [...current, createCollegeDraft()])}
+                  className="inline-flex w-fit items-center gap-2 rounded-full border border-[#f49b31] bg-[#FEF5EA] px-4 py-2 font-poppins text-xs font-semibold text-[#75420B] hover:bg-[#FFC37B]"
+                >
+                  <Plus size={16} /> Add another college
+                </button>
                 <div className="mt-2 flex justify-end gap-2">
                   <button
                     type="button"
@@ -1563,7 +1802,258 @@ const InstitutionWorkspace = () => {
                     Cancel
                   </button>
                   <button type="submit" disabled={saving} className={primaryBtnClass}>
-                    {saving ? "Saving…" : "Add College"}
+                    {saving ? "Saving…" : `Add ${collegeDrafts.length} College${collegeDrafts.length === 1 ? "" : "s"}`}
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
+
+        {isAddingCategory && (
+          <div
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4"
+            onClick={() => setIsAddingCategory(false)}
+          >
+            <div
+              className="w-full max-w-xl max-h-[90vh] overflow-y-auto rounded-[24px] border border-[#ffd7a8] bg-white p-6 shadow-xl sm:p-8"
+              onClick={(event) => event.stopPropagation()}
+            >
+              <div className="flex items-center justify-between border-b border-[#ffd7a8]/50 pb-3">
+                <h3 className="font-poppins text-lg font-bold text-[#212121]">Add Categories</h3>
+                <button
+                  type="button"
+                  aria-label="Close add categories dialog"
+                  onClick={() => setIsAddingCategory(false)}
+                  className="rounded-full p-1 text-black/40 hover:bg-[#FEF5EA]"
+                >
+                  <X size={18} />
+                </button>
+              </div>
+              {error && <p role="alert" className="mt-3 text-sm text-red-700">{error}</p>}
+              <form onSubmit={handleCreateCategory} className="mt-4 flex flex-col gap-4">
+                <div className="max-h-[60vh] space-y-3 overflow-y-auto pr-1">
+                  {categoryDrafts.map((draft, index) => (
+                    <div key={index} className="flex items-end gap-2">
+                      <label className="block flex-1 font-poppins text-xs font-medium text-[#454545]">
+                        Category {index + 1}
+                        <input
+                          required
+                          maxLength={100}
+                          value={draft}
+                          onChange={(event) =>
+                            setCategoryDrafts((current) =>
+                              current.map((name, draftIndex) =>
+                                draftIndex === index ? event.target.value : name,
+                              ),
+                            )
+                          }
+                          placeholder="e.g. Facilities"
+                          className={inputClass}
+                        />
+                      </label>
+                      {categoryDrafts.length > 1 && (
+                        <button
+                          type="button"
+                          aria-label={`Remove category ${index + 1}`}
+                          onClick={() =>
+                            setCategoryDrafts((current) =>
+                              current.filter((_, draftIndex) => draftIndex !== index),
+                            )
+                          }
+                          className="mb-1 rounded-full p-2 text-red-600 hover:bg-red-50"
+                        >
+                          <X size={16} />
+                        </button>
+                      )}
+                    </div>
+                  ))}
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setCategoryDrafts((current) => [...current, ""])}
+                  className="inline-flex w-fit items-center gap-2 rounded-full border border-[#f49b31] bg-[#FEF5EA] px-4 py-2 font-poppins text-xs font-semibold text-[#75420B] hover:bg-[#FFC37B]"
+                >
+                  <Plus size={16} /> Add another category
+                </button>
+                <div className="flex justify-end gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setIsAddingCategory(false)}
+                    className="rounded-full border border-black/15 px-5 py-2 font-poppins text-sm font-semibold"
+                  >
+                    Cancel
+                  </button>
+                  <button type="submit" disabled={saving} className={primaryBtnClass}>
+                    {saving ? "Saving…" : `Add ${categoryDrafts.length} Categor${categoryDrafts.length === 1 ? "y" : "ies"}`}
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
+
+        {isAddingHalls && (
+          <div
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4"
+            onClick={() => setIsAddingHalls(false)}
+          >
+            <div
+              className="w-full max-w-xl max-h-[90vh] overflow-y-auto rounded-[24px] border border-[#ffd7a8] bg-white p-6 shadow-xl sm:p-8"
+              onClick={(event) => event.stopPropagation()}
+            >
+              <div className="flex items-center justify-between border-b border-[#ffd7a8]/50 pb-3">
+                <h3 className="font-poppins text-lg font-bold text-[#212121]">Add Halls</h3>
+                <button
+                  type="button"
+                  aria-label="Close add halls dialog"
+                  onClick={() => setIsAddingHalls(false)}
+                  className="rounded-full p-1 text-black/40 hover:bg-[#FEF5EA]"
+                >
+                  <X size={18} />
+                </button>
+              </div>
+              {error && <p role="alert" className="mt-3 text-sm text-red-700">{error}</p>}
+              <form onSubmit={handleCreateHalls} className="mt-4 flex flex-col gap-4">
+                <div className="max-h-[60vh] space-y-3 overflow-y-auto pr-1">
+                  {hallDrafts.map((draft, index) => (
+                    <div key={index} className="flex items-end gap-2">
+                      <label className="block flex-1 font-poppins text-xs font-medium text-[#454545]">
+                        Hall {index + 1}
+                        <input
+                          required
+                          maxLength={100}
+                          value={draft}
+                          onChange={(event) =>
+                            setHallDrafts((current) =>
+                              current.map((hall, draftIndex) =>
+                                draftIndex === index ? event.target.value : hall,
+                              ),
+                            )
+                          }
+                          placeholder="e.g. Daniel Hall"
+                          className={inputClass}
+                        />
+                      </label>
+                      {hallDrafts.length > 1 && (
+                        <button
+                          type="button"
+                          aria-label={`Remove hall ${index + 1}`}
+                          onClick={() =>
+                            setHallDrafts((current) =>
+                              current.filter((_, draftIndex) => draftIndex !== index),
+                            )
+                          }
+                          className="mb-1 rounded-full p-2 text-red-600 hover:bg-red-50"
+                        >
+                          <X size={16} />
+                        </button>
+                      )}
+                    </div>
+                  ))}
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setHallDrafts((current) => [...current, ""])}
+                  className="inline-flex w-fit items-center gap-2 rounded-full border border-[#f49b31] bg-[#FEF5EA] px-4 py-2 font-poppins text-xs font-semibold text-[#75420B] hover:bg-[#FFC37B]"
+                >
+                  <Plus size={16} /> Add another hall
+                </button>
+                <div className="flex justify-end gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setIsAddingHalls(false)}
+                    className="rounded-full border border-black/15 px-5 py-2 font-poppins text-sm font-semibold"
+                  >
+                    Cancel
+                  </button>
+                  <button type="submit" disabled={saving} className={primaryBtnClass}>
+                    {saving ? "Saving…" : `Add ${hallDrafts.length} Hall${hallDrafts.length === 1 ? "" : "s"}`}
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
+
+        {isAddingLevels && (
+          <div
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4"
+            onClick={() => setIsAddingLevels(false)}
+          >
+            <div
+              className="w-full max-w-xl max-h-[90vh] overflow-y-auto rounded-[24px] border border-[#ffd7a8] bg-white p-6 shadow-xl sm:p-8"
+              onClick={(event) => event.stopPropagation()}
+            >
+              <div className="flex items-center justify-between border-b border-[#ffd7a8]/50 pb-3">
+                <h3 className="font-poppins text-lg font-bold text-[#212121]">Add Academic Levels</h3>
+                <button
+                  type="button"
+                  aria-label="Close add academic levels dialog"
+                  onClick={() => setIsAddingLevels(false)}
+                  className="rounded-full p-1 text-black/40 hover:bg-[#FEF5EA]"
+                >
+                  <X size={18} />
+                </button>
+              </div>
+              {error && <p role="alert" className="mt-3 text-sm text-red-700">{error}</p>}
+              <form onSubmit={handleCreateLevels} className="mt-4 flex flex-col gap-4">
+                <div className="max-h-[60vh] space-y-3 overflow-y-auto pr-1">
+                  {levelDrafts.map((draft, index) => (
+                    <div key={index} className="flex items-end gap-2">
+                      <label className="block flex-1 font-poppins text-xs font-medium text-[#454545]">
+                        Level {index + 1}
+                        <input
+                          required
+                          inputMode="numeric"
+                          value={draft}
+                          onChange={(event) =>
+                            setLevelDrafts((current) =>
+                              current.map((level, draftIndex) =>
+                                draftIndex === index
+                                  ? event.target.value.replace(/\D/g, "").slice(0, 4)
+                                  : level,
+                              ),
+                            )
+                          }
+                          placeholder="e.g. 700"
+                          className={inputClass}
+                        />
+                      </label>
+                      {levelDrafts.length > 1 && (
+                        <button
+                          type="button"
+                          aria-label={`Remove level ${index + 1}`}
+                          onClick={() =>
+                            setLevelDrafts((current) =>
+                              current.filter((_, draftIndex) => draftIndex !== index),
+                            )
+                          }
+                          className="mb-1 rounded-full p-2 text-red-600 hover:bg-red-50"
+                        >
+                          <X size={16} />
+                        </button>
+                      )}
+                    </div>
+                  ))}
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setLevelDrafts((current) => [...current, ""])}
+                  className="inline-flex w-fit items-center gap-2 rounded-full border border-[#f49b31] bg-[#FEF5EA] px-4 py-2 font-poppins text-xs font-semibold text-[#75420B] hover:bg-[#FFC37B]"
+                >
+                  <Plus size={16} /> Add another level
+                </button>
+                <div className="flex justify-end gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setIsAddingLevels(false)}
+                    className="rounded-full border border-black/15 px-5 py-2 font-poppins text-sm font-semibold"
+                  >
+                    Cancel
+                  </button>
+                  <button type="submit" disabled={saving} className={primaryBtnClass}>
+                    {saving ? "Saving…" : `Add ${levelDrafts.length} Level${levelDrafts.length === 1 ? "" : "s"}`}
                   </button>
                 </div>
               </form>
