@@ -609,7 +609,7 @@ const InstitutionWorkspace = () => {
                 Loading institution workspace…
               </div>
             ) : (
-              <div className="w-full">
+              <div className="flex w-full flex-col gap-6">
                 {activeTab === "organization" && canManageOrganizationSettings && (
                   <section className="rounded-[20px] border border-[#ffd7a8] bg-white p-5 sm:p-8">
                     <GeneralSettings />
@@ -631,10 +631,10 @@ const InstitutionWorkspace = () => {
                     <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                       <div>
                         <h2 className="font-poppins font-semibold text-[18px] text-[#212121]">
-                          Campus Setup
+                          Academic Structure
                         </h2>
                         <p className="font-poppins text-[12px] text-[#8b8e8d] mt-1">
-                          Manage colleges, departments, Ping categories, and context choices for your institution.
+                          Create colleges and organize their departments for your institution.
                         </p>
                       </div>
                       <button
