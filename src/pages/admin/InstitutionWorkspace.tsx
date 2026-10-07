@@ -975,7 +975,7 @@ const InstitutionWorkspace = () => {
                       ) : (
                         <div className="rounded-xl bg-[#FEF5EA] p-6 text-center">
                           <p className="font-poppins text-sm text-[#75420B]">
-                            No departments added yet. Add departments like Electrical & Information Engineering (EIE) to start routing issues.
+                            No departments added yet.
                           </p>
                         </div>
                       )}
@@ -992,7 +992,7 @@ const InstitutionWorkspace = () => {
                           Representative Bodies & Committees
                         </h2>
                         <p className="font-poppins text-[12px] text-[#8b8e8d] mt-1">
-                          Official executive councils, hall committees, and departmental bodies (e.g. AEIES). Click any body to inspect its assigned executives and metrics.
+                          Official executive councils, hall committees, and departmental bodies. Click any body to inspect its assigned executives and metrics.
                         </p>
                       </div>
                       <button
@@ -1056,7 +1056,7 @@ const InstitutionWorkspace = () => {
                     ) : (
                       <div className="rounded-[20px] border border-[#ffd7a8] bg-white p-8 text-center">
                         <p className="font-poppins text-sm text-[#75420B]">
-                          No representative bodies created yet. Create bodies like AEIES or Student Council.
+                          No representative bodies created yet.
                         </p>
                       </div>
                     )}
@@ -1192,7 +1192,7 @@ const InstitutionWorkspace = () => {
                       ) : (
                         <div className="rounded-xl bg-[#FEF5EA] p-6 text-center">
                           <p className="font-poppins text-sm text-[#75420B]">
-                            No representatives assigned yet. Create a body like AEIES and assign executive members.
+                            No representatives assigned yet.
                           </p>
                         </div>
                       )}
