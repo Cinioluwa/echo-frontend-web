@@ -493,18 +493,6 @@ const InstitutionWorkspace = () => {
     });
   };
 
-  const handleSaveContextOptions = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    void runSave(
-      () =>
-        institutionAdminService.updateContextOptions({
-          halls: hallOptions,
-          levels: levelOptions,
-        }),
-      "Ping context choices saved successfully.",
-    );
-  };
-
   const handleCreateHalls = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const drafts = hallDrafts.map((hall) => hall.trim());
@@ -564,6 +552,34 @@ const InstitutionWorkspace = () => {
       setLevelOptions(nextLevels);
       setLevelDrafts([""]);
       setIsAddingLevels(false);
+    });
+  };
+
+  const handleRemoveHall = (hallToRemove: string) => {
+    const nextHalls = hallOptions.filter((hall) => hall !== hallToRemove);
+    void runSave(
+      () =>
+        institutionAdminService.updateContextOptions({
+          halls: nextHalls,
+          levels: levelOptions,
+        }),
+      "Hall option removed successfully.",
+    ).then((saved) => {
+      if (saved) setHallOptions(nextHalls);
+    });
+  };
+
+  const handleRemoveLevel = (levelToRemove: number) => {
+    const nextLevels = levelOptions.filter((level) => level !== levelToRemove);
+    void runSave(
+      () =>
+        institutionAdminService.updateContextOptions({
+          halls: hallOptions,
+          levels: nextLevels,
+        }),
+      "Academic level removed successfully.",
+    ).then((saved) => {
+      if (saved) setLevelOptions(nextLevels);
     });
   };
 
@@ -1285,8 +1301,7 @@ const InstitutionWorkspace = () => {
 
                 {/* ────────── TAB: PING CONTEXT CHOICES (HALLS & LEVELS) ────────── */}
                 {activeTab === "departments" && (
-                  <form
-                    onSubmit={handleSaveContextOptions}
+                  <section
                     className="flex flex-col gap-6 w-full animate-fade-in"
                   >
                     <div>
@@ -1294,7 +1309,7 @@ const InstitutionWorkspace = () => {
                         Ping Context Choices (Halls & Levels)
                       </h2>
                       <p className="font-poppins text-[12px] text-[#8b8e8d] mt-1">
-                        These dynamic options populate the student Ping composer. Nothing is hardcoded; what you save here is live across campus.
+                        These dynamic options populate the student Ping composer and save automatically when added or removed.
                       </p>
                     </div>
 
@@ -1312,6 +1327,7 @@ const InstitutionWorkspace = () => {
                           </div>
                           <button
                             type="button"
+                            disabled={saving}
                             onClick={() => {
                               setError(null);
                               setIsAddingHalls(true);
@@ -1332,10 +1348,9 @@ const InstitutionWorkspace = () => {
                               <button
                                 type="button"
                                 aria-label={`Remove ${hall}`}
-                                onClick={() =>
-                                  setHallOptions((current) => current.filter((h) => h !== hall))
-                                }
-                                className="rounded-full px-1.5 py-0.5 hover:bg-[#FFC37B]"
+                                disabled={saving}
+                                onClick={() => handleRemoveHall(hall)}
+                                className="rounded-full px-1.5 py-0.5 hover:bg-[#FFC37B] disabled:cursor-wait disabled:opacity-50"
                               >
                                 ×
                               </button>
@@ -1362,6 +1377,7 @@ const InstitutionWorkspace = () => {
                           </div>
                           <button
                             type="button"
+                            disabled={saving}
                             onClick={() => {
                               setError(null);
                               setIsAddingLevels(true);
@@ -1382,10 +1398,9 @@ const InstitutionWorkspace = () => {
                               <button
                                 type="button"
                                 aria-label={`Remove ${level}L`}
-                                onClick={() =>
-                                  setLevelOptions((current) => current.filter((l) => l !== level))
-                                }
-                                className="rounded-full px-1.5 py-0.5 hover:bg-[#FFC37B]"
+                                disabled={saving}
+                                onClick={() => handleRemoveLevel(level)}
+                                className="rounded-full px-1.5 py-0.5 hover:bg-[#FFC37B] disabled:cursor-wait disabled:opacity-50"
                               >
                                 ×
                               </button>
@@ -1399,11 +1414,7 @@ const InstitutionWorkspace = () => {
                         </ul>
                       </div>
                     </div>
-
-                    <button type="submit" disabled={saving} className={`${primaryBtnClass} w-fit`}>
-                      {saving ? "Saving…" : "Save Ping Context"}
-                    </button>
-                  </form>
+                  </section>
                 )}
               </div>
             )}
