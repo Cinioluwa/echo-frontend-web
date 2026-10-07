@@ -13,6 +13,7 @@ import { adminService } from "../../../api/services/admin.service";
 import type { Ping, User } from "../../../api/types/index";
 import { useAuthStore } from "../../../stores";
 import representativeService from "../../../api/services/representative.service";
+import { usePageTitle } from "../../../hooks/usePageTitle";
 import RelatedPings from "./RelatedPings";
 import { getRelatedTitleScore } from "./relatedPingMatching";
 import BadgeTooltip from "../../BadgeTooltip";
@@ -159,6 +160,7 @@ const AdminPingDetail: React.FC<AdminPingDetailProps> = ({ pingId: propPingId, m
     }, [mode, user]);
 
     const [pingData, setPingData] = useState<Ping | null>(null);
+    usePageTitle(mode === "admin" ? pingData?.title : undefined, mode === "admin");
     const [relatedPings, setRelatedPings] = useState<RelatedPing[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);

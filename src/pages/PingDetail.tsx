@@ -73,6 +73,7 @@ const PingDetail = () => {
   const [weeklyTop3Ids, setWeeklyTop3Ids] = useState<number[]>([]);
   const [isResolving, setIsResolving] = useState(false);
   const [resolveError, setResolveError] = useState<string | null>(null);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
 
   // Update page title with the ping title when ping is loaded
   usePageTitle(ping?.title);
@@ -219,11 +220,13 @@ const PingDetail = () => {
   }, [pingId]);
 
   const handleDeleteWave = (waveId: number) => {
+    setDeleteError(null);
     setItemToDelete({ type: "Wave", id: waveId });
   };
 
   const handleDeletePing = (e: React.MouseEvent) => {
     e.stopPropagation();
+    setDeleteError(null);
     setItemToDelete({ type: "Ping", id: Number(pingId) });
   };
 
@@ -232,6 +235,7 @@ const PingDetail = () => {
     const target = itemToDelete;
 
     setIsDeletingItem(true);
+    setDeleteError(null);
     if (target.type === "Wave") {
       try {
         await waveService.deleteWave(String(target.id));
@@ -250,6 +254,7 @@ const PingDetail = () => {
         setItemToDelete(null);
       } catch (err) {
         console.error("Failed to delete Wave:", err);
+        setDeleteError(getErrorMessage(err));
       } finally {
         setIsDeletingItem(false);
       }
@@ -262,6 +267,7 @@ const PingDetail = () => {
         navigate("/feed");
       } catch (err) {
         console.error("Failed to delete Ping:", err);
+        setDeleteError(getErrorMessage(err));
       } finally {
         setIsDeletingItem(false);
       }
@@ -514,8 +520,12 @@ const PingDetail = () => {
         <DeleteConfirmationModal
           itemType={itemToDelete.type}
           onConfirm={confirmDelete}
-          onCancel={() => setItemToDelete(null)}
+          onCancel={() => {
+            setItemToDelete(null);
+            setDeleteError(null);
+          }}
           isLoading={isDeletingItem}
+          errorMessage={deleteError}
         />
       )}
     </div>

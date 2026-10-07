@@ -11,17 +11,24 @@ import { useLocation, useParams } from "react-router-dom";
  * - usePageTitle() - for static title pages (Feed, History, etc)
  * - usePageTitle(pingTitle) - for dynamic pages (PingDetail)
  */
-export const usePageTitle = (pageTitleOverride?: string) => {
+export const usePageTitle = (
+  pageTitleOverride?: string,
+  enabled = true,
+) => {
   const location = useLocation();
   const params = useParams();
 
   useEffect(() => {
+    if (!enabled) return;
+
     const pathname = location.pathname;
     let title = "Echo";
 
     // If an override is provided (e.g., dynamic ping title), use it
     if (pageTitleOverride) {
-      title = pageTitleOverride;
+      title = pathname.startsWith("/admin/")
+        ? `${pageTitleOverride} | Admin | Echo`
+        : pageTitleOverride;
     }
     // Feed pages
     else if (pathname === "/feed" || pathname === "/") {
@@ -47,16 +54,30 @@ export const usePageTitle = (pageTitleOverride?: string) => {
     }
     // Admin pages
     else if (pathname === "/admin/profile") {
-      title = "Admin Profile | Echo";
+      title = "Profile Settings | Echo";
     } else if (pathname === "/admin/account") {
-      title = "Admin Account | Echo";
-    } else if (pathname === "/admin/notification") {
-      title = "Admin Notifications | Echo";
+      title = "Account Settings | Echo";
+    } else if (
+      pathname === "/admin/notification-settings" ||
+      pathname === "/admin/notification"
+    ) {
+      title = "Notification Settings | Echo";
+    } else if (pathname === "/admin/soundboard") {
+      title = "Soundboard | Echo";
+    } else if (pathname.startsWith("/admin/soundboard/")) {
+      title = "Ping Details | Admin | Echo";
+    } else if (pathname === "/admin/moderation") {
+      title = "Moderation | Echo";
+    } else if (pathname === "/admin/institution") {
+      title = "Institution Management | Echo";
     } else if (pathname === "/admin/feed") {
       title = "Admin Feed | Echo";
     } else if (pathname === "/admin/overview") {
       title = "Overview | Echo";
-    } else if (pathname === "/admin/followUp") {
+    } else if (
+      pathname === "/admin/followUp" ||
+      pathname === "/admin/followup"
+    ) {
       title = "Follow Up | Echo";
     } else if (pathname.startsWith("/admin/feed/details/")) {
       title = "Post Details | Echo";
@@ -77,5 +98,5 @@ export const usePageTitle = (pageTitleOverride?: string) => {
     }
 
     document.title = title;
-  }, [location, params, pageTitleOverride]);
+  }, [location, params, pageTitleOverride, enabled]);
 };

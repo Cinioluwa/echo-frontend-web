@@ -10,6 +10,7 @@ interface DeleteConfirmationModalProps {
     onConfirm: () => void;
     onCancel: () => void;
     isLoading?: boolean;
+    errorMessage?: string | null;
     itemType?: "Ping" | "Wave" | "Comment" | "Category" | "College" | "Department" | "Body";
 }
 
@@ -17,6 +18,7 @@ const DeleteConfirmationModal = ({
     onConfirm,
     onCancel,
     isLoading = false,
+    errorMessage,
     itemType = "Ping",
 }: DeleteConfirmationModalProps) => {
     return (
@@ -48,6 +50,11 @@ const DeleteConfirmationModal = ({
                         <span className="font-semibold text-[#f49b31]">{itemType}</span>
                         {` would be deleted permanently. Action cannot be reverted`}
                     </p>
+                    {errorMessage && (
+                        <p role="alert" className="w-full rounded-lg bg-red-50 px-3 py-2 text-center text-sm text-red-700">
+                            {errorMessage}
+                        </p>
+                    )}
                 </div>
 
                 {/* Action buttons */}

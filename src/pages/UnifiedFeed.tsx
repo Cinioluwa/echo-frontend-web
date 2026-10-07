@@ -12,7 +12,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { useOutletContext, useSearchParams, useNavigate } from "react-router-dom";
 import { useShallow } from "zustand/react/shallow";
-import { publicService, organizationService } from "../api/services";
+import { organizationService } from "../api/services";
 import { getSocket } from "../api/socket";
 import ClaimSpaceBanner from "../components/ClaimSpaceBanner";
 import ClaimSpaceModal from "../components/ClaimSpaceModal";
@@ -79,7 +79,7 @@ const UnifiedFeed = () => {
   // ── Modal state ─────────────────────────────────────────────────────────────
   const [isClaimModalOpen, setClaimModalOpen] = useState(false);
   const [isInviteModalOpen, setInviteModalOpen] = useState(false);
-  const [weeklyTop3Ids, setWeeklyTop3Ids] = useState<number[]>([]);
+  const weeklyTop3Ids = top3.map((ping) => ping.id);
   const [institutionStatus, setInstitutionStatus] =
     useState<InstitutionStatus | null>(null);
   const refreshInstitutionStatus = useCallback(async () => {
@@ -109,15 +109,6 @@ const UnifiedFeed = () => {
       categoryId: selectedCategoryId !== null ? selectedCategoryId : undefined,
       sort: "trending",
     });
-    // Fetch top 3 pings to pass badge info to UnifiedPingCard components
-    publicService
-      .getSoundboard({ sort: "trending", top: 3 })
-      .then((res) => {
-        setWeeklyTop3Ids(res.data.map((ping) => ping.id));
-      })
-      .catch((err) => {
-        console.error("Failed to fetch top 3 pings:", err);
-      });
   }, [debouncedQuery, selectedCategoryId, fetchPings, organizationId]);
 
   // ── WebSocket event wiring (Phase 11) ───────────────────────────────────────

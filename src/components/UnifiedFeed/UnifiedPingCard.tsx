@@ -23,6 +23,7 @@ import type { Ping } from "../../api/types";
 import { categoryImages } from "../CategoryImages";
 import SurgeIcon from "../shared/SurgeIcon";
 import formatTimeAgo from "../../utils/formatTimeAgo";
+import { getErrorMessage } from "../../utils/networkUtils";
 
 const waveIcon = "/assets/icon/wave.svg";
 const commentIcon = "/assets/icon/comment.svg";
@@ -60,6 +61,8 @@ const UnifiedPingCard = ({
   const currentPing = pingFromStore || ping;
 
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
 
   const isOwner = currentPing.isAnonymous
     ? (currentPing.isOwner ?? false)
@@ -111,18 +114,24 @@ const UnifiedPingCard = ({
 
   const handleDelete = (e: React.MouseEvent) => {
     e.stopPropagation();
+    setDeleteError(null);
     setShowDeleteModal(true);
   };
 
   const handleDeleteConfirm = async () => {
     const pingId = currentPing.id;
-    setShowDeleteModal(false);
-    usePingsStore.getState().removePing(String(pingId));
-    onDelete?.(pingId);
+    setIsDeleting(true);
+    setDeleteError(null);
     try {
       await pingService.deletePing(String(pingId));
+      usePingsStore.getState().removePing(String(pingId));
+      onDelete?.(pingId);
+      setShowDeleteModal(false);
     } catch (err) {
       console.error("Failed to delete ping:", err);
+      setDeleteError(getErrorMessage(err));
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -343,6 +352,8 @@ const UnifiedPingCard = ({
         <DeleteConfirmationModal
           onConfirm={handleDeleteConfirm}
           onCancel={() => setShowDeleteModal(false)}
+          isLoading={isDeleting}
+          errorMessage={deleteError}
         />
       )}
     </>

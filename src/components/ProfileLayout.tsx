@@ -2,11 +2,13 @@ import NavBar from "./NavBar";
 import BackButton from "./shared/BackButton";
 import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "../stores";
+import { usePageTitle } from "../hooks/usePageTitle";
 
 const ProfileLayout = () => {
   const navigate = useNavigate();
   const user = useAuthStore((state) => state.user);
   const isAdmin = user?.role === "ADMIN" || user?.role === "SUPER_ADMIN";
+  usePageTitle();
 
   return (
     <div>

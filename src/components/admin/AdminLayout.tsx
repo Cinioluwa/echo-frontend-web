@@ -1,7 +1,13 @@
+import { useLocation } from "react-router-dom";
 import AdminSideBar from "./AdminSideBar";
 import AdminMobileNavBar from "./AdminMobileNavBar";
+import { usePageTitle } from "../../hooks/usePageTitle";
 
 const AdminLayout = () => {
+  const location = useLocation();
+  const isAdminPingDetail = location.pathname.startsWith("/admin/soundboard/");
+  usePageTitle(undefined, !isAdminPingDetail);
+
   return (
     <div className="relative z-50 min-[1131px]:fixed">
       {/* Top NavBar — fixed on desktop, static on mobile */}
