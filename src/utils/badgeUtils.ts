@@ -36,6 +36,8 @@ import pingAcknowledged from "../assets/badges/ping-acknowledged.svg";
 import pingResolved from "../assets/badges/ping-resolved.svg";
 import pingOpen from "../assets/badges/ping-open.svg";
 
+export const WAVE_BADGE_SIZE_CLASS = "h-[22px] sm:h-[28px] md:h-[33px]";
+
 // ─── Wave Badge Types ────────────────────────────────────────────────────────
 
 export type WaveBadgeType =

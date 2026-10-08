@@ -5,7 +5,11 @@ import WaveActionModal from "./WaveActionModal";
 import BadgeTooltip from "../../BadgeTooltip";
 import type { PingDetailPermissions, WaveActionStatus } from "./types";
 import formatTimeAgo from "../../../utils/formatTimeAgo";
-import { calculateWaveBadge, waveCommunityPick } from "../../../utils/badgeUtils";
+import {
+    calculateWaveBadge,
+    waveCommunityPick,
+    WAVE_BADGE_SIZE_CLASS,
+} from "../../../utils/badgeUtils";
 
 interface AdminWaveCardProps {
     wave: Wave;
@@ -61,7 +65,7 @@ const AdminWaveCard: React.FC<AdminWaveCardProps> = ({ wave, rank, permissions, 
                     <p className="max-w-full truncate whitespace-nowrap font-poppins text-[12px] font-semibold text-black sm:text-[15px] max-[500px]:text-[10px]">{authorName}</p>
                     <p className="whitespace-nowrap font-poppins text-[9px] font-medium text-[#8b8e8d] sm:text-[13px] max-[500px]:text-[8px]">{timestamp}</p>
                 </div>
-                <div className="flex max-w-[48%] shrink-0 flex-nowrap items-center justify-end gap-1 overflow-hidden sm:max-w-[52%] sm:gap-[5px] max-[500px]:max-w-[46%]">
+                <div className="flex shrink-0 flex-nowrap items-center justify-end gap-1 sm:gap-[5px]">
                     {statusBadge ? (
                         <BadgeTooltip
                             badgeKey={statusBadge.type ?? status}
@@ -72,7 +76,7 @@ const AdminWaveCard: React.FC<AdminWaveCardProps> = ({ wave, rank, permissions, 
                             <img
                                 src={statusBadge.svg}
                                 alt={statusBadge.label}
-                                className="h-[22px] w-auto max-w-full shrink-0 object-contain"
+                                className={`${WAVE_BADGE_SIZE_CLASS} w-auto shrink-0 object-contain`}
                             />
                         </BadgeTooltip>
                     ) : featured ? (
@@ -80,13 +84,13 @@ const AdminWaveCard: React.FC<AdminWaveCardProps> = ({ wave, rank, permissions, 
                             <img
                                 src={waveCommunityPick}
                                 alt="Community Pick"
-                                className="h-[22px] w-auto max-w-full shrink-0 object-contain"
+                                className={`${WAVE_BADGE_SIZE_CLASS} w-auto shrink-0 object-contain`}
                             />
                         </BadgeTooltip>
                     ) : (
                         <BadgeTooltip badgeKey="ALTERNATIVE">
-                            <span className="flex min-w-0 items-center gap-0.5 rounded-[23px] border-[1.5px] border-[#626665] bg-[#fefefe] px-1 py-1 font-poppins text-[8px] font-medium text-black sm:gap-[7.5px] sm:px-[16.5px] sm:py-1.5 sm:text-[13.5px]">
-                                <img src="/assets/icon/dot-blue.svg" alt="" className="size-[6px] sm:size-[7.5px]" />
+                            <span className={`${WAVE_BADGE_SIZE_CLASS} inline-flex shrink-0 items-center gap-1 rounded-[23px] border-[1.5px] border-[#626665] bg-[#fefefe] px-2 font-poppins text-[10px] font-medium text-black sm:gap-1.5 sm:px-3 sm:text-[12px] md:gap-[7.5px] md:px-[16.5px] md:text-[13.5px]`}>
+                                <img src="/assets/icon/dot-blue.svg" alt="" className="size-[6px] shrink-0 sm:size-[7.5px]" />
                                 <span className="truncate whitespace-nowrap">Alternative</span>
                             </span>
                         </BadgeTooltip>

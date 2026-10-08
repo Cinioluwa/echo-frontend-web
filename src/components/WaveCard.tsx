@@ -15,7 +15,7 @@ import UserAvatar from "./UserAvatar";
 import DeleteConfirmationModal from "./DeleteConfirmationModal";
 import WaveActionsDropdown from "./WaveActionsDropdown";
 import BadgeTooltip from "./BadgeTooltip";
-import { calculateWaveBadge } from "../utils/badgeUtils";
+import { calculateWaveBadge, WAVE_BADGE_SIZE_CLASS } from "../utils/badgeUtils";
 import type { Wave, Media } from "../api/types";
 import ImageLightbox from "./shared/ImageLightbox";
 import { useEditWindow } from "../hooks";
@@ -220,7 +220,7 @@ const WaveCard = React.memo(
                   <img
                     src={badgeConfig.svg}
                     alt={badgeConfig.label}
-                    className="h-[22px] sm:h-[28px] md:h-[33px] w-auto shrink-0 select-none object-contain"
+                    className={`${WAVE_BADGE_SIZE_CLASS} w-auto shrink-0 select-none object-contain`}
                   />
                 </BadgeTooltip>
               )}
