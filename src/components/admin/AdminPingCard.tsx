@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { MessageSquare, Waves } from "lucide-react";
 import { categoryImages } from "../CategoryImages";
@@ -45,11 +45,17 @@ const getProgressBadge = (ping: AdminPing) => {
 
 const AdminPingCard = ({ pings, onUpdate }: AdminPingCardProps) => {
   const navigate = useNavigate();
-  const [acknowledged, setAcknowledged] = useState(!!pings.acknowledgedAt);
+  const [acknowledged, setAcknowledged] = useState(
+    !!pings.acknowledgedAt || pings.progressStatus === "ACKNOWLEDGED",
+  );
   const [openMenu, setOpenMenu] = useState(false);
   const [openEngagementMenu, setOpenEngagementMenu] = useState(false);
   const [loading, setLoading] = useState(false);
   const [toasts, setToasts] = useState<ToastItem[]>([]);
+
+  useEffect(() => {
+    setAcknowledged(!!pings.acknowledgedAt || pings.progressStatus === "ACKNOWLEDGED");
+  }, [pings.acknowledgedAt, pings.progressStatus]);
 
   const pushToast = (variant: ToastItem["variant"]) => {
     const id = `${Date.now()}`;
@@ -63,7 +69,7 @@ const AdminPingCard = ({ pings, onUpdate }: AdminPingCardProps) => {
       setLoading(true);
       await adminService.acknowledgePing(pings.id);
       setAcknowledged(true);
-      pushToast("ping");
+      pushToast("acknowledged");
       if (onUpdate) onUpdate();
     } catch {
       pushToast("deleted"); // reuse "deleted" variant as error indicator
@@ -213,16 +219,16 @@ const AdminPingCard = ({ pings, onUpdate }: AdminPingCardProps) => {
               disabled={loading || acknowledged}
               className={`transition-colors duration-150 cursor-pointer ${
                 acknowledged
-                  ? "bg-[#F49B31] text-white font-bold"
+                  ? "bg-[#8B8E8D] text-white font-bold"
                   : "bg-[#FEF5EA] hover:bg-[#f2e8d9]"
               } ${
                 loading ? "opacity-50 cursor-not-allowed" : ""
               } py-1.5 lg:py-2 lg:px-4 flex text-[11px] font-bold items-center gap-2 border rounded-[20px] px-4`}
             >
               <img
-                src={surge}
+                src="/assets/icon/followup-acknowledged.svg"
                 alt=""
-                className={`${acknowledged ? "brightness-0 invert" : ""} w-4 h-4 contrast-200`}
+                className="h-4 w-4 brightness-0 invert"
               />
               {acknowledged ? "ACKNOWLEDGED" : loading ? "..." : "ACKNOWLEDGE"}
             </button>

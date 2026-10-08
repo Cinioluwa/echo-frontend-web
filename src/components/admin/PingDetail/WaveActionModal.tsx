@@ -24,6 +24,10 @@ const WaveActionModal: React.FC<WaveActionModalProps> = ({ action, onConfirm, on
     }, [isSuccess, onCancel]);
 
     const handleConfirm = async () => {
+        if (action === "REJECTED" && !reason.trim()) {
+            setError("A reason is required to reject a wave.");
+            return;
+        }
         setIsLoading(true);
         setError(null);
         try {
@@ -201,11 +205,14 @@ const WaveActionModal: React.FC<WaveActionModalProps> = ({ action, onConfirm, on
                             disabled={isLoading}
                             className="w-full h-[100px] border border-[#a2a2a2] rounded-[10px] p-3 text-[14px] font-medium text-black placeholder-[#626665] outline-none focus:border-[#eb5050] transition-colors resize-none disabled:bg-gray-50"
                         />
+                        <p className="w-full -mt-4 text-left text-xs text-[#b01212]">
+                            {error || "A reason is required to reject a wave."}
+                        </p>
 
                         <div className="flex flex-col items-center gap-4 w-full mt-2">
                             <button
                                 onClick={handleConfirm}
-                                disabled={isLoading}
+                                disabled={isLoading || !reason.trim()}
                                 className="w-full py-3 bg-[#b01212] hover:bg-[#8e0f0f] text-white font-bold text-[16px] rounded-[15px] transition-all duration-200 active:scale-95 disabled:opacity-50 flex items-center justify-center shadow-md"
                             >
                                 {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : "Reject"}

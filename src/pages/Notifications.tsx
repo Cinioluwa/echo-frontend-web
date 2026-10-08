@@ -35,6 +35,7 @@ const TYPE_META: Partial<
   NEW_WAVE_ON_PING: { icon: Waves, label: 'New wave on your ping' },
   WAVE_APPROVED: { icon: CheckCircle2, label: 'Wave approved' },
   WAVE_STATUS_UPDATED: { icon: ClipboardCheck, label: 'Wave status updated' },
+  PING_STATUS_UPDATED: { icon: ClipboardCheck, label: 'Ping status updated' },
   PING_SURGED_MILESTONE: { icon: TrendingUp, label: 'Surge milestone reached' },
 
   // Comments

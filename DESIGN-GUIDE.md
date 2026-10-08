@@ -233,7 +233,7 @@ Use for compact numeric reactions, not as a primary CTA.
 
 ### 6d. Status badge / pill
 
-Observed examples: **Top 3**, **Posted**, **Submitted**, **Under Review**
+Observed examples: **Top 3**, **Proposed**, **Under Review**, **Approved**, **Rejected**, **In Progress**, **Completed**
 
 - Outlined pill
 - Border: `1px solid #626665`
@@ -248,6 +248,16 @@ These are state indicators, not decorative tags.
 
 Special wave tags such as **Community Pick** and **Alternative** are for **Ping Detail wave rows only**.  
 Do **not** reuse them in feed cards, page headers, sidebars, or forms.
+
+### 6f. Wave badge priority
+
+A wave shows exactly one badge. Read the priority sequence from lowest to highest:
+
+**Proposed → Community Pick → Approved / Rejected / Under Review → In Progress → Completed**
+
+Thus, a posted wave with the highest surge rank shows Community Pick instead of Proposed. Once a moderation or progress state is applied, that state badge replaces the rank badge. Rejected waves are hidden from the admin Ping Detail list, so the highest-ranked remaining wave becomes Community Pick and the next becomes Alternative (admin Ping Detail only).
+
+Ping badges follow the same low-to-high reading order: **Open → Top 3 → Acknowledged → Resolved**. A higher-priority state replaces any lower-priority badge; for example, an acknowledged ping in the weekly Top 3 shows Acknowledged.
 
 ---
 

@@ -11,7 +11,10 @@ interface AdminPingWavesProps {
 
 /** Ping Detail only surfaces the two most surged waves. */
 const AdminPingWaves: React.FC<AdminPingWavesProps> = ({ waves, permissions, onUpdateWaveStatus }) => {
-    const topWaves = [...waves].sort((a, b) => b.surgeCount - a.surgeCount).slice(0, 2);
+    const topWaves = [...waves]
+        .filter((wave) => wave.status !== "REJECTED")
+        .sort((a, b) => (b._count?.surges ?? b.surgeCount) - (a._count?.surges ?? a.surgeCount))
+        .slice(0, 2);
 
     return (
         <div className="flex w-full flex-col gap-5">

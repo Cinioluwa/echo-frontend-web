@@ -211,11 +211,18 @@ const WaveCard = React.memo(
 
             <div className="flex items-center gap-1 shrink-0">
               {badgeConfig && (
-                <BadgeTooltip badgeKey={badgeConfig.type as string}><img
-                  src={badgeConfig.svg}
-                  alt={badgeConfig.label}
-                  className="h-[22px] sm:h-[28px] md:h-[33px] w-auto shrink-0 select-none object-contain"
-                /></BadgeTooltip>
+                <BadgeTooltip
+                  badgeKey={badgeConfig.type as string}
+                  description={currentWave.status === "REJECTED" && currentWave.reason
+                    ? `Reason: ${currentWave.reason}`
+                    : undefined}
+                >
+                  <img
+                    src={badgeConfig.svg}
+                    alt={badgeConfig.label}
+                    className="h-[22px] sm:h-[28px] md:h-[33px] w-auto shrink-0 select-none object-contain"
+                  />
+                </BadgeTooltip>
               )}
               <WaveActionsDropdown
                 waveId={wave.id}

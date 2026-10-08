@@ -13,6 +13,7 @@ const ICONS: Partial<Record<NotificationType, string>> = {
   COMMENT_REPLY: '↩️',
   COMMENT_SURGE: '⚡',
   WAVE_STATUS_UPDATED: '📋',
+  PING_STATUS_UPDATED: '📋',
   WAVE_APPROVED: '✅',
   OFFICIAL_RESPONSE_POSTED: '📣',
   OFFICIAL_RESPONSE: '📣',

@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   Building2,
   ChevronRight,
+  Pencil,
   Plus,
   Settings,
   Sliders,
@@ -43,10 +44,10 @@ type PendingDelete =
   | { kind: "body"; id: number };
 
 type DepartmentDraft = { name: string; code: string; collegeId: string };
-type CollegeDraft = { name: string; code: string };
+type CollegeDraft = { name: string; code: string; departmentIds: string[] };
 
 const createDepartmentDraft = (): DepartmentDraft => ({ name: "", code: "", collegeId: "" });
-const createCollegeDraft = (): CollegeDraft => ({ name: "", code: "" });
+const createCollegeDraft = (): CollegeDraft => ({ name: "", code: "", departmentIds: [] });
 
 const initialPermissions: RepresentativePermissions = {
   canRespond: false,
@@ -89,6 +90,7 @@ const InstitutionWorkspace = () => {
   // Modal open states
   const [isAddingDepartment, setIsAddingDepartment] = useState(false);
   const [isAddingCollege, setIsAddingCollege] = useState(false);
+  const [editingCollege, setEditingCollege] = useState<(CollegeDraft & { id: number }) | null>(null);
   const [isAddingCategory, setIsAddingCategory] = useState(false);
   const [isAddingHalls, setIsAddingHalls] = useState(false);
   const [isAddingLevels, setIsAddingLevels] = useState(false);
@@ -388,6 +390,7 @@ const InstitutionWorkspace = () => {
     const drafts = collegeDrafts.map((draft) => ({
       name: draft.name.trim(),
       code: draft.code.trim(),
+      departmentIds: draft.departmentIds.map(Number),
     }));
     if (drafts.some((draft) => !draft.name || !draft.code)) {
       setError("Enter a name and short code for each college.");
@@ -399,21 +402,103 @@ const InstitutionWorkspace = () => {
       new Set(collegeCodes).size !== collegeCodes.length ||
       collegeCodes.some((code) => colleges.some((college) => college.code.toUpperCase() === code)) ||
       new Set(collegeNames).size !== collegeNames.length ||
-      collegeNames.some((name) => colleges.some((college) => college.name.toLowerCase() === name))
+      collegeNames.some((name) => colleges.some((college) => college.name.toLowerCase() === name)) ||
+      new Set(drafts.flatMap((draft) => draft.departmentIds)).size !==
+        drafts.reduce((total, draft) => total + draft.departmentIds.length, 0)
     ) {
-      setError("College names and short codes must be unique.");
+      setError("College names and short codes must be unique, and a department can only be assigned to one new college at a time.");
       return;
     }
     void runBatchSave(
       drafts.map((draft) => () => institutionAdminService.createCollege(draft)),
-      (created) => setColleges((current) => [...current, ...created]),
+      (created) => {
+        setColleges((current) => [...current, ...created]);
+        const assignments = new Map<number, number>();
+        created.forEach((college, index) => {
+          drafts[index].departmentIds.forEach((departmentId) => assignments.set(departmentId, college.id));
+        });
+        setDepartments((current) =>
+          current.map((department) => {
+            const collegeId = assignments.get(department.id);
+            if (collegeId === undefined) return department;
+            const college = created.find((item) => item.id === collegeId);
+            return {
+              ...department,
+              collegeId,
+              college: college ? { id: college.id, name: college.name, code: college.code } : null,
+            };
+          }),
+        );
+      },
       "college",
       "colleges",
     ).then((createdCount) => {
       setCollegeDrafts(
-        createdCount < drafts.length ? drafts.slice(createdCount) : [createCollegeDraft()],
+        createdCount < drafts.length ? collegeDrafts.slice(createdCount) : [createCollegeDraft()],
       );
       setIsAddingCollege(false);
+    });
+  };
+
+  const openCollegeEditor = (college: College) => {
+    setError(null);
+    setEditingCollege({
+      id: college.id,
+      name: college.name,
+      code: college.code,
+      departmentIds: departments
+        .filter((department) => department.collegeId === college.id)
+        .map((department) => String(department.id)),
+    });
+  };
+
+  const handleUpdateCollege = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (!editingCollege) return;
+
+    const name = editingCollege.name.trim();
+    const code = editingCollege.code.trim();
+    const departmentIds = editingCollege.departmentIds.map(Number);
+    if (!name || !code) {
+      setError("Enter a name and short code for the college.");
+      return;
+    }
+    const duplicate = colleges.some(
+      (college) =>
+        college.id !== editingCollege.id &&
+        (college.code.toUpperCase() === code.toUpperCase() ||
+          college.name.toLowerCase() === name.toLowerCase()),
+    );
+    if (duplicate) {
+      setError("College names and short codes must be unique.");
+      return;
+    }
+
+    void runSave(
+      () => institutionAdminService.updateCollege(editingCollege.id, { name, code, departmentIds }),
+      "College updated successfully.",
+    ).then((saved) => {
+      if (!saved) return;
+      setColleges((current) =>
+        current.map((college) =>
+          college.id === editingCollege.id ? { ...college, name, code: code.toUpperCase() } : college,
+        ),
+      );
+      setDepartments((current) =>
+        current.map((department) => {
+          const assigned = departmentIds.includes(department.id);
+          if (department.collegeId !== editingCollege.id && !assigned) return department;
+          if (!assigned && department.collegeId === editingCollege.id) {
+            return { ...department, collegeId: null, college: null };
+          }
+          return {
+            ...department,
+            collegeId: editingCollege.id,
+            college: { id: editingCollege.id, name, code: code.toUpperCase() },
+          };
+        }),
+      );
+      setEditingCollege(null);
     });
   };
 
@@ -851,7 +936,7 @@ const InstitutionWorkspace = () => {
                       </div>
                       {colleges.length ? (
                         <div className="overflow-x-auto">
-                          <table className="w-full min-w-[520px] border-collapse text-left font-['Inter',sans-serif] text-sm">
+                          <table className="w-full min-w-[560px] border-collapse text-left font-['Inter',sans-serif] text-sm">
                             <thead>
                               <tr className="border-b border-[#ffd7a8]/50 text-[#8b8e8d] font-poppins text-xs">
                                 <th className="pb-3 pr-4 font-semibold uppercase tracking-wider">College Name</th>
@@ -873,6 +958,14 @@ const InstitutionWorkspace = () => {
                                     {departments.filter((department) => department.collegeId === college.id).length}
                                   </td>
                                   <td className="py-3.5 text-right">
+                                    <button
+                                      type="button"
+                                      aria-label={`Edit ${college.name}`}
+                                      onClick={() => openCollegeEditor(college)}
+                                      className="rounded-full p-2 text-[#75420B] hover:bg-[#FEF5EA]"
+                                    >
+                                      <Pencil size={16} />
+                                    </button>
                                     <button
                                       type="button"
                                       aria-label={`Delete ${college.name}`}
@@ -1794,6 +1887,51 @@ const InstitutionWorkspace = () => {
                           className={inputClass}
                         />
                       </label>
+                      <fieldset className="mt-4">
+                        <legend className="font-poppins text-xs font-medium text-[#454545]">
+                          Existing Departments
+                        </legend>
+                        <p className="mb-2 mt-1 font-poppins text-[11px] text-[#8b8e8d]">
+                          Select existing departments. A department already assigned to another college will move here.
+                        </p>
+                        {departments.length ? (
+                          <div className="max-h-36 space-y-2 overflow-y-auto rounded-xl border border-[#ffd7a8]/60 bg-white p-3">
+                            {departments.map((department) => (
+                              <label key={department.id} className="flex items-start gap-2 font-poppins text-xs text-[#454545]">
+                                <input
+                                  type="checkbox"
+                                  checked={draft.departmentIds.includes(String(department.id))}
+                                  onChange={(event) =>
+                                    setCollegeDrafts((current) =>
+                                      current.map((item, draftIndex) =>
+                                        draftIndex === index
+                                          ? {
+                                              ...item,
+                                              departmentIds: event.target.checked
+                                                ? [...item.departmentIds, String(department.id)]
+                                                : item.departmentIds.filter((id) => id !== String(department.id)),
+                                            }
+                                          : item,
+                                      ),
+                                    )
+                                  }
+                                  className="mt-0.5 accent-[#F49B31]"
+                                />
+                                <span>
+                                  {department.name} ({department.code})
+                                  {department.collegeId
+                                    ? ` · currently in ${department.college?.code ?? "another college"}`
+                                    : ""}
+                                </span>
+                              </label>
+                            ))}
+                          </div>
+                        ) : (
+                          <p className="rounded-xl bg-white p-3 font-poppins text-xs text-[#8b8e8d]">
+                            Create departments first to assign them to a college.
+                          </p>
+                        )}
+                      </fieldset>
                     </fieldset>
                   ))}
                 </div>
@@ -1814,6 +1952,116 @@ const InstitutionWorkspace = () => {
                   </button>
                   <button type="submit" disabled={saving} className={primaryBtnClass}>
                     {saving ? "Saving…" : `Add ${collegeDrafts.length} College${collegeDrafts.length === 1 ? "" : "s"}`}
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
+
+        {editingCollege && (
+          <div
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 backdrop-blur-sm animate-fade-in"
+            onClick={() => setEditingCollege(null)}
+          >
+            <div
+              className="relative max-h-[90vh] w-full max-w-xl overflow-y-auto rounded-[24px] border border-[#ffd7a8] bg-white p-6 shadow-xl sm:p-8"
+              onClick={(event) => event.stopPropagation()}
+            >
+              <div className="flex items-center justify-between border-b border-[#ffd7a8]/50 pb-3">
+                <h3 className="font-poppins text-lg font-bold text-[#212121]">Edit College</h3>
+                <button
+                  type="button"
+                  onClick={() => setEditingCollege(null)}
+                  className="rounded-full p-1 text-black/40 hover:bg-[#FEF5EA]"
+                  aria-label="Close edit college dialog"
+                >
+                  <X size={18} />
+                </button>
+              </div>
+              {error && <p role="alert" className="mt-3 text-sm text-red-700">{error}</p>}
+              <form onSubmit={handleUpdateCollege} className="mt-4 flex flex-col gap-4">
+                <label className="block font-poppins text-xs font-medium text-[#454545]">
+                  College Name
+                  <input
+                    required
+                    maxLength={160}
+                    value={editingCollege.name}
+                    onChange={(event) =>
+                      setEditingCollege((current) =>
+                        current ? { ...current, name: event.target.value } : current,
+                      )
+                    }
+                    className={inputClass}
+                  />
+                </label>
+                <label className="block font-poppins text-xs font-medium text-[#454545]">
+                  Short Code
+                  <input
+                    required
+                    maxLength={32}
+                    value={editingCollege.code}
+                    onChange={(event) =>
+                      setEditingCollege((current) =>
+                        current ? { ...current, code: event.target.value } : current,
+                      )
+                    }
+                    className={inputClass}
+                  />
+                </label>
+                <fieldset>
+                  <legend className="font-poppins text-xs font-medium text-[#454545]">
+                    Departments
+                  </legend>
+                  <p className="mb-2 mt-1 font-poppins text-[11px] text-[#8b8e8d]">
+                    Choose from existing departments. Selecting one assigned to another college moves it here; unselected departments will be unassigned from this college.
+                  </p>
+                  {departments.length ? (
+                    <div className="max-h-48 space-y-2 overflow-y-auto rounded-xl border border-[#ffd7a8]/60 bg-[#FEF5EA]/30 p-3">
+                      {departments.map((department) => (
+                        <label key={department.id} className="flex items-start gap-2 font-poppins text-xs text-[#454545]">
+                          <input
+                            type="checkbox"
+                            checked={editingCollege.departmentIds.includes(String(department.id))}
+                            onChange={(event) =>
+                              setEditingCollege((current) =>
+                                current
+                                  ? {
+                                      ...current,
+                                      departmentIds: event.target.checked
+                                        ? [...current.departmentIds, String(department.id)]
+                                        : current.departmentIds.filter((id) => id !== String(department.id)),
+                                    }
+                                  : current,
+                              )
+                            }
+                            className="mt-0.5 accent-[#F49B31]"
+                          />
+                          <span>
+                            {department.name} ({department.code})
+                            {department.collegeId && department.collegeId !== editingCollege.id
+                              ? ` · currently in ${department.college?.code ?? "another college"}`
+                              : ""}
+                          </span>
+                        </label>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="rounded-xl bg-[#FEF5EA]/30 p-3 font-poppins text-xs text-[#8b8e8d]">
+                      There are no existing departments to assign.
+                    </p>
+                  )}
+                </fieldset>
+                <div className="mt-2 flex justify-end gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setEditingCollege(null)}
+                    className="rounded-full border border-black/15 px-5 py-2 font-poppins text-sm font-semibold"
+                  >
+                    Cancel
+                  </button>
+                  <button type="submit" disabled={saving} className={primaryBtnClass}>
+                    {saving ? "Saving…" : "Save Changes"}
                   </button>
                 </div>
               </form>

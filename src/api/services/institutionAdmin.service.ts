@@ -142,9 +142,21 @@ const institutionAdminService = {
   createCollege: async (data: {
     name: string;
     code: string;
+    departmentIds?: number[];
   }): Promise<College> => {
     const response = await api.post<{ college: College }>(
       "/admin/colleges",
+      data,
+    );
+    return response.data.college;
+  },
+
+  updateCollege: async (
+    id: number,
+    data: { name: string; code: string; departmentIds: number[] },
+  ): Promise<College> => {
+    const response = await api.patch<{ college: College }>(
+      `/admin/colleges/${id}`,
       data,
     );
     return response.data.college;

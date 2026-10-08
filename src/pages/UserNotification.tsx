@@ -120,7 +120,7 @@ const UserNotification = () => {
                 {/* Notification Toggles */}
                 <div className="space-y-4">
                   <div className="flex justify-between items-center p-5 bg-transparent border border-orange-200 rounded-2xl">
-                    <span className="text-[#4A3728] text-base">Wave status updated</span>
+                    <span className="text-[#4A3728] text-base">Ping and wave status updated</span>
                     <Toggle
                       checked={prefs.waveStatusUpdated}
                       onChange={() => handleToggle("waveStatusUpdated")}

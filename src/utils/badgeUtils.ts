@@ -85,14 +85,8 @@ const BADGE_COLORS = {
  * Calculate the appropriate Wave badge based on hierarchy.
  * Only ONE badge displays at a time.
  *
- * Hierarchy (highest to lowest priority):
- * 1. Community Pick (Yellow) - if this wave has the highest surge count for its Ping
- * 2. Rejected (Red)
- * 3. Completed (Orange)
- * 4. In Progress (Amber)
- * 5. Approved (Green)
- * 6. Under Review (Green)
- * 7. Posted (Grey)
+ * Priority from lowest to highest:
+ * Proposed → Community Pick → moderation states → In Progress → Completed.
  *
  * @param wave - The Wave to calculate badge for
  * @param allWavesForPing - All waves for this wave's parent Ping (needed for Community Pick calculation)
@@ -102,27 +96,10 @@ export function calculateWaveBadge(
   wave: Wave,
   allWavesForPing: Wave[],
 ): WaveBadgeConfig | null {
-  // Priority 1: Community Pick (Yellow)
-  // Check if this wave has the highest surge count among all waves for this ping
-  if (allWavesForPing.length > 0) {
-    const maxSurgeCount = Math.max(
-      ...allWavesForPing.map((w) => w.surgeCount || 0),
-    );
-    const waveSurgeCount = wave.surgeCount || 0;
+  const status = wave.status || "POSTED";
 
-    if (waveSurgeCount === maxSurgeCount && maxSurgeCount > 0) {
-      return {
-        type: "COMMUNITY_PICK",
-        label: "Community Pick",
-        color: BADGE_COLORS.YELLOW,
-        svg: waveCommunityPick,
-      };
-    }
-  }
-
-  // Priority 2-7: Status-based badges
-  // Only one status can be active at a time, so return based on status
-  switch (wave.status) {
+  // A moderation/progress status always overrides the surge-ranked badge.
+  switch (status) {
     case "REJECTED":
       return {
         type: "REJECTED",
@@ -164,12 +141,32 @@ export function calculateWaveBadge(
       };
 
     case "POSTED":
-      return {
-        type: "POSTED",
-        label: "Posted",
-        color: BADGE_COLORS.GREY,
-        svg: waveProposed,
-      };
+      {
+        const communityPick = allWavesForPing
+          .filter((candidate) => candidate.status !== "REJECTED")
+          .reduce<Wave | null>((leader, candidate) => {
+            if (!leader || (candidate.surgeCount ?? 0) > (leader.surgeCount ?? 0)) {
+              return candidate;
+            }
+            return leader;
+          }, null);
+
+        if (communityPick?.id === wave.id && (wave.surgeCount ?? 0) > 0) {
+          return {
+            type: "COMMUNITY_PICK",
+            label: "Community Pick",
+            color: BADGE_COLORS.YELLOW,
+            svg: waveCommunityPick,
+          };
+        }
+
+        return {
+          type: "POSTED",
+          label: "Proposed",
+          color: BADGE_COLORS.GREY,
+          svg: waveProposed,
+        };
+      }
     // Unsupported status or "ON_HOLD"
     default:
       return null;
@@ -182,10 +179,7 @@ export function calculateWaveBadge(
  * Calculate the appropriate Ping badge based on hierarchy.
  * Only ONE badge displays at a time.
  *
- * Hierarchy (highest to lowest priority):
- * 1. Top 3 (Yellow) - if ping is in the weekly top 3 by surge count
- * 2. Acknowledged (Green) - if progressStatus === "ACKNOWLEDGED"
- * 3. Resolved (Amber) - if progressStatus === "RESOLVED"
+ * Priority from lowest to highest: Open → Top 3 → Acknowledged → Resolved.
  *
  * @param ping - The Ping to calculate badge for
  * @param weeklyTop3Ids - Array of Ping IDs that are in the top 3 this week
@@ -195,27 +189,7 @@ export function calculatePingBadge(
   ping: Ping,
   weeklyTop3Ids: number[] = [],
 ): PingBadgeConfig | null {
-  // Priority 1: Top 3 (Yellow)
-  if (weeklyTop3Ids.includes(ping.id)) {
-    return {
-      type: "TOP_3",
-      label: "Top 3",
-      color: BADGE_COLORS.YELLOW,
-      svg: pingTop3,
-    };
-  }
-
-  // Priority 2: Acknowledged (Green)
-  if (ping.progressStatus === "ACKNOWLEDGED") {
-    return {
-      type: "ACKNOWLEDGED",
-      label: "Acknowledged",
-      color: BADGE_COLORS.GREEN,
-      svg: pingAcknowledged,
-    };
-  }
-
-  // Priority 3: Resolved (Amber)
+  // Explicit ping states take precedence over weekly ranking.
   if (ping.progressStatus === "RESOLVED" || !!ping.resolvedAt) {
     return {
       type: "RESOLVED",
@@ -225,7 +199,25 @@ export function calculatePingBadge(
     };
   }
 
-  // Priority 4: Open - no official action yet
+  if (ping.progressStatus === "ACKNOWLEDGED" || !!ping.acknowledgedAt) {
+    return {
+      type: "ACKNOWLEDGED",
+      label: "Acknowledged",
+      color: BADGE_COLORS.GREEN,
+      svg: pingAcknowledged,
+    };
+  }
+
+  if (weeklyTop3Ids.includes(ping.id)) {
+    return {
+      type: "TOP_3",
+      label: "Top 3",
+      color: BADGE_COLORS.YELLOW,
+      svg: pingTop3,
+    };
+  }
+
+  // Open is the default when no higher-priority badge applies.
   if (!ping.officialResponse && !ping.acknowledgedAt) {
     return {
       type: "OPEN",

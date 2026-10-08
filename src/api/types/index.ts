@@ -271,6 +271,7 @@ export interface Wave {
   anonymousProfilePicture?: string | null; // Avatar URL for anonymous posts
   rank?: number; // Top ranking (1-3 for top waves)
   isEdited?: boolean; // true if solution was edited after original creation
+  reason?: string | null;
   status:
     | "POSTED"
     | "UNDER_REVIEW"
@@ -547,6 +548,7 @@ export interface UserPreference {
 export type NotificationType =
   | 'WAVE_APPROVED'
   | 'WAVE_STATUS_UPDATED'
+  | 'PING_STATUS_UPDATED'
   | 'OFFICIAL_RESPONSE_POSTED'
   | 'OFFICIAL_RESPONSE'
   | 'ANNOUNCEMENT_POSTED'

@@ -19,6 +19,8 @@ import { getRelatedTitleScore } from "./relatedPingMatching";
 import BadgeTooltip from "../../BadgeTooltip";
 import AssignPingModal from "../../AssignPingModal";
 import formatTimeAgo from "../../../utils/formatTimeAgo";
+import { ToastContainer } from "../../shared/Toast";
+import type { ToastItem } from "../../shared/Toast";
 
 export type AdminBadgeType =
     | "SURGING_NOW"
@@ -171,6 +173,7 @@ const AdminPingDetail: React.FC<AdminPingDetailProps> = ({ pingId: propPingId, m
     const [urging, setUrging] = useState(false);
     const [isAssignModalOpen, setIsAssignModalOpen] = useState(false);
     const [notice, setNotice] = useState<string | null>(null);
+    const [toasts, setToasts] = useState<ToastItem[]>([]);
     const [redirectToUserDetail, setRedirectToUserDetail] = useState(false);
 
     const fetchPing = useCallback(async () => {
@@ -296,6 +299,10 @@ const AdminPingDetail: React.FC<AdminPingDetailProps> = ({ pingId: propPingId, m
             setAcknowledging(true);
             await adminService.acknowledgePing(parseInt(pingId));
             await fetchPing();
+            setToasts((current) => [
+                ...current,
+                { id: `${Date.now()}`, variant: "acknowledged" },
+            ]);
         } catch (err: any) {
             setNotice(err?.response?.data?.error || "Failed to acknowledge ping");
         } finally {
@@ -505,14 +512,18 @@ const AdminPingDetail: React.FC<AdminPingDetailProps> = ({ pingId: propPingId, m
                         pings={relatedPings}
                         detailBasePath={mode === "rep" ? "/inbox" : "/admin/soundboard"}
                     />
-                    {permissions.canAcknowledge && !isAcknowledged && !isResolved && (
+                    {(permissions.canAcknowledge || isAcknowledged) && !isResolved && (
                         <button
                             onClick={handleAcknowledge}
-                            disabled={acknowledging}
-                            className="flex h-[39px] w-full items-center justify-center gap-2 rounded-[20px] bg-[#f49b31] font-['Baloo_Bhai_2',sans-serif] text-[14px] font-bold uppercase text-white hover:bg-[#e68a1f] disabled:opacity-50"
+                            disabled={acknowledging || isAcknowledged}
+                            className={`flex h-[39px] w-full items-center justify-center gap-2 rounded-[20px] font-['Baloo_Bhai_2',sans-serif] text-[14px] font-bold uppercase text-white disabled:cursor-not-allowed ${
+                                isAcknowledged
+                                    ? "bg-[#8b8e8d]"
+                                    : "bg-[#f49b31] hover:bg-[#e68a1f] disabled:opacity-50"
+                            }`}
                         >
                             <img src="/assets/icon/followup-acknowledged.svg" alt="" className="size-5 brightness-0 invert" />
-                            {acknowledging ? "..." : "Acknowledge"}
+                            {isAcknowledged ? "Acknowledged" : acknowledging ? "..." : "Acknowledge"}
                         </button>
                     )}
                     {permissions.canAssign && (
@@ -546,6 +557,10 @@ const AdminPingDetail: React.FC<AdminPingDetailProps> = ({ pingId: propPingId, m
                     }}
                 />
             )}
+            <ToastContainer
+                toasts={toasts}
+                onDismiss={(id) => setToasts((current) => current.filter((toast) => toast.id !== id))}
+            />
         </div>
     );
 };

@@ -98,7 +98,7 @@ const AdminNotification = () => {
             <div className="space-y-4">
               <div className="flex justify-between items-center p-5 bg-transparent border border-orange-200 rounded-2xl">
                 <span className="text-[#4A3728] text-base">
-                  Notify when a wave (solution) status is updated
+                  Notify when a ping or wave status is updated
                 </span>
                 <Toggle
                   checked={preferences.waveStatusUpdated}

@@ -5,6 +5,7 @@ import WaveActionModal from "./WaveActionModal";
 import BadgeTooltip from "../../BadgeTooltip";
 import type { PingDetailPermissions, WaveActionStatus } from "./types";
 import formatTimeAgo from "../../../utils/formatTimeAgo";
+import { calculateWaveBadge, waveCommunityPick } from "../../../utils/badgeUtils";
 
 interface AdminWaveCardProps {
     wave: Wave;
@@ -26,13 +27,14 @@ const AdminWaveCard: React.FC<AdminWaveCardProps> = ({ wave, rank, permissions, 
     const canModerate = permissions.canModerateWaves;
     const canProgress = permissions.canUpdateWaveProgress;
     const canApprove = canModerate && (status === "POSTED" || status === "UNDER_REVIEW");
-    const canReject = canModerate && (status === "POSTED" || status === "UNDER_REVIEW" || status === "APPROVED");
+    const canReject = canModerate && (status === "POSTED" || status === "UNDER_REVIEW");
     const canReview = canModerate && status === "POSTED";
     const canStart = canProgress && status === "APPROVED";
-    const canComplete = canProgress && status === "IN_PROGRESS";
+    const canComplete = canProgress && (status === "APPROVED" || status === "IN_PROGRESS");
     const hasActions = canApprove || canReject || canReview || canStart || canComplete;
 
     const timestamp = formatTimeAgo(wave.createdAt);
+    const statusBadge = status === "POSTED" ? null : calculateWaveBadge(wave, []);
 
     const authorName = wave.author ? `${wave.author.firstName} ${wave.author.lastName}` : "Anonymous";
     const avatar =
@@ -60,23 +62,35 @@ const AdminWaveCard: React.FC<AdminWaveCardProps> = ({ wave, rank, permissions, 
                     <p className="whitespace-nowrap font-poppins text-[9px] font-medium text-[#8b8e8d] sm:text-[13px] max-[500px]:text-[8px]">{timestamp}</p>
                 </div>
                 <div className="flex max-w-[48%] shrink-0 flex-nowrap items-center justify-end gap-1 overflow-hidden sm:max-w-[52%] sm:gap-[5px] max-[500px]:max-w-[46%]">
-                    {status !== "POSTED" && (
-                        <BadgeTooltip badgeKey={status}>
-                            <span className="max-w-full truncate whitespace-nowrap rounded-[23px] bg-[#fef5ea] px-1 py-1 font-poppins text-[8px] font-medium capitalize text-[#f49b31] sm:px-3 sm:text-[12px]">
-                                {status.replace("_", " ").toLowerCase()}
+                    {statusBadge ? (
+                        <BadgeTooltip
+                            badgeKey={statusBadge.type ?? status}
+                            description={status === "REJECTED" && wave.reason
+                                ? `Reason: ${wave.reason}`
+                                : undefined}
+                        >
+                            <img
+                                src={statusBadge.svg}
+                                alt={statusBadge.label}
+                                className="h-[22px] w-auto max-w-full shrink-0 object-contain"
+                            />
+                        </BadgeTooltip>
+                    ) : featured ? (
+                        <BadgeTooltip badgeKey="COMMUNITY_PICK">
+                            <img
+                                src={waveCommunityPick}
+                                alt="Community Pick"
+                                className="h-[22px] w-auto max-w-full shrink-0 object-contain"
+                            />
+                        </BadgeTooltip>
+                    ) : (
+                        <BadgeTooltip badgeKey="ALTERNATIVE">
+                            <span className="flex min-w-0 items-center gap-0.5 rounded-[23px] border-[1.5px] border-[#626665] bg-[#fefefe] px-1 py-1 font-poppins text-[8px] font-medium text-black sm:gap-[7.5px] sm:px-[16.5px] sm:py-1.5 sm:text-[13.5px]">
+                                <img src="/assets/icon/dot-blue.svg" alt="" className="size-[6px] sm:size-[7.5px]" />
+                                <span className="truncate whitespace-nowrap">Alternative</span>
                             </span>
                         </BadgeTooltip>
                     )}
-                    <BadgeTooltip badgeKey={featured ? "COMMUNITY_PICK" : "ALTERNATIVE"}>
-                        <span className="flex min-w-0 items-center gap-0.5 rounded-[23px] border-[1.5px] border-[#626665] bg-[#fefefe] px-1 py-1 font-poppins text-[8px] font-medium text-black sm:gap-[7.5px] sm:px-[16.5px] sm:py-1.5 sm:text-[13.5px]">
-                            <img
-                                src={featured ? "/assets/icon/dot-yellow.svg" : "/assets/icon/dot-blue.svg"}
-                                alt=""
-                                className="size-[6px] sm:size-[7.5px]"
-                            />
-                            <span className="truncate whitespace-nowrap">{featured ? "Community Pick" : "Alternative"}</span>
-                        </span>
-                    </BadgeTooltip>
                 </div>
             </div>
 

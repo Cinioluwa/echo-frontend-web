@@ -31,6 +31,10 @@ export const BADGE_DESCRIPTIONS: Record<string, { title: string; description: st
         title: "Proposed",
         description: "A solution suggested by the community that is waiting to be reviewed.",
     },
+    PROPOSED: {
+        title: "Proposed",
+        description: "A solution suggested by the community that is waiting to be reviewed.",
+    },
     UNDER_REVIEW: {
         title: "Under Review",
         description: "Leadership is currently evaluating this wave.",
@@ -57,9 +61,15 @@ interface BadgeTooltipProps {
     badgeKey: string;
     children: React.ReactNode;
     className?: string;
+    description?: string;
 }
 
-const BadgeTooltip: React.FC<BadgeTooltipProps> = ({ badgeKey, children, className = "" }) => {
+const BadgeTooltip: React.FC<BadgeTooltipProps> = ({
+    badgeKey,
+    children,
+    className = "",
+    description,
+}) => {
     const [open, setOpen] = useState(false);
     const [coords, setCoords] = useState<{ top: number; left: number } | null>(null);
     const triggerRef = useRef<HTMLButtonElement>(null);
@@ -141,7 +151,7 @@ const BadgeTooltip: React.FC<BadgeTooltipProps> = ({ badgeKey, children, classNa
                 >
                     <span className="font-poppins text-[13px] font-semibold text-[#171717]">{info.title}</span>
                     <span className="font-poppins text-[12px] font-medium leading-snug text-[#626665]">
-                        {info.description}
+                        {description ?? info.description}
                     </span>
                 </span>,
                 document.body
