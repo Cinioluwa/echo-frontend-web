@@ -326,7 +326,31 @@ const AdminPingDetail: React.FC<AdminPingDetailProps> = ({ pingId: propPingId, m
     const handleUpdateWaveStatus = async (id: number, status: WaveActionStatus, reason?: string) => {
         try {
             await adminService.updateWaveStatus(id, { status, reason });
-            await fetchPing();
+            setPingData((current) => {
+                if (!current) return current;
+
+                return {
+                    ...current,
+                    ...(status === "COMPLETED"
+                        ? {
+                              resolvedAt: new Date().toISOString(),
+                              progressStatus: "RESOLVED" as const,
+                          }
+                        : {}),
+                    waves: current.waves?.map((wave) =>
+                        wave.id === id
+                            ? {
+                                  ...wave,
+                                  status,
+                                  flaggedForReview: status === "UNDER_REVIEW",
+                                  ...(status === "REJECTED"
+                                      ? { reason: reason?.trim() || null }
+                                      : {}),
+                              }
+                            : wave,
+                    ),
+                };
+            });
         } catch (err: any) {
             console.error("Failed to update wave status", err);
             throw new Error(err?.response?.data?.error || err?.response?.data?.message || "Failed to update wave status");

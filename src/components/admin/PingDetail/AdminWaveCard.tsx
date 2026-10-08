@@ -50,6 +50,7 @@ const AdminWaveCard: React.FC<AdminWaveCardProps> = ({ wave, rank, permissions, 
         try {
             setIsUpdating(true);
             await onUpdateStatus(wave.id, activeAction, reason);
+            setActiveAction(null);
         } finally {
             setIsUpdating(false);
         }
