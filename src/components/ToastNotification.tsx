@@ -1,17 +1,18 @@
-import { useEffect } from 'react';
+import { useEffect, type ReactNode } from 'react';
 import { X } from 'lucide-react';
 import { useNotificationStore } from '../stores/ui/useNotificationStore';
 import { useNavigate } from 'react-router-dom';
 import type { AppNotification, NotificationType } from '../api/types';
+import SurgeIcon from './shared/SurgeIcon';
 
 const AUTO_DISMISS_MS = 5500;
 
-const ICONS: Partial<Record<NotificationType, string>> = {
+const ICONS: Partial<Record<NotificationType, string | ReactNode>> = {
   NEW_WAVE_ON_PING: '🌊',
   NEW_COMMENT_ON_POST: '💬',
-  PING_SURGED_MILESTONE: '🚀',
+  PING_SURGED_MILESTONE: <SurgeIcon width={13} height={17} fill="#F49B31" />,
   COMMENT_REPLY: '↩️',
-  COMMENT_SURGE: '⚡',
+  COMMENT_SURGE: <SurgeIcon width={13} height={17} fill="#F49B31" />,
   WAVE_STATUS_UPDATED: '📋',
   PING_STATUS_UPDATED: '📋',
   WAVE_APPROVED: '✅',

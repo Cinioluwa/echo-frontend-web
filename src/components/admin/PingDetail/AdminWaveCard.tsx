@@ -3,6 +3,7 @@ import { X } from "lucide-react";
 import type { Wave } from "../../../api/types/index";
 import WaveActionModal from "./WaveActionModal";
 import BadgeTooltip from "../../BadgeTooltip";
+import SurgeIcon from "../../shared/SurgeIcon";
 import type { PingDetailPermissions, WaveActionStatus } from "./types";
 import formatTimeAgo from "../../../utils/formatTimeAgo";
 import {
@@ -165,7 +166,7 @@ const AdminWaveCard: React.FC<AdminWaveCardProps> = ({ wave, rank, permissions, 
                 </div>
 
                 <div className="ml-auto flex shrink-0 items-center gap-1">
-                    <img src="/assets/images/surge.svg" alt="Surges" className="h-[23px] w-[14px]" />
+                    <SurgeIcon width={14} height={19} fill="#F49B31" />
                     <span className="font-poppins text-[28px] font-semibold leading-none text-[#f49b31]">
                         {wave.surgeCount}
                     </span>

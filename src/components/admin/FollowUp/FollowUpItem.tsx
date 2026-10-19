@@ -1,6 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import type { FollowUpItem as FollowUpItemType } from "./types";
+import SurgeIcon from "../../shared/SurgeIcon";
 
 interface FollowUpItemProps {
     item: FollowUpItemType;
@@ -140,11 +141,7 @@ const FollowUpItem: React.FC<FollowUpItemProps> = ({ item }) => {
                             </div>
                             {item.surgeCount !== undefined && (
                                 <div className="flex gap-[2.5px] items-center w-full" data-node-id="5627:18010">
-                                    <img
-                                        src="/assets/icon/red-surge.svg"
-                                        alt="surge"
-                                        className="h-[10.6px] w-[8.1px] shrink-0"
-                                    />
+                                    <SurgeIcon width={8} height={11} fill="#B01212" />
                                     <span className="font-poppins font-medium text-[13px] leading-normal text-[#454545]">
                                         {item.surgeCount} surges
                                     </span>
@@ -290,12 +287,7 @@ const FollowUpItem: React.FC<FollowUpItemProps> = ({ item }) => {
 
                     {/* Surge count */}
                     <div className="flex items-center gap-[5px] self-end sm:self-auto" data-node-id="5701:15638">
-                        <img
-                            src="/assets/images/surge.svg"
-                            alt="Surges"
-                            className="h-[26px] w-5 shrink-0"
-                            data-node-id="5701:15639"
-                        />
+                        <SurgeIcon width={20} height={26} fill="#F49B31" data-node-id="5701:15639" />
                         <span
                             className="font-poppins font-semibold text-[24px] leading-none text-[#f49b31]"
                             data-node-id="5701:15640"

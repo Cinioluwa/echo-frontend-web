@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { Navigate, useParams } from "react-router-dom";
 import { TrendingUp, MessageSquare, Radio, CheckCircle2, Send } from "lucide-react";
+import SurgeIcon from "../../shared/SurgeIcon";
 import { categoryImages } from "../../CategoryImages";
 import KPICard from "./KPICard";
 import CommentsPanel from "./CommentsPanel";
@@ -43,7 +44,7 @@ const badgeConfigs: Record<AdminBadgeType, BadgeConfig> = {
         label: "Surging now",
         bgColor: "#ffd7d7",
         textColor: "#b01212",
-        icon: <img src="/assets/icon/red-surge.svg" alt="Red lighting Icon" className="w-3 h-3" />
+        icon: <SurgeIcon width={9} height={12} fill="#B01212" />
     },
     RISING_QUICKLY: {
         label: "Rising quickly",
@@ -518,7 +519,7 @@ const AdminPingDetail: React.FC<AdminPingDetailProps> = ({ pingId: propPingId, m
                     )}
 
                     <div className="flex w-full flex-col gap-5 sm:flex-row">
-                        <KPICard icon="/assets/images/surge.svg" label="Surge count" value={detail.surgeCount} delta={detail.surgeDelta} />
+                        <KPICard icon={<SurgeIcon width={11} height={15} fill="#F49B31" />} label="Surge count" value={detail.surgeCount} delta={detail.surgeDelta} />
                         <KPICard label="Unresolved for" value={detail.unresolvedFor} />
                     </div>
 

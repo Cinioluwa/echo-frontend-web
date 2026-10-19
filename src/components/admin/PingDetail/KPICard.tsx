@@ -1,7 +1,7 @@
 import React from "react";
 
 interface KPICardProps {
-    icon?: string;
+    icon?: React.ReactNode;
     label: string;
     value: string | number;
     delta?: string;
@@ -11,7 +11,7 @@ const KPICard: React.FC<KPICardProps> = ({ icon, label, value, delta }) => {
     return (
         <div className="flex flex-1 flex-col gap-2 rounded-xl border border-[rgba(244,155,49,0.3)] bg-white px-[17px] py-[25px]">
             <div className="flex items-center gap-1">
-                {icon && <img src={icon} alt="" className="h-[18px] w-[11px]" />}
+                {icon}
                 <p className="font-poppins text-[15px] font-medium tracking-[0.55px] text-[#f49b31]">{label}</p>
             </div>
             <div className="flex items-center justify-between gap-2">

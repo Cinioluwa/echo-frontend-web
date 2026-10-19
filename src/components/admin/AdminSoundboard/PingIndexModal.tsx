@@ -327,11 +327,7 @@ const PingIndexModal: React.FC<PingIndexModalProps> = ({ category, categories, o
                                             {/* Surges */}
                                             <div className="flex flex-col md:flex-col">
                                                 <span className="text-[12px] md:text-[13px] font-semibold text-[#F49B31]">
-                                                    <img
-                                                        src="/assets/images/surge.svg"
-                                                        alt="Surge"
-                                                        className="w-3 h-3 md:w-3.5 md:h-3.5 inline-block mr-0.5"
-                                                    />
+                                                    <SurgeIcon width={12} height={16} fill="#F49B31" className="inline-block mr-0.5" />
                                                     {ping.surgeCount}
                                                 </span>
                                                 <span className="text-[9px] md:text-[10px] text-[#9CA3AF]">

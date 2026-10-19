@@ -91,6 +91,7 @@ const InstitutionWorkspace = () => {
   const [isAddingDepartment, setIsAddingDepartment] = useState(false);
   const [isAddingCollege, setIsAddingCollege] = useState(false);
   const [editingCollege, setEditingCollege] = useState<(CollegeDraft & { id: number }) | null>(null);
+  const [editingDepartment, setEditingDepartment] = useState<(DepartmentDraft & { id: number }) | null>(null);
   const [isAddingCategory, setIsAddingCategory] = useState(false);
   const [isAddingHalls, setIsAddingHalls] = useState(false);
   const [isAddingLevels, setIsAddingLevels] = useState(false);
@@ -449,6 +450,63 @@ const InstitutionWorkspace = () => {
       departmentIds: departments
         .filter((department) => department.collegeId === college.id)
         .map((department) => String(department.id)),
+    });
+  };
+
+  const openDepartmentEditor = (department: AcademicDepartment) => {
+    setError(null);
+    setEditingDepartment({
+      id: department.id,
+      name: department.name,
+      code: department.code,
+      collegeId: department.collegeId ? String(department.collegeId) : "",
+    });
+  };
+
+  const handleUpdateDepartment = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (!editingDepartment) return;
+
+    const name = editingDepartment.name.trim();
+    const code = editingDepartment.code.trim();
+    const collegeId = editingDepartment.collegeId ? Number(editingDepartment.collegeId) : null;
+    if (!name || !code) {
+      setError("Enter a name and short code for the department.");
+      return;
+    }
+    const duplicate = departments.some(
+      (department) =>
+        department.id !== editingDepartment.id &&
+        (department.code.toUpperCase() === code.toUpperCase() ||
+          department.name.toLowerCase() === name.toLowerCase()),
+    );
+    if (duplicate) {
+      setError("Department names and short codes must be unique.");
+      return;
+    }
+
+    void runSave(
+      () => institutionAdminService.updateDepartment(editingDepartment.id, { name, code, collegeId }),
+      "Department updated successfully.",
+    ).then((saved) => {
+      if (!saved) return;
+      const college = colleges.find((item) => item.id === collegeId);
+      setDepartments((current) =>
+        current.map((department) =>
+          department.id === editingDepartment.id
+            ? {
+                ...department,
+                name,
+                code: code.toUpperCase(),
+                collegeId,
+                college: college
+                  ? { id: college.id, name: college.name, code: college.code }
+                  : null,
+              }
+            : department,
+        ),
+      );
+      setEditingDepartment(null);
     });
   };
 
@@ -1053,6 +1111,14 @@ const InstitutionWorkspace = () => {
                                   <td className="py-3.5 text-right">
                                     <button
                                       type="button"
+                                      aria-label={`Edit ${dept.name}`}
+                                      onClick={() => openDepartmentEditor(dept)}
+                                      className="rounded-full p-2 text-[#75420B] hover:bg-[#FEF5EA]"
+                                    >
+                                      <Pencil size={16} />
+                                    </button>
+                                    <button
+                                      type="button"
                                       aria-label={`Delete ${dept.name}`}
                                       onClick={() => setPendingDelete({ kind: "department", id: dept.id })}
                                       className="rounded-full p-2 text-red-600 hover:bg-red-50"
@@ -1363,13 +1429,15 @@ const InstitutionWorkspace = () => {
                                     <div className="flex shrink-0 items-center gap-1">
                                       <button
                                         type="button"
+                                        aria-label={`Rename ${category.name}`}
+                                        title={`Rename ${category.name}`}
                                         onClick={() => {
                                           setEditingCategoryId(category.id);
                                           setEditingCategoryName(category.name);
                                         }}
-                                        className="rounded-full border border-[#ffd7a8] px-3 py-1 text-xs font-semibold text-[#75420B] hover:bg-[#FEF5EA]"
+                                        className="rounded-full p-2 text-[#75420B] hover:bg-[#FEF5EA]"
                                       >
-                                        Rename
+                                        <Pencil size={16} />
                                       </button>
                                       <button
                                         type="button"
@@ -2056,6 +2124,92 @@ const InstitutionWorkspace = () => {
                   <button
                     type="button"
                     onClick={() => setEditingCollege(null)}
+                    className="rounded-full border border-black/15 px-5 py-2 font-poppins text-sm font-semibold"
+                  >
+                    Cancel
+                  </button>
+                  <button type="submit" disabled={saving} className={primaryBtnClass}>
+                    {saving ? "Saving…" : "Save Changes"}
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
+
+        {editingDepartment && (
+          <div
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 backdrop-blur-sm animate-fade-in"
+            onClick={() => setEditingDepartment(null)}
+          >
+            <div
+              className="relative max-h-[90vh] w-full max-w-xl overflow-y-auto rounded-[24px] border border-[#ffd7a8] bg-white p-6 shadow-xl sm:p-8"
+              onClick={(event) => event.stopPropagation()}
+            >
+              <div className="flex items-center justify-between border-b border-[#ffd7a8]/50 pb-3">
+                <h3 className="font-poppins text-lg font-bold text-[#212121]">Edit Department</h3>
+                <button
+                  type="button"
+                  onClick={() => setEditingDepartment(null)}
+                  className="rounded-full p-1 text-black/40 hover:bg-[#FEF5EA]"
+                  aria-label="Close edit department dialog"
+                >
+                  <X size={18} />
+                </button>
+              </div>
+              {error && <p role="alert" className="mt-3 text-sm text-red-700">{error}</p>}
+              <form onSubmit={handleUpdateDepartment} className="mt-4 flex flex-col gap-4">
+                <label className="block font-poppins text-xs font-medium text-[#454545]">
+                  Department Name
+                  <input
+                    required
+                    maxLength={160}
+                    value={editingDepartment.name}
+                    onChange={(event) =>
+                      setEditingDepartment((current) =>
+                        current ? { ...current, name: event.target.value } : current,
+                      )
+                    }
+                    className={inputClass}
+                  />
+                </label>
+                <label className="block font-poppins text-xs font-medium text-[#454545]">
+                  Short Code
+                  <input
+                    required
+                    maxLength={32}
+                    value={editingDepartment.code}
+                    onChange={(event) =>
+                      setEditingDepartment((current) =>
+                        current ? { ...current, code: event.target.value } : current,
+                      )
+                    }
+                    className={inputClass}
+                  />
+                </label>
+                <label className="block font-poppins text-xs font-medium text-[#454545]">
+                  College (optional)
+                  <select
+                    value={editingDepartment.collegeId}
+                    onChange={(event) =>
+                      setEditingDepartment((current) =>
+                        current ? { ...current, collegeId: event.target.value } : current,
+                      )
+                    }
+                    className={inputClass}
+                  >
+                    <option value="">No college</option>
+                    {colleges.map((college) => (
+                      <option key={college.id} value={college.id}>
+                        {college.name} ({college.code})
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                <div className="mt-2 flex justify-end gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setEditingDepartment(null)}
                     className="rounded-full border border-black/15 px-5 py-2 font-poppins text-sm font-semibold"
                   >
                     Cancel

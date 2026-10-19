@@ -127,6 +127,17 @@ const institutionAdminService = {
     return response.data.department;
   },
 
+  updateDepartment: async (
+    id: number,
+    data: { name: string; code: string; collegeId: number | null },
+  ): Promise<AcademicDepartment> => {
+    const response = await api.patch<{ department: AcademicDepartment }>(
+      `/admin/departments/${id}`,
+      data,
+    );
+    return response.data.department;
+  },
+
   removeDepartment: async (id: number): Promise<{ message: string }> => {
     const response = await api.delete<{ message: string }>(
       `/admin/departments/${id}`,

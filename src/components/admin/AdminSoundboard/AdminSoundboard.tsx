@@ -47,7 +47,6 @@ const AdminSoundboard: React.FC<AdminSoundboardProps> = ({
 
     // Data state
     const [surgeItems, setSurgeItems] = useState<SurgeItem[]>([]);
-    const [surgeCount, setSurgeCount] = useState(0);
     const [followUpItems, setFollowUpItems] = useState<FollowUpItem[]>([]);
     const [pendingCount, setPendingCount] = useState(0);
     const [categoryData, setCategoryData] = useState<CategoryData[]>([]);
@@ -84,7 +83,6 @@ const AdminSoundboard: React.FC<AdminSoundboardProps> = ({
                 }
             }));
             setSurgeItems(surges);
-            setSurgeCount(surging.count);
 
             // Follow-up queue (use dedicated endpoint if available, fallback to manual)
             const followUps: FollowUpItem[] = [];
@@ -114,8 +112,9 @@ const AdminSoundboard: React.FC<AdminSoundboardProps> = ({
             });
 
 
-            setFollowUpItems(followUps);
-            setPendingCount(followUps.reduce((sum, i) => sum + i.count, 0));
+            const activeFollowUps = followUps.filter((item) => item.count > 0);
+            setFollowUpItems(activeFollowUps);
+            setPendingCount(activeFollowUps.reduce((sum, item) => sum + item.count, 0));
 
             // Category data (use dedicated endpoint if available, fallback to overview)
             if (issuesByCategory) {
@@ -178,8 +177,8 @@ const AdminSoundboard: React.FC<AdminSoundboardProps> = ({
 
     return (
         <>
-            <div className={`flex min-h-screen min-w-0 bg-[#fcfcfc] m-0 ${isSidebarCollapsed ? "min-[1131px]:ms-[102px]" : "min-[1131px]:ms-[230px]"} transition-all duration-300`} data-node-id="admin-soundboard-page">
-                <div className="min-w-0 flex-1 bg-[#fcfcfc]">
+            <div className={`flex min-h-screen min-w-0 bg-[#FAE9D4] m-0 ${isSidebarCollapsed ? "min-[1131px]:ms-[102px]" : "min-[1131px]:ms-[230px]"} transition-all duration-300`} data-node-id="admin-soundboard-page">
+                <div className="min-w-0 flex-1 bg-[#FAE9D4]">
                     <div className="px-3 sm:px-5 pt-5 sm:pt-[30px] pb-3 sm:pb-5">
                         <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between lg:gap-0">
                             <div className="flex min-w-0 flex-col gap-1 sm:gap-2">
@@ -187,12 +186,9 @@ const AdminSoundboard: React.FC<AdminSoundboardProps> = ({
                                     Soundboard
                                 </h1>
                                 <AdminHeader title="Soundboard" />
-                                <p className="font-poppins font-medium text-[13px] sm:text-[16px] leading-normal text-[#8b8e8d]">
-                                    See the issues and community activity that need institutional attention.
-                                </p>
                             </div>
 
-                            <div className="grid w-full grid-cols-2 gap-2 lg:w-auto lg:shrink-0">
+                            <div className="grid w-full grid-cols-1 gap-2 sm:grid-cols-2 lg:w-auto lg:shrink-0">
                                 <motion.button
                                     onClick={handleExportClick}
                                     className="min-w-0 whitespace-nowrap border border-[#f49b31] rounded-lg px-1.5 sm:px-3 lg:px-[15px] py-2 sm:py-[9px] flex items-center justify-center gap-1 sm:gap-2 hover:bg-[#F49B31] text-[#f49b31] hover:text-white transition-colors text-[10px] sm:text-xs"
@@ -213,7 +209,7 @@ const AdminSoundboard: React.FC<AdminSoundboardProps> = ({
                         </div>
                     </div>
 
-                    <div className="flex-1 overflow-y-auto px-3 sm:px-5 py-5 sm:py-[30px]">
+                    <div className="flex-1 min-w-0 overflow-y-auto px-3 sm:px-5 py-5 sm:py-[30px]">
                         {loading ? (
                             <div className="flex items-center justify-center h-[400px]">
                                 <div className="animate-spin w-12 h-12 border-4 border-[#f49b31] border-t-transparent rounded-full" />
@@ -224,10 +220,9 @@ const AdminSoundboard: React.FC<AdminSoundboardProps> = ({
                                 <button onClick={() => fetchDashboardData()} className="ml-2 underline">Retry</button>
                             </div>
                         ) : (
-                            <div className="flex flex-col gap-[30px] max-w-[1200px]">
-                                <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+                            <div className="flex w-full min-w-0 flex-col gap-5 sm:gap-6">
+                                <div className="grid min-w-0 grid-cols-1 gap-5 xl:grid-cols-2">
                                     <SurgeAlertCard
-                                        count={surgeCount}
                                         items={surgeItems}
                                         className="lg:col-span-1"
                                     />
@@ -238,7 +233,7 @@ const AdminSoundboard: React.FC<AdminSoundboardProps> = ({
                                     />
                                 </div>
 
-                                <div className="grid min-w-0 grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
+                                <div className="grid min-w-0 grid-cols-1 gap-5 md:grid-cols-2 2xl:grid-cols-3">
                                     <StatCard
                                         title="Resolution Rate"
                                         value={resolutionRate.value}

@@ -1,5 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import SurgeIcon from "../../shared/SurgeIcon";
 
 export interface CategoryIssue {
     id: string;
@@ -36,8 +37,8 @@ const IssuesByCategoryCard: React.FC<IssuesByCategoryCardProps> = ({
             data-node-id="issues-by-category-card"
         >
             {/* Title */}
-            <h3 className="text-[#212121] font-semibold text-[16px] leading-[18px] uppercase tracking-[0.5px]">
-                Issues by Category
+            <h3 className="font-poppins text-[#212121] font-semibold text-[18px] leading-6">
+                Issues by category
             </h3>
 
             {/* Categories Grid */}
@@ -92,8 +93,9 @@ const IssuesByCategoryCard: React.FC<IssuesByCategoryCardProps> = ({
                                             {issue.postedTime}
                                         </p>
                                     </div>
-                                    <div className="ml-2 shrink-0 text-[#f49b31] font-semibold text-[12px]">
-                                        ⚡ {issue.count}
+                                    <div className="ml-2 flex shrink-0 items-center gap-1 text-[#f49b31] font-semibold text-[12px]">
+                                        <SurgeIcon width={9} height={12} fill="#F49B31" />
+                                        {issue.count}
                                     </div>
                                 </button>
                             ))}
