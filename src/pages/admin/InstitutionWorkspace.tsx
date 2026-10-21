@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
   Building2,
   ChevronRight,
@@ -59,7 +59,8 @@ const initialPermissions: RepresentativePermissions = {
   canManageReps: false,
 };
 
-const InstitutionWorkspace = () => {
+const InstitutionWorkspace = ({ mode = "admin" }: { mode?: "admin" | "rep" }) => {
+  const embedded = mode === "rep";
   const user = useAuthStore((state) => state.user);
   const isSidebarCollapsed = useUIStore((state) => state.isSidebarCollapsed);
   const organizationId = useAuthStore((state) => state.user?.organizationId);
@@ -69,6 +70,11 @@ const InstitutionWorkspace = () => {
     user.representativeProfile.canManageReps === true;
   const canManageOrganizationSettings =
     user?.role === "ADMIN" || user?.role === "SUPER_ADMIN";
+  const canGrantRepresentativePermission = (
+    permission: keyof RepresentativePermissions,
+  ) =>
+    canManageOrganizationSettings ||
+    user?.representativeProfile?.[permission] === true;
 
   const [activeTab, setActiveTab] = useState<WorkspaceTab>(
     isRepresentativeManager ? "representatives" : "departments",
@@ -773,23 +779,32 @@ const InstitutionWorkspace = () => {
   const primaryBtnClass =
     "rounded-full bg-[#f49b31] px-6 py-2.5 font-poppins text-sm font-semibold text-white shadow-sm transition hover:bg-[#e8911a] disabled:cursor-wait disabled:opacity-50";
 
+  const Shell = embedded ? React.Fragment : AdminPageProvider;
+  const shellProps = embedded ? {} : { initialPage: "institution" as const };
+
   return (
-    <AdminPageProvider initialPage="institution">
-      <div className="min-h-screen w-full min-w-0 bg-[#FCFCFC]">
-        <AdminLayout />
+    <Shell {...shellProps}>
+      <div className={embedded ? "w-full min-w-0" : "min-h-screen w-full min-w-0 bg-[#FCFCFC]"}>
+        {!embedded && <AdminLayout />}
         <main
-          className={`min-h-screen min-w-0 bg-[#FCFCFC] px-4 py-6 sm:px-8 sm:py-8 ${
-            isSidebarCollapsed ? "min-[1131px]:ms-[102px]" : "min-[1131px]:ms-[230px]"
-          } transition-all duration-300 pb-24`}
+          className={`min-w-0 ${
+            embedded
+              ? "pb-10"
+              : `min-h-screen bg-[#FCFCFC] px-4 py-6 sm:px-8 sm:py-8 pb-24 ${
+                  isSidebarCollapsed ? "min-[1131px]:ms-[102px]" : "min-[1131px]:ms-[230px]"
+                }`
+          } transition-all duration-300`}
         >
           <div className="flex min-w-0 w-full flex-col items-start gap-6">
             {/* Header Row */}
             <div className="flex flex-col gap-2 items-start relative w-full border-b border-[#ffd7a8] pb-4">
               <div className="flex w-full flex-col items-start gap-1 sm:gap-2">
-                <h1 className="hidden min-[1131px]:block font-poppins font-bold text-[24px] sm:text-[32px] leading-normal text-black">
+                <h1 className={`${embedded ? "block" : "hidden min-[1131px]:block"} font-poppins font-bold text-[24px] sm:text-[32px] leading-normal text-black`}>
                   {isRepresentativeManager ? "Delegation & Scope" : "Institution"}
                 </h1>
-                <AdminHeader title={isRepresentativeManager ? "Delegation & Scope" : "Institution"} />
+                {!embedded && (
+                  <AdminHeader title={isRepresentativeManager ? "Delegation & Scope" : "Institution"} />
+                )}
                 <p className="font-poppins font-medium text-[13px] sm:text-[16px] leading-normal text-[#8b8e8d]">
                   {isRepresentativeManager
                     ? "Manage representatives and the issues within their assigned scope."
@@ -799,12 +814,13 @@ const InstitutionWorkspace = () => {
             </div>
 
             {/* Navigation Tabs Bar */}
+            {!isRepresentativeManager && (
             <div
               className="flex overflow-x-auto scrollbar-hide flex-nowrap gap-2 w-full pb-2"
               role="tablist"
               aria-label="Institution tabs"
             >
-              {!isRepresentativeManager && (
+              {(
                 <>
                   <button
                     role="tab"
@@ -867,6 +883,7 @@ const InstitutionWorkspace = () => {
                 </>
               )}
             </div>
+            )}
 
             {/* Alerts */}
             {error && (
@@ -1174,15 +1191,17 @@ const InstitutionWorkspace = () => {
                 {/* ────────── TAB: DELEGATION & SCOPE ────────── */}
                 {activeTab === "representatives" && (
                   <section className="flex flex-col gap-6 w-full animate-fade-in">
-                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                      <div>
-                        <h2 className="font-poppins font-semibold text-[18px] text-[#212121]">
-                          Representative Delegation & Scope
-                        </h2>
-                        <p className="font-poppins text-[12px] text-[#8b8e8d] mt-1">
-                          Empower student leaders with specific departmental and category authority without exposing university-wide administrative controls.
-                        </p>
-                      </div>
+                    <div className={`flex flex-col sm:flex-row sm:items-center gap-4 ${isRepresentativeManager ? "sm:justify-end" : "sm:justify-between"}`}>
+                      {!isRepresentativeManager && (
+                        <div>
+                          <h2 className="font-poppins font-semibold text-[18px] text-[#212121]">
+                            Representative Delegation & Scope
+                          </h2>
+                          <p className="font-poppins text-[12px] text-[#8b8e8d] mt-1">
+                            Empower student leaders with specific departmental and category authority without exposing university-wide administrative controls.
+                          </p>
+                        </div>
+                      )}
                       <button
                         type="button"
                         onClick={() => setIsAssigningRep(true)}
@@ -1267,6 +1286,11 @@ const InstitutionWorkspace = () => {
                                       {rep.canRespond && (
                                         <span className="rounded bg-blue-50 px-1.5 py-0.5 text-[10px] font-semibold text-blue-700 border border-blue-200">
                                           Respond
+                                        </span>
+                                      )}
+                                      {rep.canModerateWaves && (
+                                        <span className="rounded bg-violet-50 px-1.5 py-0.5 text-[10px] font-semibold text-violet-700 border border-violet-200">
+                                          Moderate
                                         </span>
                                       )}
                                     </div>
@@ -2674,13 +2698,18 @@ const InstitutionWorkspace = () => {
                   <legend className="font-poppins text-xs font-semibold text-[#212121]">
                     Permissions
                   </legend>
+                  {user?.role === "REPRESENTATIVE" && (
+                    <p className="mt-1 font-poppins text-[11px] text-[#8b8e8d]">
+                      You can only grant permissions that are already assigned to you.
+                    </p>
+                  )}
                   <div className="mt-2 grid gap-2 sm:grid-cols-2">
                     {(
                       [
                         ["canAssign", "Can assign issues to reps/bodies"],
                         ["canRespond", "Can publish official responses"],
                         ["canAcknowledge", "Can acknowledge issues"],
-                        ["canModerateWaves", "Can approve, reject or review waves"],
+                        ["canModerateWaves", "Can moderate posts (approve, reject or review waves)"],
                         ["canUpdateWaveProgress", "Can mark waves in progress or completed"],
                         ["canExport", "Can export data to CSV"],
                         ["canManageReps", "Can manage other reps"],
@@ -2693,10 +2722,11 @@ const InstitutionWorkspace = () => {
                         <input
                           type="checkbox"
                           checked={permissions[key]}
+                          disabled={!canGrantRepresentativePermission(key)}
                           onChange={(e) =>
                             setPermissions((curr) => ({ ...curr, [key]: e.target.checked }))
                           }
-                          className="accent-[#F49B31]"
+                          className="accent-[#F49B31] disabled:cursor-not-allowed"
                         />
                         {label}
                       </label>
@@ -2737,7 +2767,7 @@ const InstitutionWorkspace = () => {
           />
         )}
       </div>
-    </AdminPageProvider>
+    </Shell>
   );
 };
 

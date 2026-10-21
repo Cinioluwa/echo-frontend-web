@@ -84,17 +84,17 @@ const SideBar = ({ onCreatePing, onNavigate, variant = "desktop" }: Props) => {
           {navItem("/follow-up", "Follow Up", "/assets/icon/followup.svg", pathname === "/follow-up")}
           {canModerate &&
             navItem(
-              "/admin/moderation",
+              "/moderation",
               "Moderation",
               "/assets/icon/moderation.svg",
-              pathname === "/admin/moderation",
+              pathname === "/moderation",
             )}
           {canManageReps &&
             navItem(
-              "/admin/institution",
+              "/delegation",
               "Delegation & Scope",
               "/assets/icon/organization.svg",
-              pathname === "/admin/institution",
+              pathname === "/delegation",
             )}
         </>
       )}

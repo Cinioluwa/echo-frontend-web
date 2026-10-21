@@ -67,6 +67,8 @@ const PingDetail = lazyWithRetry(() => import("../pages/PingDetail"));
 const RepInbox = lazyWithRetry(() => import("../pages/RepInbox"));
 const RepPingDetail = lazyWithRetry(() => import("../components/admin/PingDetail/AdminPingDetail").then((m) => ({ default: () => <m.default mode="rep" /> })));
 const RepFollowUp = lazyWithRetry(() => import("../components/admin/FollowUp/FollowUp").then((m) => ({ default: () => <m.default mode="rep" /> })));
+const RepModeration = lazyWithRetry(() => import("../components/admin/Moderation/Moderation").then((m) => ({ default: () => <m.default mode="rep" /> })));
+const RepDelegation = lazyWithRetry(() => import("../pages/admin/InstitutionWorkspace").then((m) => ({ default: () => <m.default mode="rep" /> })));
 const History = lazyWithRetry(() => import("../pages/History"));
 const Notifications = lazyWithRetry(() => import("../pages/Notifications"));
 
@@ -226,6 +228,16 @@ const router = createBrowserRouter([
         ],
       },
       {
+        path: "",
+        element: <RepresentativeRoute permission="canModerateWaves" />,
+        children: [{ path: "moderation", element: withSuspense(RepModeration) }],
+      },
+      {
+        path: "",
+        element: <RepresentativeRoute permission="canManageReps" />,
+        children: [{ path: "delegation", element: withSuspense(RepDelegation) }],
+      },
+      {
         path: "notifications",
         element: withSuspense(Notifications),
       },
@@ -317,7 +329,7 @@ const router = createBrowserRouter([
       {
         path: "moderation",
         element: (
-          <AdminRoute allowRepresentativeModerator>
+          <AdminRoute>
             {withSuspense(ModerationPage)}
           </AdminRoute>
         ),
@@ -329,7 +341,7 @@ const router = createBrowserRouter([
       {
         path: "institution",
         element: (
-          <AdminRoute allowRepresentativeManager>
+          <AdminRoute>
             {withSuspense(InstitutionWorkspace)}
           </AdminRoute>
         ),
