@@ -30,6 +30,13 @@ const SideBar = ({ onCreatePing, onNavigate, variant = "desktop" }: Props) => {
     onCreatePing?.();
   };
   const { pathname } = useLocation();
+  const representativeProfile = useAuthStore((s) =>
+    s.user?.role === "REPRESENTATIVE" && s.user.representativeProfile?.isActive
+      ? s.user.representativeProfile
+      : null,
+  );
+  const canManageReps = representativeProfile?.canManageReps === true;
+  const canModerate = representativeProfile?.canModerateWaves === true;
   const isRepresentative = useAuthStore((s) => s.user?.role === "REPRESENTATIVE");
   const isHistoryRoute = pathname === "/history";
 
@@ -75,6 +82,20 @@ const SideBar = ({ onCreatePing, onNavigate, variant = "desktop" }: Props) => {
         <>
           {navItem("/inbox", "Inbox", "/assets/icon/admin-soundboard.svg", pathname.startsWith("/inbox"))}
           {navItem("/follow-up", "Follow Up", "/assets/icon/followup.svg", pathname === "/follow-up")}
+          {canModerate &&
+            navItem(
+              "/admin/moderation",
+              "Moderation",
+              "/assets/icon/moderation.svg",
+              pathname === "/admin/moderation",
+            )}
+          {canManageReps &&
+            navItem(
+              "/admin/institution",
+              "Delegation & Scope",
+              "/assets/icon/organization.svg",
+              pathname === "/admin/institution",
+            )}
         </>
       )}
 

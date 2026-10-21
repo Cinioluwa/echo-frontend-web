@@ -317,7 +317,7 @@ const router = createBrowserRouter([
       {
         path: "moderation",
         element: (
-          <AdminRoute allowActiveRepresentative>
+          <AdminRoute allowRepresentativeModerator>
             {withSuspense(ModerationPage)}
           </AdminRoute>
         ),

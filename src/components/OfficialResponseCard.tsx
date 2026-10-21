@@ -36,17 +36,17 @@ const OfficialResponseCard = ({ response }: OfficialResponseCardProps) => {
         <p className="font-poppins text-[17px] font-medium leading-relaxed text-[#212121]">
           {response.content}
         </p>
-        <div className="relative mt-3 flex flex-col items-start gap-1">
+        <div className="relative mt-3 flex w-full flex-col items-end gap-1 text-right">
           <button
             type="button"
             aria-expanded={showOfficialAuthor}
             onClick={() => setShowOfficialAuthor((visible) => !visible)}
-            className="font-poppins text-[13px] font-medium text-[#75420B] transition-colors hover:text-[#F49B31]"
+            className="text-right font-poppins text-[13px] font-medium text-[#75420B] transition-colors hover:text-[#F49B31]"
           >
             ~ {roleLabel}
           </button>
           {showOfficialAuthor && (
-            <div className="absolute left-0 top-full z-20 mt-2 flex min-w-[220px] items-center gap-3 rounded-[12px] border border-[#F49B31]/40 bg-white p-3 shadow-lg">
+            <div className="absolute right-0 top-full z-20 mt-2 flex min-w-[220px] items-center gap-3 rounded-[12px] border border-[#F49B31]/40 bg-white p-3 text-left shadow-lg">
               {response.author.profilePicture ? (
                 <img
                   src={response.author.profilePicture}
