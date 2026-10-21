@@ -34,7 +34,6 @@ export interface RepresentativePermissions {
   canModerateWaves: boolean;
   canUpdateWaveProgress: boolean;
   canAssign: boolean;
-  canResolve: boolean;
   canExport: boolean;
   canManageReps: boolean;
 }

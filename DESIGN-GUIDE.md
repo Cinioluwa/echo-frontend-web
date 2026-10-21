@@ -172,6 +172,8 @@ Observed pattern:
 
 Use this for clearly system-owned or institution-owned content such as **Official Response**.
 
+For an Official Response, keep the response text prominent beneath the heading, followed by a compact role and date line. Let the role line reveal the responder's profile photo and name in a small overlay when selected.
+
 #### Wave card
 
 Observed in Ping Detail:

@@ -186,19 +186,31 @@ const AdminSideBar: React.FC<AdminSidebarProps> = ({
         )}
 
         {isRepresentative && (
-          <Link to="/admin/soundboard">
-            <button className={navButtonClass(currentPage === "soundboard")}>
-              <SoundboardIcon />
-              <span className={navTextClass(currentPage === "soundboard")}>Representative inbox</span>
-            </button>
-          </Link>
+          <>
+            <Link to="/admin/soundboard">
+              <button className={navButtonClass(currentPage === "soundboard")}>
+                <SoundboardIcon />
+                <span className={navTextClass(currentPage === "soundboard")}>Representative inbox</span>
+              </button>
+            </Link>
+            <Link to="/admin/moderation" onClick={onModerationClick}>
+              <button className={navButtonClass(currentPage === "moderation")}>
+                <div className={navIconWrapperClass(currentPage === "moderation")}>
+                  <ModerationIcon />
+                </div>
+                <span className={navTextClass(currentPage === "moderation")}>Moderation</span>
+              </button>
+            </Link>
+          </>
         )}
 
         {(!isRepresentative || isRepresentativeManager) && (
           <Link to="/admin/institution">
             <button className={navButtonClass(currentPage === "institution")}>
               <Building2 className={`h-5 w-5 shrink-0 ${currentPage === "institution" ? "text-white" : "text-[#F49B31]"}`} aria-hidden="true" />
-              <span className={navTextClass(currentPage === "institution")}>Institution</span>
+              <span className={navTextClass(currentPage === "institution")}>
+                {isRepresentative ? "Delegation & Scope" : "Institution"}
+              </span>
             </button>
           </Link>
         )}

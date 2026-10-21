@@ -85,15 +85,6 @@ export const adminService = {
   },
 
   /**
-   * Mark a ping as resolved
-   * @param id Ping ID
-   */
-  async resolvePing(id: number): Promise<AdminPing> {
-    const { data } = await api.post(`/admin/pings/${id}/resolve`);
-    return data;
-  },
-
-  /**
    * Update ping progress status
    * @param id Ping ID
    * @param dto Status update data
@@ -600,4 +591,3 @@ export const adminService = {
 };
 
 export default adminService;
-

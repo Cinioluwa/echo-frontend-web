@@ -30,8 +30,6 @@ const AnnouncementModal = ({
         content: announcementData.description.trim(),
       });
 
-      alert("Announcement published successfully!");
-
       // Reset form
       setAnnouncementData({
         title: "",

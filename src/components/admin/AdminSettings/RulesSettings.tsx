@@ -10,7 +10,6 @@ const RulesSettings: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState<string | null>(null);
 
   const fetchRules = useCallback(async () => {
     try {
@@ -36,7 +35,6 @@ const RulesSettings: React.FC = () => {
     try {
       setSaving(true);
       setError(null);
-      setSuccess(null);
       await adminService.updateOrgRules({
         allowMediaAttachments: allowMedia,
         sameTopicCooldownHours: parseInt(cooldown),
@@ -44,7 +42,6 @@ const RulesSettings: React.FC = () => {
         hideFlaggedContentPending: hidePending,
         minSurgesForWave: parseInt(minSurges),
       });
-      setSuccess("Rules saved successfully.");
     } catch (err: any) {
       setError(err?.response?.data?.error || "Failed to save rules");
     } finally {
@@ -68,12 +65,6 @@ const RulesSettings: React.FC = () => {
           <button onClick={() => setError(null)} className="ml-2 underline">Dismiss</button>
         </div>
       )}
-      {success && (
-        <div className="p-3 bg-green-50 border border-green-200 rounded-lg text-green-700 text-[13px] font-poppins">
-          {success}
-        </div>
-      )}
-
       <div className="flex flex-col gap-4 w-full">
         <div className="pb-2">
           <h3 className="font-poppins font-semibold text-[16px] text-black">

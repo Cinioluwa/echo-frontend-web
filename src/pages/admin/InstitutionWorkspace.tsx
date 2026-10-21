@@ -55,7 +55,6 @@ const initialPermissions: RepresentativePermissions = {
   canModerateWaves: false,
   canUpdateWaveProgress: false,
   canAssign: false,
-  canResolve: false,
   canExport: false,
   canManageReps: false,
 };
@@ -82,7 +81,6 @@ const InstitutionWorkspace = () => {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [notice, setNotice] = useState<string | null>(null);
 
   // Body drilldown detail state
   const [selectedBody, setSelectedBody] = useState<RepresentativeBody | null>(null);
@@ -176,25 +174,12 @@ const InstitutionWorkspace = () => {
     void refresh();
   }, []);
 
-  const updateNotice = (message: string) => {
-    setError(null);
-    setNotice(message);
-  };
-
-  const runSave = async (action: () => Promise<unknown>, message: string): Promise<boolean> => {
+  const runSave = async (action: () => Promise<unknown>): Promise<boolean> => {
     setSaving(true);
     setError(null);
-    setNotice(null);
     try {
       await action();
-      const refreshed = await refresh();
-      if (refreshed) {
-        updateNotice(message);
-      } else {
-        setNotice(
-          `${message} The list could not be refreshed; use Refresh to check the latest values.`,
-        );
-      }
+      await refresh();
       return true;
     } catch (saveError) {
       console.error("Institution management update failed:", saveError);
@@ -215,12 +200,10 @@ const InstitutionWorkspace = () => {
   const runBatchSave = async <T,>(
     actions: Array<() => Promise<T>>,
     applyCreated: (created: T[]) => void,
-    itemName: string,
     pluralItemName: string,
   ): Promise<number> => {
     setSaving(true);
     setError(null);
-    setNotice(null);
     const created: T[] = [];
     let failure: unknown;
     try {
@@ -234,11 +217,7 @@ const InstitutionWorkspace = () => {
       }
 
       if (created.length) applyCreated(created);
-      if (created.length === actions.length) {
-        updateNotice(
-          `${created.length} ${created.length === 1 ? itemName : pluralItemName} added successfully.`,
-        );
-      } else {
+      if (created.length !== actions.length) {
         const responseData = (
           failure as { response?: { data?: { error?: string; message?: string } } }
         )?.response?.data;
@@ -261,11 +240,9 @@ const InstitutionWorkspace = () => {
   const saveCategoryChange = async (
     action: () => Promise<CategoryData>,
     applyChange: (category: CategoryData) => void,
-    message: string,
   ): Promise<boolean> => {
     setSaving(true);
     setError(null);
-    setNotice(null);
     try {
       const category = await action();
       applyChange(category);
@@ -275,7 +252,6 @@ const InstitutionWorkspace = () => {
         labelIcon: categoryImages[category.name] || categoryImages.General,
       });
       useCategoriesStore.getState().invalidateCache();
-      updateNotice(message);
       return true;
     } catch (saveError) {
       console.error("Category management update failed:", saveError);
@@ -298,14 +274,12 @@ const InstitutionWorkspace = () => {
     const item = pendingDelete;
     setSaving(true);
     setError(null);
-    setNotice(null);
     try {
       if (item.kind === "category") {
         await categoryService.remove(item.id);
         setCategories((current) => current.filter((category) => category.id !== item.id));
         useCategoriesStore.getState().removeCategory(item.id);
         useCategoriesStore.getState().invalidateCache();
-        updateNotice("Category deleted successfully.");
       } else if (item.kind === "college") {
         await institutionAdminService.removeCollege(item.id);
         setColleges((current) => current.filter((college) => college.id !== item.id));
@@ -316,11 +290,9 @@ const InstitutionWorkspace = () => {
               : department,
           ),
         );
-        updateNotice("College deleted successfully. Its departments are now ungrouped.");
       } else if (item.kind === "department") {
         await institutionAdminService.removeDepartment(item.id);
         setDepartments((current) => current.filter((department) => department.id !== item.id));
-        updateNotice("Department deleted successfully.");
       } else {
         await institutionAdminService.removeBody(item.id);
         setBodies((current) => current.filter((body) => body.id !== item.id));
@@ -328,7 +300,6 @@ const InstitutionWorkspace = () => {
         setRepresentatives((current) =>
           current.filter((representative) => representative.body?.id !== item.id),
         );
-        updateNotice("Representative body deleted successfully.");
       }
       setPendingDelete(null);
     } catch (deleteError) {
@@ -376,7 +347,6 @@ const InstitutionWorkspace = () => {
           }),
       ),
       (created) => setDepartments((current) => [...current, ...created]),
-      "department",
       "departments",
     ).then((createdCount) => {
       setDepartmentDrafts(
@@ -431,7 +401,6 @@ const InstitutionWorkspace = () => {
           }),
         );
       },
-      "college",
       "colleges",
     ).then((createdCount) => {
       setCollegeDrafts(
@@ -487,7 +456,6 @@ const InstitutionWorkspace = () => {
 
     void runSave(
       () => institutionAdminService.updateDepartment(editingDepartment.id, { name, code, collegeId }),
-      "Department updated successfully.",
     ).then((saved) => {
       if (!saved) return;
       const college = colleges.find((item) => item.id === collegeId);
@@ -534,7 +502,6 @@ const InstitutionWorkspace = () => {
 
     void runSave(
       () => institutionAdminService.updateCollege(editingCollege.id, { name, code, departmentIds }),
-      "College updated successfully.",
     ).then((saved) => {
       if (!saved) return;
       setColleges((current) =>
@@ -569,7 +536,6 @@ const InstitutionWorkspace = () => {
           ...(bodyDepartmentId ? { departmentId: Number(bodyDepartmentId) } : {}),
           ...(bodyDescription.trim() ? { description: bodyDescription.trim() } : {}),
         }),
-      "Representative body created successfully.",
     ).then((saved) => {
       if (!saved) return;
       setBodyName("");
@@ -608,7 +574,6 @@ const InstitutionWorkspace = () => {
         );
         store.invalidateCache();
       },
-      "category",
       "categories",
     ).then((createdCount) => {
       setCategoryDrafts(createdCount < drafts.length ? drafts.slice(createdCount) : [""]);
@@ -627,7 +592,6 @@ const InstitutionWorkspace = () => {
             category.id === updated.id ? { ...category, ...updated } : category,
           ),
         ),
-      "Category renamed successfully.",
     ).then((saved) => {
       if (saved) {
         setEditingCategoryId(null);
@@ -662,7 +626,6 @@ const InstitutionWorkspace = () => {
           halls: nextHalls,
           levels: levelOptions,
         }),
-      "Hall options added successfully.",
     ).then((saved) => {
       if (!saved) return;
       setHallOptions(nextHalls);
@@ -689,7 +652,6 @@ const InstitutionWorkspace = () => {
           halls: hallOptions,
           levels: nextLevels,
         }),
-      "Academic levels added successfully.",
     ).then((saved) => {
       if (!saved) return;
       setLevelOptions(nextLevels);
@@ -706,7 +668,6 @@ const InstitutionWorkspace = () => {
           halls: nextHalls,
           levels: levelOptions,
         }),
-      "Hall option removed successfully.",
     ).then((saved) => {
       if (saved) setHallOptions(nextHalls);
     });
@@ -720,7 +681,6 @@ const InstitutionWorkspace = () => {
           halls: hallOptions,
           levels: nextLevels,
         }),
-      "Academic level removed successfully.",
     ).then((saved) => {
       if (saved) setLevelOptions(nextLevels);
     });
@@ -766,7 +726,6 @@ const InstitutionWorkspace = () => {
           responsibilities,
           ...permissions,
         }),
-      "Representative assigned successfully.",
     ).then((saved) => {
       if (!saved) return;
       setRepEmail("");
@@ -786,7 +745,6 @@ const InstitutionWorkspace = () => {
     if (!window.confirm("Are you sure you want to remove this representative's access?")) return;
     void runSave(
       () => institutionAdminService.removeRepresentative(profileId),
-      "Representative removed successfully.",
     );
   };
 
@@ -829,11 +787,13 @@ const InstitutionWorkspace = () => {
             <div className="flex flex-col gap-2 items-start relative w-full border-b border-[#ffd7a8] pb-4">
               <div className="flex w-full flex-col items-start gap-1 sm:gap-2">
                 <h1 className="hidden min-[1131px]:block font-poppins font-bold text-[24px] sm:text-[32px] leading-normal text-black">
-                  Institution
+                  {isRepresentativeManager ? "Delegation & Scope" : "Institution"}
                 </h1>
-                <AdminHeader title="Institution" />
+                <AdminHeader title={isRepresentativeManager ? "Delegation & Scope" : "Institution"} />
                 <p className="font-poppins font-medium text-[13px] sm:text-[16px] leading-normal text-[#8b8e8d]">
-                  Manage your institution, members, representative teams, categories, and posting rules.
+                  {isRepresentativeManager
+                    ? "Manage representatives and the issues within their assigned scope."
+                    : "Manage your institution, members, representative teams, categories, and posting rules."}
                 </p>
               </div>
             </div>
@@ -916,17 +876,6 @@ const InstitutionWorkspace = () => {
               >
                 <span>{error}</span>
                 <button onClick={() => setError(null)} className="ml-2 underline text-xs">
-                  Dismiss
-                </button>
-              </div>
-            )}
-            {notice && (
-              <div
-                role="status"
-                className="w-full rounded-xl border border-[#FFC37B] bg-[#FEF5EA] p-4 font-poppins text-sm text-[#75420B] flex items-center justify-between"
-              >
-                <span>{notice}</span>
-                <button onClick={() => setNotice(null)} className="ml-2 underline text-xs">
                   Dismiss
                 </button>
               </div>
@@ -1318,11 +1267,6 @@ const InstitutionWorkspace = () => {
                                       {rep.canRespond && (
                                         <span className="rounded bg-blue-50 px-1.5 py-0.5 text-[10px] font-semibold text-blue-700 border border-blue-200">
                                           Respond
-                                        </span>
-                                      )}
-                                      {rep.canResolve && (
-                                        <span className="rounded bg-purple-50 px-1.5 py-0.5 text-[10px] font-semibold text-purple-700 border border-purple-200">
-                                          Resolve
                                         </span>
                                       )}
                                     </div>
@@ -2738,7 +2682,6 @@ const InstitutionWorkspace = () => {
                         ["canAcknowledge", "Can acknowledge issues"],
                         ["canModerateWaves", "Can approve, reject or review waves"],
                         ["canUpdateWaveProgress", "Can mark waves in progress or completed"],
-                        ["canResolve", "Can resolve issues"],
                         ["canExport", "Can export data to CSV"],
                         ["canManageReps", "Can manage other reps"],
                       ] as const
