@@ -34,6 +34,8 @@ interface PingCardProps {
     onCommentClick: () => void;
     onDelete: (e: React.MouseEvent) => void;
     onRefresh?: () => void;
+    guestMode?: boolean;
+    guestAuthorName?: string;
 }
 
 const waveIcon = "/assets/icon/wave.svg";
@@ -69,8 +71,10 @@ const PingCard = ({
     onCommentClick,
     onDelete,
     onRefresh,
+    guestMode = false,
+    guestAuthorName,
 }: PingCardProps) => {
-    const authorName = getAuthorName(ping);
+    const authorName = guestAuthorName ?? getAuthorName(ping);
     const categoryName =
         ping.categoryId && categories[ping.categoryId]
             ? categories[ping.categoryId].name
@@ -146,9 +150,11 @@ const PingCard = ({
                         >
                             {authorName}
                         </span>
-                        <span className="font-['Poppins',sans-serif] font-medium text-[8px] text-black whitespace-nowrap">
-                            {formatTimeAgo(ping.createdAt)}
-                        </span>
+                        {!guestMode && (
+                            <span className="font-['Poppins',sans-serif] font-medium text-[8px] text-black whitespace-nowrap">
+                                {formatTimeAgo(ping.createdAt)}
+                            </span>
+                        )}
                     </div>
                 </div>
 
@@ -165,13 +171,15 @@ const PingCard = ({
                             /></BadgeTooltip>);
                     })()}
                     {/* Actions dropdown */}
-                    <PingActionsDropdown
-                        pingId={ping.id}
-                        isOwner={isOwner}
-                        canEdit={canEdit}
-                        onEdit={() => setIsEditing(true)}
-                        onDelete={onDelete}
-                    />
+                    {!guestMode && (
+                        <PingActionsDropdown
+                            pingId={ping.id}
+                            isOwner={isOwner}
+                            canEdit={canEdit}
+                            onEdit={() => setIsEditing(true)}
+                            onDelete={onDelete}
+                        />
+                    )}
                 </div>
             </div>
 

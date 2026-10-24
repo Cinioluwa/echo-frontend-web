@@ -29,6 +29,7 @@ export interface ShareMetadata {
   canonicalUrl: string;
   surgeCount?: number;
   waveCount?: number;
+  commentCount?: number;
   category?: string;
   orgName?: string;
   orgLogoUrl?: string;
