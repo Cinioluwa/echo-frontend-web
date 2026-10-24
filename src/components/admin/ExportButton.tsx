@@ -24,7 +24,6 @@ export const ExportPingsButton = () => {
             document.body.removeChild(link);
             window.URL.revokeObjectURL(url);
 
-            alert('Pings exported successfully!');
         } catch (error: any) {
             console.error('Failed to export pings:', error);
             alert('Failed to export pings');

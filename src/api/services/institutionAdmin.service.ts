@@ -34,7 +34,6 @@ export interface RepresentativePermissions {
   canModerateWaves: boolean;
   canUpdateWaveProgress: boolean;
   canAssign: boolean;
-  canResolve: boolean;
   canExport: boolean;
   canManageReps: boolean;
 }
@@ -122,6 +121,17 @@ const institutionAdminService = {
   }): Promise<AcademicDepartment> => {
     const response = await api.post<{ department: AcademicDepartment }>(
       "/admin/departments",
+      data,
+    );
+    return response.data.department;
+  },
+
+  updateDepartment: async (
+    id: number,
+    data: { name: string; code: string; collegeId: number | null },
+  ): Promise<AcademicDepartment> => {
+    const response = await api.patch<{ department: AcademicDepartment }>(
+      `/admin/departments/${id}`,
       data,
     );
     return response.data.department;

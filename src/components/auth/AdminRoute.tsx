@@ -6,6 +6,7 @@ interface AdminRouteProps {
     children: React.ReactNode;
     allowRepresentativeManager?: boolean;
     allowActiveRepresentative?: boolean;
+    allowRepresentativeModerator?: boolean;
 }
 
 /**
@@ -17,6 +18,7 @@ const AdminRoute: React.FC<AdminRouteProps> = ({
     children,
     allowRepresentativeManager = false,
     allowActiveRepresentative = false,
+    allowRepresentativeModerator = false,
 }) => {
     const { isAuthenticated, isLoading, user } = useAuthStore();
     const location = useLocation();
@@ -41,8 +43,14 @@ const AdminRoute: React.FC<AdminRouteProps> = ({
         allowRepresentativeManager &&
         isActiveRepresentative &&
         user.representativeProfile?.canManageReps === true;
+    const isRepresentativeModerator =
+        allowRepresentativeModerator &&
+        isActiveRepresentative &&
+        user.representativeProfile?.canModerateWaves === true;
     const isAllowedRepresentative =
-        (allowActiveRepresentative && isActiveRepresentative) || isRepresentativeManager;
+        (allowActiveRepresentative && isActiveRepresentative) ||
+        isRepresentativeManager ||
+        isRepresentativeModerator;
 
     if (!isAdmin && !isAllowedRepresentative) {
         console.warn("AdminRoute: User does not have admin privileges, redirecting to soundBoard");

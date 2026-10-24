@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import MetricCard from "../../components/super-admin/MetricCard";
 import { AlertTriangle } from "lucide-react";
 import { superAdminService } from "../../api/services/super-admin.service";
+import SurgeIcon from "../../components/shared/SurgeIcon";
 
 const SuperAdminDashboard: React.FC = () => {
   const [stats, setStats] = useState<any>(null);
@@ -63,7 +64,7 @@ const SuperAdminDashboard: React.FC = () => {
           label="Total Waves"
         />
         <MetricCard
-          icon={<img src="/assets/images/surge.svg" />}
+          icon={<SurgeIcon width={18} height={24} fill="#F49B31" />}
           value={stats?.content?.surges?.toLocaleString() ?? "0"}
           label="Total Surges"
         />

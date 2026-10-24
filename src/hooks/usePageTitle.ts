@@ -70,6 +70,10 @@ export const usePageTitle = (
       title = "Moderation | Echo";
     } else if (pathname === "/admin/institution") {
       title = "Institution Management | Echo";
+    } else if (pathname === "/moderation") {
+      title = "Moderation | Echo";
+    } else if (pathname === "/delegation") {
+      title = "Delegation & Scope | Echo";
     } else if (pathname === "/admin/feed") {
       title = "Admin Feed | Echo";
     } else if (pathname === "/admin/overview") {

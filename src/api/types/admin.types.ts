@@ -165,8 +165,11 @@ export interface Announcement {
   createdAt: string;
   updatedAt?: string;
   author: {
+    id: number;
     firstName: string;
     lastName: string;
+    profilePicture?: string | null;
+    role?: "USER" | "ADMIN" | "REPRESENTATIVE" | "LEADER" | "SUPER_ADMIN";
   };
   categories?: Array<{
     id: number;
@@ -197,8 +200,7 @@ export interface UpdatePingProgressDto {
   progressStatus:
     | "UNACKNOWLEDGED"
     | "ACKNOWLEDGED"
-    | "IN_PROGRESS"
-    | "RESOLVED";
+    | "IN_PROGRESS";
 }
 
 // ==================== Report Types ====================
@@ -491,19 +493,20 @@ export interface OfficialResponse {
   isResolved: boolean;
   createdAt: string;
   author: {
+    id: number;
     firstName: string;
     lastName: string;
+    profilePicture?: string | null;
+    role?: "USER" | "ADMIN" | "REPRESENTATIVE" | "LEADER" | "SUPER_ADMIN";
   };
 }
 
 export interface CreateOfficialResponseDto {
   content: string;
-  isResolved?: boolean;
 }
 
 export interface UpdateOfficialResponseDto {
   content?: string;
-  isResolved?: boolean;
 }
 
 // ==================== Super Admin Types ====================

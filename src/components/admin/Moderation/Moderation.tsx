@@ -8,7 +8,12 @@ import { useUIStore } from "../../../stores";
 import { adminService } from "../../../api/services/admin.service";
 import type { ReportItem } from "../../../api/types/admin.types";
 
-const Moderation: React.FC = () => {
+interface ModerationProps {
+  mode?: "admin" | "rep";
+}
+
+const Moderation: React.FC<ModerationProps> = ({ mode = "admin" }) => {
+  const isRep = mode === "rep";
   const [toasts, setToasts] = useState<ToastItem[]>([]);
   const { isSidebarCollapsed } = useUIStore();
   const [reports, setReports] = useState<ReportItem[]>([]);
@@ -110,14 +115,14 @@ const Moderation: React.FC = () => {
   };
 
   return (
-    <div className="w-full min-h-screen bg-[#FCFCFC] relative" data-node-id="moderation-page">
+    <div className={`w-full relative ${isRep ? "" : "min-h-screen bg-[#FCFCFC]"}`} data-node-id="moderation-page">
       <ToastContainer toasts={toasts} onDismiss={removeToast} />
-      <div className={`m-0 min-w-0 ${isSidebarCollapsed ? "min-[1131px]:ms-[102px]" : "min-[1131px]:ms-[230px]"} flex flex-col gap-4 sm:gap-6 items-start px-3 sm:px-6 py-6 sm:py-8 relative transition-all duration-300`}>
+      <div className={`m-0 min-w-0 ${isRep ? "" : isSidebarCollapsed ? "min-[1131px]:ms-[102px]" : "min-[1131px]:ms-[230px]"} flex flex-col gap-4 sm:gap-6 items-start px-3 sm:px-6 py-6 sm:py-8 relative transition-all duration-300`}>
         <div className="flex flex-col gap-1 sm:gap-2 items-start relative w-full">
-          <h1 className="hidden min-[1131px]:block font-poppins font-bold text-[24px] sm:text-[32px] leading-normal text-black">
+          <h1 className={`${isRep ? "block" : "hidden min-[1131px]:block"} font-poppins font-bold text-[24px] sm:text-[32px] leading-normal text-black`}>
             Moderation
           </h1>
-          <AdminHeader title="Moderation" />
+          {!isRep && <AdminHeader title="Moderation" />}
           <p className="font-poppins font-medium text-[13px] sm:text-[16px] leading-normal text-[#8b8e8d]">
             Flagged posts from your community awaiting your review
           </p>

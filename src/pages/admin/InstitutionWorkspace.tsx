@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
   Building2,
   ChevronRight,
@@ -55,12 +55,12 @@ const initialPermissions: RepresentativePermissions = {
   canModerateWaves: false,
   canUpdateWaveProgress: false,
   canAssign: false,
-  canResolve: false,
   canExport: false,
   canManageReps: false,
 };
 
-const InstitutionWorkspace = () => {
+const InstitutionWorkspace = ({ mode = "admin" }: { mode?: "admin" | "rep" }) => {
+  const embedded = mode === "rep";
   const user = useAuthStore((state) => state.user);
   const isSidebarCollapsed = useUIStore((state) => state.isSidebarCollapsed);
   const organizationId = useAuthStore((state) => state.user?.organizationId);
@@ -70,6 +70,11 @@ const InstitutionWorkspace = () => {
     user.representativeProfile.canManageReps === true;
   const canManageOrganizationSettings =
     user?.role === "ADMIN" || user?.role === "SUPER_ADMIN";
+  const canGrantRepresentativePermission = (
+    permission: keyof RepresentativePermissions,
+  ) =>
+    canManageOrganizationSettings ||
+    user?.representativeProfile?.[permission] === true;
 
   const [activeTab, setActiveTab] = useState<WorkspaceTab>(
     isRepresentativeManager ? "representatives" : "departments",
@@ -82,7 +87,6 @@ const InstitutionWorkspace = () => {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [notice, setNotice] = useState<string | null>(null);
 
   // Body drilldown detail state
   const [selectedBody, setSelectedBody] = useState<RepresentativeBody | null>(null);
@@ -91,6 +95,7 @@ const InstitutionWorkspace = () => {
   const [isAddingDepartment, setIsAddingDepartment] = useState(false);
   const [isAddingCollege, setIsAddingCollege] = useState(false);
   const [editingCollege, setEditingCollege] = useState<(CollegeDraft & { id: number }) | null>(null);
+  const [editingDepartment, setEditingDepartment] = useState<(DepartmentDraft & { id: number }) | null>(null);
   const [isAddingCategory, setIsAddingCategory] = useState(false);
   const [isAddingHalls, setIsAddingHalls] = useState(false);
   const [isAddingLevels, setIsAddingLevels] = useState(false);
@@ -175,25 +180,12 @@ const InstitutionWorkspace = () => {
     void refresh();
   }, []);
 
-  const updateNotice = (message: string) => {
-    setError(null);
-    setNotice(message);
-  };
-
-  const runSave = async (action: () => Promise<unknown>, message: string): Promise<boolean> => {
+  const runSave = async (action: () => Promise<unknown>): Promise<boolean> => {
     setSaving(true);
     setError(null);
-    setNotice(null);
     try {
       await action();
-      const refreshed = await refresh();
-      if (refreshed) {
-        updateNotice(message);
-      } else {
-        setNotice(
-          `${message} The list could not be refreshed; use Refresh to check the latest values.`,
-        );
-      }
+      await refresh();
       return true;
     } catch (saveError) {
       console.error("Institution management update failed:", saveError);
@@ -214,12 +206,10 @@ const InstitutionWorkspace = () => {
   const runBatchSave = async <T,>(
     actions: Array<() => Promise<T>>,
     applyCreated: (created: T[]) => void,
-    itemName: string,
     pluralItemName: string,
   ): Promise<number> => {
     setSaving(true);
     setError(null);
-    setNotice(null);
     const created: T[] = [];
     let failure: unknown;
     try {
@@ -233,11 +223,7 @@ const InstitutionWorkspace = () => {
       }
 
       if (created.length) applyCreated(created);
-      if (created.length === actions.length) {
-        updateNotice(
-          `${created.length} ${created.length === 1 ? itemName : pluralItemName} added successfully.`,
-        );
-      } else {
+      if (created.length !== actions.length) {
         const responseData = (
           failure as { response?: { data?: { error?: string; message?: string } } }
         )?.response?.data;
@@ -260,11 +246,9 @@ const InstitutionWorkspace = () => {
   const saveCategoryChange = async (
     action: () => Promise<CategoryData>,
     applyChange: (category: CategoryData) => void,
-    message: string,
   ): Promise<boolean> => {
     setSaving(true);
     setError(null);
-    setNotice(null);
     try {
       const category = await action();
       applyChange(category);
@@ -274,7 +258,6 @@ const InstitutionWorkspace = () => {
         labelIcon: categoryImages[category.name] || categoryImages.General,
       });
       useCategoriesStore.getState().invalidateCache();
-      updateNotice(message);
       return true;
     } catch (saveError) {
       console.error("Category management update failed:", saveError);
@@ -297,14 +280,12 @@ const InstitutionWorkspace = () => {
     const item = pendingDelete;
     setSaving(true);
     setError(null);
-    setNotice(null);
     try {
       if (item.kind === "category") {
         await categoryService.remove(item.id);
         setCategories((current) => current.filter((category) => category.id !== item.id));
         useCategoriesStore.getState().removeCategory(item.id);
         useCategoriesStore.getState().invalidateCache();
-        updateNotice("Category deleted successfully.");
       } else if (item.kind === "college") {
         await institutionAdminService.removeCollege(item.id);
         setColleges((current) => current.filter((college) => college.id !== item.id));
@@ -315,11 +296,9 @@ const InstitutionWorkspace = () => {
               : department,
           ),
         );
-        updateNotice("College deleted successfully. Its departments are now ungrouped.");
       } else if (item.kind === "department") {
         await institutionAdminService.removeDepartment(item.id);
         setDepartments((current) => current.filter((department) => department.id !== item.id));
-        updateNotice("Department deleted successfully.");
       } else {
         await institutionAdminService.removeBody(item.id);
         setBodies((current) => current.filter((body) => body.id !== item.id));
@@ -327,7 +306,6 @@ const InstitutionWorkspace = () => {
         setRepresentatives((current) =>
           current.filter((representative) => representative.body?.id !== item.id),
         );
-        updateNotice("Representative body deleted successfully.");
       }
       setPendingDelete(null);
     } catch (deleteError) {
@@ -375,7 +353,6 @@ const InstitutionWorkspace = () => {
           }),
       ),
       (created) => setDepartments((current) => [...current, ...created]),
-      "department",
       "departments",
     ).then((createdCount) => {
       setDepartmentDrafts(
@@ -430,7 +407,6 @@ const InstitutionWorkspace = () => {
           }),
         );
       },
-      "college",
       "colleges",
     ).then((createdCount) => {
       setCollegeDrafts(
@@ -449,6 +425,62 @@ const InstitutionWorkspace = () => {
       departmentIds: departments
         .filter((department) => department.collegeId === college.id)
         .map((department) => String(department.id)),
+    });
+  };
+
+  const openDepartmentEditor = (department: AcademicDepartment) => {
+    setError(null);
+    setEditingDepartment({
+      id: department.id,
+      name: department.name,
+      code: department.code,
+      collegeId: department.collegeId ? String(department.collegeId) : "",
+    });
+  };
+
+  const handleUpdateDepartment = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (!editingDepartment) return;
+
+    const name = editingDepartment.name.trim();
+    const code = editingDepartment.code.trim();
+    const collegeId = editingDepartment.collegeId ? Number(editingDepartment.collegeId) : null;
+    if (!name || !code) {
+      setError("Enter a name and short code for the department.");
+      return;
+    }
+    const duplicate = departments.some(
+      (department) =>
+        department.id !== editingDepartment.id &&
+        (department.code.toUpperCase() === code.toUpperCase() ||
+          department.name.toLowerCase() === name.toLowerCase()),
+    );
+    if (duplicate) {
+      setError("Department names and short codes must be unique.");
+      return;
+    }
+
+    void runSave(
+      () => institutionAdminService.updateDepartment(editingDepartment.id, { name, code, collegeId }),
+    ).then((saved) => {
+      if (!saved) return;
+      const college = colleges.find((item) => item.id === collegeId);
+      setDepartments((current) =>
+        current.map((department) =>
+          department.id === editingDepartment.id
+            ? {
+                ...department,
+                name,
+                code: code.toUpperCase(),
+                collegeId,
+                college: college
+                  ? { id: college.id, name: college.name, code: college.code }
+                  : null,
+              }
+            : department,
+        ),
+      );
+      setEditingDepartment(null);
     });
   };
 
@@ -476,7 +508,6 @@ const InstitutionWorkspace = () => {
 
     void runSave(
       () => institutionAdminService.updateCollege(editingCollege.id, { name, code, departmentIds }),
-      "College updated successfully.",
     ).then((saved) => {
       if (!saved) return;
       setColleges((current) =>
@@ -511,7 +542,6 @@ const InstitutionWorkspace = () => {
           ...(bodyDepartmentId ? { departmentId: Number(bodyDepartmentId) } : {}),
           ...(bodyDescription.trim() ? { description: bodyDescription.trim() } : {}),
         }),
-      "Representative body created successfully.",
     ).then((saved) => {
       if (!saved) return;
       setBodyName("");
@@ -550,7 +580,6 @@ const InstitutionWorkspace = () => {
         );
         store.invalidateCache();
       },
-      "category",
       "categories",
     ).then((createdCount) => {
       setCategoryDrafts(createdCount < drafts.length ? drafts.slice(createdCount) : [""]);
@@ -569,7 +598,6 @@ const InstitutionWorkspace = () => {
             category.id === updated.id ? { ...category, ...updated } : category,
           ),
         ),
-      "Category renamed successfully.",
     ).then((saved) => {
       if (saved) {
         setEditingCategoryId(null);
@@ -604,7 +632,6 @@ const InstitutionWorkspace = () => {
           halls: nextHalls,
           levels: levelOptions,
         }),
-      "Hall options added successfully.",
     ).then((saved) => {
       if (!saved) return;
       setHallOptions(nextHalls);
@@ -631,7 +658,6 @@ const InstitutionWorkspace = () => {
           halls: hallOptions,
           levels: nextLevels,
         }),
-      "Academic levels added successfully.",
     ).then((saved) => {
       if (!saved) return;
       setLevelOptions(nextLevels);
@@ -648,7 +674,6 @@ const InstitutionWorkspace = () => {
           halls: nextHalls,
           levels: levelOptions,
         }),
-      "Hall option removed successfully.",
     ).then((saved) => {
       if (saved) setHallOptions(nextHalls);
     });
@@ -662,7 +687,6 @@ const InstitutionWorkspace = () => {
           halls: hallOptions,
           levels: nextLevels,
         }),
-      "Academic level removed successfully.",
     ).then((saved) => {
       if (saved) setLevelOptions(nextLevels);
     });
@@ -708,7 +732,6 @@ const InstitutionWorkspace = () => {
           responsibilities,
           ...permissions,
         }),
-      "Representative assigned successfully.",
     ).then((saved) => {
       if (!saved) return;
       setRepEmail("");
@@ -728,7 +751,6 @@ const InstitutionWorkspace = () => {
     if (!window.confirm("Are you sure you want to remove this representative's access?")) return;
     void runSave(
       () => institutionAdminService.removeRepresentative(profileId),
-      "Representative removed successfully.",
     );
   };
 
@@ -757,36 +779,48 @@ const InstitutionWorkspace = () => {
   const primaryBtnClass =
     "rounded-full bg-[#f49b31] px-6 py-2.5 font-poppins text-sm font-semibold text-white shadow-sm transition hover:bg-[#e8911a] disabled:cursor-wait disabled:opacity-50";
 
+  const Shell = embedded ? React.Fragment : AdminPageProvider;
+  const shellProps = embedded ? {} : { initialPage: "institution" as const };
+
   return (
-    <AdminPageProvider initialPage="institution">
-      <div className="min-h-screen w-full min-w-0 bg-[#FCFCFC]">
-        <AdminLayout />
+    <Shell {...shellProps}>
+      <div className={embedded ? "w-full min-w-0" : "min-h-screen w-full min-w-0 bg-[#FCFCFC]"}>
+        {!embedded && <AdminLayout />}
         <main
-          className={`min-h-screen min-w-0 bg-[#FCFCFC] px-4 py-6 sm:px-8 sm:py-8 ${
-            isSidebarCollapsed ? "min-[1131px]:ms-[102px]" : "min-[1131px]:ms-[230px]"
-          } transition-all duration-300 pb-24`}
+          className={`min-w-0 ${
+            embedded
+              ? "pb-10"
+              : `min-h-screen bg-[#FCFCFC] px-4 py-6 sm:px-8 sm:py-8 pb-24 ${
+                  isSidebarCollapsed ? "min-[1131px]:ms-[102px]" : "min-[1131px]:ms-[230px]"
+                }`
+          } transition-all duration-300`}
         >
           <div className="flex min-w-0 w-full flex-col items-start gap-6">
             {/* Header Row */}
             <div className="flex flex-col gap-2 items-start relative w-full border-b border-[#ffd7a8] pb-4">
               <div className="flex w-full flex-col items-start gap-1 sm:gap-2">
-                <h1 className="hidden min-[1131px]:block font-poppins font-bold text-[24px] sm:text-[32px] leading-normal text-black">
-                  Institution
+                <h1 className={`${embedded ? "block" : "hidden min-[1131px]:block"} font-poppins font-bold text-[24px] sm:text-[32px] leading-normal text-black`}>
+                  {isRepresentativeManager ? "Delegation & Scope" : "Institution"}
                 </h1>
-                <AdminHeader title="Institution" />
+                {!embedded && (
+                  <AdminHeader title={isRepresentativeManager ? "Delegation & Scope" : "Institution"} />
+                )}
                 <p className="font-poppins font-medium text-[13px] sm:text-[16px] leading-normal text-[#8b8e8d]">
-                  Manage your institution, members, representative teams, categories, and posting rules.
+                  {isRepresentativeManager
+                    ? "Manage representatives and the issues within their assigned scope."
+                    : "Manage your institution, members, representative teams, categories, and posting rules."}
                 </p>
               </div>
             </div>
 
             {/* Navigation Tabs Bar */}
+            {!isRepresentativeManager && (
             <div
               className="flex overflow-x-auto scrollbar-hide flex-nowrap gap-2 w-full pb-2"
               role="tablist"
               aria-label="Institution tabs"
             >
-              {!isRepresentativeManager && (
+              {(
                 <>
                   <button
                     role="tab"
@@ -849,6 +883,7 @@ const InstitutionWorkspace = () => {
                 </>
               )}
             </div>
+            )}
 
             {/* Alerts */}
             {error && (
@@ -858,17 +893,6 @@ const InstitutionWorkspace = () => {
               >
                 <span>{error}</span>
                 <button onClick={() => setError(null)} className="ml-2 underline text-xs">
-                  Dismiss
-                </button>
-              </div>
-            )}
-            {notice && (
-              <div
-                role="status"
-                className="w-full rounded-xl border border-[#FFC37B] bg-[#FEF5EA] p-4 font-poppins text-sm text-[#75420B] flex items-center justify-between"
-              >
-                <span>{notice}</span>
-                <button onClick={() => setNotice(null)} className="ml-2 underline text-xs">
                   Dismiss
                 </button>
               </div>
@@ -1053,6 +1077,14 @@ const InstitutionWorkspace = () => {
                                   <td className="py-3.5 text-right">
                                     <button
                                       type="button"
+                                      aria-label={`Edit ${dept.name}`}
+                                      onClick={() => openDepartmentEditor(dept)}
+                                      className="rounded-full p-2 text-[#75420B] hover:bg-[#FEF5EA]"
+                                    >
+                                      <Pencil size={16} />
+                                    </button>
+                                    <button
+                                      type="button"
                                       aria-label={`Delete ${dept.name}`}
                                       onClick={() => setPendingDelete({ kind: "department", id: dept.id })}
                                       className="rounded-full p-2 text-red-600 hover:bg-red-50"
@@ -1159,15 +1191,17 @@ const InstitutionWorkspace = () => {
                 {/* ────────── TAB: DELEGATION & SCOPE ────────── */}
                 {activeTab === "representatives" && (
                   <section className="flex flex-col gap-6 w-full animate-fade-in">
-                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                      <div>
-                        <h2 className="font-poppins font-semibold text-[18px] text-[#212121]">
-                          Representative Delegation & Scope
-                        </h2>
-                        <p className="font-poppins text-[12px] text-[#8b8e8d] mt-1">
-                          Empower student leaders with specific departmental and category authority without exposing university-wide administrative controls.
-                        </p>
-                      </div>
+                    <div className={`flex flex-col sm:flex-row sm:items-center gap-4 ${isRepresentativeManager ? "sm:justify-end" : "sm:justify-between"}`}>
+                      {!isRepresentativeManager && (
+                        <div>
+                          <h2 className="font-poppins font-semibold text-[18px] text-[#212121]">
+                            Representative Delegation & Scope
+                          </h2>
+                          <p className="font-poppins text-[12px] text-[#8b8e8d] mt-1">
+                            Empower student leaders with specific departmental and category authority without exposing university-wide administrative controls.
+                          </p>
+                        </div>
+                      )}
                       <button
                         type="button"
                         onClick={() => setIsAssigningRep(true)}
@@ -1254,9 +1288,9 @@ const InstitutionWorkspace = () => {
                                           Respond
                                         </span>
                                       )}
-                                      {rep.canResolve && (
-                                        <span className="rounded bg-purple-50 px-1.5 py-0.5 text-[10px] font-semibold text-purple-700 border border-purple-200">
-                                          Resolve
+                                      {rep.canModerateWaves && (
+                                        <span className="rounded bg-violet-50 px-1.5 py-0.5 text-[10px] font-semibold text-violet-700 border border-violet-200">
+                                          Moderate
                                         </span>
                                       )}
                                     </div>
@@ -1363,13 +1397,15 @@ const InstitutionWorkspace = () => {
                                     <div className="flex shrink-0 items-center gap-1">
                                       <button
                                         type="button"
+                                        aria-label={`Rename ${category.name}`}
+                                        title={`Rename ${category.name}`}
                                         onClick={() => {
                                           setEditingCategoryId(category.id);
                                           setEditingCategoryName(category.name);
                                         }}
-                                        className="rounded-full border border-[#ffd7a8] px-3 py-1 text-xs font-semibold text-[#75420B] hover:bg-[#FEF5EA]"
+                                        className="rounded-full p-2 text-[#75420B] hover:bg-[#FEF5EA]"
                                       >
-                                        Rename
+                                        <Pencil size={16} />
                                       </button>
                                       <button
                                         type="button"
@@ -2069,6 +2105,92 @@ const InstitutionWorkspace = () => {
           </div>
         )}
 
+        {editingDepartment && (
+          <div
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 backdrop-blur-sm animate-fade-in"
+            onClick={() => setEditingDepartment(null)}
+          >
+            <div
+              className="relative max-h-[90vh] w-full max-w-xl overflow-y-auto rounded-[24px] border border-[#ffd7a8] bg-white p-6 shadow-xl sm:p-8"
+              onClick={(event) => event.stopPropagation()}
+            >
+              <div className="flex items-center justify-between border-b border-[#ffd7a8]/50 pb-3">
+                <h3 className="font-poppins text-lg font-bold text-[#212121]">Edit Department</h3>
+                <button
+                  type="button"
+                  onClick={() => setEditingDepartment(null)}
+                  className="rounded-full p-1 text-black/40 hover:bg-[#FEF5EA]"
+                  aria-label="Close edit department dialog"
+                >
+                  <X size={18} />
+                </button>
+              </div>
+              {error && <p role="alert" className="mt-3 text-sm text-red-700">{error}</p>}
+              <form onSubmit={handleUpdateDepartment} className="mt-4 flex flex-col gap-4">
+                <label className="block font-poppins text-xs font-medium text-[#454545]">
+                  Department Name
+                  <input
+                    required
+                    maxLength={160}
+                    value={editingDepartment.name}
+                    onChange={(event) =>
+                      setEditingDepartment((current) =>
+                        current ? { ...current, name: event.target.value } : current,
+                      )
+                    }
+                    className={inputClass}
+                  />
+                </label>
+                <label className="block font-poppins text-xs font-medium text-[#454545]">
+                  Short Code
+                  <input
+                    required
+                    maxLength={32}
+                    value={editingDepartment.code}
+                    onChange={(event) =>
+                      setEditingDepartment((current) =>
+                        current ? { ...current, code: event.target.value } : current,
+                      )
+                    }
+                    className={inputClass}
+                  />
+                </label>
+                <label className="block font-poppins text-xs font-medium text-[#454545]">
+                  College (optional)
+                  <select
+                    value={editingDepartment.collegeId}
+                    onChange={(event) =>
+                      setEditingDepartment((current) =>
+                        current ? { ...current, collegeId: event.target.value } : current,
+                      )
+                    }
+                    className={inputClass}
+                  >
+                    <option value="">No college</option>
+                    {colleges.map((college) => (
+                      <option key={college.id} value={college.id}>
+                        {college.name} ({college.code})
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                <div className="mt-2 flex justify-end gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setEditingDepartment(null)}
+                    className="rounded-full border border-black/15 px-5 py-2 font-poppins text-sm font-semibold"
+                  >
+                    Cancel
+                  </button>
+                  <button type="submit" disabled={saving} className={primaryBtnClass}>
+                    {saving ? "Saving…" : "Save Changes"}
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
+
         {isAddingCategory && (
           <div
             className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4"
@@ -2576,15 +2698,19 @@ const InstitutionWorkspace = () => {
                   <legend className="font-poppins text-xs font-semibold text-[#212121]">
                     Permissions
                   </legend>
+                  {user?.role === "REPRESENTATIVE" && (
+                    <p className="mt-1 font-poppins text-[11px] text-[#8b8e8d]">
+                      You can only grant permissions that are already assigned to you.
+                    </p>
+                  )}
                   <div className="mt-2 grid gap-2 sm:grid-cols-2">
                     {(
                       [
                         ["canAssign", "Can assign issues to reps/bodies"],
                         ["canRespond", "Can publish official responses"],
                         ["canAcknowledge", "Can acknowledge issues"],
-                        ["canModerateWaves", "Can approve, reject or review waves"],
+                        ["canModerateWaves", "Can moderate posts (approve, reject or review waves)"],
                         ["canUpdateWaveProgress", "Can mark waves in progress or completed"],
-                        ["canResolve", "Can resolve issues"],
                         ["canExport", "Can export data to CSV"],
                         ["canManageReps", "Can manage other reps"],
                       ] as const
@@ -2596,10 +2722,11 @@ const InstitutionWorkspace = () => {
                         <input
                           type="checkbox"
                           checked={permissions[key]}
+                          disabled={!canGrantRepresentativePermission(key)}
                           onChange={(e) =>
                             setPermissions((curr) => ({ ...curr, [key]: e.target.checked }))
                           }
-                          className="accent-[#F49B31]"
+                          className="accent-[#F49B31] disabled:cursor-not-allowed"
                         />
                         {label}
                       </label>
@@ -2640,7 +2767,7 @@ const InstitutionWorkspace = () => {
           />
         )}
       </div>
-    </AdminPageProvider>
+    </Shell>
   );
 };
 

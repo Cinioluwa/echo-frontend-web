@@ -1,5 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import SurgeIcon from "../../shared/SurgeIcon";
 import type { RelatedPing } from "./types";
 
 interface RelatedPingsProps {
@@ -32,7 +33,7 @@ const RelatedPings: React.FC<RelatedPingsProps> = ({ pings, detailBasePath }) =>
                             </p>
                         </div>
                         <div className="flex shrink-0 items-center gap-1">
-                            <img src="/assets/images/surge.svg" alt="" className="h-[14px] w-[9px]" />
+                            <SurgeIcon width={9} height={12} fill="#F49B31" />
                             <span className="font-poppins text-[14px] font-semibold text-[#f49b31]">
                                 {ping.waveCount}
                             </span>

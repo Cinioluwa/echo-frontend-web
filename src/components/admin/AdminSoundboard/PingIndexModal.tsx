@@ -16,7 +16,7 @@ interface PingIndexModalProps {
 // ── Status badge ────────────────────────────────────────────────────────────────
 const getStatusBadge = (ping: AdminPing) => {
     const status = ping.progressStatus || ping.status;
-    if (status === "RESOLVED" || status === "COMPLETED") {
+    if (ping.progressStatus === "RESOLVED" || ping.resolvedAt) {
         return (
             <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] md:text-[10px] font-semibold bg-[#F49B31] text-white whitespace-nowrap">
                 <span className="w-1.5 h-1.5 rounded-full bg-white" />
@@ -129,7 +129,7 @@ const PingIndexModal: React.FC<PingIndexModalProps> = ({ category, categories, o
 
     // Use real resolved count from API data
     const resolvedCount = pings.filter(
-        (p) => p.progressStatus === "RESOLVED" || p.status === "COMPLETED"
+        (p) => p.progressStatus === "RESOLVED" || p.resolvedAt
     ).length;
 
     // Calculate percentage dynamically to fix 0% backend bug
@@ -327,11 +327,7 @@ const PingIndexModal: React.FC<PingIndexModalProps> = ({ category, categories, o
                                             {/* Surges */}
                                             <div className="flex flex-col md:flex-col">
                                                 <span className="text-[12px] md:text-[13px] font-semibold text-[#F49B31]">
-                                                    <img
-                                                        src="/assets/images/surge.svg"
-                                                        alt="Surge"
-                                                        className="w-3 h-3 md:w-3.5 md:h-3.5 inline-block mr-0.5"
-                                                    />
+                                                    <SurgeIcon width={12} height={16} fill="#F49B31" className="inline-block mr-0.5" />
                                                     {ping.surgeCount}
                                                 </span>
                                                 <span className="text-[9px] md:text-[10px] text-[#9CA3AF]">

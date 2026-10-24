@@ -7,9 +7,9 @@ import { adminService } from "../../api";
 import PostActionMenu from "./PostActionMenu";
 import PostEngagementMenu from "./PostEngagementMenu";
 import { ToastContainer } from "../shared/Toast";
+import SurgeIcon from "../shared/SurgeIcon";
 import type { ToastItem } from "../shared/Toast";
 
-const surge = "/assets/images/surge.svg";
 const waveMenu = "/assets/images/waveMenu.svg";
 const dropdown = "/assets/images/customDropdown.svg";
 const dropdown_menu = "/assets/images/dropdown_menu.svg";
@@ -204,7 +204,7 @@ const AdminPingCard = ({ pings, onUpdate }: AdminPingCardProps) => {
               </div>
             )}
             <div className="flex items-center gap-1">
-              <img src={surge} alt="surges" className="w-3.5 h-3.5" />
+              <SurgeIcon width={11} height={14} fill="#F49B31" />
               <span>{surgeCount} surges</span>
             </div>
           </div>

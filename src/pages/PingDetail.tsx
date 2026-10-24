@@ -27,6 +27,7 @@ import MarkAsResolvedBar from "../components/MarkAsResolvedBar";
 import CommentsPanel from "../components/CommentsPanel";
 import WaveCard from "../components/WaveCard";
 import PingCard from "../components/PingCard";
+import OfficialResponseCard from "../components/OfficialResponseCard";
 import { getSocket } from "../api/socket";
 import { getErrorMessage } from "../utils/networkUtils";
 import type { Ping, Wave, CategoryData } from "../api/types";
@@ -402,27 +403,7 @@ const PingDetail = () => {
         </div>
       )}
 
-      {ping?.officialResponse && (
-        <div className="bg-[#FFC37B] rounded-[15px] pt-2.5 sm:pt-2.5 flex flex-col gap-3">
-          <div className="flex items-center gap-2.5 px-2.5 sm:px-2.5">
-            <img src="/assets/icon/official-response.svg" className="w-5 h-5" alt="Official Response Icon" />
-            <h3 className="font-poppins font-semibold text-[14px] sm:text-[18px] text-black">
-              Official Response
-            </h3>
-          </div>
-          <div className="bg-white p-5 rounded-b-[15px]">
-            <div className="flex items-center gap-2 mb-2">
-              <span className="font-poppins font-semibold text-[13px] text-[#f49b31]">
-                {ping.officialResponse.author.firstName} {ping.officialResponse.author.lastName}
-              </span>
-              <span className="text-[#8b8e8d] text-[11px]">
-                {new Date(ping.officialResponse.createdAt).toLocaleDateString()}
-              </span>
-            </div>
-            <p className="font-poppins text-[13px] text-[#212121]">{ping.officialResponse.content}</p>
-          </div>
-        </div>
-      )}
+      {ping?.officialResponse && <OfficialResponseCard response={ping.officialResponse} />}
       {/* ── Wave Header & Cards ───────────────────── */}
       {waves.length > 0 && (
         <div className="flex flex-col gap-2.5">

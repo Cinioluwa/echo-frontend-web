@@ -53,7 +53,6 @@ export interface User {
     canAcknowledge?: boolean;
     canModerateWaves?: boolean;
     canUpdateWaveProgress?: boolean;
-    canResolve: boolean;
     canExport?: boolean;
     canManageReps?: boolean;
     bodyId?: number | null;

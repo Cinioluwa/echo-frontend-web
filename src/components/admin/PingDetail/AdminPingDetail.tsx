@@ -1,12 +1,14 @@
 import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { Navigate, useParams } from "react-router-dom";
 import { TrendingUp, MessageSquare, Radio, CheckCircle2, Send } from "lucide-react";
+import SurgeIcon from "../../shared/SurgeIcon";
 import { categoryImages } from "../../CategoryImages";
 import KPICard from "./KPICard";
 import CommentsPanel from "./CommentsPanel";
 import StatusTimeline from "./StatusTimeline";
 import type { StatusEvent, RelatedPing, PingDetailPermissions, WaveActionStatus } from "./types";
 import AdminPingWaves from "./AdminPingWaves";
+import OfficialResponseCard from "../../OfficialResponseCard";
 import { motion } from "framer-motion";
 import pingService from "../../../api/services/ping.service";
 import { adminService } from "../../../api/services/admin.service";
@@ -43,7 +45,7 @@ const badgeConfigs: Record<AdminBadgeType, BadgeConfig> = {
         label: "Surging now",
         bgColor: "#ffd7d7",
         textColor: "#b01212",
-        icon: <img src="/assets/icon/red-surge.svg" alt="Red lighting Icon" className="w-3 h-3" />
+        icon: <SurgeIcon width={9} height={12} fill="#B01212" />
     },
     RISING_QUICKLY: {
         label: "Rising quickly",
@@ -95,7 +97,16 @@ interface PingDetailData {
     surgeDelta?: string;
     unresolvedFor: string;
     statusEvents: StatusEvent[];
-    officialResponse?: { content: string; createdAt: string; author: { firstName: string; lastName: string } } | null;
+    officialResponse?: {
+        content: string;
+        createdAt: string;
+        author: {
+            firstName: string;
+            lastName: string;
+            profilePicture?: string | null;
+            role?: string;
+        };
+    } | null;
 }
 
 interface AdminPingDetailProps {
@@ -331,12 +342,6 @@ const AdminPingDetail: React.FC<AdminPingDetailProps> = ({ pingId: propPingId, m
 
                 return {
                     ...current,
-                    ...(status === "COMPLETED"
-                        ? {
-                              resolvedAt: new Date().toISOString(),
-                              progressStatus: "RESOLVED" as const,
-                          }
-                        : {}),
                     waves: current.waves?.map((wave) =>
                         wave.id === id
                             ? {
@@ -471,22 +476,14 @@ const AdminPingDetail: React.FC<AdminPingDetailProps> = ({ pingId: propPingId, m
                         )}
                     </div>
 
-                    {(canPostResponse || detail.officialResponse) && (
+                    {detail.officialResponse ? (
+                        <OfficialResponseCard response={detail.officialResponse} />
+                    ) : canPostResponse ? (
                         <div className="flex flex-col gap-[10px] rounded-[15px] bg-white p-[10px]">
-                            <h3 className="font-poppins text-[18px] font-medium text-black">Official Response</h3>
-                            {detail.officialResponse ? (
-                                <div className="rounded-[15px] bg-[#fef5ea] p-4">
-                                    <div className="mb-2 flex items-center gap-2">
-                                        <span className="font-poppins text-[13px] font-semibold text-[#f49b31]">
-                                            {detail.officialResponse.author.firstName} {detail.officialResponse.author.lastName}
-                                        </span>
-                                        <span className="text-[11px] text-[#8b8e8d]">
-                                            {new Date(detail.officialResponse.createdAt).toLocaleDateString()}
-                                        </span>
-                                    </div>
-                                    <p className="font-poppins text-[13px] text-[#212121]">{detail.officialResponse.content}</p>
-                                </div>
-                            ) : (
+                            <div className="flex items-center gap-2.5 rounded-t-[15px] border-b border-[#F49B31] bg-[#FFC37B] px-4 py-3">
+                                <img src="/assets/icon/official-response.svg" className="h-5 w-5" alt="" />
+                                <h3 className="font-poppins text-[18px] font-semibold text-black">Official Response</h3>
+                            </div>
                                 <div
                                     className={`flex w-full gap-2 rounded-[20px] border-2 border-[#ffc37b] bg-[#fefefe] p-[5px] ${
                                         responseFocused ? "flex-col" : "h-[50px] items-center pl-5"
@@ -513,12 +510,11 @@ const AdminPingDetail: React.FC<AdminPingDetailProps> = ({ pingId: propPingId, m
                                         </div>
                                     )}
                                 </div>
-                            )}
                         </div>
-                    )}
+                    ) : null}
 
                     <div className="flex w-full flex-col gap-5 sm:flex-row">
-                        <KPICard icon="/assets/images/surge.svg" label="Surge count" value={detail.surgeCount} delta={detail.surgeDelta} />
+                        <KPICard icon={<SurgeIcon width={11} height={15} fill="#F49B31" />} label="Surge count" value={detail.surgeCount} delta={detail.surgeDelta} />
                         <KPICard label="Unresolved for" value={detail.unresolvedFor} />
                     </div>
 
@@ -577,7 +573,6 @@ const AdminPingDetail: React.FC<AdminPingDetailProps> = ({ pingId: propPingId, m
                     onClose={() => setIsAssignModalOpen(false)}
                     onAssigned={(updatedPing) => {
                         setPingData((prev) => (prev ? { ...prev, ...updatedPing } : updatedPing));
-                        setNotice("Ping assigned successfully.");
                     }}
                 />
             )}

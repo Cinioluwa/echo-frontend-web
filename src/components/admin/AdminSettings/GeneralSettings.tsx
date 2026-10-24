@@ -8,7 +8,6 @@ const GeneralSettings: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const fetchSettings = useCallback(async () => {
@@ -39,9 +38,7 @@ const GeneralSettings: React.FC = () => {
     try {
       setSaving(true);
       setError(null);
-      setSuccess(null);
       await adminService.updateOrgSettings({ name: spaceName, description });
-      setSuccess("Settings saved successfully.");
     } catch (err: any) {
       setError(err?.response?.data?.error || "Failed to save settings");
     } finally {
@@ -71,12 +68,6 @@ const GeneralSettings: React.FC = () => {
           <button onClick={() => setError(null)} className="ml-2 underline">Dismiss</button>
         </div>
       )}
-      {success && (
-        <div className="p-3 bg-green-50 border border-green-200 rounded-lg text-green-700 text-[13px] font-poppins">
-          {success}
-        </div>
-      )}
-
       <div className="flex items-center gap-6">
         <div className="w-[100px] h-[100px] rounded-full border border-[#f49b31] bg-[#fef5ea] flex items-center justify-center overflow-hidden shrink-0">
           <img

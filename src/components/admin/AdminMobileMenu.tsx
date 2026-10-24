@@ -43,8 +43,9 @@ const AdminMobileMenu = ({ setMenu, menu }: Props) => {
   const items = isRepresentative
     ? [
         { label: "Representative inbox", to: "/admin/soundboard", icon: "/assets/icon/admin-soundboard.svg" },
+        { label: "Moderation", to: "/admin/moderation", icon: "/assets/icon/moderation.svg" },
         ...(isRepresentativeManager
-          ? [{ label: "Institution", to: "/admin/institution", icon: null }]
+          ? [{ label: "Delegation & Scope", to: "/admin/institution", icon: null }]
           : []),
       ]
     : [
