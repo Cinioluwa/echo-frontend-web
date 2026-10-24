@@ -1,8 +1,13 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { Loader2, ArrowLeft } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import GuestSurgeModal from "../../components/guest/GuestSurgeModal";
 import SurgeIcon from "../../components/shared/SurgeIcon";
+import SurgeButton from "../../components/shared/SurgeButton";
+import BackButton from "../../components/shared/BackButton";
+import CommentsPanel from "../../components/CommentsPanel";
+import ProposeWaveBar from "../../components/ProposeWaveBar";
+import AccountRequiredModal from "../../components/AccountRequiredModal";
 import { publicService, guestService } from "../../api/services";
 import { useGuestStore } from "../../stores";
 
@@ -23,23 +28,26 @@ interface GuestPingData {
 const GuestPingDetail = () => {
   const { pingId } = useParams<{ pingId: string }>();
   const navigate = useNavigate();
-  
+
+  if (!pingId) return null;
+
   const [pingData, setPingData] = useState<GuestPingData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  
+
   const [showModal, setShowModal] = useState(false);
   const [isSurging, setIsSurging] = useState(false);
   const [hasSurged, setHasSurged] = useState(false);
+  const [showAccountModal, setShowAccountModal] = useState(false);
+  const [accountTrigger, setAccountTrigger] = useState<"comment" | "wave">("comment");
 
   const guestToken = useGuestStore((state) => state.guestToken);
   const isTokenValid = useGuestStore((state) => state.isTokenValid);
 
   useEffect(() => {
-    if (!pingId) return;
-    
     setIsLoading(true);
-    publicService.getShareMetadata("ping", Number(pingId))
+    publicService
+      .getShareMetadata("ping", Number(pingId))
       .then((data) => {
         setPingData({
           id: data.id,
@@ -67,11 +75,10 @@ const GuestPingDetail = () => {
       setIsSurging(true);
       try {
         const result = await guestService.guestSurgePing(Number(pingId), guestToken);
-        setPingData(prev => prev ? { ...prev, surgeCount: result.surgeCount } : null);
+        setPingData((prev) => prev ? { ...prev, surgeCount: result.surgeCount } : null);
         setHasSurged(true);
       } catch (err: any) {
         console.error("Failed to surge with existing token", err);
-        // Prompt for modal if token is invalid or if account exists (409)
         if (err.response?.status === 401 || err.response?.status === 403 || err.response?.status === 409) {
           setShowModal(true);
         }
@@ -83,24 +90,29 @@ const GuestPingDetail = () => {
     }
   };
 
+  const handleAccountRequired = (trigger: "comment" | "wave") => {
+    setAccountTrigger(trigger);
+    setShowAccountModal(true);
+  };
+
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-[#f9f9f9] flex flex-col items-center justify-center">
+      <div className="min-h-screen bg-[#FAE9D4] flex flex-col items-center justify-center">
         <Loader2 className="animate-spin text-[#F49B31] w-12 h-12" />
-        <p className="mt-4 text-gray-500">Loading ping details...</p>
+        <p className="mt-4 text-[#626665] font-['Poppins',sans-serif]">Loading ping details...</p>
       </div>
     );
   }
 
   if (error || !pingData) {
     return (
-      <div className="min-h-screen bg-[#f9f9f9] flex flex-col items-center justify-center p-4">
-        <div className="bg-white p-8 rounded-2xl shadow-sm text-center max-w-md w-full border border-gray-100">
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Not Found</h2>
-          <p className="text-gray-500 mb-6">{error}</p>
-          <button 
+      <div className="min-h-screen bg-[#FAE9D4] flex flex-col items-center justify-center p-4">
+        <div className="bg-white p-8 rounded-[15px] shadow-sm text-center max-w-md w-full border border-[#F49B31]/40">
+          <h2 className="font-['Poppins',sans-serif] font-semibold text-[24px] text-black mb-2">Not Found</h2>
+          <p className="font-['Poppins',sans-serif] font-normal text-[14px] text-[#626665] mb-6">{error}</p>
+          <button
             onClick={() => navigate("/login")}
-            className="w-full py-3 bg-[#F49B31] text-white rounded-xl font-medium hover:bg-[#d88429] transition-colors"
+            className="font-['Poppins',sans-serif] font-semibold text-[15px] text-white bg-[#F49B31] border border-[#F49B31] rounded-[15px] px-5 py-[13px] hover:bg-[#d88429] transition-colors w-full"
           >
             Go to App
           </button>
@@ -110,134 +122,108 @@ const GuestPingDetail = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[#f9f9f9] font-poppins flex flex-col">
-      {/* Simplified Header */}
-      <header className="bg-white border-b border-gray-100 px-4 md:px-8 py-4 flex items-center justify-between sticky top-0 z-10">
+    <div className="min-h-screen bg-[#FAE9D4] font-['Poppins',sans-serif] flex flex-col">
+      <header className="bg-white border-b border-[#F49B31]/40 px-4 md:px-8 py-4 flex items-center justify-between sticky top-0 z-20">
         <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate("/login")}>
-          <img
-            src={logo}
-            className="brightness-0 contrast-200 h-[24px] w-[22px]"
-            alt="Echo logo"
-          />
-          <span className="font-bold text-xl md:text-2xl text-black leading-none">
-            Echo
-          </span>
+          <img src={logo} className="brightness-0 contrast-200 h-[24px] w-[22px]" alt="Echo logo" />
+          <span className="font-bold text-xl md:text-2xl text-black leading-none">Echo</span>
         </div>
-        <button 
+        <button
           onClick={() => navigate("/login")}
-          className="text-sm font-medium text-[#F49B31] hover:text-[#d88429] px-4 py-2 border border-[#F49B31] rounded-full hover:bg-orange-50 transition-colors"
+          className="font-['Poppins',sans-serif] font-medium text-sm text-[#F49B31] hover:text-[#d88429] px-4 py-2 border border-[#F49B31] rounded-full hover:bg-orange-50 transition-colors"
         >
           Sign In
         </button>
       </header>
 
-      {/* Main Content */}
-      <main className="flex-1 max-w-3xl w-full mx-auto p-4 md:p-8 flex flex-col gap-6">
-        <button 
+      <main className="flex-1 max-w-[1400px] w-full mx-auto p-4 md:p-8 flex flex-col gap-[15px]">
+        <BackButton
           onClick={() => navigate("/login")}
-          className="flex items-center gap-2 text-sm text-gray-500 hover:text-gray-800 self-start"
-        >
-          <ArrowLeft size={16} />
-          Go to full app
-        </button>
+          label="Go to full app"
+          className="self-start"
+        />
 
-        {/* Ping Card */}
-        <div className="bg-white rounded-[20px] shadow-sm border border-gray-100 overflow-hidden">
-          {/* Image Attachment (if any and different from org logo) */}
-          {pingData.imageUrl && pingData.imageUrl !== pingData.orgLogoUrl && (
-            <div className="relative w-full overflow-hidden border-b border-gray-100 bg-black/90 flex items-center justify-center max-h-[500px]">
-              <img
-                src={pingData.imageUrl}
-                alt=""
-                aria-hidden="true"
-                className="absolute inset-0 w-full h-full object-cover blur-2xl scale-120 opacity-60 pointer-events-none select-none"
-              />
-              <img 
-                src={pingData.imageUrl} 
-                alt="Attachment" 
-                className="relative z-10 w-full h-auto max-h-[500px] object-contain"
-              />
-            </div>
-          )}
-
-          {/* Org Header */}
-          <div className="p-4 md:p-6 border-b border-gray-50 flex items-center gap-3">
-            {pingData.orgLogoUrl ? (
-              <img src={pingData.orgLogoUrl} alt={pingData.orgName} className="w-10 h-10 rounded-full object-cover border border-gray-100" />
-            ) : (
-              <div className="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center text-[#F49B31] font-bold text-lg">
-                {pingData.orgName.charAt(0)}
-              </div>
-            )}
-            <div>
-              <p className="font-semibold text-gray-900 leading-tight">{pingData.orgName}</p>
-              <p className="text-xs text-gray-500">{pingData.category}</p>
-            </div>
-          </div>
-
-          {/* Content */}
-          <div className="p-4 md:p-6 pb-2">
-            <h1 className="text-xl md:text-2xl font-bold text-black mb-3 leading-snug">
-              {pingData.title}
-            </h1>
-            <p className="text-[#454545] text-[15px] whitespace-pre-wrap leading-relaxed">
-              {pingData.description}
-            </p>
-          </div>
-
-          {/* Stats & Actions */}
-          <div className="p-4 md:p-6 bg-gray-50/50 flex flex-col sm:flex-row items-center justify-between gap-4">
-            <div className="flex gap-6 text-sm text-gray-500 w-full sm:w-auto">
-              <span className="flex items-center gap-1.5 font-medium">
-                <SurgeIcon width={14} height={18} fill="#F49B31" /> 
-                {pingData.surgeCount} {pingData.surgeCount === 1 ? 'Surge' : 'Surges'}
-              </span>
-              <span className="font-medium">
-                {pingData.waveCount} {pingData.waveCount === 1 ? 'Wave' : 'Waves'}
-              </span>
-            </div>
-
-            <button
-              onClick={handleSurgeClick}
-              disabled={isSurging || hasSurged}
-              className={`w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-2.5 rounded-full font-bold text-sm transition-all ${
-                hasSurged 
-                  ? "bg-[#FEF5EA] text-[#F49B31] border border-[#FFC37B]" 
-                  : "bg-[#F49B31] text-white hover:bg-[#d88429] shadow-sm"
-              }`}
-            >
-              {isSurging ? (
-                <Loader2 className="animate-spin w-4 h-4" />
-              ) : (
-                <SurgeIcon width={14} height={18} fill={hasSurged ? "#F49B31" : "#FFFFFF"} />
+        <div className="flex flex-col lg:flex-row gap-[15px] min-h-0">
+          <div className="flex-1 min-w-0 flex flex-col gap-[15px]">
+            <div className="bg-white rounded-[10px] border border-[#F49B31]/40 flex flex-col overflow-hidden min-w-0">
+              {pingData.imageUrl && pingData.imageUrl !== pingData.orgLogoUrl && (
+                <div className="relative w-full overflow-hidden border-b border-[#F49B31]/40 bg-black/90 flex items-center justify-center max-h-[500px]">
+                  <img src={pingData.imageUrl} alt="" aria-hidden="true" className="absolute inset-0 w-full h-full object-cover blur-2xl scale-120 opacity-60 pointer-events-none select-none" />
+                  <img src={pingData.imageUrl} alt="Attachment" className="relative z-10 w-full h-auto max-h-[500px] object-contain" />
+                </div>
               )}
-              {hasSurged ? "Surged!" : "Surge as Guest"}
-            </button>
-          </div>
-        </div>
 
-        {/* CTA Banner */}
-        <div className="bg-gradient-to-r from-[#FFC37B]/20 to-[#F49B31]/10 rounded-[20px] p-6 text-center border border-[#FFC37B]/30">
-          <h3 className="font-bold text-lg text-gray-900 mb-2">Want to add a solution?</h3>
-          <p className="text-gray-600 text-sm mb-4">Join {pingData.orgName} on Echo to propose waves, add comments, and track the progress of this issue.</p>
-          <button 
-            onClick={() => navigate("/signUp")}
-            className="px-6 py-2 bg-white border-2 border-[#F49B31] text-[#F49B31] font-bold rounded-full hover:bg-orange-50 transition-colors"
-          >
-            Create an Account
-          </button>
+              <div className="p-4 md:p-6 border-b border-[#F49B31]/40 flex items-center gap-3">
+                {pingData.orgLogoUrl ? (
+                  <img src={pingData.orgLogoUrl} alt={pingData.orgName} className="w-10 h-10 rounded-full object-cover border border-[#F49B31]/40" />
+                ) : (
+                  <div className="w-10 h-10 rounded-full bg-[#FEF5EA] flex items-center justify-center text-[#F49B31] font-bold text-lg">{pingData.orgName.charAt(0)}</div>
+                )}
+                <div className="min-w-0">
+                  <p className="font-['Poppins',sans-serif] font-semibold text-[14px] text-black leading-tight truncate">{pingData.orgName}</p>
+                  <p className="font-['Poppins',sans-serif] font-medium text-[12px] text-[#626665] truncate">{pingData.category}</p>
+                </div>
+              </div>
+
+              <div className="p-4 md:p-6 pb-2">
+                <h1 className="font-['Poppins',sans-serif] font-semibold text-xl md:text-2xl text-black mb-3 leading-snug">{pingData.title}</h1>
+                <p className="font-['Poppins',sans-serif] font-normal text-[14px] text-[#454545] whitespace-pre-wrap leading-relaxed">{pingData.description}</p>
+              </div>
+
+              <div className="p-4 md:p-6 bg-[#FEF5EA] flex flex-col sm:flex-row items-center justify-between gap-4 border-t border-[#F49B31]/40">
+                <div className="flex gap-6 text-sm text-[#626665] w-full sm:w-auto">
+                  <span className="flex items-center gap-1.5 font-medium">
+                    <SurgeIcon width={14} height={18} fill="#F49B31" />
+                    {pingData.surgeCount} {pingData.surgeCount === 1 ? "Surge" : "Surges"}
+                  </span>
+                  <span className="font-medium">{pingData.waveCount} {pingData.waveCount === 1 ? "Wave" : "Waves"}</span>
+                </div>
+                <SurgeButton
+                  count={pingData.surgeCount}
+                  surged={hasSurged}
+                  onClick={handleSurgeClick}
+                  disabled={isSurging || hasSurged}
+                  className="flex items-center justify-center gap-2 px-6 py-2.5 rounded-full font-bold text-sm"
+                />
+              </div>
+            </div>
+
+            <ProposeWaveBar
+              pingId={pingId}
+              pingTitle={pingData.title}
+              readOnly={true}
+              onAccountRequired={() => handleAccountRequired("wave")}
+            />
+          </div>
+
+          <div className="lg:w-[360px] shrink-0 min-w-0">
+            <CommentsPanel
+              pingId={pingId}
+              className="bg-[#F49B31] rounded-[24px] md:rounded-[28px] h-auto"
+              readOnly={true}
+              onAccountRequired={() => handleAccountRequired("comment")}
+            />
+          </div>
         </div>
       </main>
 
       {showModal && (
-        <GuestSurgeModal 
+        <GuestSurgeModal
           pingId={pingData.id}
           pingTitle={pingData.title}
           onClose={() => setShowModal(false)}
           onSuccess={(newCount) => {
-            setPingData(prev => prev ? { ...prev, surgeCount: newCount ?? (prev.surgeCount + 1) } : null);
+            setPingData((prev) => prev ? { ...prev, surgeCount: newCount ?? (prev.surgeCount + 1) } : null);
             setHasSurged(true);
           }}
+        />
+      )}
+
+      {showAccountModal && (
+        <AccountRequiredModal
+          isOpen={showAccountModal}
+          onClose={() => setShowAccountModal(false)}
+          trigger={accountTrigger}
         />
       )}
     </div>

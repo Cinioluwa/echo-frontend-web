@@ -25,6 +25,8 @@ interface Props {
   pingTitle?: string;
   pingCreatedAt?: string;
   onWaveProposed?: (createdWave: Wave) => void;
+  readOnly?: boolean;
+  onAccountRequired?: () => void;
 }
 
 interface UploadedFile {
@@ -35,7 +37,12 @@ interface UploadedFile {
   size?: number;
 }
 
-const ProposeWaveBar = ({ pingId, onWaveProposed }: Props) => {
+const ProposeWaveBar = ({
+  pingId,
+  onWaveProposed,
+  readOnly = false,
+  onAccountRequired,
+}: Props) => {
   const [solution, setSolution] = useState("");
   const [isActive, setIsActive] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -179,6 +186,35 @@ const ProposeWaveBar = ({ pingId, onWaveProposed }: Props) => {
       setIsSubmitting(false);
     }
   };
+
+  if (readOnly) {
+    return (
+      <div
+        className="bg-[#fefefe] border-2 border-[#ffc37b] rounded-[16px] md:rounded-[20px] mb-4 md:mb-5 p-2 md:p-2.5 flex items-center gap-2 md:gap-[13px] w-full max-w-full cursor-pointer"
+        onClick={onAccountRequired}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            onAccountRequired?.();
+          }
+        }}
+        role="button"
+        tabIndex={0}
+        aria-label="Account required to propose a wave"
+      >
+        <div className="shrink-0 flex items-center justify-center">
+          <UserAvatar user={null} size="md" responsive bgColor="bg-[#ffc37b]" />
+        </div>
+        <div className="flex-1 min-w-0">
+          <div className="w-full flex items-center gap-2">
+            <span className="text-[#9E9E9E] text-[13px] md:text-[14px] font-['Poppins',sans-serif] font-medium">
+              What's your solution?
+            </span>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <form

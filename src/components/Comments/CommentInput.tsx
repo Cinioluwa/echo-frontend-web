@@ -15,6 +15,8 @@ interface Props {
     onCommentAdded?: (comment: Comment) => void;
     onCancel?: () => void;
     isDrawer?: boolean;
+    readOnly?: boolean;
+    onAccountRequired?: () => void;
 }
 
 const CommentInput = ({
@@ -22,6 +24,8 @@ const CommentInput = ({
     targetId,
     onCommentAdded,
     isDrawer = false,
+    readOnly = false,
+    onAccountRequired,
 }: Props) => {
     const [content, setContent] = useState("");
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -105,6 +109,46 @@ const CommentInput = ({
         }
     };
 
+
+    if (readOnly) {
+        return (
+            <div
+                className={`bg-[#f49b31] flex gap-2.5 items-center px-[15px] py-3 ${isDrawer ? "rounded-b-none" : "rounded-b-[24px] md:rounded-b-[28px]"} w-full`}
+                data-node-id="4790:11755"
+                ref={containerRef}
+                onClick={onAccountRequired}
+                onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault();
+                        onAccountRequired?.();
+                    }
+                }}
+                role="button"
+                tabIndex={0}
+                aria-label="Account required to comment"
+            >
+                {/* Avatar - guest placeholder */}
+                <div className="shrink-0 flex items-center justify-center size-[38px] md:size-[42px] mt-1" data-node-id="4790:11756">
+                    <UserAvatar
+                        user={null}
+                        size="md"
+                        className="!w-[38px] !h-[38px] md:!w-[42px] md:!h-[42px]"
+                        bgColor="bg-[#FFC37B]"
+                        textColor="text-[#4A3728]"
+                    />
+                </div>
+
+                {/* Read-only input placeholder */}
+                <div className="flex-1 min-w-0">
+                    <div className="bg-white flex h-[38px] md:h-[42px] items-center px-3.5 rounded-[30px] w-full">
+                        <div className="text-[#9E9E9E] text-[13px] md:text-[14px] font-['Poppins',sans-serif] font-normal leading-none">
+                            What do you have to say?
+                        </div>
+                    </div>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div

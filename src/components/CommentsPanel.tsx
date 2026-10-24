@@ -16,9 +16,18 @@ interface Props {
   className?: string;
   isDrawer?: boolean;
   initialCount?: number;
+  readOnly?: boolean;
+  onAccountRequired?: () => void;
 }
 
-const CommentsPanel = ({ pingId, className = "", isDrawer = false, initialCount = 0 }: Props) => {
+const CommentsPanel = ({
+  pingId,
+  className = "",
+  isDrawer = false,
+  initialCount = 0,
+  readOnly = false,
+  onAccountRequired,
+}: Props) => {
   const commentsListRef = useRef<CommentsListHandle>(null);
   const panelRef = useRef<HTMLDivElement>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
@@ -161,6 +170,8 @@ const CommentsPanel = ({ pingId, className = "", isDrawer = false, initialCount 
           targetId={pingId}
           onCommentAdded={handleCommentAdded}
           isDrawer={isDrawer}
+          readOnly={readOnly}
+          onAccountRequired={onAccountRequired}
         />
       </div>
     </div>
