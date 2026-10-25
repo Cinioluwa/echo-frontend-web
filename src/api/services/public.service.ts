@@ -20,6 +20,34 @@ export interface ResolutionLogParams extends PaginationParams {
   days?: number | "all";
 }
 
+export interface PublicCommentSummary {
+  id: number;
+  content: string;
+  surgeCount: number;
+  createdAt: string;
+  isAnonymous: boolean;
+  author: {
+    displayName: string;
+    profilePicture?: string | null;
+  };
+}
+
+export interface PublicCommunityPickWave {
+  id: number;
+  solution: string;
+  surgeCount: number;
+  commentCount: number;
+  createdAt: string;
+  isCommunityPick: boolean;
+  media?: Array<{ url: string; mimeType: string }>;
+  author: {
+    displayName: string;
+    profilePicture?: string | null;
+    department?: string | null;
+    level?: number | null;
+  };
+}
+
 export interface ShareMetadata {
   type: "ping" | "wave" | "comment" | "feed";
   id: number;
@@ -33,6 +61,10 @@ export interface ShareMetadata {
   category?: string;
   orgName?: string;
   orgLogoUrl?: string;
+  topComments?: PublicCommentSummary[];
+  communityPickWave?: PublicCommunityPickWave | null;
+  hasMoreComments?: boolean;
+  hasMoreWaves?: boolean;
 }
 
 /**

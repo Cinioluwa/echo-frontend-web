@@ -2,14 +2,47 @@ import { useEffect, useRef } from "react";
 import { X } from "lucide-react";
 import { getAppOrigin } from "../utils/shareUrl";
 
+export type AccountTrigger = "comment" | "wave" | "wave_surge" | "view_more_comments" | "view_more_waves";
+
 interface AccountRequiredModalProps {
   isOpen: boolean;
   onClose: () => void;
-  trigger: "comment" | "wave";
+  trigger: AccountTrigger;
 }
 
 const ACCOUNT_URL = getAppOrigin();
 const SIGN_UP_URL = `${ACCOUNT_URL}/signUp`;
+
+const getModalContent = (trigger: AccountTrigger) => {
+  switch (trigger) {
+    case "wave_surge":
+      return {
+        heading: "Support this solution",
+        body: "Create an account or sign in with your school email to surge community solutions.",
+      };
+    case "view_more_comments":
+      return {
+        heading: "View all comments",
+        body: "Create an account or sign in with your school email to read the full community discussion.",
+      };
+    case "view_more_waves":
+      return {
+        heading: "Explore all solutions",
+        body: "Create an account or sign in with your school email to browse all proposed waves.",
+      };
+    case "wave":
+      return {
+        heading: "Propose a solution",
+        body: "Create an account or sign in with your school email to propose a wave for this ping.",
+      };
+    case "comment":
+    default:
+      return {
+        heading: "Join the conversation",
+        body: "Create an account or sign in with your school email to comment on this ping.",
+      };
+  }
+};
 
 const AccountRequiredModal = ({
   isOpen,
@@ -18,13 +51,7 @@ const AccountRequiredModal = ({
 }: AccountRequiredModalProps) => {
   const dialogRef = useRef<HTMLDivElement>(null);
   const primaryActionRef = useRef<HTMLAnchorElement>(null);
-  const isComment = trigger === "comment";
-  const heading = isComment
-    ? "Join the conversation"
-    : "Propose a solution";
-  const body = isComment
-    ? "Create an account or sign in with your school email to comment on this ping."
-    : "Create an account or sign in with your school email to propose a wave for this ping.";
+  const { heading, body } = getModalContent(trigger);
 
   useEffect(() => {
     if (!isOpen) return;

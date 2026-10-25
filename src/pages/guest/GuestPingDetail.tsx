@@ -1,13 +1,15 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { Loader2 } from "lucide-react";
+import { Loader2, Sparkles, ChevronRight, Lock } from "lucide-react";
 import GuestSurgeModal from "../../components/guest/GuestSurgeModal";
 import BackButton from "../../components/shared/BackButton";
-import CommentsPanel from "../../components/CommentsPanel";
 import ProposeWaveBar from "../../components/ProposeWaveBar";
-import AccountRequiredModal from "../../components/AccountRequiredModal";
+import AccountRequiredModal, { type AccountTrigger } from "../../components/AccountRequiredModal";
 import PingCard from "../../components/PingCard";
+import SurgeIcon from "../../components/shared/SurgeIcon";
+import formatTimeAgo from "../../utils/formatTimeAgo";
 import { publicService, guestService } from "../../api/services";
+import type { PublicCommentSummary, PublicCommunityPickWave } from "../../api/services/public.service";
 import { useGuestStore } from "../../stores";
 import type { Ping } from "../../api/types";
 import { getAppOrigin } from "../../utils/shareUrl";
@@ -25,6 +27,10 @@ interface GuestPingData {
   surgeCount: number;
   waveCount: number;
   commentCount: number;
+  topComments?: PublicCommentSummary[];
+  communityPickWave?: PublicCommunityPickWave | null;
+  hasMoreComments?: boolean;
+  hasMoreWaves?: boolean;
 }
 
 const GuestPingDetail = () => {
@@ -39,7 +45,7 @@ const GuestPingDetail = () => {
   const [isSurging, setIsSurging] = useState(false);
   const [hasSurged, setHasSurged] = useState(false);
   const [showAccountModal, setShowAccountModal] = useState(false);
-  const [accountTrigger, setAccountTrigger] = useState<"comment" | "wave">("comment");
+  const [accountTrigger, setAccountTrigger] = useState<AccountTrigger>("comment");
 
   const guestToken = useGuestStore((state) => state.guestToken);
   const isTokenValid = useGuestStore((state) => state.isTokenValid);
@@ -61,6 +67,10 @@ const GuestPingDetail = () => {
           surgeCount: data.surgeCount || 0,
           waveCount: data.waveCount || 0,
           commentCount: data.commentCount || 0,
+          topComments: data.topComments || [],
+          communityPickWave: data.communityPickWave || null,
+          hasMoreComments: Boolean(data.hasMoreComments),
+          hasMoreWaves: Boolean(data.hasMoreWaves),
         });
       })
       .catch((err) => {
@@ -92,7 +102,7 @@ const GuestPingDetail = () => {
     }
   };
 
-  const handleAccountRequired = (trigger: "comment" | "wave") => {
+  const handleAccountRequired = (trigger: AccountTrigger) => {
     setAccountTrigger(trigger);
     setShowAccountModal(true);
   };
@@ -214,21 +224,193 @@ const GuestPingDetail = () => {
               }
               onDelete={() => {}}
             />
+
             <ProposeWaveBar
               pingId={pingId}
               pingTitle={pingData.title}
               readOnly={true}
               onAccountRequired={() => handleAccountRequired("wave")}
             />
+
+            {/* Community Pick Wave */}
+            {pingData.communityPickWave && (
+              <div className="bg-white rounded-[15px] md:rounded-[20px] p-5 md:p-6 border border-[#FFC37B] shadow-sm flex flex-col gap-3">
+                <div className="flex items-center justify-between gap-3 flex-wrap">
+                  <div className="flex items-center gap-3">
+                    {pingData.communityPickWave.author.profilePicture ? (
+                      <img
+                        src={pingData.communityPickWave.author.profilePicture}
+                        alt={pingData.communityPickWave.author.displayName}
+                        className="w-10 h-10 rounded-full object-cover border border-gray-100"
+                      />
+                    ) : (
+                      <div className="w-10 h-10 rounded-full bg-[#FEF5EA] border border-[#F49B31] flex items-center justify-center font-bold text-[#F49B31] text-sm">
+                        {pingData.communityPickWave.author.displayName.charAt(0).toUpperCase()}
+                      </div>
+                    )}
+                    <div>
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className="font-semibold text-black text-sm md:text-base">
+                          {pingData.communityPickWave.author.displayName}
+                        </span>
+                        {pingData.communityPickWave.isCommunityPick && (
+                          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-[#FEF5EA] text-[#F49B31] border border-[#FFC37B]">
+                            <Sparkles className="w-3 h-3 text-[#F49B31]" />
+                            Community Pick
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-xs text-[#626665]">
+                        {formatTimeAgo(pingData.communityPickWave.createdAt)}
+                        {pingData.communityPickWave.author.department && ` • ${pingData.communityPickWave.author.department}`}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <p className="text-black text-[14px] md:text-[15px] whitespace-pre-wrap leading-relaxed">
+                  {pingData.communityPickWave.solution}
+                </p>
+
+                {pingData.communityPickWave.media && pingData.communityPickWave.media.length > 0 && (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-1">
+                    {pingData.communityPickWave.media.map((m, idx) => (
+                      <img
+                        key={idx}
+                        src={m.url}
+                        alt="Solution attachment"
+                        className="w-full max-h-[300px] object-cover rounded-xl border border-gray-100"
+                      />
+                    ))}
+                  </div>
+                )}
+
+                <div className="pt-2 border-t border-gray-100 flex items-center justify-between">
+                  <button
+                    type="button"
+                    onClick={() => handleAccountRequired("wave_surge")}
+                    className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs md:text-sm font-semibold bg-[#FEF5EA] text-[#F49B31] border border-[#FFC37B] hover:bg-orange-100 transition-colors"
+                    title="Sign in to surge this wave"
+                  >
+                    <SurgeIcon width={13} height={16} fill="#F49B31" />
+                    <span>{pingData.communityPickWave.surgeCount} {pingData.communityPickWave.surgeCount === 1 ? 'Surge' : 'Surges'}</span>
+                  </button>
+
+                  {pingData.hasMoreWaves && (
+                    <button
+                      type="button"
+                      onClick={() => handleAccountRequired("view_more_waves")}
+                      className="text-xs md:text-sm font-semibold text-[#F49B31] hover:underline inline-flex items-center gap-1"
+                    >
+                      <span>View all {pingData.waveCount} solutions</span>
+                      <ChevronRight size={14} />
+                    </button>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {pingData.hasMoreWaves && !pingData.communityPickWave && (
+              <div className="bg-white rounded-[15px] p-5 text-center border border-[#FFC37B]/50 shadow-sm flex flex-col items-center gap-2">
+                <p className="text-sm font-medium text-gray-700">
+                  {pingData.waveCount} {pingData.waveCount === 1 ? "solution proposed" : "solutions proposed"}
+                </p>
+                <button
+                  type="button"
+                  onClick={() => handleAccountRequired("view_more_waves")}
+                  className="text-sm font-semibold text-[#F49B31] hover:underline"
+                >
+                  Sign in to view all solutions
+                </button>
+              </div>
+            )}
           </div>
 
           <div id="guest-comments" className="min-w-0 scroll-mt-24">
-            <CommentsPanel
-              pingId={pingId}
-              className="min-[1100px]:h-[calc(100vh-100px)] min-[1100px]:max-h-[800px]"
-              readOnly={true}
-              onAccountRequired={() => handleAccountRequired("comment")}
-            />
+            <div className="bg-[#FFC37B] rounded-[24px] md:rounded-[28px] overflow-hidden flex flex-col">
+              <h2 className="bg-[#F49B31] text-white px-[16px] py-[14px] text-lg font-semibold flex items-center justify-between">
+                <span>Comments</span>
+                <span className="inline-flex h-6 min-w-6 items-center justify-center rounded-full px-2 text-[13px] font-semibold bg-white text-[#F49B31]">
+                  {pingData.commentCount}
+                </span>
+              </h2>
+
+              <div className="p-4 flex flex-col gap-3">
+                {pingData.topComments && pingData.topComments.length > 0 ? (
+                  <>
+                    {pingData.topComments.map((comment) => (
+                      <div
+                        key={comment.id}
+                        className="bg-white rounded-[16px] p-3.5 shadow-xs border border-amber-200/60 flex flex-col gap-2"
+                      >
+                        <div className="flex items-center justify-between gap-2">
+                          <div className="flex items-center gap-2.5">
+                            {comment.author.profilePicture ? (
+                              <img
+                                src={comment.author.profilePicture}
+                                alt={comment.author.displayName}
+                                className="w-7 h-7 rounded-full object-cover border border-gray-100"
+                              />
+                            ) : (
+                              <div className="w-7 h-7 rounded-full bg-[#FEF5EA] border border-[#F49B31] flex items-center justify-center text-xs font-bold text-[#F49B31]">
+                                {comment.author.displayName.charAt(0).toUpperCase()}
+                              </div>
+                            )}
+                            <span className="font-semibold text-xs md:text-sm text-gray-900">
+                              {comment.author.displayName}
+                            </span>
+                          </div>
+                          <span className="text-[11px] text-gray-400">
+                            {formatTimeAgo(comment.createdAt)}
+                          </span>
+                        </div>
+
+                        <p className="text-gray-800 text-xs md:text-sm leading-relaxed whitespace-pre-wrap">
+                          {comment.content}
+                        </p>
+
+                        <div className="flex items-center justify-between pt-1 text-[11px] text-gray-500">
+                          <button
+                            type="button"
+                            onClick={() => handleAccountRequired("comment")}
+                            className="inline-flex items-center gap-1 hover:text-[#F49B31] transition-colors"
+                          >
+                            <SurgeIcon width={10} height={12} fill="#9ca3af" />
+                            <span>{comment.surgeCount}</span>
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+
+                    {pingData.hasMoreComments && (
+                      <button
+                        type="button"
+                        onClick={() => handleAccountRequired("view_more_comments")}
+                        className="w-full py-2.5 bg-white/90 hover:bg-white text-[#F49B31] font-semibold text-xs md:text-sm rounded-[14px] border border-[#F49B31] transition-colors flex items-center justify-center gap-1 shadow-xs"
+                      >
+                        <span>View all {pingData.commentCount} comments</span>
+                        <ChevronRight size={14} />
+                      </button>
+                    )}
+                  </>
+                ) : (
+                  <div className="bg-white/80 rounded-[16px] p-6 text-center text-gray-500 text-xs md:text-sm">
+                    No comments yet. Be the first to share your voice!
+                  </div>
+                )}
+              </div>
+
+              <div className="p-3 bg-[#F49B31]">
+                <button
+                  type="button"
+                  onClick={() => handleAccountRequired("comment")}
+                  className="w-full bg-white hover:bg-amber-50 text-left px-4 py-2.5 rounded-full text-xs md:text-sm text-gray-400 border border-amber-200 shadow-inner flex items-center justify-between cursor-pointer transition-colors"
+                >
+                  <span>Write a comment...</span>
+                  <Lock size={14} className="text-[#F49B31]" />
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </main>
