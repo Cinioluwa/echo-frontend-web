@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { usePageTitle } from "../hooks/usePageTitle";
 import { useAuthStore } from "../stores";
@@ -74,11 +74,23 @@ const Login = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const login = useAuthStore((state) => state.login);
+  const currentUser = useAuthStore((state) => state.user);
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  const isInitializing = useAuthStore((state) => state.isInitializing);
+  const isAuthLoading = useAuthStore((state) => state.isLoading);
   const { isOffline } = useNetworkStatus();
 
   // Extract demoOrg from URL
   const searchParams = new URLSearchParams(location.search);
   const demoOrg = searchParams.get("demoOrg");
+  const returnToParam =
+    searchParams.get("returnTo") ||
+    searchParams.get("next") ||
+    searchParams.get("returnUrl") ||
+    searchParams.get("from");
+  const signUpLink = returnToParam
+    ? `/signUp?returnTo=${encodeURIComponent(returnToParam)}`
+    : "/signUp";
 
   // Set page title
   usePageTitle();
@@ -132,20 +144,67 @@ const Login = () => {
    */
   const redirectUser = (user: User) => {
     console.log("redirectUser called with:", { role: user.role, status: user.status, orgId: user.organizationId });
-    const requestedPath = new URLSearchParams(window.location.search).get("returnTo");
+    
+    // Resolve returnTo from URL search params, sessionStorage, or router state
+    const urlParams = new URLSearchParams(window.location.search);
+    let rawRequestedPath =
+      urlParams.get("returnTo") ||
+      urlParams.get("next") ||
+      urlParams.get("returnUrl") ||
+      urlParams.get("from");
+
+    if (!rawRequestedPath) {
+      try {
+        rawRequestedPath = sessionStorage.getItem("echo_return_to");
+      } catch {
+        // ignore
+      }
+    }
+
+    // Clear saved return_to so subsequent logins don't loop
+    try {
+      sessionStorage.removeItem("echo_return_to");
+    } catch {
+      // ignore
+    }
+
+    if (!rawRequestedPath) {
+      const fromPathname = location.state?.from?.pathname;
+      const fromSearch = location.state?.from?.search || "";
+      if (fromPathname) {
+        rawRequestedPath = fromPathname + fromSearch;
+      } else if (typeof location.state?.from === "string") {
+        rawRequestedPath = location.state.from;
+      } else if (typeof location.state?.returnTo === "string") {
+        rawRequestedPath = location.state.returnTo;
+      }
+    }
+
+    // Normalize path: convert /guest/feed/:id -> /feed/:id for authenticated users
+    let normalizedPath = rawRequestedPath;
+    if (normalizedPath?.startsWith("/guest/feed/")) {
+      normalizedPath = normalizedPath.replace(/^\/guest/, "");
+    }
+
     const safeRequestedPath =
-      requestedPath?.startsWith("/") && !requestedPath.startsWith("//")
-        ? requestedPath
+      normalizedPath?.startsWith("/") &&
+      !normalizedPath.startsWith("//") &&
+      !normalizedPath.startsWith("/login") &&
+      !normalizedPath.startsWith("/signUp") &&
+      !normalizedPath.startsWith("/signup") &&
+      !normalizedPath.startsWith("/verification") &&
+      normalizedPath !== "/"
+        ? normalizedPath
         : null;
 
-    // Admin users - go to admin feed
+    // Admin users - go to safe requested path or admin soundboard
     if (user.role === "ADMIN" || user.role === "SUPER_ADMIN") {
-      console.log("→ Redirecting to /admin/feed (ADMIN)");
-      navigate(
-        safeRequestedPath?.startsWith("/admin/")
-          ? safeRequestedPath
-          : "/admin/soundboard",
-      );
+      console.log("→ Redirecting ADMIN user to:", safeRequestedPath || "/admin/soundboard");
+      if (safeRequestedPath) {
+        navigate(safeRequestedPath);
+      } else {
+        navigate("/admin/soundboard");
+      }
       return;
     }
 
@@ -172,23 +231,10 @@ const Login = () => {
       return;
     }
 
-    // Active user with organization - go to main feed (or from location)
+    // Active user with organization - go to requested path or main feed
     if (user.status === "ACTIVE" && user.organizationId) {
-      console.log("→ Redirecting to /feed (ACTIVE user)");
-      const fromPathname = location.state?.from?.pathname;
-      const fromSearch = location.state?.from?.search || "";
-      const from = fromPathname ? fromPathname + fromSearch : null;
-
-      if (safeRequestedPath && !safeRequestedPath.startsWith("/admin/")) {
-        navigate(safeRequestedPath);
-        return;
-      }
-
-      if (from && from !== "/login") {
-        navigate(from);
-      } else {
-        navigate("/feed");
-      }
+      console.log("→ Redirecting ACTIVE user to:", safeRequestedPath || "/feed");
+      navigate(safeRequestedPath || "/feed");
       return;
     }
 
@@ -210,6 +256,13 @@ const Login = () => {
     console.log("→ Redirecting to /verification (fallback)");
     navigate("/verification", { state: { email: user.email } });
   };
+
+  // Auto-redirect if user already has an active authenticated session
+  useEffect(() => {
+    if (isAuthenticated && currentUser && !isInitializing && !isAuthLoading) {
+      redirectUser(currentUser);
+    }
+  }, [isAuthenticated, currentUser, isInitializing, isAuthLoading]);
 
   const handleSubmitLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -438,7 +491,7 @@ const Login = () => {
             >
               <span className="text-[#838383]">Don't have an account? </span>
               <Link
-                to="/signUp"
+                to={signUpLink}
                 className="text-[#f49b31] hover:text-[#e08a2a] transition-colors cursor-pointer"
               >
                 Sign Up

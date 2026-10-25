@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { usePageTitle } from "../hooks/usePageTitle";
 import { useAuthStore, useRegistrationStore } from "../stores";
 import AuthLayout from "../components/auth/AuthLayout";
@@ -42,9 +42,31 @@ const UserIcon = () => (
  */
 const SignUp: React.FC = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const register = useAuthStore((state) => state.register);
   const setRegistrationFormData = useRegistrationStore((state) => state.setFormData);
   const { isOffline } = useNetworkStatus();
+
+  // Extract returnTo param
+  const searchParams = new URLSearchParams(location.search);
+  const returnToParam =
+    searchParams.get("returnTo") ||
+    searchParams.get("next") ||
+    searchParams.get("returnUrl") ||
+    searchParams.get("from");
+  const loginLink = returnToParam
+    ? `/login?returnTo=${encodeURIComponent(returnToParam)}`
+    : "/login";
+
+  useEffect(() => {
+    if (returnToParam) {
+      try {
+        sessionStorage.setItem("echo_return_to", returnToParam);
+      } catch {
+        // ignore
+      }
+    }
+  }, [returnToParam]);
 
   // Set page title
   usePageTitle();
@@ -361,7 +383,7 @@ const SignUp: React.FC = () => {
           <div className="text-center">
             <p className="text-[12px] sm:text-[13px] text-[#838383]" style={{ fontFamily: 'Poppins, sans-serif' }}>
               Already have an account?{' '}
-              <Link to="/login" className="text-[#f49b31] font-medium hover:underline">
+              <Link to={loginLink} className="text-[#f49b31] font-medium hover:underline">
                 Log in
               </Link>
             </p>

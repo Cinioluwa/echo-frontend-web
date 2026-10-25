@@ -8,10 +8,8 @@ interface AccountRequiredModalProps {
   isOpen: boolean;
   onClose: () => void;
   trigger: AccountTrigger;
+  returnTo?: string;
 }
-
-const ACCOUNT_URL = getAppOrigin();
-const SIGN_UP_URL = `${ACCOUNT_URL}/signUp`;
 
 const getModalContent = (trigger: AccountTrigger) => {
   switch (trigger) {
@@ -48,10 +46,24 @@ const AccountRequiredModal = ({
   isOpen,
   onClose,
   trigger,
+  returnTo,
 }: AccountRequiredModalProps) => {
   const dialogRef = useRef<HTMLDivElement>(null);
   const primaryActionRef = useRef<HTMLAnchorElement>(null);
   const { heading, body } = getModalContent(trigger);
+
+  const fallbackReturnTo =
+    typeof window !== "undefined"
+      ? (window.location.pathname.startsWith("/guest/feed/")
+          ? window.location.pathname.replace(/^\/guest/, "")
+          : window.location.pathname)
+      : "/feed";
+  const targetReturnTo = returnTo || fallbackReturnTo;
+  const returnToQuery = targetReturnTo
+    ? `?returnTo=${encodeURIComponent(targetReturnTo)}`
+    : "";
+  const signUpUrl = `${getAppOrigin()}/signUp${returnToQuery}`;
+  const signInUrl = `${getAppOrigin()}/login${returnToQuery}`;
 
   useEffect(() => {
     if (!isOpen) return;
@@ -136,13 +148,13 @@ const AccountRequiredModal = ({
             <div className="flex flex-col gap-[10px]">
               <a
                 ref={primaryActionRef}
-                href={SIGN_UP_URL}
+                href={signUpUrl}
                 className="font-['Poppins',sans-serif] font-semibold text-[15px] text-white bg-[#F49B31] border border-[#F49B31] rounded-[15px] px-5 h-12 inline-flex items-center justify-center hover:bg-[#d88429] transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black"
               >
                 Create an Account
               </a>
               <a
-                href={ACCOUNT_URL}
+                href={signInUrl}
                 className="font-['Poppins',sans-serif] font-medium text-[14px] text-[#F49B31] underline underline-offset-4 hover:text-[#d88429] transition-colors text-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#F49B31]"
               >
                 Already have an account? Sign in

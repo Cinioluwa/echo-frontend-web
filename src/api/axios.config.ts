@@ -30,6 +30,7 @@ api.interceptors.request.use(
     const token = localStorage.getItem("authToken");
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
+      isTokenExpired = false;
     }
     return config;
   },
@@ -64,11 +65,27 @@ api.interceptors.response.use(
             // Show user-friendly message
             console.error("Your session has expired. Please log in again.");
 
-            // Redirect to login (or guest view) after a brief delay
+            // Redirect to login preserving the current page
             setTimeout(() => {
-              const currentPath = window.location.pathname;
-              if (currentPath.startsWith("/feed/")) {
-                window.location.href = `/guest${currentPath}`;
+              const currentPath =
+                window.location.pathname +
+                window.location.search +
+                window.location.hash;
+              const isAuthPage =
+                currentPath.startsWith("/login") ||
+                currentPath.startsWith("/signUp") ||
+                currentPath.startsWith("/signup");
+
+              if (!isAuthPage) {
+                try {
+                  sessionStorage.setItem("echo_return_to", currentPath);
+                } catch {
+                  // ignore
+                }
+                const targetReturn = currentPath.startsWith("/guest/feed/")
+                  ? currentPath.replace(/^\/guest/, "")
+                  : currentPath;
+                window.location.href = `/login?returnTo=${encodeURIComponent(targetReturn)}`;
               } else {
                 window.location.href = "/login";
               }

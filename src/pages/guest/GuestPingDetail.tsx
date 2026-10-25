@@ -10,7 +10,7 @@ import SurgeIcon from "../../components/shared/SurgeIcon";
 import formatTimeAgo from "../../utils/formatTimeAgo";
 import { publicService, guestService } from "../../api/services";
 import type { PublicCommentSummary, PublicCommunityPickWave } from "../../api/services/public.service";
-import { useGuestStore } from "../../stores";
+import { useGuestStore, useAuthStore } from "../../stores";
 import type { Ping } from "../../api/types";
 import { getAppOrigin } from "../../utils/shareUrl";
 
@@ -49,6 +49,17 @@ const GuestPingDetail = () => {
 
   const guestToken = useGuestStore((state) => state.guestToken);
   const isTokenValid = useGuestStore((state) => state.isTokenValid);
+  const { isAuthenticated, user } = useAuthStore();
+
+  const returnToFeedPath = pingId ? `/feed/${pingId}` : "/feed";
+  const loginUrl = `/login?returnTo=${encodeURIComponent(returnToFeedPath)}`;
+  const signUpUrl = `${getAppOrigin()}/signUp?returnTo=${encodeURIComponent(returnToFeedPath)}`;
+
+  useEffect(() => {
+    if (isAuthenticated && user && pingId) {
+      navigate(`/feed/${pingId}`, { replace: true });
+    }
+  }, [isAuthenticated, user, pingId, navigate]);
 
   useEffect(() => {
     if (!pingId) return;
@@ -125,7 +136,7 @@ const GuestPingDetail = () => {
           <h2 className="font-['Poppins',sans-serif] font-semibold text-[24px] text-black mb-2">Not Found</h2>
           <p className="font-['Poppins',sans-serif] font-normal text-[14px] text-[#626665] mb-6">{error}</p>
           <button
-            onClick={() => navigate("/login")}
+            onClick={() => navigate(loginUrl)}
             className="font-['Poppins',sans-serif] font-semibold text-[15px] text-white bg-[#F49B31] border border-[#F49B31] rounded-[15px] px-5 py-[13px] hover:bg-[#d88429] transition-colors w-full"
           >
             Go to App
@@ -169,7 +180,7 @@ const GuestPingDetail = () => {
         <button
           type="button"
           className="flex items-center gap-2 cursor-pointer"
-          onClick={() => navigate("/login")}
+          onClick={() => navigate(loginUrl)}
           aria-label="Echo home"
         >
           <img src={logo} className="brightness-0 contrast-200 h-[27px] w-[25px]" alt="" />
@@ -177,13 +188,13 @@ const GuestPingDetail = () => {
         </button>
         <div className="flex items-center gap-3">
           <button
-            onClick={() => navigate("/login")}
+            onClick={() => navigate(loginUrl)}
             className="font-['Poppins',sans-serif] font-semibold text-[14px] text-black bg-[#FEF5EA] hover:bg-white px-4 h-11 border border-[#F49B31] rounded-[15px] transition-colors"
           >
             Sign In
           </button>
           <a
-            href={`${getAppOrigin()}/signUp`}
+            href={signUpUrl}
             className="font-['Poppins',sans-serif] font-semibold text-[14px] text-white bg-[#F49B31] border border-[#F49B31] rounded-[15px] px-4 h-11 inline-flex items-center hover:bg-[#d88429] transition-colors"
           >
             Sign Up
@@ -193,7 +204,7 @@ const GuestPingDetail = () => {
 
       <main className="flex-1 max-w-[1322px] w-full mx-auto px-4 md:px-6 py-4 flex flex-col gap-[15px]">
         <BackButton
-          onClick={() => navigate("/login")}
+          onClick={() => navigate(loginUrl)}
           label="Go to full app"
           className="self-start"
         />
@@ -432,6 +443,7 @@ const GuestPingDetail = () => {
           isOpen={showAccountModal}
           onClose={() => setShowAccountModal(false)}
           trigger={accountTrigger}
+          returnTo={returnToFeedPath}
         />
       )}
     </div>

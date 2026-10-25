@@ -121,7 +121,7 @@ const GuestSurgeModal = ({ pingId, pingTitle, onClose, onSuccess }: GuestSurgeMo
                 This email is already registered on Echo. Please sign in to your account to surge this ping and track its progress!
               </div>
               <button
-                onClick={() => navigate("/login")}
+                onClick={() => navigate(`/login?returnTo=${encodeURIComponent(`/feed/${pingId}`)}`)}
                 className="w-full flex justify-center items-center py-3 px-4 border border-transparent rounded-xl shadow-sm text-sm font-bold text-white bg-[#F49B31] hover:bg-[#d88429] transition-colors mb-3"
               >
                 Sign In to Echo
