@@ -105,6 +105,10 @@ const PingDetail = () => {
         }
       })
       .catch((err) => {
+        // Do not route to guest view if session expired / unauthorized (let 401 handler route to login)
+        if (err?.response?.status === 401) {
+          return;
+        }
         console.error("Failed to load ping (possibly wrong org). Falling back to guest view:", err);
         navigate(`/guest/feed/${pingId}`);
       })

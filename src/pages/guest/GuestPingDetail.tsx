@@ -56,7 +56,8 @@ const GuestPingDetail = () => {
   const signUpUrl = `${getAppOrigin()}/signUp?returnTo=${encodeURIComponent(returnToFeedPath)}`;
 
   useEffect(() => {
-    if (isAuthenticated && user && pingId) {
+    const hasToken = Boolean(localStorage.getItem("authToken"));
+    if (isAuthenticated && user && hasToken && pingId) {
       navigate(`/feed/${pingId}`, { replace: true });
     }
   }, [isAuthenticated, user, pingId, navigate]);

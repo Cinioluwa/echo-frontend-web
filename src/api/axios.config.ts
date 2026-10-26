@@ -56,11 +56,21 @@ api.interceptors.response.use(
         // Only handle token expiration once to avoid loops
         if (!isTokenExpired) {
           isTokenExpired = true;
-          const hadToken = !!localStorage.getItem("authToken");
+          const hadAuth =
+            !!localStorage.getItem("authToken") ||
+            !!localStorage.getItem("auth-storage");
 
-          if (hadToken) {
-            // Clear token
+          if (hadAuth) {
+            // Clear token and persisted store state
             localStorage.removeItem("authToken");
+            localStorage.removeItem("auth-storage");
+            try {
+              import("../stores").then(({ useAuthStore }) => {
+                useAuthStore.setState({ user: null, token: null, isAuthenticated: false });
+              });
+            } catch {
+              // ignore
+            }
 
             // Show user-friendly message
             console.error("Your session has expired. Please log in again.");
@@ -89,7 +99,7 @@ api.interceptors.response.use(
               } else {
                 window.location.href = "/login";
               }
-            }, 1000);
+            }, 500);
           }
         }
         break;

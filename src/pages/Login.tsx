@@ -259,8 +259,11 @@ const Login = () => {
 
   // Auto-redirect if user already has an active authenticated session
   useEffect(() => {
-    if (isAuthenticated && currentUser && !isInitializing && !isAuthLoading) {
+    const hasToken = Boolean(localStorage.getItem("authToken"));
+    if (isAuthenticated && currentUser && hasToken && !isInitializing && !isAuthLoading) {
       redirectUser(currentUser);
+    } else if ((!hasToken || !currentUser) && isAuthenticated) {
+      useAuthStore.setState({ user: null, token: null, isAuthenticated: false });
     }
   }, [isAuthenticated, currentUser, isInitializing, isAuthLoading]);
 
