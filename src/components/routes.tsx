@@ -18,6 +18,7 @@ import SuperAdminRoute from "./auth/SuperAdminRoute";
 import ProtectedRoute from "./auth/ProtectedRoute";
 import ProfileRedirect from "./auth/ProfileRedirect";
 import Layout from "./Layout";
+import ShareRedirect from "./ShareRedirect";
 import ErrorPage from "../pages/ErrorPage";
 import {
   isChunkLoadError,
@@ -151,6 +152,14 @@ const router = createBrowserRouter([
   {
     path: "/guest/feed/:pingId",
     element: withSuspense(GuestPingDetail),
+  },
+  {
+    path: "/share/:entity/:id",
+    element: <ShareRedirect />,
+  },
+  {
+    path: "/share/:entity",
+    element: <ShareRedirect />,
   },
   {
     path: "/find-institution-error",

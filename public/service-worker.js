@@ -5,7 +5,7 @@
  *   2. Web Push API events for native OS-level notifications
  */
 
-const CACHE_NAME = 'echo-shell-v2';
+const CACHE_NAME = 'echo-shell-v3';
 
 // Assets to pre-cache on install — update version string when deploying new builds
 const SHELL_ASSETS = [
@@ -67,6 +67,9 @@ self.addEventListener('fetch', (event) => {
 
   // Skip chrome-extension and non-http(s) schemes
   if (!url.protocol.startsWith('http')) return;
+
+  // Never intercept /share routes — let them pass directly to Vercel SSR/OG handler
+  if (url.pathname.startsWith('/share/')) return;
 
   // For navigation requests (page loads): serve from network, fallback to cache
   if (request.mode === 'navigate') {
