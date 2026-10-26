@@ -87,11 +87,6 @@ export const useAuthStore = create<AuthState>()(
               response.token ? "✓" : "✗",
             );
 
-            set((state) => {
-              state.token = response.token;
-              state.isAuthenticated = true;
-            });
-
             // Connect WebSocket (Phase 11)
             connectSocket(response.token);
 
@@ -108,7 +103,9 @@ export const useAuthStore = create<AuthState>()(
               );
 
               set((state) => {
+                state.token = response.token;
                 state.user = userData;
+                state.isAuthenticated = true;
                 state.isLoading = false;
               });
 

@@ -262,8 +262,6 @@ const Login = () => {
     const hasToken = Boolean(localStorage.getItem("authToken"));
     if (isAuthenticated && currentUser && hasToken && !isInitializing && !isAuthLoading) {
       redirectUser(currentUser);
-    } else if ((!hasToken || !currentUser) && isAuthenticated) {
-      useAuthStore.setState({ user: null, token: null, isAuthenticated: false });
     }
   }, [isAuthenticated, currentUser, isInitializing, isAuthLoading]);
 
