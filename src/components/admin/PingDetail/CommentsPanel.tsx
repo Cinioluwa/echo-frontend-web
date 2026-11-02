@@ -49,8 +49,8 @@ const getAuthorName = (comment: Comment) => {
 };
 
 const getAvatarUrl = (comment: Comment) => {
-    if (comment.isAnonymous && comment.anonymousProfilePicture) {
-        return comment.anonymousProfilePicture;
+    if (comment.isAnonymous) {
+        return comment.anonymousProfilePicture || undefined;
     }
     if (comment.author && typeof comment.author === "object" && comment.author.profilePicture) {
         return comment.author.profilePicture;
@@ -69,7 +69,7 @@ const CommentCard = ({ comment }: { comment: CommentWithReplies }) => {
             <div className="flex gap-[5px] items-start">
                 <div className="shrink-0 size-[23px]">
                     <UserAvatar
-                        user={typeof comment.author === "object" ? comment.author : null}
+                        user={!comment.isAnonymous && typeof comment.author === "object" ? comment.author : null}
                         size="sm"
                         bgColor="bg-[#f49b31]"
                         pictureUrl={avatarUrl}
@@ -124,7 +124,7 @@ const ReplyCard = ({ reply }: { reply: Comment }) => {
         <div className="bg-white rounded-xl p-1.5 w-full flex gap-[5px] items-start">
             <div className="shrink-0 size-[23px]">
                 <UserAvatar
-                    user={typeof reply.author === "object" ? reply.author : null}
+                    user={!reply.isAnonymous && typeof reply.author === "object" ? reply.author : null}
                     size="sm"
                     bgColor="bg-[#f49b31]"
                     pictureUrl={avatarUrl}

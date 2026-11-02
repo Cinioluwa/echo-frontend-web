@@ -8,3 +8,4 @@ export { default as PingIndexModal } from "./PingIndexModal";
 export type { SurgeItem } from "./SurgeAlertCard";
 export type { FollowUpItem } from "./FollowUpQueueCard";
 export type { CategoryIssue, CategoryData } from "./IssuesByCategoryCard";
+export { default as AdminAnnouncementCard } from "./AdminAnnouncementCard";

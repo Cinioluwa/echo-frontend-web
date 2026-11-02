@@ -77,9 +77,10 @@ export interface AdminWave {
   createdAt: string;
   author: {
     id: number;
-    email: string;
+    email?: string;
     firstName: string;
     lastName: string;
+    profilePicture?: string | null;
   } | null;
   ping: {
     id: number;
@@ -89,6 +90,7 @@ export interface AdminWave {
     createdAt: string;
     isAnonymous?: boolean;
     anonymousAlias?: string | null;
+    anonymousProfilePicture?: string | null;
     author?: { id: number; firstName: string; lastName: string; profilePicture?: string | null } | null;
     category?: { id: number; name: string } | null;
   };
@@ -537,6 +539,7 @@ export interface SuperAdminUser {
   email: string;
   firstName: string;
   lastName: string;
+  profilePicture?: string | null;
   role: string;
   status: string;
   isVerified: boolean;

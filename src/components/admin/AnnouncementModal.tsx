@@ -8,10 +8,12 @@ interface AnnouncementDetails {
 
 interface AnnouncementModalProps {
   setAnnouncementModal: React.Dispatch<React.SetStateAction<boolean>>;
+  onPublished?: () => void;
 }
 
 const AnnouncementModal = ({
   setAnnouncementModal,
+  onPublished,
 }: AnnouncementModalProps) => {
   const [announcementData, setAnnouncementData] = useState<AnnouncementDetails>({
     title: "",
@@ -36,6 +38,7 @@ const AnnouncementModal = ({
         description: "",
       });
 
+      onPublished?.();
       setAnnouncementModal(false);
     } catch (err: any) {
       console.error("Failed to create announcement:", err);

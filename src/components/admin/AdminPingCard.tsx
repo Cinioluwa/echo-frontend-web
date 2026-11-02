@@ -8,6 +8,7 @@ import PostActionMenu from "./PostActionMenu";
 import PostEngagementMenu from "./PostEngagementMenu";
 import { ToastContainer } from "../shared/Toast";
 import SurgeIcon from "../shared/SurgeIcon";
+import { resolveAvatarUrl } from "../../utils/avatar";
 import type { ToastItem } from "../shared/Toast";
 
 const waveMenu = "/assets/images/waveMenu.svg";
@@ -88,11 +89,11 @@ const AdminPingCard = ({ pings, onUpdate }: AdminPingCardProps) => {
     ? `${pings.author.firstName} ${pings.author.lastName}`
     : "Anonymous";
 
-  const avatarUrl =
-    !pings.isAnonymous && pings.author
-      ? (pings.author as any).profilePicture ||
-        `https://ui-avatars.com/api/?name=${pings.author.firstName}+${pings.author.lastName}&background=f49b31&color=fff&size=80`
-      : `https://ui-avatars.com/api/?name=A&background=cacaca&color=fff&size=80`;
+  const avatarUrl = resolveAvatarUrl({
+    author: pings.author as any,
+    isAnonymous: pings.isAnonymous,
+    anonymousProfilePicture: (pings as any).anonymousProfilePicture,
+  });
 
   const categoryIcon = pings.category?.name
     ? (categoryImages as Record<string, string>)[pings.category.name] ||

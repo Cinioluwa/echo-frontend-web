@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import StatCard from "./StatCard";
 import SurgeAlertCard, { type SurgeItem } from "./SurgeAlertCard";
 import FollowUpQueueCard, { type FollowUpItem } from "./FollowUpQueueCard";
+import AdminAnnouncementCard from "./AdminAnnouncementCard";
 import IssuesByCategoryCard, { type CategoryData } from "./IssuesByCategoryCard";
 import { useUIStore } from "../../../stores";
 import PingIndexModal from "./PingIndexModal";
@@ -14,6 +15,7 @@ import type { ToastItem } from "../../shared/Toast";
 
 interface AdminSoundboardProps {
     onPublishAnnouncement?: () => void;
+    announcementRefreshKey?: number;
     onExport?: () => void;
 }
 
@@ -32,6 +34,7 @@ const iconVariants = {
 
 const AdminSoundboard: React.FC<AdminSoundboardProps> = ({
     onPublishAnnouncement,
+    announcementRefreshKey,
     onExport,
 }) => {
     const { isSidebarCollapsed } = useUIStore();
@@ -221,6 +224,10 @@ const AdminSoundboard: React.FC<AdminSoundboardProps> = ({
                             </div>
                         ) : (
                             <div className="flex w-full min-w-0 flex-col gap-5 sm:gap-6">
+                                <AdminAnnouncementCard
+                                    refreshKey={announcementRefreshKey}
+                                    onPublish={onPublishAnnouncement}
+                                />
                                 <div className="grid min-w-0 grid-cols-1 gap-5 xl:grid-cols-2">
                                     <SurgeAlertCard
                                         items={surgeItems}

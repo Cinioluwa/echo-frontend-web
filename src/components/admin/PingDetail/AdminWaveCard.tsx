@@ -4,6 +4,7 @@ import type { Wave } from "../../../api/types/index";
 import WaveActionModal from "./WaveActionModal";
 import BadgeTooltip from "../../BadgeTooltip";
 import SurgeIcon from "../../shared/SurgeIcon";
+import { resolveAvatarUrl } from "../../../utils/avatar";
 import type { PingDetailPermissions, WaveActionStatus } from "./types";
 import formatTimeAgo from "../../../utils/formatTimeAgo";
 import {
@@ -42,9 +43,7 @@ const AdminWaveCard: React.FC<AdminWaveCardProps> = ({ wave, rank, permissions, 
     const statusBadge = status === "POSTED" ? null : calculateWaveBadge(wave, []);
 
     const authorName = wave.author ? `${wave.author.firstName} ${wave.author.lastName}` : "Anonymous";
-    const avatar =
-        wave.author?.profilePicture ||
-        `https://ui-avatars.com/api/?name=${wave.author?.firstName || "A"}+${wave.author?.lastName || "U"}&background=random&size=106`;
+    const avatar = resolveAvatarUrl({ author: wave.author });
 
     const handleConfirm = async (reason?: string) => {
         if (!activeAction) return;

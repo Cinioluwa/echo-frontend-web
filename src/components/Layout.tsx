@@ -8,7 +8,7 @@
  * - Sidebar (narrower 280px, desktop only)
  * - Main content area (Outlet)
  * - Right aside slot (desktop only):
- *     - /feed          → AnnouncementWidget + Top3Widget (Phase 2)
+ *     - /feed          → Top3Widget (Phase 2)
  *     - /feed/:pingId  → CommentsPanel (Phase 3)
  */
 import { useState, useEffect, useCallback } from "react";
@@ -19,7 +19,6 @@ import { usePushNotifications } from "../hooks/usePushNotifications";
 import { getSocket, connectSocket } from "../api/socket";
 import NavBar from "./NavBar";
 import SideBar from "./SideBar";
-import AnnouncementWidget from "./UnifiedFeed/AnnouncementWidget";
 import Top3Widget from "./UnifiedFeed/Top3Widget";
 import CommentsPanel from "./CommentsPanel";
 import PingFormModal from "./PingFormModal";
@@ -221,7 +220,6 @@ const Layout = () => {
           {isFeedPage && (
             <aside className="hidden lg:block w-[310px] shrink-0 sticky top-[85px] h-[calc(100vh-85px)] overflow-y-auto [scrollbar-width:none] pt-[15px]">
               <div className="flex flex-col gap-[15px]">
-                <AnnouncementWidget announcement={announcement} />
                 <Top3Widget pings={top3} />
               </div>
             </aside>

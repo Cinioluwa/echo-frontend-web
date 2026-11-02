@@ -1,6 +1,7 @@
 import { Plus } from "lucide-react";
 import React, { useState, useEffect, useCallback } from "react";
 import { adminService } from "../../../api/services/admin.service";
+import { resolveAvatarUrl } from "../../../utils/avatar";
 
 interface WaitingUser {
     id: string;
@@ -60,7 +61,7 @@ const MemberManagement: React.FC = () => {
                 id: r.id.toString(),
                 name: `${r.user.firstName} ${r.user.lastName}`,
                 email: r.email,
-                avatarUrl: `https://ui-avatars.com/api/?name=${r.user.firstName}+${r.user.lastName}&background=random`,
+                avatarUrl: resolveAvatarUrl({ author: r.user }),
                 requestId: r.id,
             })));
         } catch (err: any) {
@@ -79,7 +80,7 @@ const MemberManagement: React.FC = () => {
                 name: `${u.firstName} ${u.lastName}`,
                 email: u.email,
                 role: u.role === "ADMIN" ? "Admin" : u.role === "REPRESENTATIVE" ? "Leader" : "Student",
-                avatarUrl: `https://ui-avatars.com/api/?name=${u.firstName}+${u.lastName}&background=random`,
+                avatarUrl: resolveAvatarUrl({ author: u }),
                 userId: u.id,
             })));
         } catch (err: any) {

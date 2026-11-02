@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { Navigate, useParams } from "react-router-dom";
 import { TrendingUp, MessageSquare, Radio, CheckCircle2, Send } from "lucide-react";
 import SurgeIcon from "../../shared/SurgeIcon";
+import { resolveAvatarUrl } from "../../../utils/avatar";
 import { categoryImages } from "../../CategoryImages";
 import KPICard from "./KPICard";
 import CommentsPanel from "./CommentsPanel";
@@ -260,7 +261,11 @@ const AdminPingDetail: React.FC<AdminPingDetailProps> = ({ pingId: propPingId, m
             category: { name: ping.category?.name || "General" },
             author: {
                 name: ping.author ? `${ping.author.firstName} ${ping.author.lastName}` : (ping.anonymousAlias || "Anonymous"),
-                avatar: ping.author?.profilePicture || `https://ui-avatars.com/api/?name=${ping.author?.firstName || "A"}+${ping.author?.lastName || "U"}&background=random`,
+                avatar: resolveAvatarUrl({
+                    author: ping.author,
+                    isAnonymous: ping.isAnonymous,
+                    anonymousProfilePicture: ping.anonymousProfilePicture,
+                }),
                 timestamp: formatTimeAgo(ping.createdAt),
             },
             badges: ping.surgeCount > 100 ? ["SURGING_NOW"] : [],

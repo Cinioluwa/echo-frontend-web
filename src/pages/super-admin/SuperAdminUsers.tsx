@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import { Search, ChevronRight, ChevronLeft } from "lucide-react";
 import { superAdminService } from "../../api/services/super-admin.service";
 import type { SuperAdminUser } from "../../api/types/admin.types";
+import { resolveAvatarUrl } from "../../utils/avatar";
 
 const SuperAdminUsers: React.FC = () => {
   const [users, setUsers] = useState<SuperAdminUser[]>([]);
@@ -148,7 +149,7 @@ const SuperAdminUsers: React.FC = () => {
               <tr key={user.id} className="border-b border-gray-50 hover:bg-gray-50 transition-colors">
                 <td className="px-6 py-4 flex items-center gap-3">
                   <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center overflow-hidden border border-gray-200">
-                    <img src={`https://ui-avatars.com/api/?name=${user.firstName}+${user.lastName}&background=random`} alt={user.firstName} className="w-full h-full object-cover" />
+                    <img src={resolveAvatarUrl({ author: user })} alt={user.firstName} className="w-full h-full object-cover" />
                   </div>
                   <span className="font-semibold text-gray-900">{user.firstName} {user.lastName}</span>
                 </td>

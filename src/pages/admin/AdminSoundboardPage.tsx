@@ -15,6 +15,7 @@ const AdminSoundboardPage: React.FC = () => {
     const location = useLocation();
     const user = useAuthStore((state) => state.user);
     const [showAnnouncementModal, setShowAnnouncementModal] = useState(false);
+    const [announcementRefreshKey, setAnnouncementRefreshKey] = useState(0);
 
     const getCurrentPage = (): AdminPage => {
         const path = location.pathname;
@@ -81,11 +82,15 @@ const AdminSoundboardPage: React.FC = () => {
 
                 <AdminSoundboard
                     onPublishAnnouncement={handlePublishAnnouncement}
+                    announcementRefreshKey={announcementRefreshKey}
                     onExport={handleExport}
                 />
 
                 {showAnnouncementModal && (
-                    <AnnouncementModal setAnnouncementModal={setShowAnnouncementModal} />
+                    <AnnouncementModal
+                        setAnnouncementModal={setShowAnnouncementModal}
+                        onPublished={() => setAnnouncementRefreshKey((k) => k + 1)}
+                    />
                 )}
             </div>
         </AdminPageProvider>

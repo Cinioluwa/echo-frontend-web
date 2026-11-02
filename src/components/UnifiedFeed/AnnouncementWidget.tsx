@@ -1,67 +1,70 @@
 /**
  * AnnouncementWidget
- * Figma ref: 3843:12491 (desktop variants — Default & Expanded)
- * Phase: 2
+ * Figma ref: 3843:12491 (Default & Expanded variants)
  *
- * Right-column widget for the desktop feed.
- * "GENERAL ANNOUNCEMENT" header (bold, underlined), announcement title, description with "Show more" toggle.
- * Two variants: Default (compact) and Expanded (full text).
+ * "GENERAL ANNOUNCEMENT" card shown in the feed (below the ping creator)
+ * and on the admin soundboard. Header with megaphone icon + published time,
+ * title, description with "Show more" toggle, and the author.
  */
 
 import { useState } from "react";
+import { Megaphone } from "lucide-react";
 import type { Announcement } from "../../api/types";
-import { GoDotFill } from "react-icons/go";
+import formatTimeAgo from "../../utils/formatTimeAgo";
 
 interface AnnouncementWidgetProps {
   announcement?: Announcement | null;
+  className?: string;
 }
+
+const PREVIEW_LENGTH = 160;
 
 const AnnouncementWidget = ({
   announcement = null,
+  className = "",
 }: AnnouncementWidgetProps) => {
   const [isExpanded, setIsExpanded] = useState(false);
   if (!announcement) return null;
 
+  const isLong = announcement.content.length > PREVIEW_LENGTH;
+
   return (
     <div
-      className="bg-white border border-[#FFC37B] overflow-hidden rounded-[15px] flex flex-col gap-2.5 w-full lg:w-[300px]"
-      style={{ maxHeight: isExpanded ? "400px" : "290px" }}
+      className={`bg-white border border-[#FFC37B] overflow-hidden rounded-[15px] flex flex-col w-full ${className}`}
+      data-node-id="general-announcement-card"
     >
-      {/* Announcement content */}
-      {/* Header: "GENERAL ANNOUNCEMENT" */}
-      <div className="bg-[#F49B31] w-full p-4 flex justify-between items-center">
-        <p className="font-['Inter',sans-serif] font-extrabold text-[14px] flex items-center justify-start gap-1 text-white decoration-solid leading-5">
-          <GoDotFill />
+      <div className="bg-[#F49B31] w-full px-4 py-3 flex justify-between items-center gap-2">
+        <p className="font-['Inter',sans-serif] font-extrabold text-[14px] flex items-center gap-2 text-white leading-5">
+          <Megaphone size={16} aria-hidden="true" />
           GENERAL ANNOUNCEMENT
         </p>
+        <span className="font-['Poppins',sans-serif] font-medium text-[11px] text-white/90 whitespace-nowrap">
+          Published {formatTimeAgo(announcement.createdAt)}
+        </span>
       </div>
-      <div className="pb-8 px-4 w-full">
-        <div className="flex flex-col  gap-2.5 w-full text-black">
-          <div className="flex flex-col gap-[5px] w-full">
-            {/* Title */}
-            <p className="font-['Poppins',sans-serif] font-bold  text-[18px] leading-normal text-wrap">
-              {announcement.title.toUpperCase()}
-            </p>
-          </div>
-          {/* Description */}
-          <div className="w-full">
-            <p className="text-[14px] font-['Poppins',sans-serif]">
-              <span className="font-medium leading-[1.8] text-black/90">
-                {isExpanded || announcement.content.length <= 160
-                  ? announcement.content
-                  : announcement.content.slice(0, 160) + "..."}
-              </span>
-            </p>
-          </div>
-        </div>
-        {/* Show more / Show less */}
-        {announcement.content.length > 160 && (
+
+      <div className="p-4 flex flex-col gap-2.5 w-full text-black">
+        <p className="font-['Poppins',sans-serif] font-bold text-[18px] leading-normal wrap-break-word">
+          {announcement.title.toUpperCase()}
+        </p>
+        <p className="text-[14px] font-['Poppins',sans-serif] font-medium leading-[1.8] text-black/90 whitespace-pre-wrap wrap-break-word">
+          {isExpanded || !isLong
+            ? announcement.content
+            : announcement.content.slice(0, PREVIEW_LENGTH) + "..."}
+        </p>
+        {isLong && (
           <button
-            onClick={() => setIsExpanded(!isExpanded)}
-            className="font-['Poppins',sans-serif] font-medium text-[13px] text-[#F49B31] cursor-pointer hover:underline text-left w-full"
+            type="button"
+            onClick={() => setIsExpanded((v) => !v)}
+            className="font-['Poppins',sans-serif] font-medium text-[13px] text-[#F49B31] cursor-pointer hover:underline text-left w-fit"
           >
             {isExpanded ? "Show less" : "Show more"}
           </button>
+        )}
+        {announcement.author && (
+          <span className="font-['Poppins',sans-serif] text-[12px] text-[#626665]">
+            By {announcement.author.firstName} {announcement.author.lastName}
+          </span>
         )}
       </div>
     </div>

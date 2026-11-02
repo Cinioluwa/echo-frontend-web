@@ -6,6 +6,7 @@ import { ToastContainer, type ToastItem } from "../../shared/Toast";
 import type { FollowUpItem as FollowUpItemType, FilterType } from "./types";
 import { adminService } from "../../../api/services/admin.service";
 import type { AdminWave } from "../../../api/types/admin.types";
+import { resolveAvatarUrl } from "../../../utils/avatar";
 import { useUIStore, useAuthStore } from "../../../stores";
 import representativeService from "../../../api/services/representative.service";
 import formatTimeAgo from "../../../utils/formatTimeAgo";
@@ -57,8 +58,15 @@ const FollowUp: React.FC<FollowUpProps> = ({ mode = "admin" }) => {
     fetchWaves();
   }, [fetchWaves]);
 
-  const avatarFor = (first?: string, last?: string) =>
-    `https://ui-avatars.com/api/?name=${first || "A"}+${last || "U"}&background=random`;
+  const avatarFor = (author?: { firstName?: string; lastName?: string; profilePicture?: string | null } | null) =>
+    resolveAvatarUrl({ author });
+
+  const pingAvatarFor = (ping: AdminWave["ping"]) =>
+    resolveAvatarUrl({
+      author: ping.author,
+      isAnonymous: ping.isAnonymous,
+      anonymousProfilePicture: ping.anonymousProfilePicture,
+    });
 
   const buildItems = (waves: AdminWave[]) => {
     const waveItems: FollowUpItemType[] = [];
@@ -91,7 +99,7 @@ const FollowUp: React.FC<FollowUpProps> = ({ mode = "admin" }) => {
     category: wave.ping?.category?.name || "",
     author: {
       name: wave.author ? `${wave.author.firstName} ${wave.author.lastName}` : "Anonymous",
-      avatar: avatarFor(wave.author?.firstName, wave.author?.lastName),
+      avatar: avatarFor(wave.author),
       timestamp: formatTimeAgo(wave.createdAt),
     },
     description: wave.solution,
@@ -111,7 +119,7 @@ const FollowUp: React.FC<FollowUpProps> = ({ mode = "admin" }) => {
       status: "acknowledged",
       pingAuthor: {
         name: pingAuthorName,
-        avatar: avatarFor(ping.author?.firstName, ping.author?.lastName),
+        avatar: pingAvatarFor(ping),
         timestamp: formatTimeAgo(ping.createdAt),
       },
       surgeCount: ping.surgeCount ?? 0,

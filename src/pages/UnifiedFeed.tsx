@@ -176,13 +176,13 @@ const UnifiedFeed = () => {
       {/* Inline ping creator */}
       <InlinePingCreator />
 
-      {/* Mobile-only Top Widgets (Desktop renders these in Layout's right aside) */}
-      {(
-        <div className="lg:hidden flex flex-col gap-[15px]">
-          <AnnouncementWidget announcement={announcement} />
-          <Top3Widget pings={top3} />
-        </div>
-      )}
+      {/* General announcement — below the creator, above the first ping */}
+      <AnnouncementWidget announcement={announcement} />
+
+      {/* Mobile-only Top 3 (Desktop renders it in Layout's right aside) */}
+      <div className="lg:hidden flex flex-col gap-[15px]">
+        <Top3Widget pings={top3} />
+      </div>
 
       {/* ── Feed list ── */}
       {error && pings.length === 0 ? (
