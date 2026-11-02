@@ -13,7 +13,7 @@ import type { Ping } from "../../api/types";
 import UserAvatar from "../UserAvatar";
 import Top3Skeleton from "../skeletons/top3Skeleton";
 import SurgeIcon from "../shared/SurgeIcon";
-import { usePingsStore, useSurgeStore } from "../../stores";
+import { useAuthStore, usePingsStore, useSurgeStore } from "../../stores";
 
 interface Top3WidgetProps {
   pings?: Ping[];
@@ -78,6 +78,17 @@ const Top3Item: React.FC<Top3ItemProps> = ({ ping, index }) => {
   );
   const toggleSurge = useSurgeStore((state) => state.toggleSurge);
 
+  // Prefer the live auth user for own pings so profile picture changes show immediately
+  const authUser = useAuthStore((state) => state.user);
+  const author =
+    !currentPing.isAnonymous && typeof currentPing.author === "object"
+      ? currentPing.author
+      : null;
+  const avatarUser =
+    author && authUser && String(authUser.id) === String(author.id)
+      ? { ...author, ...authUser, profilePicture: authUser.profilePicture || author.profilePicture }
+      : author;
+
   const initialHasSurged = currentPing.hasSurged ?? false;
   const baseSurgeCount =
     currentPing.surgeCount ?? currentPing._count?.surges ?? 0;
@@ -112,13 +123,8 @@ const Top3Item: React.FC<Top3ItemProps> = ({ ping, index }) => {
         className="w-[30px] h-[30px] rounded-full flex items-center justify-center shrink-0 overflow-hidden"
       >
         <UserAvatar
-          user={
-            !currentPing.isAnonymous && typeof currentPing.author === "object"
-              ? currentPing.author
-              : null
-          }
+          user={avatarUser}
           size="sm"
-          initialsOnly={!(currentPing.isAnonymous && currentPing.anonymousProfilePicture)}
           pictureUrl={
             currentPing.isAnonymous && currentPing.anonymousProfilePicture
               ? currentPing.anonymousProfilePicture
