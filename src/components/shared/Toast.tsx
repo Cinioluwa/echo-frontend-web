@@ -14,7 +14,7 @@
 
 import { useEffect, useState } from "react";
 
-export type ToastVariant = "ping" | "wave" | "deleted" | "copied" | "reported" | "acknowledged";
+export type ToastVariant = "ping" | "wave" | "deleted" | "copied" | "reported" | "acknowledged" | "export-failed";
 
 interface ToastProps {
     variant: ToastVariant;
@@ -63,6 +63,12 @@ const TOAST_CONFIG: Record<
         textColor: "text-[#454545]",
         iconBg: "bg-[#f49b31]",
     },
+    "export-failed": {
+        message: "Export failed. Please try again.",
+        bg: "bg-[#eb5050]",
+        textColor: "text-white",
+        iconBg: "bg-[#c83030]",
+    },
 };
 
 const Toast = ({ variant, duration = 3000, onDismiss }: ToastProps) => {
@@ -94,7 +100,11 @@ const Toast = ({ variant, duration = 3000, onDismiss }: ToastProps) => {
             <div
                 className={`${config.iconBg} rounded-full shrink-0 w-[30px] h-[30px] flex items-center justify-center mix-blend-luminosity`}
             >
-                {variant === "deleted" ? (
+                {variant === "export-failed" ? (
+                    <svg className="w-4 h-4 text-white" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                        <path d="M8 3.5V9M8 12V12.5" stroke="white" strokeWidth="1.6" strokeLinecap="round" />
+                    </svg>
+                ) : variant === "deleted" ? (
                     /* Trash icon for deleted */
                     <svg
                         className="w-4 h-4 text-white"

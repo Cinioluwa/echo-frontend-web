@@ -8,15 +8,13 @@ import { useUIStore } from "../../../stores";
 import PingIndexModal from "./PingIndexModal";
 import { motion } from "framer-motion";
 import AdminHeader from "../AdminHeader";
-import { adminService } from "../../../api/services/admin.service";
+import { loadSoundboardSnapshot, buildFollowUps, buildStatCards, type StatCardData } from "./soundboardData";
 import { useNavigate } from "react-router-dom";
-import { ToastContainer } from "../../shared/Toast";
-import type { ToastItem } from "../../shared/Toast";
+import { useAdminExport } from "../../../features/export/useAdminExport";
 
 interface AdminSoundboardProps {
     onPublishAnnouncement?: () => void;
     announcementRefreshKey?: number;
-    onExport?: () => void;
 }
 
 const iconVariants = {
@@ -35,18 +33,12 @@ const iconVariants = {
 const AdminSoundboard: React.FC<AdminSoundboardProps> = ({
     onPublishAnnouncement,
     announcementRefreshKey,
-    onExport,
 }) => {
     const { isSidebarCollapsed } = useUIStore();
     const navigate = useNavigate();
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
-    const [toasts, setToasts] = useState<ToastItem[]>([]);
-
-    const pushToast = (variant: ToastItem["variant"]) => {
-        const id = `${Date.now()}`;
-        setToasts((prev) => [...prev, { id, variant }]);
-    };
+    const { canExport, exporting, startExport, toastNode } = useAdminExport("soundboard");
 
     // Data state
     const [surgeItems, setSurgeItems] = useState<SurgeItem[]>([]);
@@ -54,9 +46,9 @@ const AdminSoundboard: React.FC<AdminSoundboardProps> = ({
     const [pendingCount, setPendingCount] = useState(0);
     const [categoryData, setCategoryData] = useState<CategoryData[]>([]);
     const [selectedCategory, setSelectedCategory] = useState<CategoryData | null>(null);
-    const [resolutionRate, setResolutionRate] = useState({ value: "0%", badge: "" });
-    const [avgResolveTime, setAvgResolveTime] = useState({ value: "0 days", badge: "" });
-    const [overdue, setOverdue] = useState({ value: "0", badge: "" });
+    const [resolutionRate, setResolutionRate] = useState<StatCardData>({ value: "0%" });
+    const [avgResolveTime, setAvgResolveTime] = useState<StatCardData>({ value: "N/A" });
+    const [overdue, setOverdue] = useState<StatCardData>({ value: "0" });
 
     const fetchDashboardData = useCallback(async (isSilentRefetch = false) => {
         try {
@@ -65,17 +57,10 @@ const AdminSoundboard: React.FC<AdminSoundboardProps> = ({
             }
             setError(null);
 
-            const [overview, surging, issuesByCategory] = await Promise.all([
-                adminService.getOverview({ months: 1 }),
-                adminService.getSurgingIssues({ hours: 6, limit: 3 }),
-                // adminService.getPriorityPings({ weeks: 1, limit: 3 }),
-                // adminService.getStallingPings({ staleDays: 7, limit: 5 }),
-                // adminService.getFollowUpQueue({ staleDays: 7 }).catch(() => null),
-                adminService.getIssuesByCategory().catch(() => null),
-            ]);
+            const { overview, surging, issuesByCategory } = await loadSoundboardSnapshot();
 
             // Surge alerts
-            const surges: SurgeItem[] = surging.items.map((item) => ({
+            const surges: SurgeItem[] = surging.map((item) => ({
                 id: item.pingId.toString(),
                 title: item.title,
                 velocity: item.currentRatePerHour,
@@ -87,35 +72,7 @@ const AdminSoundboard: React.FC<AdminSoundboardProps> = ({
             }));
             setSurgeItems(surges);
 
-            // Follow-up queue (use dedicated endpoint if available, fallback to manual)
-            const followUps: FollowUpItem[] = [];
-            followUps.push({
-                id: "approved-waves",
-                title: "Approved waves not being implemented",
-                description: `${overview.stalledWavesCount} approved waves require progression`,
-                count: overview.stalledWavesCount,
-                iconColor: "green",
-                icon: "/assets/icon/not-implemented.svg",
-            });
-            followUps.push({
-                id: "awaiting-approval",
-                title: "Waves awaiting approval",
-                description: `${overview.wavesAwaitingApproval} waves need review`,
-                count: overview.wavesAwaitingApproval,
-                iconColor: "red",
-                icon: "/assets/icon/awaiting-approval.svg",
-            });
-            followUps.push({
-                id: "acknowledged-stalling",
-                title: "Acknowledged pings stalling",
-                description: `${overview.stalledAcknowledgedPingsCount} acknowledged pings need progression`,
-                count: overview.stalledAcknowledgedPingsCount,
-                iconColor: "red",
-                icon: "/assets/icon/acknowledged-pings.svg",
-            });
-
-
-            const activeFollowUps = followUps.filter((item) => item.count > 0);
+            const activeFollowUps = buildFollowUps(overview);
             setFollowUpItems(activeFollowUps);
             setPendingCount(activeFollowUps.reduce((sum, item) => sum + item.count, 0));
 
@@ -146,18 +103,10 @@ const AdminSoundboard: React.FC<AdminSoundboardProps> = ({
             }
 
             // Stat cards
-            setResolutionRate({
-                value: `${overview.summaryCards.resolutionRate.value}%`,
-                badge: `↑ ${overview.summaryCards.resolutionRate.deltaPercentagePoints}% this month`,
-            });
-            setAvgResolveTime({
-                value: `${overview.summaryCards.avgResolveTimeDays.value.toFixed(1)} days`,
-                badge: `↓ ${overview.summaryCards.avgResolveTimeDays.deltaDays.toFixed(1)}d improvement`,
-            });
-            setOverdue({
-                value: overview.summaryCards.unresolvedOlderThanDays.value.toString(),
-                badge: `↑ +${overview.summaryCards.unresolvedOlderThanDays.deltaAbsolute} this week`,
-            });
+            const stats = buildStatCards(overview);
+            setResolutionRate(stats.resolution);
+            setAvgResolveTime(stats.avgTime);
+            setOverdue(stats.overdue);
 
         } catch (err: any) {
             setError(err?.response?.data?.error || err.message || "Failed to load dashboard data");
@@ -169,14 +118,6 @@ const AdminSoundboard: React.FC<AdminSoundboardProps> = ({
     useEffect(() => {
         fetchDashboardData();
     }, [fetchDashboardData]);
-
-    const handleExportClick = () => {
-        if (onExport) {
-            onExport();
-        } else {
-            pushToast("ping");
-        }
-    };
 
     return (
         <>
@@ -192,14 +133,22 @@ const AdminSoundboard: React.FC<AdminSoundboardProps> = ({
                             </div>
 
                             <div className="grid w-full grid-cols-1 gap-2 sm:grid-cols-2 lg:w-auto lg:shrink-0">
-                                <motion.button
-                                    onClick={handleExportClick}
-                                    className="min-w-0 whitespace-nowrap border border-[#f49b31] rounded-lg px-1.5 sm:px-3 lg:px-[15px] py-2 sm:py-[9px] flex items-center justify-center gap-1 sm:gap-2 hover:bg-[#F49B31] text-[#f49b31] hover:text-white transition-colors text-[10px] sm:text-xs"
-                                    whileHover="hover"
-                                >
-                                    <motion.img src="/assets/icon/Export.svg" alt="Export Icon" className="w-[13px] h-[13px]" variants={iconVariants} />
-                                    <span className="font-medium">Export</span>
-                                </motion.button>
+                                {canExport && (
+                                    <motion.button
+                                        onClick={startExport}
+                                        disabled={exporting}
+                                        aria-busy={exporting}
+                                        className="min-w-0 whitespace-nowrap border border-[#f49b31] rounded-lg px-1.5 sm:px-3 lg:px-[15px] py-2 sm:py-[9px] flex items-center justify-center gap-1 sm:gap-2 hover:bg-[#F49B31] text-[#f49b31] hover:text-white transition-colors text-[10px] sm:text-xs disabled:cursor-wait disabled:opacity-60"
+                                        whileHover="hover"
+                                    >
+                                        {exporting ? (
+                                            <span className="w-[13px] h-[13px] animate-spin rounded-full border-2 border-current border-t-transparent" />
+                                        ) : (
+                                            <motion.img src="/assets/icon/Export.svg" alt="Export Icon" className="w-[13px] h-[13px]" variants={iconVariants} />
+                                        )}
+                                        <span className="font-medium">{exporting ? "Exporting…" : "Export"}</span>
+                                    </motion.button>
+                                )}
 
                                 <button
                                     onClick={onPublishAnnouncement}
@@ -245,19 +194,19 @@ const AdminSoundboard: React.FC<AdminSoundboardProps> = ({
                                         title="Resolution Rate"
                                         value={resolutionRate.value}
                                         subtitle="*Of pings resolved"
-                                        badge={{ label: resolutionRate.badge, color: "green" }}
+                                        badge={resolutionRate.badge}
                                     />
                                     <StatCard
                                         title="Average Resolution Time"
                                         value={avgResolveTime.value}
                                         subtitle="*Days to resolve"
-                                        badge={{ label: avgResolveTime.badge, color: "green" }}
+                                        badge={avgResolveTime.badge}
                                     />
                                     <StatCard
                                         title="Overdue (>7D)"
                                         value={overdue.value}
                                         subtitle="*Need attention"
-                                        badge={{ label: overdue.badge, color: "red" }}
+                                        badge={overdue.badge}
                                     />
                                 </div>
 
@@ -281,12 +230,7 @@ const AdminSoundboard: React.FC<AdminSoundboardProps> = ({
                 />
             )}
 
-            <div className="fixed bottom-0 left-1/2 -translate-x-1/2 z-[100] pointer-events-none">
-                <ToastContainer
-                    toasts={toasts}
-                    onDismiss={(id) => setToasts((prev) => prev.filter((t) => t.id !== id))}
-                />
-            </div>
+            {toastNode}
         </>
     );
 };

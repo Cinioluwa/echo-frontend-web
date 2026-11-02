@@ -273,7 +273,7 @@ export interface OverviewResponse {
     waves: { value: number; deltaPercent: number };
     pingsSubmitted: { value: number; deltaPercent: number };
     resolutionRate: { value: number; deltaPercentagePoints: number };
-    avgResolveTimeDays: { value: number; deltaDays: number };
+    avgResolveTimeDays: { value: number; deltaDays: number | null };
     activeUsers: { value: number; deltaPercent: number };
     underReview: { value: number; deltaPercent: number };
     unresolvedOlderThanDays: {

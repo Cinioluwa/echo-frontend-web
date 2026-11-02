@@ -1,4 +1,5 @@
 import React from "react";
+import TrendArrow, { type TrendDirection } from "../../shared/TrendArrow";
 
 interface StatCardProps {
     title: string;
@@ -6,6 +7,7 @@ interface StatCardProps {
     subtitle?: string;
     badge?: {
         label: string;
+        direction?: TrendDirection;
         color: "green" | "red" | "orange";
     };
     className?: string;
@@ -43,6 +45,7 @@ const StatCard: React.FC<StatCardProps> = ({
                     <div
                         className={`rounded-full px-2 py-1 w-fit text-[11px] font-medium leading-[16.5px] text-nowrap truncate ${badgeColorClasses[badge.color]}`}
                     >
+                        {badge.direction && <TrendArrow direction={badge.direction} className="me-1 align-[-1px]" />}
                         {badge.label}
                     </div>
                 )}

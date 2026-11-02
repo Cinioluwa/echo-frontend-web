@@ -103,6 +103,10 @@ const SuperAdminMaintenance = lazyWithRetry(() => import("../pages/super-admin/S
 
 
 
+// Print-only export routes (admin PDF export)
+const PingPrintPage = lazyWithRetry(() => import("../features/export/PingPrintPage"));
+const SoundboardPrintPage = lazyWithRetry(() => import("../features/export/SoundboardPrintPage"));
+
 // Lazy load legal pages
 const TermsOfUse = lazyWithRetry(() => import("../pages/TermsOfUse"));
 const PrivacyPolicy = lazyWithRetry(() => import("../pages/PrivacyPolicy"));
@@ -293,6 +297,15 @@ const router = createBrowserRouter([
         element: withSuspense(UserNotification),
       },
     ],
+  },
+
+  {
+    path: "/print/ping/:pingId",
+    element: <AdminRoute>{withSuspense(PingPrintPage)}</AdminRoute>,
+  },
+  {
+    path: "/print/soundboard",
+    element: <AdminRoute>{withSuspense(SoundboardPrintPage)}</AdminRoute>,
   },
 
   // Admin routes

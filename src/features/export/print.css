@@ -1,0 +1,349 @@
+/* Print-only export styles. Scoped to .ep-root so nothing leaks into the app. Flat design: no shadows, gradients or hover. */
+
+@page {
+  size: A4 portrait;
+  margin: 16mm 14mm 18mm;
+  @bottom-right {
+    content: "Page " counter(page) " of " counter(pages);
+    font-family: "Poppins", sans-serif;
+    font-size: 8pt;
+    color: #854f0b;
+  }
+}
+
+.ep-root {
+  --ep-orange: #e8911a;
+  --ep-cream: #faeeda;
+  --ep-amber: #854f0b;
+  --ep-ink: #1a1a1a;
+  --ep-muted: #5f5e5a;
+  --ep-rule: #e6d4b8;
+  min-height: 100vh;
+  background: #ececec;
+  padding: 24px 12px 48px;
+  font-family: "Poppins", sans-serif;
+  color: var(--ep-ink);
+  font-size: 10pt;
+  line-height: 1.5;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+.ep-root *,
+.ep-root *::before,
+.ep-root *::after {
+  box-sizing: border-box;
+  box-shadow: none !important;
+  text-shadow: none !important;
+}
+
+.ep-toolbar {
+  width: 210mm;
+  max-width: 100%;
+  margin: 0 auto 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 12px;
+  color: var(--ep-muted);
+}
+
+.ep-toolbar button {
+  border: 1px solid var(--ep-orange);
+  background: var(--ep-cream);
+  color: var(--ep-amber);
+  border-radius: 6px;
+  padding: 6px 14px;
+  font: inherit;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.ep-page {
+  width: 210mm;
+  max-width: 100%;
+  margin: 0 auto;
+  background: #fff;
+  padding: 16mm 14mm;
+  border: 1px solid #d9d9d9;
+}
+
+.ep-state {
+  width: 210mm;
+  max-width: 100%;
+  margin: 0 auto;
+  background: #fff;
+  border: 1px solid #d9d9d9;
+  padding: 32px;
+  text-align: center;
+  font-size: 13px;
+}
+
+.ep-state--error {
+  border-color: #c83030;
+  color: #c83030;
+}
+
+.ep-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8mm;
+  padding-bottom: 4mm;
+  border-bottom: 2px solid var(--ep-orange);
+}
+
+.ep-header img {
+  height: 9mm;
+  width: auto;
+}
+
+.ep-institution {
+  margin: 1mm 0 0;
+  font-weight: 600;
+  color: var(--ep-amber);
+  font-size: 10pt;
+}
+
+.ep-generated {
+  margin: 0;
+  text-align: right;
+  font-size: 8pt;
+  color: var(--ep-muted);
+  overflow-wrap: anywhere;
+}
+
+.ep-doc-title {
+  margin: 6mm 0 0;
+  font-size: 17pt;
+  font-weight: 700;
+  line-height: 1.25;
+  color: var(--ep-ink);
+  overflow-wrap: anywhere;
+}
+
+.ep-section {
+  margin-top: 7mm;
+}
+
+.ep-h2 {
+  margin: 0 0 3mm;
+  padding-bottom: 1mm;
+  border-bottom: 1px solid var(--ep-orange);
+  font-size: 12pt;
+  font-weight: 600;
+  color: var(--ep-orange);
+  break-after: avoid;
+}
+
+.ep-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1mm 6mm;
+  margin: 2mm 0 0;
+  font-size: 9pt;
+  color: var(--ep-muted);
+}
+
+.ep-meta strong {
+  color: var(--ep-ink);
+  font-weight: 600;
+}
+
+.ep-body {
+  margin: 3mm 0 0;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.ep-kpis {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 3mm;
+}
+
+.ep-kpis--two {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.ep-kpi {
+  border: 1px solid var(--ep-orange);
+  background: #fff;
+  padding: 3mm 4mm;
+  break-inside: avoid;
+  min-width: 0;
+}
+
+.ep-kpi-label {
+  margin: 0;
+  font-size: 8pt;
+  font-weight: 500;
+  color: var(--ep-amber);
+}
+
+.ep-kpi-value {
+  margin: 1mm 0 0;
+  font-size: 18pt;
+  font-weight: 700;
+  line-height: 1.1;
+  color: var(--ep-orange);
+  overflow-wrap: anywhere;
+}
+
+.ep-kpi-note {
+  margin: 1mm 0 0;
+  font-size: 7.5pt;
+  color: var(--ep-muted);
+}
+
+.ep-kpi-trend {
+  margin: 1mm 0 0;
+  font-size: 8pt;
+  font-weight: 500;
+  color: var(--ep-amber);
+  display: flex;
+  align-items: center;
+  gap: 1mm;
+}
+
+.ep-card {
+  border: 1px solid var(--ep-rule);
+  padding: 3mm 4mm;
+  margin-top: 2.5mm;
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+
+.ep-card--accent {
+  background: var(--ep-cream);
+  border-color: var(--ep-orange);
+}
+
+.ep-card-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 4mm;
+}
+
+.ep-card-title {
+  margin: 0;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+  min-width: 0;
+}
+
+.ep-tag {
+  display: inline-block;
+  border: 1px solid var(--ep-orange);
+  background: var(--ep-cream);
+  color: var(--ep-amber);
+  font-size: 7.5pt;
+  font-weight: 600;
+  padding: 0 2mm;
+  white-space: nowrap;
+}
+
+.ep-small {
+  margin: 0.5mm 0 0;
+  font-size: 8.5pt;
+  color: var(--ep-muted);
+  overflow-wrap: anywhere;
+}
+
+.ep-empty {
+  margin: 0;
+  color: var(--ep-muted);
+  font-style: italic;
+}
+
+.ep-thread {
+  margin-top: 1mm;
+}
+
+.ep-thread .ep-thread {
+  margin-left: 7mm;
+  border-left: 2px solid var(--ep-cream);
+  padding-left: 3mm;
+}
+
+.ep-comment {
+  padding: 2mm 0;
+  border-bottom: 1px solid var(--ep-rule);
+  break-inside: avoid;
+}
+
+.ep-timeline {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.ep-timeline li {
+  display: flex;
+  gap: 3mm;
+  padding: 1.5mm 0;
+  border-bottom: 1px solid var(--ep-rule);
+  break-inside: avoid;
+}
+
+.ep-timeline li::before {
+  content: "";
+  flex: none;
+  width: 2mm;
+  height: 2mm;
+  margin-top: 2mm;
+  border-radius: 50%;
+  background: var(--ep-orange);
+}
+
+.ep-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 4mm;
+  padding: 1.5mm 0;
+  border-bottom: 1px solid var(--ep-rule);
+  break-inside: avoid;
+}
+
+.ep-row:last-child {
+  border-bottom: 0;
+}
+
+.ep-surge {
+  display: inline-flex;
+  align-items: center;
+  gap: 1mm;
+  font-weight: 600;
+  color: var(--ep-amber);
+  white-space: nowrap;
+}
+
+@media print {
+  html:has(.ep-root),
+  body:has(.ep-root) {
+    background: #fff !important;
+  }
+
+  .ep-root {
+    background: #fff;
+    padding: 0;
+    min-height: 0;
+  }
+
+  .ep-toolbar,
+  .ep-state {
+    display: none !important;
+  }
+
+  .ep-page {
+    width: auto;
+    max-width: none;
+    margin: 0;
+    padding: 0;
+    border: 0;
+  }
+}

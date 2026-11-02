@@ -18,7 +18,8 @@ import { useAuthStore } from "../../../stores";
 import representativeService from "../../../api/services/representative.service";
 import { usePageTitle } from "../../../hooks/usePageTitle";
 import RelatedPings from "./RelatedPings";
-import { getRelatedTitleScore } from "./relatedPingMatching";
+import { loadRelatedPings } from "./loadRelatedPings";
+import { useAdminExport } from "../../../features/export/useAdminExport";
 import BadgeTooltip from "../../BadgeTooltip";
 import AssignPingModal from "../../AssignPingModal";
 import formatTimeAgo from "../../../utils/formatTimeAgo";
@@ -95,7 +96,6 @@ interface PingDetailData {
     badges: string[];
     mediaUrl?: string;
     surgeCount: number;
-    surgeDelta?: string;
     unresolvedFor: string;
     statusEvents: StatusEvent[];
     officialResponse?: {
@@ -158,6 +158,7 @@ const AdminPingDetail: React.FC<AdminPingDetailProps> = ({ pingId: propPingId, m
     const routeParams = useParams<{ pingId: string }>();
     const pingId = propPingId || routeParams.pingId;
     const user = useAuthStore((s) => s.user);
+    const { canExport, exporting, startExport, toastNode } = useAdminExport("ping", pingId);
 
     const permissions = useMemo<PingDetailPermissions>(() => {
         if (mode === "admin") return ADMIN_PERMISSIONS;
@@ -216,28 +217,9 @@ const AdminPingDetail: React.FC<AdminPingDetailProps> = ({ pingId: propPingId, m
     useEffect(() => {
         if (!categoryForRelated || !currentId) return;
         let cancelled = false;
-        pingService
-            .getPingsByCategory(categoryForRelated, { limit: 50 })
-            .then((res) => {
-                if (cancelled) return;
-                const scored = res.data
-                    .filter((p) => p.id !== currentId)
-                    .map((p) => ({ ping: p, score: getRelatedTitleScore(currentTitle, p.title) }))
-                    .filter(({ score }) => score >= 0.3)
-                    .sort((a, b) =>
-                        b.score - a.score ||
-                        b.ping.surgeCount - a.ping.surgeCount ||
-                        b.ping.createdAt.localeCompare(a.ping.createdAt),
-                    )
-                    .slice(0, 3);
-                setRelatedPings(
-                    scored.map(({ ping }) => ({
-                        id: ping.id.toString(),
-                        category: ping.category?.name || categoryForRelated,
-                        title: ping.title,
-                        waveCount: ping.surgeCount,
-                    })),
-                );
+        loadRelatedPings(categoryForRelated, currentId, currentTitle)
+            .then((related) => {
+                if (!cancelled) setRelatedPings(related);
             })
             .catch((relatedError) => {
                 console.error("Failed to load related pings:", relatedError);
@@ -251,7 +233,6 @@ const AdminPingDetail: React.FC<AdminPingDetailProps> = ({ pingId: propPingId, m
     const mapPingToDetailData = (ping: Ping): PingDetailData => {
         const ageMs = Date.now() - new Date(ping.createdAt).getTime();
         const ageDays = Math.floor(ageMs / (1000 * 60 * 60 * 24));
-        const diff = ping.surgeCount - (ping._count?.surges ?? 0);
         const ackBy = mode === "admin" ? "Admin" : "Representative";
 
         return {
@@ -271,7 +252,6 @@ const AdminPingDetail: React.FC<AdminPingDetailProps> = ({ pingId: propPingId, m
             badges: ping.surgeCount > 100 ? ["SURGING_NOW"] : [],
             mediaUrl: ping.media?.[0]?.url,
             surgeCount: ping.surgeCount,
-            surgeDelta: diff > 0 ? `↑ +${diff} today` : undefined,
             unresolvedFor: `${ageDays} day${ageDays !== 1 ? "s" : ""}`,
             statusEvents: [
                 { status: "Ping Posted", timestamp: new Date(ping.createdAt).toLocaleString() },
@@ -428,13 +408,22 @@ const AdminPingDetail: React.FC<AdminPingDetailProps> = ({ pingId: propPingId, m
                             <img src="/assets/icon/back-arrow.svg" alt="" className="size-5" />
                             <span className="font-poppins text-[13px] font-semibold text-black">Go back</span>
                         </button>
-                        <motion.button
-                            className="flex items-center gap-2 rounded-lg border border-[#f49b31] bg-[#fef5ea] px-[15px] py-[9px] text-[#f49b31] transition-colors hover:bg-[#f49b31] hover:text-white"
-                            whileHover="hover"
-                        >
-                            <motion.img src="/assets/icon/Export.svg" alt="" className="size-3" variants={iconVariants} />
-                            <span className="font-poppins text-[12px] font-medium">Export</span>
-                        </motion.button>
+                        {mode === "admin" && canExport && (
+                            <motion.button
+                                onClick={startExport}
+                                disabled={exporting}
+                                aria-busy={exporting}
+                                className="flex items-center gap-2 rounded-lg border border-[#f49b31] bg-[#fef5ea] px-[15px] py-[9px] text-[#f49b31] transition-colors hover:bg-[#f49b31] hover:text-white disabled:cursor-wait disabled:opacity-60"
+                                whileHover="hover"
+                            >
+                                {exporting ? (
+                                    <span className="size-3 animate-spin rounded-full border-2 border-current border-t-transparent" />
+                                ) : (
+                                    <motion.img src="/assets/icon/Export.svg" alt="" className="size-3" variants={iconVariants} />
+                                )}
+                                <span className="font-poppins text-[12px] font-medium">{exporting ? "Exporting…" : "Export"}</span>
+                            </motion.button>
+                        )}
                     </div>
 
                     <div className="flex flex-col gap-[18px] rounded-[10px] bg-[#fefefe] px-5 py-[15px]">
@@ -519,7 +508,7 @@ const AdminPingDetail: React.FC<AdminPingDetailProps> = ({ pingId: propPingId, m
                     ) : null}
 
                     <div className="flex w-full flex-col gap-5 sm:flex-row">
-                        <KPICard icon={<SurgeIcon width={11} height={15} fill="#F49B31" />} label="Surge count" value={detail.surgeCount} delta={detail.surgeDelta} />
+                        <KPICard icon={<SurgeIcon width={11} height={15} fill="#F49B31" />} label="Surge count" value={detail.surgeCount} />
                         <KPICard label="Unresolved for" value={detail.unresolvedFor} />
                     </div>
 
@@ -585,6 +574,7 @@ const AdminPingDetail: React.FC<AdminPingDetailProps> = ({ pingId: propPingId, m
                 toasts={toasts}
                 onDismiss={(id) => setToasts((current) => current.filter((toast) => toast.id !== id))}
             />
+            {toastNode}
         </div>
     );
 };
