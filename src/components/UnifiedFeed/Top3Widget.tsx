@@ -131,7 +131,7 @@ const Top3Item: React.FC<Top3ItemProps> = ({ ping, index }) => {
               : undefined
           }
           bgColor="bg-transparent"
-          className="text-[10px]! font-bold text-white"
+          className="w-full! h-full! text-[10px]! font-bold text-white"
         />
       </div>
       {/* Title & Author */}
