@@ -51,30 +51,6 @@ const buildTimeline = (ping: Ping) => {
     return events;
 };
 
-const CommentThread = ({ parentId, byParent }: {
-    parentId: string | number | null;
-    byParent: Map<string | number | null, Comment[]>;
-}) => {
-    const items = byParent.get(parentId) ?? [];
-    return (
-        <div className="ep-thread">
-            {items.map((comment) => (
-                <div key={comment.id}>
-                    <div className="ep-comment">
-                        <p className="ep-small">
-                            <strong style={{ color: "#1a1a1a" }}>{commentAuthor(comment)}</strong> · {formatAbsolute(comment.createdAt)}
-                        </p>
-                        <p className="ep-body" style={{ marginTop: "1mm" }}>{comment.content}</p>
-                    </div>
-                    {byParent.has(comment.id) && (
-                        <CommentThread parentId={comment.id} byParent={byParent} />
-                    )}
-                </div>
-            ))}
-        </div>
-    );
-};
-
 const PingPrintPage = () => {
     const { pingId } = useParams<{ pingId: string }>();
     const [ping, setPing] = useState<Ping | null>(null);
@@ -106,19 +82,22 @@ const PingPrintPage = () => {
         () =>
             [...(ping?.waves ?? [])]
                 .filter((wave) => wave.status !== "REJECTED")
-                .sort((a, b) => (b._count?.surges ?? b.surgeCount) - (a._count?.surges ?? a.surgeCount)),
+                .sort((a, b) => (b._count?.surges ?? b.surgeCount) - (a._count?.surges ?? a.surgeCount))
+                .slice(0, 2),
         [ping],
     );
 
-    const byParent = useMemo(() => {
-        const map = new Map<string | number | null, Comment[]>();
-        const sorted = [...(ping?.comments ?? [])].sort((a, b) => a.createdAt.localeCompare(b.createdAt));
-        for (const comment of sorted) {
-            const key = comment.parentCommentId ?? null;
-            map.set(key, [...(map.get(key) ?? []), comment]);
-        }
-        return map;
-    }, [ping]);
+    const topComments = useMemo(
+        () =>
+            (ping?.comments ?? [])
+                .filter((comment) => !comment.parentCommentId)
+                .sort(
+                    (a, b) =>
+                        (b.surgeCount ?? 0) - (a.surgeCount ?? 0) || b.createdAt.localeCompare(a.createdAt),
+                )
+                .slice(0, 3),
+        [ping],
+    );
 
     const status = error ? "error" : ping ? "ready" : "loading";
     const title = ping?.title ?? "Ping";
@@ -185,7 +164,7 @@ const PingPrintPage = () => {
                     </section>
 
                     <section className="ep-section">
-                        <h2 className="ep-h2">Waves</h2>
+                        <h2 className="ep-h2">Top waves</h2>
                         {waves.length === 0 ? (
                             <p className="ep-empty">No waves have been proposed for this ping yet.</p>
                         ) : (
@@ -194,7 +173,7 @@ const PingPrintPage = () => {
                                     <div className="ep-card-head">
                                         <span className="ep-tag">{index === 0 ? "Community Pick" : "Alternative"}</span>
                                         <span className="ep-surge">
-                                            <SurgeIcon width={9} height={12} fill="#854F0B" />
+                                            <SurgeIcon width={9} height={12} fill="#F49B31" />
                                             {wave._count?.surges ?? wave.surgeCount}
                                         </span>
                                     </div>
@@ -208,11 +187,18 @@ const PingPrintPage = () => {
                     </section>
 
                     <section className="ep-section">
-                        <h2 className="ep-h2">Comments</h2>
-                        {(ping.comments?.length ?? 0) === 0 ? (
+                        <h2 className="ep-h2">Top comments</h2>
+                        {topComments.length === 0 ? (
                             <p className="ep-empty">No comments yet.</p>
                         ) : (
-                            <CommentThread parentId={null} byParent={byParent} />
+                            topComments.map((comment, index) => (
+                                <div className="ep-card" key={comment.id} style={index === 0 ? { marginTop: 0 } : undefined}>
+                                    <p className="ep-small" style={{ marginTop: 0 }}>
+                                        <strong style={{ color: "#171717" }}>{commentAuthor(comment)}</strong> · {formatAbsolute(comment.createdAt)}
+                                    </p>
+                                    <p className="ep-body" style={{ marginTop: "1mm" }}>{comment.content}</p>
+                                </div>
+                            ))
                         )}
                     </section>
 
@@ -242,7 +228,7 @@ const PingPrintPage = () => {
                                         <p className="ep-small">{item.category}</p>
                                     </div>
                                     <span className="ep-surge">
-                                        <SurgeIcon width={9} height={12} fill="#854F0B" />
+                                        <SurgeIcon width={9} height={12} fill="#F49B31" />
                                         {item.waveCount}
                                     </span>
                                 </div>

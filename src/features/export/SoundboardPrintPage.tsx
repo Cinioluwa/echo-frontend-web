@@ -80,13 +80,13 @@ const SoundboardPrintPage = () => {
                             <p className="ep-empty">No surging issues right now.</p>
                         ) : (
                             snapshot.surging.map((item) => (
-                                <div className="ep-row" key={item.pingId}>
+                                <div className="ep-card ep-card--accent ep-row" key={item.pingId}>
                                     <div style={{ minWidth: 0 }}>
                                         <strong style={{ overflowWrap: "anywhere" }}>{item.title}</strong>
                                         <p className="ep-small">{item.category?.name ?? "Uncategorized"}</p>
                                     </div>
                                     <span className="ep-surge" style={{ gap: 0 }}>
-                                        +<SurgeIcon width={9} height={12} fill="#854F0B" />
+                                        +<SurgeIcon width={9} height={12} fill="#F49B31" />
                                         {item.currentRatePerHour.toFixed(1)}/hr
                                     </span>
                                 </div>
@@ -100,7 +100,7 @@ const SoundboardPrintPage = () => {
                             <p className="ep-empty">No follow-ups pending.</p>
                         ) : (
                             followUps.map((item) => (
-                                <div className="ep-row" key={item.id}>
+                                <div className="ep-card ep-row" key={item.id}>
                                     <div style={{ minWidth: 0 }}>
                                         <strong>{item.title}</strong>
                                         <p className="ep-small">{item.description}</p>
@@ -133,10 +133,10 @@ const SoundboardPrintPage = () => {
                                             {category.openCount} open · {Math.round(category.resolved)}% resolved
                                         </span>
                                     </div>
-                                    {category.pings.length === 0 ? (
+                                    {category.pings.slice(0, 2).length === 0 ? (
                                         <p className="ep-small">No open pings listed.</p>
                                     ) : (
-                                        category.pings.map((ping) => (
+                                        category.pings.slice(0, 2).map((ping) => (
                                             <div className="ep-row" key={ping.id}>
                                                 <div style={{ minWidth: 0 }}>
                                                     <span style={{ overflowWrap: "anywhere" }}>{ping.title}</span>
@@ -145,7 +145,7 @@ const SoundboardPrintPage = () => {
                                                     </p>
                                                 </div>
                                                 <span className="ep-surge">
-                                                    <SurgeIcon width={9} height={12} fill="#854F0B" />
+                                                    <SurgeIcon width={9} height={12} fill="#F49B31" />
                                                     {ping.surgeCount}
                                                 </span>
                                             </div>

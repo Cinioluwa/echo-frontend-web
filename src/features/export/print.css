@@ -17,14 +17,15 @@
   --ep-amber: #854f0b;
   --ep-ink: #1a1a1a;
   --ep-muted: #5f5e5a;
-  --ep-rule: #e6d4b8;
+  --ep-rule: #e8c48f;
+  --ep-bright: #f49b31;
   min-height: 100vh;
   background: #ececec;
   padding: 24px 12px 48px;
   font-family: "Poppins", sans-serif;
   color: var(--ep-ink);
-  font-size: 10pt;
-  line-height: 1.5;
+  font-size: 11pt;
+  line-height: 1.55;
   -webkit-print-color-adjust: exact;
   print-color-adjust: exact;
 }
@@ -109,14 +110,14 @@
 .ep-generated {
   margin: 0;
   text-align: right;
-  font-size: 8pt;
-  color: var(--ep-muted);
+  font-size: 9pt;
+  color: #4a4a48;
   overflow-wrap: anywhere;
 }
 
 .ep-doc-title {
   margin: 6mm 0 0;
-  font-size: 17pt;
+  font-size: 20pt;
   font-weight: 700;
   line-height: 1.25;
   color: var(--ep-ink);
@@ -124,14 +125,14 @@
 }
 
 .ep-section {
-  margin-top: 7mm;
+  margin-top: 8mm;
 }
 
 .ep-h2 {
   margin: 0 0 3mm;
   padding-bottom: 1mm;
   border-bottom: 1px solid var(--ep-orange);
-  font-size: 12pt;
+  font-size: 14pt;
   font-weight: 600;
   color: var(--ep-orange);
   break-after: avoid;
@@ -142,8 +143,8 @@
   flex-wrap: wrap;
   gap: 1mm 6mm;
   margin: 2mm 0 0;
-  font-size: 9pt;
-  color: var(--ep-muted);
+  font-size: 10pt;
+  color: #4a4a48;
 }
 
 .ep-meta strong {
@@ -169,23 +170,24 @@
 }
 
 .ep-kpi {
-  border: 1px solid var(--ep-orange);
+  border: 1.5px solid var(--ep-orange);
+  border-radius: 4mm;
   background: #fff;
-  padding: 3mm 4mm;
+  padding: 4mm 5mm;
   break-inside: avoid;
   min-width: 0;
 }
 
 .ep-kpi-label {
   margin: 0;
-  font-size: 8pt;
+  font-size: 9.5pt;
   font-weight: 500;
   color: var(--ep-amber);
 }
 
 .ep-kpi-value {
   margin: 1mm 0 0;
-  font-size: 18pt;
+  font-size: 22pt;
   font-weight: 700;
   line-height: 1.1;
   color: var(--ep-orange);
@@ -194,13 +196,13 @@
 
 .ep-kpi-note {
   margin: 1mm 0 0;
-  font-size: 7.5pt;
+  font-size: 9pt;
   color: var(--ep-muted);
 }
 
 .ep-kpi-trend {
   margin: 1mm 0 0;
-  font-size: 8pt;
+  font-size: 9.5pt;
   font-weight: 500;
   color: var(--ep-amber);
   display: flex;
@@ -209,14 +211,16 @@
 }
 
 .ep-card {
-  border: 1px solid var(--ep-rule);
-  padding: 3mm 4mm;
-  margin-top: 2.5mm;
+  border: 1.5px solid var(--ep-rule);
+  border-radius: 4mm;
+  padding: 4mm 5mm;
+  margin-top: 3.5mm;
   break-inside: avoid;
   page-break-inside: avoid;
 }
 
 .ep-card--accent {
+  border-width: 1.5px;
   background: var(--ep-cream);
   border-color: var(--ep-orange);
 }
@@ -238,18 +242,19 @@
 .ep-tag {
   display: inline-block;
   border: 1px solid var(--ep-orange);
+  border-radius: 99mm;
   background: var(--ep-cream);
   color: var(--ep-amber);
-  font-size: 7.5pt;
+  font-size: 9pt;
   font-weight: 600;
-  padding: 0 2mm;
+  padding: 0.5mm 3mm;
   white-space: nowrap;
 }
 
 .ep-small {
   margin: 0.5mm 0 0;
-  font-size: 8.5pt;
-  color: var(--ep-muted);
+  font-size: 9.5pt;
+  color: #4a4a48;
   overflow-wrap: anywhere;
 }
 
@@ -301,24 +306,30 @@
 
 .ep-row {
   display: flex;
-  align-items: baseline;
+  align-items: center;
   justify-content: space-between;
   gap: 4mm;
-  padding: 1.5mm 0;
+  padding: 2.5mm 0;
   border-bottom: 1px solid var(--ep-rule);
   break-inside: avoid;
 }
 
-.ep-row:last-child {
+.ep-row:not(.ep-card):last-child {
   border-bottom: 0;
+}
+
+.ep-card.ep-row {
+  padding: 4mm 5mm;
+  border-bottom-width: 1.5px;
 }
 
 .ep-surge {
   display: inline-flex;
   align-items: center;
   gap: 1mm;
-  font-weight: 600;
-  color: var(--ep-amber);
+  font-weight: 700;
+  font-size: 12pt;
+  color: var(--ep-bright);
   white-space: nowrap;
 }
 
