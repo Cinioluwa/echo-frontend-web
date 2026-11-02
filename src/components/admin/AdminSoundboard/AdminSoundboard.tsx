@@ -64,7 +64,7 @@ const AdminSoundboard: React.FC<AdminSoundboardProps> = ({
 
             const [overview, surging, issuesByCategory] = await Promise.all([
                 adminService.getOverview({ months: 1 }),
-                adminService.getSurgingIssues({ hours: 72, limit: 3 }),
+                adminService.getSurgingIssues({ hours: 6, limit: 3 }),
                 // adminService.getPriorityPings({ weeks: 1, limit: 3 }),
                 // adminService.getStallingPings({ staleDays: 7, limit: 5 }),
                 // adminService.getFollowUpQueue({ staleDays: 7 }).catch(() => null),
@@ -75,7 +75,7 @@ const AdminSoundboard: React.FC<AdminSoundboardProps> = ({
             const surges: SurgeItem[] = surging.items.map((item) => ({
                 id: item.pingId.toString(),
                 title: item.title,
-                velocity: `+${item.currentRatePerHour}/hr`,
+                velocity: item.currentRatePerHour,
                 category: item.category?.name || "Uncategorized",
                 onClick: () => {
                     // Navigate to ping details page

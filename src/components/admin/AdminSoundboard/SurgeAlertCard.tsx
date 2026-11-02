@@ -4,7 +4,8 @@ import SurgeIcon from "../../shared/SurgeIcon";
 export interface SurgeItem {
     id: string;
     title: string;
-    velocity: string;
+    /** Surges gained per hour over the recent window */
+    velocity: number;
     category: string;
     onClick?: () => void;
 }
@@ -42,9 +43,14 @@ const SurgeAlertCard: React.FC<SurgeAlertCardProps> = ({
                                     {item.title}
                                 </span>
                                 <span className="flex max-w-full flex-wrap gap-2 sm:ml-3 sm:justify-end">
-                                    <span className="bg-[#F49B31] rounded-[20px] px-2 py-0.5 flex items-center">
+                                    <span
+                                        className="bg-[#F49B31] rounded-[20px] px-2 py-0.5 flex items-center gap-0.5"
+                                        title="Surges gained per hour"
+                                    >
+                                        <span className="text-white font-poppins font-medium text-[11px] leading-[16.5px] whitespace-nowrap">+</span>
+                                        <SurgeIcon width={8} height={11} fill="#FFFFFF" />
                                         <span className="text-white font-poppins font-medium text-[11px] leading-[16.5px] whitespace-nowrap">
-                                            {item.velocity}
+                                            {Number(item.velocity.toFixed(1))}/hr
                                         </span>
                                     </span>
                                     <span className="bg-white border border-[#F49B31] rounded-[20px] px-2 py-0.5 flex items-center">

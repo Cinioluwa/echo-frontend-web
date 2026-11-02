@@ -12,7 +12,6 @@ import {
   ArrowLeft,
   Waves,
   MessageSquare,
-  TrendingUp,
   CornerDownRight,
   ClipboardCheck,
   Megaphone,
@@ -23,6 +22,11 @@ import {
 } from 'lucide-react';
 import { useNotificationStore } from '../stores/ui/useNotificationStore';
 import type { NotificationType } from '../api/types';
+import SurgeIcon from '../components/shared/SurgeIcon';
+
+const SurgeNotificationIcon = ({ className }: { className?: string }) => (
+  <SurgeIcon size={14} fill="currentColor" className={className} />
+);
 
 // ── Icon / label map for each notification type ────────────────────────────
 const TYPE_META: Partial<
@@ -36,12 +40,12 @@ const TYPE_META: Partial<
   WAVE_APPROVED: { icon: CheckCircle2, label: 'Wave approved' },
   WAVE_STATUS_UPDATED: { icon: ClipboardCheck, label: 'Wave status updated' },
   PING_STATUS_UPDATED: { icon: ClipboardCheck, label: 'Ping status updated' },
-  PING_SURGED_MILESTONE: { icon: TrendingUp, label: 'Surge milestone reached' },
+  PING_SURGED_MILESTONE: { icon: SurgeNotificationIcon, label: 'Surge milestone reached' },
 
   // Comments
   NEW_COMMENT_ON_POST: { icon: MessageSquare, label: 'New comment on your post' },
   COMMENT_REPLY: { icon: CornerDownRight, label: 'Reply to your comment' },
-  COMMENT_SURGE: { icon: TrendingUp, label: 'Comment surged' },
+  COMMENT_SURGE: { icon: SurgeNotificationIcon, label: 'Comment surged' },
 
   // Official / Announcements
   OFFICIAL_RESPONSE_POSTED: { icon: Megaphone, label: 'Official response' },

@@ -9,6 +9,8 @@
  *
  */
 
+import SurgeIcon from "./SurgeIcon";
+
 interface SurgeButtonProps {
     count: number;
     surged?: boolean;
@@ -41,23 +43,13 @@ const SurgeButton = ({
         ${className ?? ""}
       `}
         >
-            {/* Lightning bolt icon — 12×16px */}
-            <svg
-                className="shrink-0 w-3 h-4"
-                viewBox="0 0 12 16"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
+            <SurgeIcon
+                width={12}
+                height={16}
+                fill={surged ? "white" : "#4a504e"}
+                className="shrink-0"
                 aria-hidden="true"
-            >
-                <path
-                    d="M7 1L1 9H6L5 15L11 7H6L7 1Z"
-                    fill={surged ? "white" : "#4a504e"}
-                    stroke={surged ? "white" : "#4a504e"}
-                    strokeWidth="1"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                />
-            </svg>
+            />
 
             {/* Count */}
             <span className={`font-semibold text-[14px] leading-normal text-right whitespace-nowrap font-poppins ${surged ? "text-white" : "text-[#4a504e]"}`}>

@@ -15,6 +15,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import WaveStatusIndicator from "../WaveStatusIndicator";
 import UserAvatar from "../UserAvatar";
+import SurgeIcon from "../shared/SurgeIcon";
 import DeleteConfirmationModal from "../DeleteConfirmationModal";
 import type { Wave } from "../../api/types";
 import { categoryImages } from "../CategoryImages";
@@ -239,23 +240,7 @@ const WaveHistoryCard = ({ wave, onDelete }: WaveHistoryCardProps) => {
                 {/* ─── Footer: surge count ──────────────── */}
                 <div className="flex items-center gap-2">
                     <div className="flex items-center gap-1.5 border border-[#626665] rounded-[18px] px-[13px] py-[5px]">
-                        {/* Lightning bolt icon */}
-                        <svg
-                            width="10"
-                            height="14"
-                            viewBox="0 0 10 14"
-                            fill="none"
-                            xmlns="http://www.w3.org/2000/svg"
-                            aria-hidden="true"
-                        >
-                            <path
-                                d="M5.5 1L1 7.5H5L4.5 13L9 6.5H5L5.5 1Z"
-                                fill="#F49B31"
-                                stroke="#F49B31"
-                                strokeWidth="0.8"
-                                strokeLinejoin="round"
-                            />
-                        </svg>
+                        <SurgeIcon width={10} height={13} fill="#F49B31" aria-hidden="true" />
                         <span className="font-['Poppins',sans-serif] font-medium text-[13px] text-black">
                             {surgeCount}
                         </span>

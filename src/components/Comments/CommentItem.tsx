@@ -1,6 +1,7 @@
 import type { Comment } from "../../api/types";
 import { useState } from "react";
 import { Send } from "lucide-react";
+import SurgeIcon from "../shared/SurgeIcon";
 import api from "../../api/axios.config";
 import UserAvatar from "../UserAvatar";
 import { useAuthStore } from "../../stores/auth/useAuthStore";
@@ -340,19 +341,7 @@ const CommentItem = ({ comment, onRefresh: _onRefresh, onDelete, pingId }: Props
                                         }`}
                                     data-node-id="4923:13612"
                                 >
-                                    <svg
-                                        width="7.5"
-                                        height="12"
-                                        viewBox="0 0 8 13"
-                                        fill="none"
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        className="shrink-0"
-                                    >
-                                        <path
-                                            d="M4 1L0.5 7.5H3.5V12L7.5 5.5H4.5L4 1Z"
-                                            fill="currentColor"
-                                        />
-                                    </svg>
+                                    <SurgeIcon width={9} height={12} fill="currentColor" className="shrink-0" />
                                     <span>{localSurgeCount}</span>
                                 </button>
 
@@ -582,19 +571,7 @@ const ReplyItem = ({ reply, onDelete }: ReplyItemProps) => {
                             : "bg-white text-black"
                             }`}
                     >
-                        <svg
-                            width="7.5"
-                            height="12"
-                            viewBox="0 0 8 13"
-                            fill="none"
-                            xmlns="http://www.w3.org/2000/svg"
-                            className="shrink-0"
-                        >
-                            <path
-                                d="M4 1L0.5 7.5H3.5V12L7.5 5.5H4.5L4 1Z"
-                                fill="currentColor"
-                            />
-                        </svg>
+                        <SurgeIcon width={9} height={12} fill="currentColor" className="shrink-0" />
                         <span>{replyLocalSurgeCount}</span>
                     </button>
                 </div>
