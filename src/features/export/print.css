@@ -227,7 +227,7 @@
 
 .ep-card-head {
   display: flex;
-  align-items: baseline;
+  align-items: center;
   justify-content: space-between;
   gap: 4mm;
 }
@@ -239,16 +239,32 @@
   min-width: 0;
 }
 
+/* Matches the "Alternative" pill used on the admin/user wave cards. */
 .ep-tag {
-  display: inline-block;
-  border: 1px solid var(--ep-orange);
+  display: inline-flex;
+  align-items: center;
+  gap: 1.2mm;
+  border: 1.5px solid #626665;
   border-radius: 99mm;
-  background: var(--ep-cream);
-  color: var(--ep-amber);
+  background: #fefefe;
+  color: #000;
   font-size: 9pt;
   font-weight: 600;
   padding: 0.5mm 3mm;
   white-space: nowrap;
+}
+
+.ep-tag-dot {
+  width: 2mm;
+  height: 2mm;
+  border-radius: 50%;
+}
+
+/* The Community Pick badge is a single pre-rendered image, same asset used
+   on the admin/user wave cards, so it stays pixel-identical everywhere. */
+.ep-community-pick-badge {
+  height: 6mm;
+  width: auto;
 }
 
 .ep-small {

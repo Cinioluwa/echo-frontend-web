@@ -7,6 +7,7 @@ import SurgeIcon from "../../components/shared/SurgeIcon";
 import type { Comment, Ping, Wave } from "../../api/types";
 import PrintShell from "./PrintShell";
 import { daysBetween, formatAbsolute, pingFilename } from "./format";
+import waveCommunityPick from "../../assets/badges/wave-community-pick.svg";
 
 const WAVE_STATUS_LABEL: Record<string, string> = {
     POSTED: "Posted",
@@ -171,7 +172,14 @@ const PingPrintPage = () => {
                             waves.map((wave, index) => (
                                 <div className="ep-card" key={wave.id} style={index === 0 ? { marginTop: 0 } : undefined}>
                                     <div className="ep-card-head">
-                                        <span className="ep-tag">{index === 0 ? "Community Pick" : "Alternative"}</span>
+                                        {index === 0 ? (
+                                            <img src={waveCommunityPick} alt="Community Pick" className="ep-community-pick-badge" />
+                                        ) : (
+                                            <span className="ep-tag">
+                                                <img src="/assets/icon/dot-blue.svg" alt="" className="ep-tag-dot" />
+                                                Alternative
+                                            </span>
+                                        )}
                                         <span className="ep-surge">
                                             <SurgeIcon width={9} height={12} fill="#F49B31" />
                                             {wave._count?.surges ?? wave.surgeCount}

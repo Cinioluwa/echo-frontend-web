@@ -2,6 +2,8 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import type { FollowUpItem as FollowUpItemType } from "./types";
 import SurgeIcon from "../../shared/SurgeIcon";
+import BadgeTooltip from "../../BadgeTooltip";
+import { waveCommunityPick, WAVE_BADGE_SIZE_CLASS } from "../../../utils/badgeUtils";
 
 interface FollowUpItemProps {
     item: FollowUpItemType;
@@ -212,23 +214,27 @@ const FollowUpItem: React.FC<FollowUpItemProps> = ({ item }) => {
 
                     {/* Status badge */}
                     {item.status === "acknowledged" ? (
-                    <div className="bg-[#fef5ea] border-[#f49b31] border-[1.5px] border-solid flex items-center justify-center px-[16.5px] py-1.5 rounded-[23px] shrink-0">
-                        <span className="font-poppins font-medium text-[13.5px] leading-normal text-[#f49b31] whitespace-nowrap">Community Pick</span>
-                    </div>
+                        <BadgeTooltip badgeKey="COMMUNITY_PICK">
+                            <img
+                                src={waveCommunityPick}
+                                alt="Community Pick"
+                                className={`${WAVE_BADGE_SIZE_CLASS} w-auto shrink-0 object-contain`}
+                            />
+                        </BadgeTooltip>
                     ) : (
-                    <div
-                        className="bg-[#fefefe] border-[#626665] border-[1.5px] border-solid flex gap-[9px] items-center justify-center px-[16.5px] py-1.5 relative rounded-[23px] shrink-0"
-                        data-node-id="5701:15619"
-                    >
-                        <img
-                            src={statusConfig.dotUrl}
-                            alt=""
-                            className="w-[7.5px] h-[7.5px] rounded-full shrink-0"
-                        />
-                        <span className="font-poppins font-medium text-[13.5px] leading-normal text-black text-right whitespace-nowrap capitalize">
-                            {statusConfig.label}
-                        </span>
-                    </div>
+                        <div
+                            className="bg-[#fefefe] border-[#626665] border-[1.5px] border-solid flex gap-[9px] items-center justify-center px-[16.5px] py-1.5 relative rounded-[23px] shrink-0"
+                            data-node-id="5701:15619"
+                        >
+                            <img
+                                src={statusConfig.dotUrl}
+                                alt=""
+                                className="w-[7.5px] h-[7.5px] rounded-full shrink-0"
+                            />
+                            <span className="font-poppins font-medium text-[13.5px] leading-normal text-black text-right whitespace-nowrap capitalize">
+                                {statusConfig.label}
+                            </span>
+                        </div>
                     )}
                 </div>
 

@@ -75,6 +75,9 @@ export interface AdminWave {
   viewCount: number;
   flaggedForReview: boolean;
   createdAt: string;
+  isAnonymous?: boolean;
+  anonymousAlias?: string | null;
+  anonymousProfilePicture?: string | null;
   author: {
     id: number;
     email?: string;

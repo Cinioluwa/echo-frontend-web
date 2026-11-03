@@ -58,9 +58,6 @@ const FollowUp: React.FC<FollowUpProps> = ({ mode = "admin" }) => {
     fetchWaves();
   }, [fetchWaves]);
 
-  const avatarFor = (author?: { firstName?: string; lastName?: string; profilePicture?: string | null } | null) =>
-    resolveAvatarUrl({ author });
-
   const pingAvatarFor = (ping: AdminWave["ping"]) =>
     resolveAvatarUrl({
       author: ping.author,
@@ -98,8 +95,16 @@ const FollowUp: React.FC<FollowUpProps> = ({ mode = "admin" }) => {
     title: wave.ping?.title || wave.solution,
     category: wave.ping?.category?.name || "",
     author: {
-      name: wave.author ? `${wave.author.firstName} ${wave.author.lastName}` : "Anonymous",
-      avatar: avatarFor(wave.author),
+      name: wave.isAnonymous
+        ? wave.anonymousAlias || "Anonymous"
+        : wave.author
+          ? `${wave.author.firstName} ${wave.author.lastName}`
+          : wave.anonymousAlias || "Anonymous",
+      avatar: resolveAvatarUrl({
+        author: wave.author,
+        isAnonymous: wave.isAnonymous,
+        anonymousProfilePicture: wave.anonymousProfilePicture,
+      }),
       timestamp: formatTimeAgo(wave.createdAt),
     },
     description: wave.solution,
