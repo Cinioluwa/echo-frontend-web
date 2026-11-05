@@ -71,7 +71,7 @@ const MobileSideDrawer = ({ isOpen, onClose }: Props) => {
 
           {/* Panel — pushes in from the left */}
           <motion.aside
-            className="md:hidden fixed left-0 top-0 bottom-0 z-50 flex w-[min(88vw,360px)] flex-col overflow-y-auto bg-[var(--echo-surface-soft)] [scrollbar-width:none] shadow-2xl"
+            className="md:hidden fixed left-0 top-0 bottom-0 z-50 flex w-[min(88vw,360px)] flex-col overflow-y-auto bg-[#FEF5EA] [scrollbar-width:none] shadow-2xl"
             role="dialog"
             aria-modal="true"
             aria-label="Navigation menu"
@@ -80,14 +80,14 @@ const MobileSideDrawer = ({ isOpen, onClose }: Props) => {
             exit={{ x: "-100%" }}
             transition={{ type: "tween", ease: [0.22, 0.61, 0.36, 1], duration: 0.28 }}
           >
-            <div className="sticky top-0 z-10 flex items-center justify-between border-b border-[var(--echo-border-f4e3c9)] bg-[var(--echo-surface-soft)] px-5 py-4">
+            <div className="sticky top-0 z-10 flex items-center justify-between border-b border-[#F4E3C9] bg-[#FEF5EA] px-5 py-4">
               <div className="flex items-center gap-2">
                 <img
                   src="/assets/images/Echo Logo_black.svg"
                   alt=""
                   className="h-6 w-[22px] brightness-0 contrast-200"
                 />
-                <span className="font-['Poppins',sans-serif] text-xl font-bold leading-none text-[var(--echo-text-primary)]">
+                <span className="font-['Poppins',sans-serif] text-xl font-bold leading-none text-black">
                   Echo
                 </span>
               </div>
@@ -95,7 +95,7 @@ const MobileSideDrawer = ({ isOpen, onClose }: Props) => {
                 type="button"
                 onClick={onClose}
                 aria-label="Close menu"
-                className="flex h-10 w-10 items-center justify-center rounded-full bg-[var(--echo-surface)] text-[var(--echo-text-4a3728)] shadow-sm transition-colors hover:bg-[var(--echo-page)]"
+                className="flex h-10 w-10 items-center justify-center rounded-full bg-white text-[#4A3728] shadow-sm transition-colors hover:bg-[#fae9d4]"
               >
                 <X size={20} />
               </button>

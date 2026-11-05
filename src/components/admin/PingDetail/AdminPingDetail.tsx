@@ -45,44 +45,44 @@ interface BadgeConfig {
 const badgeConfigs: Record<AdminBadgeType, BadgeConfig> = {
     SURGING_NOW: {
         label: "Surging now",
-        bgColor: "var(--echo-bg-ffd7d7)",
-        textColor: "var(--echo-text-b01212)",
-        icon: <SurgeIcon width={9} height={12} fill="var(--echo-text-b01212)" />
+        bgColor: "#ffd7d7",
+        textColor: "#b01212",
+        icon: <SurgeIcon width={9} height={12} fill="#B01212" />
     },
     RISING_QUICKLY: {
         label: "Rising quickly",
-        bgColor: "var(--echo-bg-ffd6a5)",
-        textColor: "var(--echo-text-a3651e)",
+        bgColor: "#ffd6a5",
+        textColor: "#a3651e",
         icon: <TrendingUp className="w-3.5 h-3.5" />
     },
     LONG_OVERDUE: {
         label: "Long overdue",
-        bgColor: "var(--echo-bg-f7c8b2)",
-        textColor: "var(--echo-text-b04712)",
+        bgColor: "#f7c8b2",
+        textColor: "#b04712",
         icon: <img src="/assets/icon/time-alert.svg" alt="Clock alert Icon" className="w-3 h-3" />
     },
     HIGH_DISCUSSION: {
         label: "High discussion",
-        bgColor: "var(--echo-bg-ead9ff)",
-        textColor: "var(--echo-text-531ea3)",
+        bgColor: "#ead9ff",
+        textColor: "#531ea3",
         icon: <MessageSquare className="w-3.5 h-3.5" />
     },
     WIDESPREAD: {
         label: "Widespread",
-        bgColor: "var(--echo-bg-b5d0ff)",
-        textColor: "var(--echo-text-0035ac)",
+        bgColor: "#b5d0ff",
+        textColor: "#0035ac",
         icon: <Radio className="w-3.5 h-3.5" />
     },
     NEEDS_ATTENTION: {
         label: "Needs Attention",
-        bgColor: "var(--echo-bg-cacaca)",
-        textColor: "var(--echo-text-454545)",
+        bgColor: "#cacaca",
+        textColor: "#454545",
         icon: <img src="/assets/icon/alert.svg" alt="Alert Icon" className="w-3 h-3" />
     },
     SOLUTION_READY: {
         label: "Solution Ready",
-        bgColor: "var(--echo-bg-b2ffcc)",
-        textColor: "var(--echo-text-067647)",
+        bgColor: "#b2ffcc",
+        textColor: "#067647",
         icon: <CheckCircle2 className="w-3.5 h-3.5" />
     }
 };
@@ -350,7 +350,7 @@ const AdminPingDetail: React.FC<AdminPingDetailProps> = ({ pingId: propPingId, m
     if (loading) {
         return (
             <div className="flex h-[400px] items-center justify-center">
-                <div className="h-12 w-12 animate-spin rounded-full border-4 border-[var(--echo-border-f49b31)] border-t-transparent" />
+                <div className="h-12 w-12 animate-spin rounded-full border-4 border-[#f49b31] border-t-transparent" />
             </div>
         );
     }
@@ -387,14 +387,14 @@ const AdminPingDetail: React.FC<AdminPingDetailProps> = ({ pingId: propPingId, m
 
     return (
         <div className="flex w-full min-w-0 flex-col items-start gap-5 px-3 py-6 sm:px-5">
-            <h1 className="font-poppins text-[28px] font-semibold leading-[30.8px] tracking-[-0.5px] text-[var(--echo-text-primary)]">
+            <h1 className="font-poppins text-[28px] font-semibold leading-[30.8px] tracking-[-0.5px] text-black">
                 Ping Details
             </h1>
 
             {notice && (
-                <div className="flex w-full items-center justify-between rounded-[10px] border border-[var(--echo-border-f49b31)] bg-[var(--echo-surface-soft)] px-4 py-2 font-poppins text-[13px] font-medium text-[var(--echo-text-primary)]">
+                <div className="flex w-full items-center justify-between rounded-[10px] border border-[#f49b31] bg-[#fef5ea] px-4 py-2 font-poppins text-[13px] font-medium text-[#171717]">
                     <span>{notice}</span>
-                    <button onClick={() => setNotice(null)} className="ml-3 text-[var(--echo-text-f49b31)]">Dismiss</button>
+                    <button onClick={() => setNotice(null)} className="ml-3 text-[#f49b31]">Dismiss</button>
                 </div>
             )}
 
@@ -403,17 +403,17 @@ const AdminPingDetail: React.FC<AdminPingDetailProps> = ({ pingId: propPingId, m
                     <div className="flex w-full items-center justify-between">
                         <button
                             onClick={handleGoBack}
-                            className="flex items-center gap-2 rounded-[20px] bg-[var(--echo-surface)] px-[15px] py-[10px] transition-colors hover:bg-[var(--echo-surface-soft)]"
+                            className="flex items-center gap-2 rounded-[20px] bg-[#fefefe] px-[15px] py-[10px] transition-colors hover:bg-[#fef5ea]"
                         >
                             <img src="/assets/icon/back-arrow.svg" alt="" className="size-5" />
-                            <span className="font-poppins text-[13px] font-semibold text-[var(--echo-text-primary)]">Go back</span>
+                            <span className="font-poppins text-[13px] font-semibold text-black">Go back</span>
                         </button>
                         {mode === "admin" && canExport && (
                             <motion.button
                                 onClick={startExport}
                                 disabled={exporting}
                                 aria-busy={exporting}
-                                className="flex items-center gap-2 rounded-lg border border-[var(--echo-border-f49b31)] bg-[var(--echo-surface-soft)] px-[15px] py-[9px] text-[var(--echo-text-f49b31)] transition-colors hover:bg-[var(--echo-accent)] hover:text-[var(--echo-text-on-accent)] disabled:cursor-wait disabled:opacity-60"
+                                className="flex items-center gap-2 rounded-lg border border-[#f49b31] bg-[#fef5ea] px-[15px] py-[9px] text-[#f49b31] transition-colors hover:bg-[#f49b31] hover:text-white disabled:cursor-wait disabled:opacity-60"
                                 whileHover="hover"
                             >
                                 {exporting ? (
@@ -426,7 +426,7 @@ const AdminPingDetail: React.FC<AdminPingDetailProps> = ({ pingId: propPingId, m
                         )}
                     </div>
 
-                    <div className="flex flex-col gap-[18px] rounded-[10px] bg-[var(--echo-surface)] px-5 py-[15px]">
+                    <div className="flex flex-col gap-[18px] rounded-[10px] bg-[#fefefe] px-5 py-[15px]">
                         <div className="flex min-w-0 items-center gap-2 sm:gap-4 max-[500px]:gap-1">
                             <img
                                 src={detail.author.avatar}
@@ -434,8 +434,8 @@ const AdminPingDetail: React.FC<AdminPingDetailProps> = ({ pingId: propPingId, m
                                 className="size-10 shrink-0 rounded-full object-cover sm:size-[53px] max-[500px]:size-8"
                             />
                             <div className="flex min-w-0 flex-1 flex-col items-start">
-                                <p className="max-w-full truncate whitespace-nowrap font-poppins text-[13px] font-semibold text-[var(--echo-text-primary)] sm:text-[15px] max-[500px]:text-[11px]">{detail.author.name}</p>
-                                <p className="whitespace-nowrap font-poppins text-[9px] font-medium text-[var(--echo-text-secondary)] sm:text-[13px] max-[500px]:text-[8px]">{detail.author.timestamp}</p>
+                                <p className="max-w-full truncate whitespace-nowrap font-poppins text-[13px] font-semibold text-black sm:text-[15px] max-[500px]:text-[11px]">{detail.author.name}</p>
+                                <p className="whitespace-nowrap font-poppins text-[9px] font-medium text-[#8b8e8d] sm:text-[13px] max-[500px]:text-[8px]">{detail.author.timestamp}</p>
                             </div>
                             <div className="flex max-w-[44%] shrink-0 flex-nowrap items-center justify-end gap-1">
                                 {detail.badges?.map((badgeKey: string) => {
@@ -457,11 +457,11 @@ const AdminPingDetail: React.FC<AdminPingDetailProps> = ({ pingId: propPingId, m
 
                         <div className="flex items-center gap-2">
                             {categoryIcon && <img src={categoryIcon} alt="" className="size-5 object-contain" />}
-                            <p className="font-poppins text-[15px] font-medium text-[var(--echo-text-primary)]">{categoryName}</p>
+                            <p className="font-poppins text-[15px] font-medium text-[#171717]">{categoryName}</p>
                         </div>
 
-                        <h2 className="font-poppins text-[16px] font-semibold text-[var(--echo-text-primary)]">{detail.title}</h2>
-                        <p className="text-justify font-poppins text-[15px] font-medium text-[var(--echo-text-secondary)]">{detail.content}</p>
+                        <h2 className="font-poppins text-[16px] font-semibold text-black">{detail.title}</h2>
+                        <p className="text-justify font-poppins text-[15px] font-medium text-[#626665]">{detail.content}</p>
 
                         {detail.mediaUrl && (
                             <div className="aspect-[4096/2548] w-full overflow-hidden rounded-[10px] bg-black">
@@ -473,13 +473,13 @@ const AdminPingDetail: React.FC<AdminPingDetailProps> = ({ pingId: propPingId, m
                     {detail.officialResponse ? (
                         <OfficialResponseCard response={detail.officialResponse} />
                     ) : canPostResponse ? (
-                        <div className="flex flex-col gap-[10px] rounded-[15px] bg-[var(--echo-surface)] p-[10px]">
-                            <div className="flex items-center gap-2.5 rounded-t-[15px] border-b border-[var(--echo-border-f49b31)] bg-[var(--echo-sidebar)] px-4 py-3">
+                        <div className="flex flex-col gap-[10px] rounded-[15px] bg-white p-[10px]">
+                            <div className="flex items-center gap-2.5 rounded-t-[15px] border-b border-[#F49B31] bg-[#FFC37B] px-4 py-3">
                                 <img src="/assets/icon/official-response.svg" className="h-5 w-5" alt="" />
-                                <h3 className="font-poppins text-[18px] font-semibold text-[var(--echo-text-primary)]">Official Response</h3>
+                                <h3 className="font-poppins text-[18px] font-semibold text-black">Official Response</h3>
                             </div>
                                 <div
-                                    className={`flex w-full gap-2 rounded-[20px] border-2 border-[var(--echo-border-ffc37b)] bg-[var(--echo-surface)] p-[5px] ${
+                                    className={`flex w-full gap-2 rounded-[20px] border-2 border-[#ffc37b] bg-[#fefefe] p-[5px] ${
                                         responseFocused ? "flex-col" : "h-[50px] items-center pl-5"
                                     }`}
                                 >
@@ -489,14 +489,14 @@ const AdminPingDetail: React.FC<AdminPingDetailProps> = ({ pingId: propPingId, m
                                         onFocus={() => setResponseFocused(true)}
                                         onClick={() => setResponseFocused(true)}
                                         placeholder="Post an update visible to all students"
-                                        className="min-w-0 flex-1 bg-transparent font-poppins text-[14px] font-medium text-[var(--echo-text-primary)] outline-none placeholder:text-[var(--echo-text-secondary)]"
+                                        className="min-w-0 flex-1 bg-transparent font-poppins text-[14px] font-medium text-black outline-none placeholder:text-[#9e9e9e]"
                                     />
                                     {responseFocused && (
                                         <div className="flex justify-end">
                                             <button
                                                 onClick={handlePostResponse}
                                                 disabled={postingResponse || !responseText.trim()}
-                                                className="flex shrink-0 items-center gap-1 rounded-[20px] border border-black bg-[var(--echo-surface-soft)] px-[10px] py-[3px] font-['Baloo_Bhai_2',sans-serif] text-[14px] font-bold uppercase text-[var(--echo-text-primary)] disabled:opacity-50"
+                                                className="flex shrink-0 items-center gap-1 rounded-[20px] border border-black bg-[#fef5ea] px-[10px] py-[3px] font-['Baloo_Bhai_2',sans-serif] text-[14px] font-bold uppercase text-black disabled:opacity-50"
                                             >
                                                 <Send className="size-[22px]" />
                                                 {postingResponse ? "..." : "Post response"}
@@ -508,7 +508,7 @@ const AdminPingDetail: React.FC<AdminPingDetailProps> = ({ pingId: propPingId, m
                     ) : null}
 
                     <div className="flex w-full flex-col gap-5 sm:flex-row">
-                        <KPICard icon={<SurgeIcon width={11} height={15} fill="var(--echo-text-f49b31)" />} label="Surge count" value={detail.surgeCount} />
+                        <KPICard icon={<SurgeIcon width={11} height={15} fill="#F49B31" />} label="Surge count" value={detail.surgeCount} />
                         <KPICard label="Unresolved for" value={detail.unresolvedFor} />
                     </div>
 
@@ -530,10 +530,10 @@ const AdminPingDetail: React.FC<AdminPingDetailProps> = ({ pingId: propPingId, m
                         <button
                             onClick={handleAcknowledge}
                             disabled={acknowledging || isAcknowledged}
-                            className={`flex h-[39px] w-full items-center justify-center gap-2 rounded-[20px] font-['Baloo_Bhai_2',sans-serif] text-[14px] font-bold uppercase text-[var(--echo-text-on-accent)] disabled:cursor-not-allowed ${
+                            className={`flex h-[39px] w-full items-center justify-center gap-2 rounded-[20px] font-['Baloo_Bhai_2',sans-serif] text-[14px] font-bold uppercase text-white disabled:cursor-not-allowed ${
                                 isAcknowledged
-                                    ? "bg-[var(--echo-bg-8b8e8d)]"
-                                    : "bg-[var(--echo-accent)] hover:bg-[var(--echo-bg-e68a1f)] disabled:opacity-50"
+                                    ? "bg-[#8b8e8d]"
+                                    : "bg-[#f49b31] hover:bg-[#e68a1f] disabled:opacity-50"
                             }`}
                         >
                             <img src="/assets/icon/followup-acknowledged.svg" alt="" className="size-5 brightness-0 invert" />
@@ -543,7 +543,7 @@ const AdminPingDetail: React.FC<AdminPingDetailProps> = ({ pingId: propPingId, m
                     {permissions.canAssign && (
                         <button
                             onClick={() => setIsAssignModalOpen(true)}
-                            className="flex h-[39px] w-full items-center justify-center gap-2 rounded-[20px] border border-[var(--echo-border-f49b31)] bg-[var(--echo-surface-soft)] font-['Baloo_Bhai_2',sans-serif] text-[14px] font-bold uppercase text-[var(--echo-text-f49b31)] hover:bg-[var(--echo-bg-fdebd2)]"
+                            className="flex h-[39px] w-full items-center justify-center gap-2 rounded-[20px] border border-[#f49b31] bg-[#fef5ea] font-['Baloo_Bhai_2',sans-serif] text-[14px] font-bold uppercase text-[#f49b31] hover:bg-[#fdebd2]"
                         >
                             Assign Ping
                         </button>
@@ -552,7 +552,7 @@ const AdminPingDetail: React.FC<AdminPingDetailProps> = ({ pingId: propPingId, m
                         <button
                             onClick={handleUrgeResolve}
                             disabled={urging}
-                            className="flex h-[39px] w-full items-center justify-center gap-2 rounded-[20px] border border-[var(--echo-border-f49b31)] bg-[var(--echo-surface-soft)] font-['Baloo_Bhai_2',sans-serif] text-[14px] font-bold uppercase text-[var(--echo-text-f49b31)] hover:bg-[var(--echo-bg-fdebd2)] disabled:opacity-50"
+                            className="flex h-[39px] w-full items-center justify-center gap-2 rounded-[20px] border border-[#f49b31] bg-[#fef5ea] font-['Baloo_Bhai_2',sans-serif] text-[14px] font-bold uppercase text-[#f49b31] hover:bg-[#fdebd2] disabled:opacity-50"
                         >
                             {urging ? "..." : "Urge author to resolve"}
                         </button>

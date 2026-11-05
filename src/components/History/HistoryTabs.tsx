@@ -5,8 +5,8 @@
  *
  * Tab picker below the History banner.
  * 4 tabs: Pings | Waves | Comments | Surged
- * - Active: bg-[var(--echo-accent)] filled background, white text
- * - Inactive: bg-[var(--echo-sidebar)] with border, dark text
+ * - Active: bg-[#F49B31] filled background, white text
+ * - Inactive: bg-[#FFC37B] with border, dark text
  * - Desktop: text-[20px], px-[20px] py-[5px], gap-[15px], p-[5px]
  * - Mobile: text-[9px], px-2.5 py-[5px], gap-[10px]
  * Tab selection updates URL param: /history/pings, /history/waves, etc.
@@ -49,8 +49,8 @@ const HistoryTabs = ({ activeTab }: HistoryTabsProps) => {
                             "px-5 py-[5px]",
                             /* Mobile sizing overrides applied via responsive wrapper in parent */
                             isActive
-                                ? "bg-[var(--echo-accent)]"
-                                : "bg-[var(--echo-sidebar)] border border-[var(--echo-border-7b7b79)]",
+                                ? "bg-[#F49B31]"
+                                : "bg-[#FFC37B] border border-[#7B7B79]",
                         ].join(" ")}
                         aria-current={isActive ? "page" : undefined}
                     >
@@ -59,7 +59,7 @@ const HistoryTabs = ({ activeTab }: HistoryTabsProps) => {
                                 "font-['Poppins',sans-serif] font-semibold leading-normal whitespace-nowrap",
                                 /* Desktop text size */
                                 "text-[20px]",
-                                isActive ? "text-[var(--echo-text-on-accent)]" : "text-[var(--echo-text-414141)]",
+                                isActive ? "text-white" : "text-[#414141]",
                             ].join(" ")}
                         >
                             {tab.label}
@@ -91,8 +91,8 @@ export const HistoryTabsMobile = ({ activeTab }: HistoryTabsProps) => {
                             "flex items-center justify-center rounded-[18px] cursor-pointer transition-colors",
                             "px-2 py-[5px]",
                             isActive
-                                ? "bg-[var(--echo-accent)]"
-                                : "bg-[var(--echo-sidebar)] border-[0.5px] border-[var(--echo-border-7b7b79)]",
+                                ? "bg-[#F49B31]"
+                                : "bg-[#FFC37B] border-[0.5px] border-[#7B7B79]",
                         ].join(" ")}
                         aria-current={isActive ? "page" : undefined}
                     >
@@ -100,7 +100,7 @@ export const HistoryTabsMobile = ({ activeTab }: HistoryTabsProps) => {
                             className={[
                                 "font-['Poppins',sans-serif] font-semibold leading-normal whitespace-nowrap",
                                 "text-[9px]",
-                                isActive ? "text-[var(--echo-text-on-accent)]" : "text-[var(--echo-text-414141)]",
+                                isActive ? "text-white" : "text-[#414141]",
                             ].join(" ")}
                         >
                             {tab.label}

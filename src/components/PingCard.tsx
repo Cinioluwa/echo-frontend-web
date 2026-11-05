@@ -124,7 +124,7 @@ const PingCard = ({
     if (isLoading) return null;
 
     return (
-        <div className="bg-[var(--echo-surface)] rounded-[10px] px-3 sm:px-5 py-3 sm:py-[15px] flex flex-col gap-[15px] w-full">
+        <div className="bg-[#fefefe] rounded-[10px] px-3 sm:px-5 py-3 sm:py-[15px] flex flex-col gap-[15px] w-full">
             {/* Author row + badge */}
             <div className="flex items-center justify-between gap-1.5 sm:gap-2">
                 <div className="flex items-center gap-2 sm:gap-2.5 min-w-0 flex-1">
@@ -142,16 +142,16 @@ const PingCard = ({
                                   ? useAuthStore.getState().user?.profilePicture
                                   : undefined
                         }
-                        bgColor="bg-[var(--echo-sidebar)]"
+                        bgColor="bg-[#ffc37b]"
                     />
                     <div className="flex flex-col min-w-0">
                         <span
-                            className="font-['Poppins',sans-serif] font-semibold text-[14px] text-[var(--echo-text-primary)] truncate whitespace-nowrap max-w-[95px] xs:max-w-[140px] sm:max-w-none"
+                            className="font-['Poppins',sans-serif] font-semibold text-[14px] text-black truncate whitespace-nowrap max-w-[95px] xs:max-w-[140px] sm:max-w-none"
                         >
                             {authorName}
                         </span>
                         {!guestMode && (
-                            <span className="font-['Poppins',sans-serif] font-medium text-[8px] text-[var(--echo-text-primary)] whitespace-nowrap">
+                            <span className="font-['Poppins',sans-serif] font-medium text-[8px] text-black whitespace-nowrap">
                                 {formatTimeAgo(ping.createdAt)}
                             </span>
                         )}
@@ -193,14 +193,14 @@ const PingCard = ({
                             className="w-3 h-3 object-contain"
                         />
                     )}
-                    <span className="font-['Poppins',sans-serif] font-medium  text-[13px] text-[var(--echo-text-primary)]">
+                    <span className="font-['Poppins',sans-serif] font-medium  text-[13px] text-black">
                         {categoryName}
                     </span>
                 </div>
             )}
 
             {/* Title */}
-            <h1 className="font-['Poppins',sans-serif] font-semibold text-[20px] text-[var(--echo-text-primary)]">
+            <h1 className="font-['Poppins',sans-serif] font-semibold text-[20px] text-black">
                 {ping.title}
                 {ping.isEdited && <EditedLabel />}
             </h1>
@@ -227,7 +227,7 @@ const PingCard = ({
                             value={editInput}
                             onChange={(e) => setEditInput(e.target.value)}
                             disabled={isSavingEdit}
-                            className="w-full text-[14px] font-['Poppins',sans-serif] font-medium p-3 border border-gray-300 rounded-md focus:outline-none focus:border-[var(--echo-border-f49b31)] resize-y min-h-[100px]"
+                            className="w-full text-[14px] font-['Poppins',sans-serif] font-medium p-3 border border-gray-300 rounded-md focus:outline-none focus:border-[#f49b31] resize-y min-h-[100px]"
                             autoFocus
                         />
                         {actionError && <p className="text-red-500 text-sm">{actionError}</p>}
@@ -248,7 +248,7 @@ const PingCard = ({
                                     type="button"
                                     onClick={handleSaveEdit}
                                     disabled={isSavingEdit || !editInput.trim()}
-                                    className="text-[12px] px-3 py-1.5 bg-[var(--echo-accent)] text-[var(--echo-text-on-accent)] rounded-md disabled:opacity-50"
+                                    className="text-[12px] px-3 py-1.5 bg-[#f49b31] text-white rounded-md disabled:opacity-50"
                                 >
                                     {isSavingEdit ? "Saving..." : "Save"}
                                 </button>
@@ -256,7 +256,7 @@ const PingCard = ({
                         </div>
                     </div>
                 ) : (
-                    <p className="font-['Poppins',sans-serif] font-medium  text-[14px] text-[var(--echo-text-secondary)] text-justify leading-relaxed whitespace-pre-wrap">
+                    <p className="font-['Poppins',sans-serif] font-medium  text-[14px] text-[#626665] text-justify leading-relaxed whitespace-pre-wrap">
                         {ping.content}
                     </p>
                 )
@@ -271,14 +271,14 @@ const PingCard = ({
                     disabled={isToggling}
                     aria-label={hasSurged ? "Remove surge" : "Surge"}
                     className={`flex items-center gap-[5px] px-2.5 md:px-3 py-1 md:py-[5px] rounded-[15px] border border-black cursor-pointer transition-colors disabled:opacity-50 ${hasSurged
-                        ? "bg-[var(--echo-accent)] text-[var(--echo-text-on-accent)]"
-                        : "bg-[var(--echo-surface-soft)] text-[var(--echo-text-4a504e)]"
+                        ? "bg-[#f49b31] text-white"
+                        : "bg-[#fef5ea] text-[#4A504E]"
                         }`}
                 >
                     <SurgeIcon
                         width={12}
                         height={16}
-                        fill={hasSurged ? "var(--echo-text-ffffff)" : "var(--echo-text-f49b31)"}
+                        fill={hasSurged ? "#FFFFFF" : "#F49B31"}
                     />
                     <span className="font-['Poppins',sans-serif] font-semibold text-[13px] md:text-[14px] leading-normal">
                         {displayedSurgeCount}
@@ -293,7 +293,7 @@ const PingCard = ({
                             className="h-[24px] w-[24px] md:h-[30px] md:w-[30px]"
                             alt="waveIcon"
                         />
-                        <span className="font-['Inter',sans-serif] font-medium text-[12px] md:text-[14px] text-[var(--echo-text-63637b)] leading-5 whitespace-nowrap">
+                        <span className="font-['Inter',sans-serif] font-medium text-[12px] md:text-[14px] text-[#63637B] leading-5 whitespace-nowrap">
                             {waveCount} <span className="md:hidden">Waves</span><span className="hidden md:inline">Waves Proposed</span>
                         </span>
                     </div>
@@ -302,14 +302,14 @@ const PingCard = ({
                     <button
                         type="button"
                         onClick={onCommentClick}
-                        className="flex min-h-11 items-center gap-1.5 rounded-full px-2 hover:text-[var(--echo-text-f49b31)] active:bg-[var(--echo-surface-soft)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--echo-border-f49b31)] transition-colors cursor-pointer"
+                        className="flex min-h-11 items-center gap-1.5 rounded-full px-2 hover:text-[#F49B31] active:bg-[#FEF5EA] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#F49B31] transition-colors cursor-pointer"
                     >
                         <img
                             src={commentIcon}
                             className="h-[16px] w-[16px] md:h-[18px] md:w-[18px]"
                             alt="commentIcon"
                         />
-                        <span className="font-['Inter',sans-serif] font-medium text-[12px] md:text-[14px] text-[var(--echo-text-63637b)] leading-5 whitespace-nowrap">
+                        <span className="font-['Inter',sans-serif] font-medium text-[12px] md:text-[14px] text-[#63637B] leading-5 whitespace-nowrap">
                             {commentCount} Comments
                         </span>
                     </button>

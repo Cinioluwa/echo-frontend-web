@@ -37,9 +37,9 @@ const AuthButton: React.FC<AuthButtonProps> = React.memo(({
     const baseClasses = "px-[20px] py-[12px] sm:px-[35px] sm:py-[14px] md:px-[50px] md:py-[15px] rounded-lg font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed text-[13px] sm:text-sm min-h-[44px] sm:min-h-[50px] active:scale-[0.98] hover:shadow-md";
 
     const variantClasses = {
-        primary: "bg-[var(--echo-accent)] text-[var(--echo-text-on-accent)] hover:bg-[var(--echo-bg-e08a2a)] focus:ring-[var(--echo-border-f49b31)]",
+        primary: "bg-[#f49b31] text-white hover:bg-[#e08a2a] focus:ring-[#f49b31]",
         secondary: "bg-gray-200 text-gray-900 hover:bg-gray-300 focus:ring-gray-500",
-        outline: "border-2 border-[var(--echo-border-f49b31)] text-[var(--echo-text-f49b31)] hover:bg-[var(--echo-surface-soft)] focus:ring-[var(--echo-border-f49b31)]",
+        outline: "border-2 border-[#f49b31] text-[#f49b31] hover:bg-[#fef5ea] focus:ring-[#f49b31]",
     };
 
     const widthClass = fullWidth ? "w-full" : "";

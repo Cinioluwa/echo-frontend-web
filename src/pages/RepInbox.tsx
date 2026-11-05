@@ -32,18 +32,18 @@ const RepInbox = () => {
 
   return (
     <div className="flex flex-col gap-[15px] pb-10 w-full max-w-[720px] mx-auto">
-      <h1 className="font-['Poppins',sans-serif] text-[24px] font-semibold text-[var(--echo-text-primary)]">Inbox</h1>
+      <h1 className="font-['Poppins',sans-serif] text-[24px] font-semibold text-black">Inbox</h1>
 
       {error && (
-        <div role="alert" className="rounded-2xl border border-red-200 bg-[var(--echo-surface)] p-5 text-sm text-red-800">
+        <div role="alert" className="rounded-2xl border border-red-200 bg-white p-5 text-sm text-red-800">
           {error}
         </div>
       )}
 
       {loading && pings.length === 0 ? (
-        <div className="py-16 text-center text-sm text-[var(--echo-text-4a504e)]">Loading…</div>
+        <div className="py-16 text-center text-sm text-[#4A504E]">Loading…</div>
       ) : !error && pings.length === 0 ? (
-        <div className="py-16 text-center text-sm text-[var(--echo-text-4a504e)]">
+        <div className="py-16 text-center text-sm text-[#4A504E]">
           No pings have been assigned to you yet.
         </div>
       ) : (
@@ -60,7 +60,7 @@ const RepInbox = () => {
             <button
               onClick={() => void load(page + 1)}
               disabled={loading}
-              className="mx-auto mt-2 px-6 py-2 bg-[var(--echo-surface-soft)] border border-[var(--echo-border-f49b31)] rounded-[15px] text-[var(--echo-text-f49b31)] font-semibold text-[14px] hover:bg-[var(--echo-page)] transition-colors disabled:opacity-50"
+              className="mx-auto mt-2 px-6 py-2 bg-[#FEF5EA] border border-[#F49B31] rounded-[15px] text-[#F49B31] font-semibold text-[14px] hover:bg-[#FAE9D4] transition-colors disabled:opacity-50"
             >
               {loading ? "Loading…" : "Load more"}
             </button>

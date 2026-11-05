@@ -126,7 +126,7 @@ const ImageCarousel: React.FC<ImageCarouselProps> = ({ images, altText = "Image"
                             <button 
                                 type="button"
                                 onClick={prev}
-                                className="absolute left-2.5 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-black/50 text-[var(--echo-text-on-accent)] flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-black/70 z-10 cursor-pointer shadow-sm"
+                                className="absolute left-2.5 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-black/50 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-black/70 z-10 cursor-pointer shadow-sm"
                                 aria-label="Previous image"
                             >
                                 <FaChevronLeft className="w-3.5 h-3.5 pr-[1px]" />
@@ -136,7 +136,7 @@ const ImageCarousel: React.FC<ImageCarouselProps> = ({ images, altText = "Image"
                             <button 
                                 type="button"
                                 onClick={next}
-                                className="absolute right-2.5 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-black/50 text-[var(--echo-text-on-accent)] flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-black/70 z-10 cursor-pointer shadow-sm"
+                                className="absolute right-2.5 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-black/50 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-black/70 z-10 cursor-pointer shadow-sm"
                                 aria-label="Next image"
                             >
                                 <FaChevronRight className="w-3.5 h-3.5 pl-[1px]" />
@@ -150,7 +150,7 @@ const ImageCarousel: React.FC<ImageCarouselProps> = ({ images, altText = "Image"
                                     type="button"
                                     onClick={(e) => { e.stopPropagation(); scrollToIndex(i); }}
                                     className={`w-1.5 h-1.5 rounded-full transition-all cursor-pointer ${
-                                        i === activeIndex ? "bg-[var(--echo-surface)] scale-125" : "bg-[var(--echo-surface)]/60"
+                                        i === activeIndex ? "bg-white scale-125" : "bg-white/60"
                                     }`}
                                     aria-label={`Go to image ${i + 1}`}
                                 />

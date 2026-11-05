@@ -233,13 +233,13 @@ const SignUp: React.FC = () => {
           {/* Title */}
           <div className="flex flex-col gap-2.5 items-center text-center w-full">
             <h1
-              className="text-[22px] sm:text-[26px] md:text-[28px] leading-7 sm:leading-8 md:leading-9 text-[var(--echo-text-primary)]"
+              className="text-[22px] sm:text-[26px] md:text-[28px] leading-7 sm:leading-8 md:leading-9 text-black"
               style={{ fontFamily: "Poppins, sans-serif", fontWeight: 600 }}
             >
               Create your Echo account
             </h1>
             <p
-              className="text-[14px] sm:text-base leading-5 sm:leading-[21px] text-[var(--echo-text-4a504e)] opacity-[0.69]"
+              className="text-[14px] sm:text-base leading-5 sm:leading-[21px] text-[#4a504e] opacity-[0.69]"
               style={{ fontFamily: "Poppins, sans-serif", fontWeight: 500 }}
             >
               Create waves, rally support and drive change on campus.
@@ -325,42 +325,42 @@ const SignUp: React.FC = () => {
 
             {/* Password Requirements */}
             {formData.password && (
-              <div className="w-full bg-[var(--echo-surface-soft)] border border-[var(--echo-border-ffcd71)] rounded-xl px-3 sm:px-[15px] py-2.5 sm:py-3">
+              <div className="w-full bg-[#fef5ea] border border-[#ffcd71] rounded-xl px-3 sm:px-[15px] py-2.5 sm:py-3">
                 <p
-                  className="text-[10px] sm:text-[11px] font-medium text-[var(--echo-text-4a504e)] mb-1.5 sm:mb-2"
+                  className="text-[10px] sm:text-[11px] font-medium text-[#4a504e] mb-1.5 sm:mb-2"
                   style={{ fontFamily: 'Poppins, sans-serif' }}
                 >
                   Password must contain:
                 </p>
                 <ul className="space-y-1">
                   <li className="flex items-center gap-2">
-                    <span className={`text-[10px] ${passwordStrength.length ? 'text-green-600' : 'text-[var(--echo-text-secondary)]'}`}>
+                    <span className={`text-[10px] ${passwordStrength.length ? 'text-green-600' : 'text-[#838383]'}`}>
                       {passwordStrength.length ? '✓' : '○'}
                     </span>
                     <span
-                      className={`text-[10px] ${passwordStrength.length ? 'text-green-600 font-medium' : 'text-[var(--echo-text-secondary)]'}`}
+                      className={`text-[10px] ${passwordStrength.length ? 'text-green-600 font-medium' : 'text-[#838383]'}`}
                       style={{ fontFamily: 'Poppins, sans-serif' }}
                     >
                       At least 8 characters
                     </span>
                   </li>
                   <li className="flex items-center gap-2">
-                    <span className={`text-[10px] ${passwordStrength.hasNumber ? 'text-green-600' : 'text-[var(--echo-text-secondary)]'}`}>
+                    <span className={`text-[10px] ${passwordStrength.hasNumber ? 'text-green-600' : 'text-[#838383]'}`}>
                       {passwordStrength.hasNumber ? '✓' : '○'}
                     </span>
                     <span
-                      className={`text-[10px] ${passwordStrength.hasNumber ? 'text-green-600 font-medium' : 'text-[var(--echo-text-secondary)]'}`}
+                      className={`text-[10px] ${passwordStrength.hasNumber ? 'text-green-600 font-medium' : 'text-[#838383]'}`}
                       style={{ fontFamily: 'Poppins, sans-serif' }}
                     >
                       At least one number
                     </span>
                   </li>
                   <li className="flex items-center gap-2">
-                    <span className={`text-[10px] ${passwordStrength.hasSpecial ? 'text-green-600' : 'text-[var(--echo-text-secondary)]'}`}>
+                    <span className={`text-[10px] ${passwordStrength.hasSpecial ? 'text-green-600' : 'text-[#838383]'}`}>
                       {passwordStrength.hasSpecial ? '✓' : '○'}
                     </span>
                     <span
-                      className={`text-[10px] ${passwordStrength.hasSpecial ? 'text-green-600 font-medium' : 'text-[var(--echo-text-secondary)]'}`}
+                      className={`text-[10px] ${passwordStrength.hasSpecial ? 'text-green-600 font-medium' : 'text-[#838383]'}`}
                       style={{ fontFamily: 'Poppins, sans-serif' }}
                     >
                       At least one special character
@@ -381,9 +381,9 @@ const SignUp: React.FC = () => {
 
           {/* Login Link */}
           <div className="text-center">
-            <p className="text-[12px] sm:text-[13px] text-[var(--echo-text-secondary)]" style={{ fontFamily: 'Poppins, sans-serif' }}>
+            <p className="text-[12px] sm:text-[13px] text-[#838383]" style={{ fontFamily: 'Poppins, sans-serif' }}>
               Already have an account?{' '}
-              <Link to={loginLink} className="text-[var(--echo-text-f49b31)] font-medium hover:underline">
+              <Link to={loginLink} className="text-[#f49b31] font-medium hover:underline">
                 Log in
               </Link>
             </p>

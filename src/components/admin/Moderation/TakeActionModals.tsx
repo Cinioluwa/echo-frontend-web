@@ -24,12 +24,12 @@ const ActionConfirmModal: React.FC<BaseModalProps> = ({
 
     return (
         <div className="flex font-poppins justify-center items-center z-50 inset-0 fixed bg-black/40">
-            <div className="bg-[var(--echo-surface)] flex flex-col gap-4 items-start justify-center overflow-hidden px-[15px] py-5 rounded-[20px] w-[330px] md:p-6 md:rounded-[30px] md:w-[477px]">
+            <div className="bg-white flex flex-col gap-4 items-start justify-center overflow-hidden px-[15px] py-5 rounded-[20px] w-[330px] md:p-6 md:rounded-[30px] md:w-[477px]">
                 <div className="flex flex-col gap-2.5 md:gap-[15px] items-start w-full">
-                    <p className="font-semibold leading-[1.46] text-[var(--echo-text-primary)] text-center w-full text-[20px] md:text-[26px]">
+                    <p className="font-semibold leading-[1.46] text-[#282828] text-center w-full text-[20px] md:text-[26px]">
                         {title}
                     </p>
-                    <p className="font-poppins text-[var(--echo-text-primary)] text-center w-full text-[13px] leading-normal md:text-[16px] md:leading-[26px]">
+                    <p className="font-poppins text-[#282828] text-center w-full text-[13px] leading-normal md:text-[16px] md:leading-[26px]">
                         {description}
                     </p>
                 </div>
@@ -40,9 +40,9 @@ const ActionConfirmModal: React.FC<BaseModalProps> = ({
                         id="deletePost"
                         checked={deletePost}
                         onChange={(e) => setDeletePost(e.target.checked)}
-                        className="w-4 h-4 rounded border-gray-300 text-[var(--echo-text-f49b31)] focus:ring-[var(--echo-border-f49b31)]"
+                        className="w-4 h-4 rounded border-gray-300 text-[#f49b31] focus:ring-[#f49b31]"
                     />
-                    <label htmlFor="deletePost" className="text-[13px] md:text-[15px] font-medium text-[var(--echo-text-primary)]">
+                    <label htmlFor="deletePost" className="text-[13px] md:text-[15px] font-medium text-black">
                         Delete post
                     </label>
                 </div>
@@ -51,14 +51,14 @@ const ActionConfirmModal: React.FC<BaseModalProps> = ({
                     <button
                         onClick={() => onConfirm(deletePost)}
                         disabled={isLoading}
-                        className="bg-[var(--echo-bg-b01212)] flex gap-2 items-center justify-center rounded-lg w-full text-[var(--echo-text-on-accent)] font-medium tracking-[-0.2px] px-5 py-2 text-[12px] leading-7 md:px-7 md:py-3 md:text-[16px] hover:bg-[var(--echo-bg-8e0f0f)] transition-colors duration-200 disabled:opacity-60"
+                        className="bg-[#b01212] flex gap-2 items-center justify-center rounded-lg w-full text-white font-medium tracking-[-0.2px] px-5 py-2 text-[12px] leading-7 md:px-7 md:py-3 md:text-[16px] hover:bg-[#8e0f0f] transition-colors duration-200 disabled:opacity-60"
                     >
                         {isLoading ? "Loading..." : confirmText}
                     </button>
                     <button
                         onClick={onCancel}
                         disabled={isLoading}
-                        className="flex items-center justify-center rounded-lg w-full font-medium tracking-[-0.2px] underline text-[12px] leading-7 text-[var(--echo-text-primary)] md:text-[16px] hover:opacity-70 transition-opacity duration-200"
+                        className="flex items-center justify-center rounded-lg w-full font-medium tracking-[-0.2px] underline text-[12px] leading-7 text-black md:text-[16px] hover:opacity-70 transition-opacity duration-200"
                     >
                         Cancel
                     </button>
@@ -86,29 +86,29 @@ export const SuspendDurationModal: React.FC<SuspendDurationModalProps> = ({
 
     return (
         <div className="flex font-poppins justify-center items-center z-50 inset-0 fixed bg-black/40">
-            <div className="bg-[var(--echo-surface)] flex flex-col gap-4 items-start justify-center overflow-hidden px-[15px] py-5 rounded-[20px] w-[330px] md:p-6 md:rounded-[30px] md:w-[477px]">
+            <div className="bg-white flex flex-col gap-4 items-start justify-center overflow-hidden px-[15px] py-5 rounded-[20px] w-[330px] md:p-6 md:rounded-[30px] md:w-[477px]">
                 <div className="flex flex-col gap-2.5 md:gap-[15px] items-start w-full">
-                    <p className="font-semibold leading-[1.46] text-[var(--echo-text-primary)] text-center w-full text-[20px] md:text-[26px]">
+                    <p className="font-semibold leading-[1.46] text-[#282828] text-center w-full text-[20px] md:text-[26px]">
                         For how long?
                     </p>
-                    <p className="font-poppins text-[var(--echo-text-primary)] text-center w-full text-[13px] leading-normal md:text-[16px] md:leading-[26px]">
+                    <p className="font-poppins text-[#282828] text-center w-full text-[13px] leading-normal md:text-[16px] md:leading-[26px]">
                         Select the duration for the account suspension.
                     </p>
                 </div>
 
                 <select
-                    className="flex flex-col gap-2 w-full mt-2 border rounded-lg p-5 bg-[var(--echo-surface-soft)] border-[var(--echo-border-f49b31)]"
+                    className="flex flex-col gap-2 w-full mt-2 border rounded-lg p-5 bg-[#FEF5EA] border-[#f49b31]"
                     value={duration}
                     onChange={(e) => setDuration(e.target.value as SuspendDuration)}
                 >
                     <option className="flex items-center gap-2 cursor-pointer" value="1_DAY">
-                        <span className="text-[14px] md:text-[16px] font-medium text-[var(--echo-text-primary)]">24 Hours</span>
+                        <span className="text-[14px] md:text-[16px] font-medium text-[#282828]">24 Hours</span>
                     </option>
                     <option className="flex items-center gap-2 cursor-pointer" value="1_WEEK">
-                        <span className="text-[14px] md:text-[16px] font-medium text-[var(--echo-text-primary)]">1 Week</span>
+                        <span className="text-[14px] md:text-[16px] font-medium text-[#282828]">1 Week</span>
                     </option>
                     <option className="flex items-center gap-2 cursor-pointer" value="1_MONTH">
-                        <span className="text-[14px] md:text-[16px] font-medium text-[var(--echo-text-primary)]">1 Month</span>
+                        <span className="text-[14px] md:text-[16px] font-medium text-[#282828]">1 Month</span>
                     </option>
                 </select>
 
@@ -119,9 +119,9 @@ export const SuspendDurationModal: React.FC<SuspendDurationModalProps> = ({
                         id="deletePostDuration"
                         checked={deletePost}
                         onChange={(e) => setDeletePost(e.target.checked)}
-                        className="w-4 h-4 rounded border-gray-300 text-[var(--echo-text-f49b31)] focus:ring-[var(--echo-border-f49b31)]"
+                        className="w-4 h-4 rounded border-gray-300 text-[#f49b31] focus:ring-[#f49b31]"
                     />
-                    <label htmlFor="deletePostDuration" className="text-[13px] md:text-[15px] font-medium text-[var(--echo-text-primary)]">
+                    <label htmlFor="deletePostDuration" className="text-[13px] md:text-[15px] font-medium text-black">
                         Delete post
                     </label>
                 </div>
@@ -130,14 +130,14 @@ export const SuspendDurationModal: React.FC<SuspendDurationModalProps> = ({
                     <button
                         onClick={() => onConfirm(duration, deletePost)}
                         disabled={isLoading}
-                        className="bg-[var(--echo-accent)] flex gap-2 items-center justify-center rounded-lg w-full text-[var(--echo-text-on-accent)] font-medium tracking-[-0.2px] px-5 py-2 text-[12px] leading-7 md:px-7 md:py-3 md:text-[16px] hover:bg-[var(--echo-bg-e68a1f)] transition-colors duration-200 disabled:opacity-60"
+                        className="bg-[#f49b31] flex gap-2 items-center justify-center rounded-lg w-full text-white font-medium tracking-[-0.2px] px-5 py-2 text-[12px] leading-7 md:px-7 md:py-3 md:text-[16px] hover:bg-[#e68a1f] transition-colors duration-200 disabled:opacity-60"
                     >
                         {isLoading ? "Loading..." : "Confirm"}
                     </button>
                     <button
                         onClick={onCancel}
                         disabled={isLoading}
-                        className="flex items-center justify-center rounded-lg w-full font-medium tracking-[-0.2px] underline text-[12px] leading-7 text-[var(--echo-text-primary)] md:text-[16px] hover:opacity-70 transition-opacity duration-200"
+                        className="flex items-center justify-center rounded-lg w-full font-medium tracking-[-0.2px] underline text-[12px] leading-7 text-black md:text-[16px] hover:opacity-70 transition-opacity duration-200"
                     >
                         Cancel
                     </button>

@@ -96,24 +96,24 @@ const Notifications = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[var(--echo-surface)] rounded-[20px] border border-black/15 pb-12">
+    <div className="min-h-screen bg-white rounded-[20px] border border-black/15 pb-12">
       <div className="max-w-2xl mx-auto px-4 py-6">
         {/* ── Page header ─────────────────────────────────────── */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
           <div className="flex items-center gap-2.5 min-w-0">
             <button
               onClick={() => navigate(-1)}
-              className="p-2 -ml-2 rounded-full hover:bg-black/5 transition-colors cursor-pointer text-[var(--echo-text-primary)] shrink-0"
+              className="p-2 -ml-2 rounded-full hover:bg-black/5 transition-colors cursor-pointer text-[#060B13] shrink-0"
               aria-label="Go back"
             >
               <ArrowLeft className="w-5 h-5" />
             </button>
             <div className="flex items-center gap-2 min-w-0">
-              <h1 className="text-xl sm:text-2xl font-bold text-[var(--echo-text-primary)] font-['Poppins',sans-serif] tracking-tight whitespace-nowrap shrink-0">
+              <h1 className="text-xl sm:text-2xl font-bold text-[#060B13] font-['Poppins',sans-serif] tracking-tight whitespace-nowrap shrink-0">
                 Notifications
               </h1>
               {unreadCount > 0 && (
-                <span className="shrink-0 bg-[var(--echo-sidebar)]/40 text-[var(--echo-text-e8911a)] text-xs font-semibold px-2.5 py-0.5 rounded-full font-['Inter',sans-serif] whitespace-nowrap">
+                <span className="shrink-0 bg-[#FFC37B]/40 text-[#E8911A] text-xs font-semibold px-2.5 py-0.5 rounded-full font-['Inter',sans-serif] whitespace-nowrap">
                   {unreadCount} unread
                 </span>
               )}
@@ -123,7 +123,7 @@ const Notifications = () => {
           {unreadCount > 0 && (
             <button
               onClick={() => void markAllAsRead()}
-              className="self-end sm:self-auto shrink-0 flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-[var(--echo-text-f49b31)] border border-[var(--echo-border-f49b31)] hover:bg-[var(--echo-accent)] hover:text-[var(--echo-text-on-accent)] rounded-full px-3.5 py-1.5 transition-all cursor-pointer font-['Inter',sans-serif] whitespace-nowrap"
+              className="self-end sm:self-auto shrink-0 flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-[#F49B31] border border-[#F49B31] hover:bg-[#F49B31] hover:text-white rounded-full px-3.5 py-1.5 transition-all cursor-pointer font-['Inter',sans-serif] whitespace-nowrap"
             >
               <CheckCheck className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
               Mark all read
@@ -138,27 +138,27 @@ const Notifications = () => {
               {[...Array(5)].map((_, i) => (
                 <div
                   key={i}
-                  className="flex items-start gap-3.5 p-4 bg-[var(--echo-bg-fbfbfa)] rounded-[20px] border border-black/5 animate-pulse"
+                  className="flex items-start gap-3.5 p-4 bg-[#FBFBFA] rounded-[20px] border border-black/5 animate-pulse"
                 >
-                  <div className="w-10 h-10 rounded-full bg-[var(--echo-bg-faeeda)] shrink-0" />
+                  <div className="w-10 h-10 rounded-full bg-[#FAEEDA] shrink-0" />
                   <div className="flex-1 space-y-2">
-                    <div className="h-3.5 bg-[var(--echo-bg-faeeda)] rounded w-2/3" />
-                    <div className="h-3 bg-[var(--echo-bg-faeeda)]/70 rounded w-full" />
-                    <div className="h-2.5 bg-[var(--echo-bg-faeeda)]/50 rounded w-1/4" />
+                    <div className="h-3.5 bg-[#FAEEDA] rounded w-2/3" />
+                    <div className="h-3 bg-[#FAEEDA]/70 rounded w-full" />
+                    <div className="h-2.5 bg-[#FAEEDA]/50 rounded w-1/4" />
                   </div>
                 </div>
               ))}
             </div>
           ) : notifications.length === 0 ? (
             /* Empty state */
-            <div className="flex flex-col items-center justify-center py-16 px-6 bg-[var(--echo-bg-fdfdfd)] rounded-[16px] border border-dashed border-black/10 text-center">
-              <div className="w-14 h-14 rounded-full bg-[var(--echo-page)] text-[var(--echo-text-f49b31)] flex items-center justify-center mb-4">
+            <div className="flex flex-col items-center justify-center py-16 px-6 bg-[#FDFDFD] rounded-[16px] border border-dashed border-black/10 text-center">
+              <div className="w-14 h-14 rounded-full bg-[#FAE9D4] text-[#F49B31] flex items-center justify-center mb-4">
                 <Bell className="w-7 h-7" />
               </div>
-              <p className="text-[var(--echo-text-primary)] font-bold text-lg font-['Poppins',sans-serif]">
+              <p className="text-[#060B13] font-bold text-lg font-['Poppins',sans-serif]">
                 All caught up!
               </p>
-              <p className="text-[var(--echo-text-737373)] text-sm max-w-sm mt-1 font-['Inter',sans-serif] leading-relaxed">
+              <p className="text-[#737373] text-sm max-w-sm mt-1 font-['Inter',sans-serif] leading-relaxed">
                 When someone interacts with your pings, waves, or comments, you'll see it here.
               </p>
             </div>
@@ -178,16 +178,16 @@ const Notifications = () => {
                     onClick={() => void handleItemClick(n.id, n.url)}
                     className={`w-full text-left flex items-start gap-3.5 p-4 rounded-[20px] border transition-all cursor-pointer shadow-xs ${
                       n.isRead
-                        ? 'bg-[var(--echo-bg-fbfbfa)] border-black/5 hover:border-black/15 hover:shadow-xs'
-                        : 'bg-[var(--echo-bg-fff9f2)] border-[var(--echo-border-f49b31)]/30 hover:border-[var(--echo-border-f49b31)]/60 hover:shadow-xs'
+                        ? 'bg-[#FBFBFA] border-black/5 hover:border-black/15 hover:shadow-xs'
+                        : 'bg-[#FFF9F2] border-[#F49B31]/30 hover:border-[#F49B31]/60 hover:shadow-xs'
                     }`}
                   >
                     {/* Icon avatar */}
                     <div
                       className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 mt-0.5 ${
                         n.isRead
-                          ? 'bg-[var(--echo-bg-f0eeeb)] text-[var(--echo-text-737373)]'
-                          : 'bg-[var(--echo-page)] text-[var(--echo-text-f49b31)]'
+                          ? 'bg-[#F0EEEB] text-[#737373]'
+                          : 'bg-[#FAE9D4] text-[#F49B31]'
                       }`}
                     >
                       <IconComponent className="w-5 h-5" />
@@ -197,17 +197,17 @@ const Notifications = () => {
                     <div className="flex-1 min-w-0 font-['Inter',sans-serif]">
                       <p
                         className={`text-[14px] leading-snug font-['Poppins',sans-serif] ${
-                          n.isRead ? 'font-normal text-[var(--echo-text-555555)]' : 'font-bold text-[var(--echo-text-primary)]'
+                          n.isRead ? 'font-normal text-[#555555]' : 'font-bold text-[#060B13]'
                         }`}
                       >
                         {displayTitle}
                       </p>
                       <p className={`text-[13px] mt-1 leading-relaxed line-clamp-2 ${
-                        n.isRead ? 'text-[var(--echo-text-777777)]' : 'text-[var(--echo-text-444444)]'
+                        n.isRead ? 'text-[#777777]' : 'text-[#444444]'
                       }`}>
                         {n.body}
                       </p>
-                      <p className="text-[11px] text-[var(--echo-text-secondary)] mt-1.5 font-medium">
+                      <p className="text-[11px] text-[#999999] mt-1.5 font-medium">
                         {formatTime(n.createdAt)}
                       </p>
                     </div>
@@ -215,7 +215,7 @@ const Notifications = () => {
                     {/* Unread indicator */}
                     {!n.isRead && (
                       <span
-                        className="w-2.5 h-2.5 rounded-full bg-[var(--echo-accent)] mt-2 shrink-0 animate-pulse"
+                        className="w-2.5 h-2.5 rounded-full bg-[#F49B31] mt-2 shrink-0 animate-pulse"
                       />
                     )}
                   </button>

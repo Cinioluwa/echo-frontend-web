@@ -65,28 +65,28 @@ const CommentCard = ({ comment }: { comment: CommentWithReplies }) => {
     const replyCount = comment.replies?.length ?? 0;
 
     return (
-        <div className="bg-[var(--echo-surface)] border border-[var(--echo-border-f49b31)] rounded-xl p-[7px] w-full">
+        <div className="bg-white border border-[#f49b31] rounded-xl p-[7px] w-full">
             <div className="flex gap-[5px] items-start">
                 <div className="shrink-0 size-[23px]">
                     <UserAvatar
                         user={!comment.isAnonymous && typeof comment.author === "object" ? comment.author : null}
                         size="sm"
-                        bgColor="bg-[var(--echo-accent)]"
+                        bgColor="bg-[#f49b31]"
                         pictureUrl={avatarUrl}
                     />
                 </div>
 
                 <div className="flex flex-col gap-[5px] items-start flex-1 min-w-0">
                     <div className="flex flex-col gap-0.5">
-                        <p className="text-[11px] font-['Poppins',sans-serif] font-semibold text-[var(--echo-text-primary)] leading-none">
+                        <p className="text-[11px] font-['Poppins',sans-serif] font-semibold text-black leading-none">
                             {authorName}
                         </p>
-                        <p className="text-[10px] font-['Poppins',sans-serif] font-medium text-[var(--echo-text-454545)] leading-none">
+                        <p className="text-[10px] font-['Poppins',sans-serif] font-medium text-[#454545] leading-none">
                             {formatTimestamp(comment.createdAt)}
                         </p>
                     </div>
 
-                    <p className="text-[12px] font-['Poppins',sans-serif] font-normal text-[var(--echo-text-primary)] leading-normal wrap-break-word w-full">
+                    <p className="text-[12px] font-['Poppins',sans-serif] font-normal text-black leading-normal wrap-break-word w-full">
                         {comment.content}
                     </p>
 
@@ -95,7 +95,7 @@ const CommentCard = ({ comment }: { comment: CommentWithReplies }) => {
                             <button
                                 type="button"
                                 onClick={() => setShowReplies(!showReplies)}
-                                className="flex items-center gap-[2.5px] px-[7.5px] py-[5.25px] rounded-[13.5px] border-[0.75px] border-black bg-[var(--echo-surface)] text-[var(--echo-text-primary)] cursor-pointer text-[11px] font-['Baloo_Bhai_2',sans-serif] font-bold uppercase leading-none transition-all duration-200"
+                                className="flex items-center gap-[2.5px] px-[7.5px] py-[5.25px] rounded-[13.5px] border-[0.75px] border-black bg-white text-black cursor-pointer text-[11px] font-['Baloo_Bhai_2',sans-serif] font-bold uppercase leading-none transition-all duration-200"
                             >
                                 <MessageCircle size={12} />
                                 <span>{replyCount}</span>
@@ -121,27 +121,27 @@ const ReplyCard = ({ reply }: { reply: Comment }) => {
     const avatarUrl = getAvatarUrl(reply);
 
     return (
-        <div className="bg-[var(--echo-surface)] rounded-xl p-1.5 w-full flex gap-[5px] items-start">
+        <div className="bg-white rounded-xl p-1.5 w-full flex gap-[5px] items-start">
             <div className="shrink-0 size-[23px]">
                 <UserAvatar
                     user={!reply.isAnonymous && typeof reply.author === "object" ? reply.author : null}
                     size="sm"
-                    bgColor="bg-[var(--echo-accent)]"
+                    bgColor="bg-[#f49b31]"
                     pictureUrl={avatarUrl}
                 />
             </div>
 
             <div className="flex-1 flex flex-col gap-[5px] items-start min-w-0">
                 <div className="flex flex-col gap-0.5 w-full">
-                    <p className="text-[11px] font-['Poppins',sans-serif] font-semibold text-[var(--echo-text-primary)] leading-none">
+                    <p className="text-[11px] font-['Poppins',sans-serif] font-semibold text-black leading-none">
                         {authorName}
                     </p>
-                    <p className="text-[10px] font-['Poppins',sans-serif] font-medium text-[var(--echo-text-454545)] leading-none">
+                    <p className="text-[10px] font-['Poppins',sans-serif] font-medium text-[#454545] leading-none">
                         {formatTimestamp(reply.createdAt)}
                     </p>
                 </div>
 
-                <p className="text-[12px] font-['Poppins',sans-serif] font-normal text-[var(--echo-text-primary)] leading-normal wrap-break-word w-full">
+                <p className="text-[12px] font-['Poppins',sans-serif] font-normal text-black leading-normal wrap-break-word w-full">
                     {reply.content}
                 </p>
 
@@ -176,25 +176,25 @@ const AdminCommentsPanel: React.FC<AdminCommentsPanelProps> = ({ comments }) => 
     const visible = commentsWithReplies.slice(0, 2);
 
     return (
-        <div className="flex flex-col overflow-hidden rounded-[24px] bg-[var(--echo-sidebar)] md:rounded-[28px]">
-            <h3 className="bg-[var(--echo-accent)] px-[14px] py-4 font-poppins text-lg font-semibold text-[var(--echo-text-on-accent)]">
+        <div className="flex flex-col overflow-hidden rounded-[24px] bg-[#ffc37b] md:rounded-[28px]">
+            <h3 className="bg-[#f49b31] px-[14px] py-4 font-poppins text-lg font-semibold text-white">
                 Comments
-                <span className="ms-2 inline-flex h-6 min-w-6 items-center justify-center rounded-full bg-[var(--echo-surface)] px-1.5 text-[13px] font-semibold leading-none tabular-nums text-[var(--echo-text-f49b31)]">
+                <span className="ms-2 inline-flex h-6 min-w-6 items-center justify-center rounded-full bg-white px-1.5 text-[13px] font-semibold leading-none tabular-nums text-[#f49b31]">
                     {commentsWithReplies.length}
                 </span>
             </h3>
             <div className="flex flex-col gap-2 px-3 pt-3 pb-3">
                 {visible.length === 0 ? (
-                    <p className="py-4 text-center text-[13px] text-[var(--echo-text-on-accent)]">No comments yet</p>
+                    <p className="py-4 text-center text-[13px] text-white">No comments yet</p>
                 ) : (
                     visible.map((comment) => <CommentCard key={comment.id} comment={comment} />)
                 )}
             </div>
             {commentsWithReplies.length > 2 && (
-                <div className="flex justify-center bg-[var(--echo-accent)] p-3">
+                <div className="flex justify-center bg-[#f49b31] p-3">
                     <button
                         onClick={() => setOpen(true)}
-                        className="rounded-[20px] border border-[var(--echo-border-ffcd84)] bg-[var(--echo-surface)] px-4 py-2 font-poppins text-[13px] font-semibold text-[var(--echo-text-f49b31)]"
+                        className="rounded-[20px] border border-[#ffcd84] bg-white px-4 py-2 font-poppins text-[13px] font-semibold text-[#f49b31]"
                     >
                         View all {commentsWithReplies.length} Comments →
                     </button>
@@ -205,18 +205,18 @@ const AdminCommentsPanel: React.FC<AdminCommentsPanelProps> = ({ comments }) => 
                 createPortal(
                     <div className="fixed inset-0 z-[100] flex items-end justify-center md:items-center">
                         <div className="absolute inset-0 bg-black/50" onClick={() => setOpen(false)} />
-                        <div className="relative flex max-h-[85vh] w-full flex-col overflow-hidden rounded-t-[24px] bg-[var(--echo-sidebar)] md:max-h-[80vh] md:max-w-[520px] md:rounded-[20px]">
-                            <div className="flex items-center justify-between bg-[var(--echo-accent)] px-[14px] py-4">
-                                <h3 className="font-poppins text-lg font-semibold text-[var(--echo-text-on-accent)]">
+                        <div className="relative flex max-h-[85vh] w-full flex-col overflow-hidden rounded-t-[24px] bg-[#ffc37b] md:max-h-[80vh] md:max-w-[520px] md:rounded-[20px]">
+                            <div className="flex items-center justify-between bg-[#f49b31] px-[14px] py-4">
+                                <h3 className="font-poppins text-lg font-semibold text-white">
                                     Comments
-                                    <span className="ms-2 inline-flex h-6 min-w-6 items-center justify-center rounded-full bg-[var(--echo-surface)] px-1.5 text-[13px] font-semibold leading-none tabular-nums text-[var(--echo-text-f49b31)]">
+                                    <span className="ms-2 inline-flex h-6 min-w-6 items-center justify-center rounded-full bg-white px-1.5 text-[13px] font-semibold leading-none tabular-nums text-[#f49b31]">
                                         {commentsWithReplies.length}
                                     </span>
                                 </h3>
                                 <button
                                     onClick={() => setOpen(false)}
                                     aria-label="Close comments"
-                                    className="rounded-full p-1 text-[var(--echo-text-on-accent)] hover:bg-[var(--echo-surface)]/20"
+                                    className="rounded-full p-1 text-white hover:bg-white/20"
                                 >
                                     <X size={20} />
                                 </button>

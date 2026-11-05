@@ -30,7 +30,7 @@ const PostEngagementMenu = ({
     comment: false,
   });
   const menuPanelClass =
-    "absolute right-0 p-2 bottom-14 z-50 w-[186px] md:w-56 rounded-xl bg-[var(--echo-surface)] shadow-md border border-gray-100 overflow-hidden";
+    "absolute right-0 p-2 bottom-14 z-50 w-[186px] md:w-56 rounded-xl bg-white shadow-md border border-gray-100 overflow-hidden";
   const menuItemClass =
     "w-full rounded-[6px] flex items-center gap-2.5 px-3 py-2 text-left text-[13px] leading-[1.2] text-gray-700 hover:bg-gray-100 transition disabled:opacity-50 disabled:cursor-not-allowed";
 
@@ -139,7 +139,7 @@ const PostEngagementMenu = ({
           disabled={loading}
           className={menuItemClass}
         >
-          <SurgeIcon width={14} height={17} fill="var(--echo-text-primary)" />
+          <SurgeIcon width={14} height={17} fill="#000000" />
           Surge
         </button>
 
@@ -161,7 +161,7 @@ const PostEngagementMenu = ({
             className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center"
           />
           <div className="fixed inset-0 z-50 flex items-center justify-center">
-            <div className="bg-[var(--echo-surface)] rounded-lg shadow-lg p-6 w-full max-w-md">
+            <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-md">
               <h2 className="text-xl font-bold mb-4">Propose a Wave (Solution)</h2>
               <form onSubmit={handleWaveSubmit}>
                 <textarea
@@ -189,7 +189,7 @@ const PostEngagementMenu = ({
                   <button
                     type="submit"
                     disabled={loading}
-                    className="flex-1 px-4 py-2 bg-orange-500 text-[var(--echo-text-on-accent)] rounded hover:bg-orange-600 disabled:opacity-50"
+                    className="flex-1 px-4 py-2 bg-orange-500 text-white rounded hover:bg-orange-600 disabled:opacity-50"
                   >
                     {loading ? "Posting..." : "Post Wave"}
                   </button>
@@ -208,7 +208,7 @@ const PostEngagementMenu = ({
             className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center"
           />
           <div className="fixed inset-0 z-50 flex items-center justify-center">
-            <div className="bg-[var(--echo-surface)] rounded-lg shadow-lg p-6 w-full max-w-md">
+            <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-md">
               <h2 className="text-xl font-bold mb-4">Add a Comment</h2>
               <form onSubmit={handleCommentSubmit}>
                 <textarea
@@ -236,7 +236,7 @@ const PostEngagementMenu = ({
                   <button
                     type="submit"
                     disabled={loading}
-                    className="flex-1 px-4 py-2 bg-orange-500 text-[var(--echo-text-on-accent)] rounded hover:bg-orange-600 disabled:opacity-50"
+                    className="flex-1 px-4 py-2 bg-orange-500 text-white rounded hover:bg-orange-600 disabled:opacity-50"
                   >
                     {loading ? "Posting..." : "Post Comment"}
                   </button>

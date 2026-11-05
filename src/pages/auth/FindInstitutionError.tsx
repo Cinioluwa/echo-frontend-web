@@ -51,10 +51,10 @@ const FindInstitutionError: React.FC<FindInstitutionErrorProps> = () => {
             <AuthCard className="max-w-[537px]">
                 {/* Header */}
                 <div className="flex flex-col gap-2.5 items-center text-center w-full">
-                    <h1 className="text-[22px] sm:text-[26px] md:text-[28px] font-semibold text-[var(--echo-text-primary)] leading-7 sm:leading-8 md:leading-9">
+                    <h1 className="text-[22px] sm:text-[26px] md:text-[28px] font-semibold text-black leading-7 sm:leading-8 md:leading-9">
                         Find your Institution
                     </h1>
-                    <p className="text-[14px] sm:text-[15px] md:text-[16px] font-medium text-[var(--echo-text-4a504e)] opacity-69 leading-5 sm:leading-[21px]">
+                    <p className="text-[14px] sm:text-[15px] md:text-[16px] font-medium text-[#4a504e] opacity-69 leading-5 sm:leading-[21px]">
                         Search for your institution to join the discussion
                     </p>
                 </div>
@@ -66,15 +66,15 @@ const FindInstitutionError: React.FC<FindInstitutionErrorProps> = () => {
 
                     {/* Institution Info (if available) */}
                     {selectedOrg && (
-                        <div className="w-full bg-[var(--echo-bg-fbfbfb)] border border-[var(--echo-border-cacaca)] rounded-xl px-5 sm:px-[25px] md:px-[30px] py-3 sm:py-[15px]">
-                            <div className="text-[13px] sm:text-[14px] font-medium text-[var(--echo-text-secondary)]">
+                        <div className="w-full bg-[#fbfbfb] border border-[#cacaca] rounded-xl px-5 sm:px-[25px] md:px-[30px] py-3 sm:py-[15px]">
+                            <div className="text-[13px] sm:text-[14px] font-medium text-[#626665]">
                                 {selectedOrg.name}
                             </div>
-                            <div className="text-[11px] sm:text-[12px] text-[var(--echo-text-secondary)] mt-1">
+                            <div className="text-[11px] sm:text-[12px] text-[#999] mt-1">
                                 Expected: @{selectedOrg.domain}
                             </div>
                             {userEmail && (
-                                <div className="text-[11px] sm:text-[12px] text-[var(--echo-text-secondary)] mt-1">
+                                <div className="text-[11px] sm:text-[12px] text-[#999] mt-1">
                                     Your email: {userEmail}
                                 </div>
                             )}
@@ -95,7 +95,7 @@ const FindInstitutionError: React.FC<FindInstitutionErrorProps> = () => {
                                     },
                                 })
                             }
-                            className="text-[12px] sm:text-[13px] font-medium text-[var(--echo-text-f49b31)] hover:underline"
+                            className="text-[12px] sm:text-[13px] font-medium text-[#f49b31] hover:underline"
                         >
                             Can't find Institution?{" "}
                             <span className="font-semibold">Make Request</span>

@@ -247,14 +247,14 @@ const CommentItem = ({ comment, onRefresh: _onRefresh, onDelete, pingId }: Props
 
     return (
         <>
-            <div className="bg-[var(--echo-surface)] border border-[var(--echo-border-f49b31)] rounded-xl p-[7px] w-full overflow-visible" data-node-id="4925:13685">
+            <div className="bg-white border border-[#f49b31] rounded-xl p-[7px] w-full overflow-visible" data-node-id="4925:13685">
                 <div className="flex gap-[5px] items-start" data-node-id="4923:13601">
                     {/* Avatar */}
                     <div className="shrink-0 size-[23px]" data-node-id="4923:13602">
                         <UserAvatar
                             user={typeof comment.author === "object" ? comment.author : null}
                             size="sm"
-                            bgColor="bg-[var(--echo-accent)]"
+                            bgColor="bg-[#f49b31]"
                             pictureUrl={
                                 comment.isAnonymous && comment.anonymousProfilePicture
                                     ? comment.anonymousProfilePicture
@@ -268,10 +268,10 @@ const CommentItem = ({ comment, onRefresh: _onRefresh, onDelete, pingId }: Props
                         {/* Info row with name, timestamp, and dots button */}
                         <div className="flex items-start justify-between w-full" data-node-id="4923:13604">
                             <div className="flex flex-col gap-0.5" data-node-id="5145:14071">
-                                <p className="text-[11px] font-['Poppins',sans-serif] font-semibold text-[var(--echo-text-primary)] leading-none">
+                                <p className="text-[11px] font-['Poppins',sans-serif] font-semibold text-black leading-none">
                                     {authorName}
                                 </p>
-                                <p className="text-[10px] font-['Poppins',sans-serif] font-medium text-[var(--echo-text-454545)] leading-none">
+                                <p className="text-[10px] font-['Poppins',sans-serif] font-medium text-[#454545] leading-none">
                                     {formatTimestamp(comment.createdAt)}
                                 </p>
                             </div>
@@ -294,7 +294,7 @@ const CommentItem = ({ comment, onRefresh: _onRefresh, onDelete, pingId }: Props
                                         value={editInput}
                                         onChange={(e) => setEditInput(e.target.value)}
                                         disabled={isSavingEdit}
-                                        className="w-full text-[12px] font-['Poppins',sans-serif] p-2 border border-gray-300 rounded-md focus:outline-none focus:border-[var(--echo-border-f49b31)] resize-none"
+                                        className="w-full text-[12px] font-['Poppins',sans-serif] p-2 border border-gray-300 rounded-md focus:outline-none focus:border-[#f49b31] resize-none"
                                         rows={2}
                                         autoFocus
                                     />
@@ -315,7 +315,7 @@ const CommentItem = ({ comment, onRefresh: _onRefresh, onDelete, pingId }: Props
                                                 type="button"
                                                 onClick={handleSaveEdit}
                                                 disabled={isSavingEdit || !editInput.trim()}
-                                                className="text-[10px] px-2 py-1 bg-[var(--echo-accent)] text-[var(--echo-text-on-accent)] rounded-md disabled:opacity-50"
+                                                className="text-[10px] px-2 py-1 bg-[#f49b31] text-white rounded-md disabled:opacity-50"
                                             >
                                                 {isSavingEdit ? "Saving..." : "Save"}
                                             </button>
@@ -323,7 +323,7 @@ const CommentItem = ({ comment, onRefresh: _onRefresh, onDelete, pingId }: Props
                                     </div>
                                 </div>
                             ) : (
-                                <p className="text-[12px] font-['Poppins',sans-serif] font-normal text-[var(--echo-text-primary)] leading-normal break-words whitespace-pre-wrap">
+                                <p className="text-[12px] font-['Poppins',sans-serif] font-normal text-black leading-normal break-words whitespace-pre-wrap">
                                     {comment.content}
                                     {comment.isEdited && <EditedLabel />}
                                 </p>
@@ -337,7 +337,7 @@ const CommentItem = ({ comment, onRefresh: _onRefresh, onDelete, pingId }: Props
                                     onClick={handleSurge}
                                     disabled={isToggling}
                                     aria-label={localHasSurged ? "Remove surge" : "Surge"}
-                                    className={`flex items-center gap-[2.25px] px-[7.5px] py-[5.25px] rounded-[18px] border-[0.75px] border-black cursor-pointer transition-all duration-200 disabled:opacity-50 text-[11px] font-['Baloo_Bhai_2',sans-serif] font-bold uppercase leading-none ${localHasSurged ? "bg-[var(--echo-accent)] text-[var(--echo-text-on-accent)] border-[var(--echo-border-f49b31)]" : "bg-[var(--echo-surface)] text-[var(--echo-text-primary)]"
+                                    className={`flex items-center gap-[2.25px] px-[7.5px] py-[5.25px] rounded-[18px] border-[0.75px] border-black cursor-pointer transition-all duration-200 disabled:opacity-50 text-[11px] font-['Baloo_Bhai_2',sans-serif] font-bold uppercase leading-none ${localHasSurged ? "bg-[#f49b31] text-white border-[#f49b31]" : "bg-white text-black"
                                         }`}
                                     data-node-id="4923:13612"
                                 >
@@ -350,7 +350,7 @@ const CommentItem = ({ comment, onRefresh: _onRefresh, onDelete, pingId }: Props
                                     type="button"
                                     onClick={handleToggleReplies}
                                     aria-label="View replies or write a reply"
-                                    className="flex items-center gap-[2.5px] px-[7.5px] py-[5.25px] rounded-[13.5px] border-[0.75px] border-black bg-[var(--echo-surface)] text-[var(--echo-text-primary)] cursor-pointer text-[11px] font-['Baloo_Bhai_2',sans-serif] font-bold uppercase leading-none transition-all duration-200"
+                                    className="flex items-center gap-[2.5px] px-[7.5px] py-[5.25px] rounded-[13.5px] border-[0.75px] border-black bg-white text-black cursor-pointer text-[11px] font-['Baloo_Bhai_2',sans-serif] font-bold uppercase leading-none transition-all duration-200"
                                     data-node-id="4923:13613"
                                 >
                                     <img src="/assets/icon/comment.svg" alt="Comment icon" className="w-[7.5px] h-3 shrink-0" style={{ filter: 'brightness(0)' }} />
@@ -387,10 +387,10 @@ const CommentItem = ({ comment, onRefresh: _onRefresh, onDelete, pingId }: Props
                                         <UserAvatar
                                             user={user && typeof user === "object" ? user : null}
                                             size="sm"
-                                            bgColor="bg-[var(--echo-accent)]"
+                                            bgColor="bg-[#f49b31]"
                                         />
                                     </div>
-                                    <div className="flex-1 min-w-0 min-h-[26px] py-1 px-2.5 bg-[var(--echo-surface)] rounded-[12px] border-[0.75px] border-black flex items-center justify-between gap-1.5 focus-within:border-[var(--echo-border-f49b31)] transition-colors">
+                                    <div className="flex-1 min-w-0 min-h-[26px] py-1 px-2.5 bg-white rounded-[12px] border-[0.75px] border-black flex items-center justify-between gap-1.5 focus-within:border-[#f49b31] transition-colors">
                                         <textarea
                                             value={replyInput}
                                             onChange={(e) => {
@@ -407,7 +407,7 @@ const CommentItem = ({ comment, onRefresh: _onRefresh, onDelete, pingId }: Props
                                             disabled={isPostingReply}
                                             placeholder="Reply"
                                             rows={1}
-                                            className="flex-1 min-w-0 w-full bg-transparent text-[var(--echo-text-primary)] text-[11px] font-normal font-['Poppins',sans-serif] outline-none placeholder-neutral-500 disabled:opacity-50 resize-none overflow-y-auto break-words whitespace-pre-wrap leading-[1.35]"
+                                            className="flex-1 min-w-0 w-full bg-transparent text-black text-[11px] font-normal font-['Poppins',sans-serif] outline-none placeholder-neutral-500 disabled:opacity-50 resize-none overflow-y-auto break-words whitespace-pre-wrap leading-[1.35]"
                                             style={{ minHeight: '16px', maxHeight: '80px' }}
                                         />
                                         <button
@@ -415,7 +415,7 @@ const CommentItem = ({ comment, onRefresh: _onRefresh, onDelete, pingId }: Props
                                             onClick={handlePostReply}
                                             disabled={isPostingReply || !replyInput.trim()}
                                             aria-label="Send reply"
-                                            className="flex items-center justify-center shrink-0 text-[var(--echo-text-primary)] disabled:opacity-40 enabled:hover:text-[var(--echo-text-f49b31)] transition-colors p-0.5 cursor-pointer disabled:cursor-not-allowed"
+                                            className="flex items-center justify-center shrink-0 text-black disabled:opacity-40 enabled:hover:text-[#f49b31] transition-colors p-0.5 cursor-pointer disabled:cursor-not-allowed"
                                         >
                                             <Send size={14} />
                                         </button>
@@ -520,13 +520,13 @@ const ReplyItem = ({ reply, onDelete }: ReplyItemProps) => {
 
     return (
         <>
-            <div className="bg-[var(--echo-surface)] rounded-xl p-1.5 w-full flex gap-[5px] items-start">
+            <div className="bg-white rounded-xl p-1.5 w-full flex gap-[5px] items-start">
                 {/* Reply Avatar */}
                 <div className="shrink-0 size-[23px]">
                     <UserAvatar
                         user={typeof reply.author === "object" ? reply.author : null}
                         size="sm"
-                        bgColor="bg-[var(--echo-accent)]"
+                        bgColor="bg-[#f49b31]"
                         pictureUrl={
                             reply.isAnonymous && reply.anonymousProfilePicture
                                 ? reply.anonymousProfilePicture
@@ -539,10 +539,10 @@ const ReplyItem = ({ reply, onDelete }: ReplyItemProps) => {
                 <div className="flex-1 flex flex-col gap-[5px] items-start min-w-0">
                     <div className="flex items-start justify-between w-full">
                         <div className="flex flex-col gap-0.5">
-                            <p className="text-[11px] font-['Poppins',sans-serif] font-semibold text-[var(--echo-text-primary)] leading-none">
+                            <p className="text-[11px] font-['Poppins',sans-serif] font-semibold text-black leading-none">
                                 {replyAuthorName}
                             </p>
-                            <p className="text-[10px] font-['Poppins',sans-serif] font-medium text-[var(--echo-text-454545)] leading-none">
+                            <p className="text-[10px] font-['Poppins',sans-serif] font-medium text-[#454545] leading-none">
                                 {formatTimestamp(reply.createdAt)}
                             </p>
                         </div>
@@ -555,7 +555,7 @@ const ReplyItem = ({ reply, onDelete }: ReplyItemProps) => {
                         />
                     </div>
 
-                    <p className="text-[12px] font-['Poppins',sans-serif] font-normal text-[var(--echo-text-primary)] leading-normal break-words w-full whitespace-pre-wrap">
+                    <p className="text-[12px] font-['Poppins',sans-serif] font-normal text-black leading-normal break-words w-full whitespace-pre-wrap">
                         {reply.content}
                         {reply.isEdited && <EditedLabel />}
                     </p>
@@ -567,8 +567,8 @@ const ReplyItem = ({ reply, onDelete }: ReplyItemProps) => {
                         disabled={isReplyToggling}
                         aria-label={replyLocalHasSurged ? "Remove surge" : "Surge"}
                         className={`flex items-center gap-[2.25px] px-[7.5px] py-[5.25px] rounded-[18px] border-[0.75px] border-black cursor-pointer transition-all duration-200 disabled:opacity-50 text-[11px] font-['Baloo_Bhai_2',sans-serif] font-bold uppercase leading-none ${replyLocalHasSurged
-                            ? "bg-[var(--echo-accent)] text-[var(--echo-text-on-accent)] border-[var(--echo-border-f49b31)]"
-                            : "bg-[var(--echo-surface)] text-[var(--echo-text-primary)]"
+                            ? "bg-[#f49b31] text-white border-[#f49b31]"
+                            : "bg-white text-black"
                             }`}
                     >
                         <SurgeIcon width={9} height={12} fill="currentColor" className="shrink-0" />

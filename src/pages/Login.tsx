@@ -21,14 +21,14 @@ const EmailIcon = () => (
   <svg width="26" height="26" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path
       d="M4.333 6.5c0-.92.746-1.667 1.667-1.667h14c.92 0 1.667.746 1.667 1.667v13c0 .92-.746 1.667-1.667 1.667H6A1.667 1.667 0 0 1 4.333 19.5v-13Z"
-      stroke="var(--echo-text-ffc37b)"
+      stroke="#ffc37b"
       strokeWidth="2"
       strokeLinecap="round"
       strokeLinejoin="round"
     />
     <path
       d="m4.333 6.5 8.667 6.5 8.667-6.5"
-      stroke="var(--echo-text-ffc37b)"
+      stroke="#ffc37b"
       strokeWidth="2"
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -44,16 +44,16 @@ const PasswordIcon = () => (
       width="16"
       height="10"
       rx="2"
-      stroke="var(--echo-text-ffc37b)"
+      stroke="#ffc37b"
       strokeWidth="2"
     />
     <path
       d="M8 11V8a5 5 0 0 1 10 0v3"
-      stroke="var(--echo-text-ffc37b)"
+      stroke="#ffc37b"
       strokeWidth="2"
       strokeLinecap="round"
     />
-    <circle cx="13" cy="16" r="1.5" fill="var(--echo-text-ffc37b)" />
+    <circle cx="13" cy="16" r="1.5" fill="#ffc37b" />
   </svg>
 );
 
@@ -340,13 +340,13 @@ const Login = () => {
           {/* Header Section */}
           <div className="flex flex-col gap-2.5 items-center text-center w-full">
             <h1
-              className="text-[22px] sm:text-[26px] md:text-[28px] leading-7 sm:leading-8 md:leading-9 text-[var(--echo-text-primary)]"
+              className="text-[22px] sm:text-[26px] md:text-[28px] leading-7 sm:leading-8 md:leading-9 text-black"
               style={{ fontFamily: "Poppins, sans-serif", fontWeight: 600 }}
             >
               Welcome back
             </h1>
             <p
-              className="text-[14px] sm:text-base leading-5 sm:leading-[21px] text-[var(--echo-text-4a504e)] opacity-[0.69]"
+              className="text-[14px] sm:text-base leading-5 sm:leading-[21px] text-[#4a504e] opacity-[0.69]"
               style={{ fontFamily: "Poppins, sans-serif", fontWeight: 500 }}
             >
               Log in to see what&apos;s happening at your institution.
@@ -366,7 +366,7 @@ const Login = () => {
               <button
                 type="button"
                 onClick={fillDemoAdmin}
-                className="flex-1 bg-[var(--echo-bg-fff5eb)] border border-[var(--echo-border-f49b31)] text-[var(--echo-text-f49b31)] rounded-lg py-2.5 text-xs sm:text-sm font-semibold hover:bg-[var(--echo-bg-fff0e0)] transition-colors"
+                className="flex-1 bg-[#fff5eb] border border-[#f49b31] text-[#f49b31] rounded-lg py-2.5 text-xs sm:text-sm font-semibold hover:bg-[#fff0e0] transition-colors"
                 style={{ fontFamily: "Poppins, sans-serif" }}
               >
                 Admin Demo
@@ -374,7 +374,7 @@ const Login = () => {
               <button
                 type="button"
                 onClick={fillDemoStudent}
-                className="flex-1 bg-[var(--echo-bg-fff5eb)] border border-[var(--echo-border-f49b31)] text-[var(--echo-text-f49b31)] rounded-lg py-2.5 text-xs sm:text-sm font-semibold hover:bg-[var(--echo-bg-fff0e0)] transition-colors"
+                className="flex-1 bg-[#fff5eb] border border-[#f49b31] text-[#f49b31] rounded-lg py-2.5 text-xs sm:text-sm font-semibold hover:bg-[#fff0e0] transition-colors"
                 style={{ fontFamily: "Poppins, sans-serif" }}
               >
                 Student Demo
@@ -433,7 +433,7 @@ const Login = () => {
               <button
                 type="button"
                 onClick={() => setForgotPasswordOpen(true)}
-                className="text-xs sm:text-sm text-[var(--echo-text-f49b31)] hover:text-[var(--echo-text-e08a2a)] transition-colors font-medium self-end"
+                className="text-xs sm:text-sm text-[#f49b31] hover:text-[#e08a2a] transition-colors font-medium self-end"
                 style={{ fontFamily: "Poppins, sans-serif" }}
                 disabled={loading || isOffline}
               >
@@ -459,22 +459,22 @@ const Login = () => {
               className="flex flex-col gap-1.5 items-center text-center text-xs leading-relaxed"
               style={{ fontFamily: "Poppins, sans-serif", fontWeight: 500 }}
             >
-              <p className="text-[var(--echo-text-secondary)]">By continuing, you agree to Echo&apos;s</p>
+              <p className="text-[#838383]">By continuing, you agree to Echo&apos;s</p>
               <div className="flex flex-wrap justify-center gap-1 text-sm">
                 <a
                   href="https://www.echo-ng.com/terms"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="font-semibold text-[var(--echo-text-f49b31)] hover:text-[var(--echo-text-e08a2a)] transition-colors"
+                  className="font-semibold text-[#f49b31] hover:text-[#e08a2a] transition-colors"
                 >
                   Terms of Use
                 </a>
-                <span className="text-[var(--echo-text-secondary)]">and</span>
+                <span className="text-[#838383]">and</span>
                 <a
                   href="https://www.echo-ng.com/privacy"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="font-semibold text-[var(--echo-text-f49b31)] hover:text-[var(--echo-text-e08a2a)] transition-colors"
+                  className="font-semibold text-[#f49b31] hover:text-[#e08a2a] transition-colors"
                 >
                   Privacy Policy
                 </a>
@@ -483,17 +483,17 @@ const Login = () => {
             </div>
 
             {/* Divider */}
-            <div className="w-full h-px bg-[var(--echo-bg-e0e0e0)]" />
+            <div className="w-full h-px bg-[#e0e0e0]" />
 
             {/* Sign Up Link */}
             <div
               className="text-center text-xs sm:text-sm"
               style={{ fontFamily: "Poppins, sans-serif", fontWeight: 500 }}
             >
-              <span className="text-[var(--echo-text-secondary)]">Don't have an account? </span>
+              <span className="text-[#838383]">Don't have an account? </span>
               <Link
                 to={signUpLink}
-                className="text-[var(--echo-text-f49b31)] hover:text-[var(--echo-text-e08a2a)] transition-colors cursor-pointer"
+                className="text-[#f49b31] hover:text-[#e08a2a] transition-colors cursor-pointer"
               >
                 Sign Up
               </Link>

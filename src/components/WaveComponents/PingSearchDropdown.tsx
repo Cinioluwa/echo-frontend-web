@@ -41,15 +41,15 @@ const PingSearchDropdown = ({
                 >
                     <div className="
             mt-2 p-3 
-            border border-[var(--echo-border-7d7d7d)] rounded-[10px] 
-            bg-[var(--echo-surface)] shadow-lg
+            border border-[#7D7D7D] rounded-[10px] 
+            bg-white shadow-lg
             max-h-[400px] overflow-y-auto
             [scrollbar-width:thin]
           ">{/* Loading State */}
                         {isSearching ? (
                             <div className="text-center py-8">
-                                <div className="inline-block w-8 h-8 border-4 border-[var(--echo-border-f49b31)] border-t-transparent rounded-full animate-spin" />
-                                <p className="text-[12px] text-[var(--echo-text-7d7d7d)] mt-2">Searching...</p>
+                                <div className="inline-block w-8 h-8 border-4 border-[#F49B31] border-t-transparent rounded-full animate-spin" />
+                                <p className="text-[12px] text-[#7D7D7D] mt-2">Searching...</p>
                             </div>
                         ) : searchResults.length === 0 ? (
                             /* Empty State */

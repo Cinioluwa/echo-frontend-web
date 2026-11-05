@@ -139,22 +139,22 @@ const AuthInput = forwardRef<HTMLInputElement, AuthInputProps>(
         return (
             <div className={className}>
                 <div className={`
-          w-full min-w-0 box-border bg-[var(--echo-bg-fbfbfb)] border rounded-xl
+          w-full min-w-0 box-border bg-[#fbfbfb] border rounded-xl
           h-[50px] sm:h-[55px] md:h-[59px]
           flex items-center gap-2.5 sm:gap-3 md:gap-[13px]
           px-[15px] sm:px-[18px] md:px-[21px] py-[11px]
-          ${error ? "border-red-500" : "border-[var(--echo-border-cacaca)]"}
+          ${error ? "border-red-500" : "border-[#cacaca]"}
           transition-colors duration-200
-          focus-within:border-[var(--echo-border-f49b31)]
+          focus-within:border-[#f49b31]
         `}>
                     {icon && (
                         <>
-                            <div className="shrink-0 w-[22px] h-[22px] sm:w-6 sm:h-6 md:w-[26px] md:h-[26px] flex items-center justify-center text-[var(--echo-text-cacaca)]">
+                            <div className="shrink-0 w-[22px] h-[22px] sm:w-6 sm:h-6 md:w-[26px] md:h-[26px] flex items-center justify-center text-[#cacaca]">
                                 {icon}
                             </div>
                             {/* Vertical separator line */}
                             <div className="w-0 h-8 sm:h-9 md:h-[38px] flex items-center justify-center">
-                                <div className="h-full w-px bg-[var(--echo-bg-e0e0e0)]"></div>
+                                <div className="h-full w-px bg-[#e0e0e0]"></div>
                             </div>
                         </>
                     )}
@@ -177,8 +177,8 @@ const AuthInput = forwardRef<HTMLInputElement, AuthInputProps>(
                         aria-describedby={errorId}
                         className="
               min-w-0 flex-1 bg-transparent border-none outline-none
-              text-[12px] sm:text-[13px] text-[var(--echo-text-4a504e)]
-              placeholder:text-[var(--echo-text-737373)] placeholder:italic
+              text-[12px] sm:text-[13px] text-[#4a504e]
+              placeholder:text-[#737373] placeholder:italic
               disabled:cursor-not-allowed
             "
                         style={{ fontFamily: 'Poppins, sans-serif', fontWeight: 500 }}
@@ -189,14 +189,14 @@ const AuthInput = forwardRef<HTMLInputElement, AuthInputProps>(
                         <>
                             {/* Vertical separator before eye icon */}
                             <div className="w-0 h-8 sm:h-9 md:h-[38px] flex items-center justify-center">
-                                <div className="h-full w-px bg-[var(--echo-bg-e0e0e0)]"></div>
+                                <div className="h-full w-px bg-[#e0e0e0]"></div>
                             </div>
                             <button
                                 type="button"
                                 onClick={() => setIsPasswordVisible(!isPasswordVisible)}
                                 disabled={disabled}
                                 aria-label={isPasswordVisible ? "Hide password" : "Show password"}
-                                className="shrink-0 w-[22px] h-[22px] sm:w-6 sm:h-6 md:w-[26px] md:h-[26px] flex items-center justify-center text-[var(--echo-text-f49b31)] hover:text-[var(--echo-text-f49b31)] transition-all duration-300 ease-in-out cursor-pointer disabled:cursor-not-allowed disabled:opacity-50 rounded-md hover:bg-[var(--echo-bg-f5f5f5)]"
+                                className="shrink-0 w-[22px] h-[22px] sm:w-6 sm:h-6 md:w-[26px] md:h-[26px] flex items-center justify-center text-[#f49b31] hover:text-[#f49b31] transition-all duration-300 ease-in-out cursor-pointer disabled:cursor-not-allowed disabled:opacity-50 rounded-md hover:bg-[#f5f5f5]"
                             >
                                 <AnimatedEyeIcon isOpen={isPasswordVisible} />
                             </button>

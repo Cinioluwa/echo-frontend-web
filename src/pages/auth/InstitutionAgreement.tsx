@@ -156,40 +156,40 @@ const InstitutionAgreement = () => {
   };
 
   return (
-    <main className="min-h-screen bg-[var(--echo-surface-soft)] px-4 py-8 text-[var(--echo-text-101010)] sm:px-6 sm:py-12">
+    <main className="min-h-screen bg-[#FEF5EA] px-4 py-8 text-[#101010] sm:px-6 sm:py-12">
       <div className="mx-auto w-full max-w-[880px]">
         <header className="mb-10 flex flex-wrap items-center justify-between gap-4">
           <Link to="/" aria-label="Echo home" className="inline-flex items-center gap-2">
             <EchoLogo size="sm" />
           </Link>
           {agreement && (
-            <p className="font-['Inter',sans-serif] text-sm text-[var(--echo-text-primary)]/60">
+            <p className="font-['Inter',sans-serif] text-sm text-black/60">
               {agreement.organizationName}
             </p>
           )}
         </header>
 
-        <p className="mb-3 font-['Inter',sans-serif] text-xs font-semibold uppercase tracking-[0.18em] text-[var(--echo-text-e8911a)]">
+        <p className="mb-3 font-['Inter',sans-serif] text-xs font-semibold uppercase tracking-[0.18em] text-[#E8911A]">
           Echo Founding Institution Pilot
         </p>
         <h1 className="font-['Poppins',sans-serif] text-3xl font-extrabold leading-tight tracking-[-0.03em] sm:text-5xl">
           Review the Founding Institution Agreement.
         </h1>
-        <p className="mt-5 max-w-[60ch] font-['Inter',sans-serif] text-base leading-7 text-[var(--echo-text-primary)]/70">
+        <p className="mt-5 max-w-[60ch] font-['Inter',sans-serif] text-base leading-7 text-black/70">
           Read the agreement below. An authorized representative can sign at the end of the page.
         </p>
 
         {loading && (
-          <p role="status" className="mt-8 rounded-2xl border border-black/10 bg-[var(--echo-surface)] p-5 font-['Inter',sans-serif]">
+          <p role="status" className="mt-8 rounded-2xl border border-black/10 bg-white p-5 font-['Inter',sans-serif]">
             Loading the agreement and verifying its integrity…
           </p>
         )}
 
         {!loading && error && !agreement && (
-          <section className="mt-8 rounded-2xl border border-red-200 bg-[var(--echo-surface)] p-6" role="alert">
+          <section className="mt-8 rounded-2xl border border-red-200 bg-white p-6" role="alert">
             <h2 className="font-['Poppins',sans-serif] text-xl font-bold">We couldn't open this signing link.</h2>
-            <p className="mt-2 font-['Inter',sans-serif] leading-7 text-[var(--echo-text-primary)]/70">{error}</p>
-            <Link to="/login" className="mt-5 inline-flex rounded-full bg-[var(--echo-accent)] px-6 py-3 font-semibold text-[var(--echo-text-on-accent)]">
+            <p className="mt-2 font-['Inter',sans-serif] leading-7 text-black/70">{error}</p>
+            <Link to="/login" className="mt-5 inline-flex rounded-full bg-[#F49B31] px-6 py-3 font-semibold text-white">
               Go to login
             </Link>
           </section>
@@ -198,50 +198,50 @@ const InstitutionAgreement = () => {
         {!loading && agreement && (
           <>
             {agreement.isFoundingPartner ? (
-              <section className="mt-8 rounded-2xl border border-black/10 bg-[var(--echo-surface)] p-6" role="status">
+              <section className="mt-8 rounded-2xl border border-black/10 bg-white p-6" role="status">
                 <h2 className="font-['Poppins',sans-serif] text-2xl font-bold">Agreement already accepted</h2>
-                <p className="mt-2 font-['Inter',sans-serif] leading-7 text-[var(--echo-text-primary)]/70">
+                <p className="mt-2 font-['Inter',sans-serif] leading-7 text-black/70">
                   {agreement.organizationName} is already a Founding Partner.
                 </p>
-                <Link to={loginUrl} className="mt-5 inline-flex rounded-full bg-[var(--echo-accent)] px-6 py-3 font-semibold text-[var(--echo-text-on-accent)]">
+                <Link to={loginUrl} className="mt-5 inline-flex rounded-full bg-[#F49B31] px-6 py-3 font-semibold text-white">
                   Continue to login
                 </Link>
               </section>
             ) : accepted ? (
-              <section className="mt-8 rounded-2xl border border-black/10 bg-[var(--echo-surface)] p-6 sm:p-8" role="status" aria-live="polite">
-                <p className="font-['Inter',sans-serif] text-sm font-semibold uppercase tracking-wide text-[var(--echo-text-e8911a)]">Founding Partner</p>
+              <section className="mt-8 rounded-2xl border border-black/10 bg-white p-6 sm:p-8" role="status" aria-live="polite">
+                <p className="font-['Inter',sans-serif] text-sm font-semibold uppercase tracking-wide text-[#E8911A]">Founding Partner</p>
                 <h2 className="mt-2 font-['Poppins',sans-serif] text-2xl font-bold sm:text-3xl">Agreement accepted.</h2>
-                <p className="mt-3 font-['Inter',sans-serif] leading-7 text-[var(--echo-text-primary)]/70">
+                <p className="mt-3 font-['Inter',sans-serif] leading-7 text-black/70">
                   {agreement.organizationName} is now activated. Sign in with your institutional account to open the Institution Admin workspace.
                 </p>
-                {error && <p role="alert" className="mt-4 rounded-xl border border-[var(--echo-border-d1c0a9)] bg-[var(--echo-surface-soft)] p-3 font-['Inter',sans-serif] text-sm text-[var(--echo-text-primary)]/75">{error}</p>}
-                <Link to={loginUrl} className="mt-6 inline-flex rounded-full bg-[var(--echo-accent)] px-7 py-3.5 font-semibold text-[var(--echo-text-on-accent)] transition hover:bg-[var(--echo-bg-e8911a)]">
+                {error && <p role="alert" className="mt-4 rounded-xl border border-[#D1C0A9] bg-[#FEF5EA] p-3 font-['Inter',sans-serif] text-sm text-black/75">{error}</p>}
+                <Link to={loginUrl} className="mt-6 inline-flex rounded-full bg-[#F49B31] px-7 py-3.5 font-semibold text-white transition hover:bg-[#E8911A]">
                   Continue to the admin workspace
                 </Link>
               </section>
             ) : (
               <>
-                <div className="mt-8 grid gap-3 rounded-2xl border border-black/10 bg-[var(--echo-surface)] p-5 sm:grid-cols-[150px_1fr]">
-                  <span className="font-['Inter',sans-serif] text-sm text-[var(--echo-text-primary)]/55">Institution</span>
+                <div className="mt-8 grid gap-3 rounded-2xl border border-black/10 bg-white p-5 sm:grid-cols-[150px_1fr]">
+                  <span className="font-['Inter',sans-serif] text-sm text-black/55">Institution</span>
                   <span className="font-['Inter',sans-serif] font-medium">{agreement.organizationName}</span>
-                  <span className="font-['Inter',sans-serif] text-sm text-[var(--echo-text-primary)]/55">Agreement version</span>
+                  <span className="font-['Inter',sans-serif] text-sm text-black/55">Agreement version</span>
                   <span className="font-['Inter',sans-serif] font-medium">{agreement.agreementVersion} · Effective {agreement.effectiveDate}</span>
                 </div>
 
-                <p className="mt-4 inline-flex items-center gap-2 rounded-full bg-[var(--echo-surface)] px-4 py-2 font-['Inter',sans-serif] text-sm text-[var(--echo-text-primary)]/70">
-                  <span aria-hidden="true" className="text-[var(--echo-text-e8911a)]">✓</span>
+                <p className="mt-4 inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 font-['Inter',sans-serif] text-sm text-black/70">
+                  <span aria-hidden="true" className="text-[#E8911A]">✓</span>
                   {integrityVerified ? "Document integrity verified · SHA-256 fingerprint protected" : "Verifying document integrity"}
                 </p>
 
                 <article
-                  className="prose prose-neutral mt-6 max-w-none rounded-[20px] border border-black/10 bg-[var(--echo-surface)] p-6 font-['Inter',sans-serif] leading-7 sm:p-10"
+                  className="prose prose-neutral mt-6 max-w-none rounded-[20px] border border-black/10 bg-white p-6 font-['Inter',sans-serif] leading-7 sm:p-10"
                   aria-label="Founding Institution Agreement"
                   dangerouslySetInnerHTML={{ __html: agreement.agreementHtml }}
                 />
 
                 <section className="mt-10 border-t border-black/15 pt-8">
                   <h2 className="font-['Poppins',sans-serif] text-2xl font-bold">Accept on behalf of your institution</h2>
-                  <p className="mt-2 font-['Inter',sans-serif] leading-7 text-[var(--echo-text-primary)]/70">
+                  <p className="mt-2 font-['Inter',sans-serif] leading-7 text-black/70">
                     Enter the legal name and institutional title of the authorized signer.
                   </p>
 
@@ -254,7 +254,7 @@ const InstitutionAgreement = () => {
                         required
                         value={fullName}
                         onChange={(event) => setFullName(event.target.value)}
-                        className="mt-2 block w-full rounded-xl border border-black/20 bg-[var(--echo-surface)] px-4 py-3 text-base outline-none focus:border-[var(--echo-border-f49b31)] focus:ring-2 focus:ring-[var(--echo-border-ffc37b)]"
+                        className="mt-2 block w-full rounded-xl border border-black/20 bg-white px-4 py-3 text-base outline-none focus:border-[#F49B31] focus:ring-2 focus:ring-[#FFC37B]"
                       />
                     </label>
                     <label className="block font-['Inter',sans-serif] text-sm font-medium">
@@ -265,16 +265,16 @@ const InstitutionAgreement = () => {
                         required
                         value={roleTitle}
                         onChange={(event) => setRoleTitle(event.target.value)}
-                        className="mt-2 block w-full rounded-xl border border-black/20 bg-[var(--echo-surface)] px-4 py-3 text-base outline-none focus:border-[var(--echo-border-f49b31)] focus:ring-2 focus:ring-[var(--echo-border-ffc37b)]"
+                        className="mt-2 block w-full rounded-xl border border-black/20 bg-white px-4 py-3 text-base outline-none focus:border-[#F49B31] focus:ring-2 focus:ring-[#FFC37B]"
                       />
                     </label>
 
-                    <label className="flex items-start gap-3 rounded-xl bg-[var(--echo-surface)] p-4 font-['Inter',sans-serif] leading-6">
+                    <label className="flex items-start gap-3 rounded-xl bg-white p-4 font-['Inter',sans-serif] leading-6">
                       <input
                         type="checkbox"
                         checked={authorized}
                         onChange={(event) => setAuthorized(event.target.checked)}
-                        className="mt-1 h-4 w-4 accent-[var(--echo-text-f49b31)]"
+                        className="mt-1 h-4 w-4 accent-[#F49B31]"
                         required
                       />
                       <span>I confirm I am authorized to accept this pilot agreement on behalf of {agreement.organizationName}.</span>
@@ -285,7 +285,7 @@ const InstitutionAgreement = () => {
                     <button
                       type="submit"
                       disabled={submitting || !integrityVerified}
-                      className="inline-flex w-full items-center justify-center rounded-full bg-[var(--echo-accent)] px-7 py-4 font-['Inter',sans-serif] font-semibold text-[var(--echo-text-on-accent)] transition hover:bg-[var(--echo-bg-e8911a)] disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
+                      className="inline-flex w-full items-center justify-center rounded-full bg-[#F49B31] px-7 py-4 font-['Inter',sans-serif] font-semibold text-white transition hover:bg-[#E8911A] disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
                     >
                       {submitting ? "Recording your acceptance…" : "Sign & Activate Institution Space"}
                     </button>

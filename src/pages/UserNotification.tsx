@@ -101,15 +101,15 @@ const UserNotification = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[var(--echo-surface-soft)]">
+    <div className="min-h-screen bg-[#FEF5EA]">
       <ProfileLayout />
       <main className="mt-1 mx-auto h-full w-full max-w-[1200px] p-4 md:p-10 pt-2 md:pt-2 pb-16 md:pb-20">
-        <div className="flex border border-[var(--echo-border-f4e3c9)] rounded-[20px] bg-[var(--echo-surface)] p-4 md:p-7 flex-col lg:flex-row gap-4 lg:gap-8 shadow-sm">
+        <div className="flex border border-[#F4E3C9] rounded-[20px] bg-white p-4 md:p-7 flex-col lg:flex-row gap-4 lg:gap-8 shadow-sm">
           <UserProfileSidePanel pages={pages} />
-          <div className="flex-1 min-w-0 lg:border-l border-[var(--echo-border-f4e3c9)] lg:pl-8 pt-4 lg:pt-0">
+          <div className="flex-1 min-w-0 lg:border-l border-[#F4E3C9] lg:pl-8 pt-4 lg:pt-0">
             <div className="mb-6">
-              <h2 className="text-xl text-[var(--echo-text-4a3728)] mb-1">Notification</h2>
-              <p className="text-[var(--echo-text-7d7d7d)]">Manage how communication is made with you</p>
+              <h2 className="text-xl text-[#4A3728] mb-1">Notification</h2>
+              <p className="text-[#7D7D7D]">Manage how communication is made with you</p>
             </div>
             {loading ? (
               <div className="text-center text-gray-500 py-8">Loading preferences...</div>
@@ -120,77 +120,77 @@ const UserNotification = () => {
                 {/* Notification Toggles */}
                 <div className="space-y-4">
                   <div className="flex justify-between items-center p-5 bg-transparent border border-orange-200 rounded-2xl">
-                    <span className="text-[var(--echo-text-4a3728)] text-base">Ping and wave status updated</span>
+                    <span className="text-[#4A3728] text-base">Ping and wave status updated</span>
                     <Toggle
                       checked={prefs.waveStatusUpdated}
                       onChange={() => handleToggle("waveStatusUpdated")}
                     />
                   </div>
                   <div className="flex justify-between items-center p-5 bg-transparent border border-orange-200 rounded-2xl">
-                    <span className="text-[var(--echo-text-4a3728)] text-base">Official response notifications</span>
+                    <span className="text-[#4A3728] text-base">Official response notifications</span>
                     <Toggle
                       checked={prefs.officialResponse}
                       onChange={() => handleToggle("officialResponse")}
                     />
                   </div>
                   <div className="flex justify-between items-center p-5 bg-transparent border border-orange-200 rounded-2xl">
-                    <span className="text-[var(--echo-text-4a3728)] text-base">Announcement notifications</span>
+                    <span className="text-[#4A3728] text-base">Announcement notifications</span>
                     <Toggle
                       checked={prefs.announcement}
                       onChange={() => handleToggle("announcement")}
                     />
                   </div>
                   <div className="flex justify-between items-center p-5 bg-transparent border border-orange-200 rounded-2xl">
-                    <span className="text-[var(--echo-text-4a3728)] text-base">Comment surge notifications</span>
+                    <span className="text-[#4A3728] text-base">Comment surge notifications</span>
                     <Toggle
                       checked={prefs.commentSurge}
                       onChange={() => handleToggle("commentSurge")}
                     />
                   </div>
                   <div className="flex justify-between items-center p-5 bg-transparent border border-orange-200 rounded-2xl">
-                    <span className="text-[var(--echo-text-4a3728)] text-base">Ping created notifications</span>
+                    <span className="text-[#4A3728] text-base">Ping created notifications</span>
                     <Toggle
                       checked={prefs.pingCreated}
                       onChange={() => handleToggle("pingCreated")}
                     />
                   </div>
-                  <h3 className="text-lg text-[var(--echo-text-4a3728)] mt-6 font-semibold">Social Notifications</h3>
+                  <h3 className="text-lg text-[#4A3728] mt-6 font-semibold">Social Notifications</h3>
                   <div className="flex justify-between items-center p-5 bg-transparent border border-orange-200 rounded-2xl">
-                    <span className="text-[var(--echo-text-4a3728)] text-base">New wave on your ping</span>
+                    <span className="text-[#4A3728] text-base">New wave on your ping</span>
                     <Toggle
                       checked={prefs.newWaveOnPing}
                       onChange={() => handleToggle("newWaveOnPing")}
                     />
                   </div>
                   <div className="flex justify-between items-center p-5 bg-transparent border border-orange-200 rounded-2xl">
-                    <span className="text-[var(--echo-text-4a3728)] text-base">New comment on your post</span>
+                    <span className="text-[#4A3728] text-base">New comment on your post</span>
                     <Toggle
                       checked={prefs.newCommentOnPost}
                       onChange={() => handleToggle("newCommentOnPost")}
                     />
                   </div>
                   <div className="flex justify-between items-center p-5 bg-transparent border border-orange-200 rounded-2xl">
-                    <span className="text-[var(--echo-text-4a3728)] text-base">Ping surged milestone</span>
+                    <span className="text-[#4A3728] text-base">Ping surged milestone</span>
                     <Toggle
                       checked={prefs.pingSurgedMilestone}
                       onChange={() => handleToggle("pingSurgedMilestone")}
                     />
                   </div>
                   <div className="flex justify-between items-center p-5 bg-transparent border border-orange-200 rounded-2xl">
-                    <span className="text-[var(--echo-text-4a3728)] text-base">Comment reply</span>
+                    <span className="text-[#4A3728] text-base">Comment reply</span>
                     <Toggle
                       checked={prefs.commentReply}
                       onChange={() => handleToggle("commentReply")}
                     />
                   </div>
 
-                  <h3 className="text-lg text-[var(--echo-text-4a3728)] mt-6 font-semibold">System Settings</h3>
+                  <h3 className="text-lg text-[#4A3728] mt-6 font-semibold">System Settings</h3>
                   <div className="flex justify-between items-center p-5 bg-transparent border border-orange-200 rounded-2xl">
-                    <span className="text-[var(--echo-text-4a3728)] text-base">Browser Push Notifications</span>
+                    <span className="text-[#4A3728] text-base">Browser Push Notifications</span>
                     <button
                       onClick={handlePushEnable}
                       disabled={pushStatus === "Enabled ✓" || pushStatus === "Checking..."}
-                      className="px-4 py-2 bg-[var(--echo-accent)] text-[var(--echo-text-on-accent)] rounded-[25px] text-sm font-medium disabled:opacity-50 transition-colors"
+                      className="px-4 py-2 bg-[#F49B31] text-white rounded-[25px] text-sm font-medium disabled:opacity-50 transition-colors"
                     >
                       {pushStatus}
                     </button>

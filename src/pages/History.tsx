@@ -54,17 +54,17 @@ const History = () => {
             <div className="flex items-center justify-between mb-[22px]">
                 <button
                     onClick={() => navigate("/feed")}
-                    className="flex items-center gap-1.5 md:gap-2.5 bg-[var(--echo-surface)] rounded-full px-3 md:px-5 py-1.5 md:py-2 font-['Poppins',sans-serif] font-semibold text-[13px] md:text-[15px] text-[var(--echo-text-primary)] hover:bg-[var(--echo-sidebar)] transition-colors cursor-pointer shadow-xs border border-[var(--echo-border-f0f0f0)]"
+                    className="flex items-center gap-1.5 md:gap-2.5 bg-[#fefefe] rounded-full px-3 md:px-5 py-1.5 md:py-2 font-['Poppins',sans-serif] font-semibold text-[13px] md:text-[15px] text-black hover:bg-[#FFC37B] transition-colors cursor-pointer shadow-xs border border-[#f0f0f0]"
                 >
-                    <ArrowLeft className="w-4 h-4 md:w-5 md:h-5 text-[var(--echo-text-primary)] stroke-[2.5]" />
+                    <ArrowLeft className="w-4 h-4 md:w-5 md:h-5 text-black stroke-[2.5]" />
                     <span>Go back to feed</span>
                 </button>
                 <button
                     onClick={() => setShowPingFormModal(true)}
-                    className="hidden md:flex items-center gap-2 bg-[var(--echo-accent)] hover:bg-[var(--echo-bg-d88429)] transition-colors rounded-[18px] px-5 py-[5px] cursor-pointer"
+                    className="hidden md:flex items-center gap-2 bg-[#F49B31] hover:bg-[#d88429] transition-colors rounded-[18px] px-5 py-[5px] cursor-pointer"
                 >
-                    <FaPlus className="w-3 h-3 text-[var(--echo-text-on-accent)]" />
-                    <span className="font-['Poppins',sans-serif] font-medium text-[15px] text-[var(--echo-text-on-accent)]">
+                    <FaPlus className="w-3 h-3 text-white" />
+                    <span className="font-['Poppins',sans-serif] font-medium text-[15px] text-white">
                         Create a Ping
                     </span>
                 </button>

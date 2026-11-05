@@ -29,45 +29,45 @@ const TOAST_CONFIG: Record<
 > = {
     ping: {
         message: "Ping Posted Successfully",
-        bg: "bg-[var(--echo-sidebar)]",
-        textColor: "text-[var(--echo-text-454545)]",
-        iconBg: "bg-[var(--echo-accent)]",
+        bg: "bg-[#ffc37b]",
+        textColor: "text-[#454545]",
+        iconBg: "bg-[#f49b31]",
     },
     wave: {
         message: "Wave Posted Successfully",
-        bg: "bg-[var(--echo-sidebar)]",
-        textColor: "text-[var(--echo-text-454545)]",
-        iconBg: "bg-[var(--echo-accent)]",
+        bg: "bg-[#ffc37b]",
+        textColor: "text-[#454545]",
+        iconBg: "bg-[#f49b31]",
     },
     deleted: {
         message: "Ping Deleted!",
-        bg: "bg-[var(--echo-bg-eb5050)]",
-        textColor: "text-[var(--echo-text-on-accent)]",
-        iconBg: "bg-[var(--echo-bg-c83030)]",
+        bg: "bg-[#eb5050]",
+        textColor: "text-white",
+        iconBg: "bg-[#c83030]",
     },
     copied: {
         message: "Link copied to clipboard",
-        bg: "bg-[var(--echo-sidebar)]",
-        textColor: "text-[var(--echo-text-454545)]",
-        iconBg: "bg-[var(--echo-accent)]",
+        bg: "bg-[#ffc37b]",
+        textColor: "text-[#454545]",
+        iconBg: "bg-[#f49b31]",
     },
     reported: {
         message: "Report submitted successfully",
-        bg: "bg-[var(--echo-sidebar)]",
-        textColor: "text-[var(--echo-text-454545)]",
-        iconBg: "bg-[var(--echo-accent)]",
+        bg: "bg-[#ffc37b]",
+        textColor: "text-[#454545]",
+        iconBg: "bg-[#f49b31]",
     },
     acknowledged: {
         message: "Ping acknowledged successfully",
-        bg: "bg-[var(--echo-sidebar)]",
-        textColor: "text-[var(--echo-text-454545)]",
-        iconBg: "bg-[var(--echo-accent)]",
+        bg: "bg-[#ffc37b]",
+        textColor: "text-[#454545]",
+        iconBg: "bg-[#f49b31]",
     },
     "export-failed": {
         message: "Export failed. Please try again.",
-        bg: "bg-[var(--echo-bg-eb5050)]",
-        textColor: "text-[var(--echo-text-on-accent)]",
-        iconBg: "bg-[var(--echo-bg-c83030)]",
+        bg: "bg-[#eb5050]",
+        textColor: "text-white",
+        iconBg: "bg-[#c83030]",
     },
 };
 
@@ -101,13 +101,13 @@ const Toast = ({ variant, duration = 3000, onDismiss }: ToastProps) => {
                 className={`${config.iconBg} rounded-full shrink-0 w-[30px] h-[30px] flex items-center justify-center mix-blend-luminosity`}
             >
                 {variant === "export-failed" ? (
-                    <svg className="w-4 h-4 text-[var(--echo-text-on-accent)]" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                    <svg className="w-4 h-4 text-white" viewBox="0 0 16 16" fill="none" aria-hidden="true">
                         <path d="M8 3.5V9M8 12V12.5" stroke="white" strokeWidth="1.6" strokeLinecap="round" />
                     </svg>
                 ) : variant === "deleted" ? (
                     /* Trash icon for deleted */
                     <svg
-                        className="w-4 h-4 text-[var(--echo-text-on-accent)]"
+                        className="w-4 h-4 text-white"
                         viewBox="0 0 16 16"
                         fill="none"
                         xmlns="http://www.w3.org/2000/svg"
@@ -124,7 +124,7 @@ const Toast = ({ variant, duration = 3000, onDismiss }: ToastProps) => {
                 ) : variant === "copied" ? (
                     /* Link/copy icon for copied */
                     <svg
-                        className="w-4 h-4 text-[var(--echo-text-on-accent)]"
+                        className="w-4 h-4 text-white"
                         viewBox="0 0 16 16"
                         fill="none"
                         xmlns="http://www.w3.org/2000/svg"
@@ -141,7 +141,7 @@ const Toast = ({ variant, duration = 3000, onDismiss }: ToastProps) => {
                 ) : (
                     /* Check/tick icon for posted */
                     <svg
-                        className="w-4 h-4 text-[var(--echo-text-on-accent)]"
+                        className="w-4 h-4 text-white"
                         viewBox="0 0 16 16"
                         fill="none"
                         xmlns="http://www.w3.org/2000/svg"

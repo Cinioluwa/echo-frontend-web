@@ -86,7 +86,7 @@ const WaveStatusIndicator = ({
 
     return (
 <BadgeTooltip badgeKey={statusValue as string}>
-<div className={`inline-flex items-center gap-1.5 px-[15px] py-[7px] border border-[var(--echo-border-626665)] rounded-[23px] ${className}`}
+<div className={`inline-flex items-center gap-1.5 px-[15px] py-[7px] border border-[#626665] rounded-[23px] ${className}`}
         >
             {/* Colored status dot */}
             <span
@@ -95,7 +95,7 @@ const WaveStatusIndicator = ({
             />
 
             {/* Status label */}
-            <span className="text-[11px] font-medium text-[var(--echo-text-primary)] whitespace-nowrap">
+            <span className="text-[11px] font-medium text-black whitespace-nowrap">
                 {config.label}
             </span>
         </div>

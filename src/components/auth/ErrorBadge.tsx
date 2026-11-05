@@ -23,9 +23,9 @@ const ErrorBadge: React.FC<ErrorBadgeProps> = React.memo(({
 }) => {
     const styles = variant === "warning"
         ? {
-            bg: "bg-[var(--echo-surface-soft)]",
-            border: "border-[var(--echo-border-ffcd71)]",
-            text: "text-[var(--echo-text-primary)]"
+            bg: "bg-[#fef5ea]",
+            border: "border-[#ffcd71]",
+            text: "text-black"
         }
         : {
             bg: "bg-red-50",

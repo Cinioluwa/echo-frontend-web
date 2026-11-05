@@ -10,7 +10,7 @@ const CommentRepliesIndicator = ({ replyCount }: Props) => {
     };
 
     return (
-        <div className="flex items-center gap-2 py-2 border-t border-[var(--echo-border-e7e7ef)]">
+        <div className="flex items-center gap-2 py-2 border-t border-[#E7E7EF]">
             {/* Reply avatars - show up to 3 overlapping circles */}
             <div className="flex items-center -space-x-2">
                 {/* First avatar */}
@@ -30,7 +30,7 @@ const CommentRepliesIndicator = ({ replyCount }: Props) => {
             {/* Reply count text */}
             <button
                 onClick={handleViewReplies}
-                className="text-sm font-medium text-[var(--echo-text-63637b)] hover:text-[var(--echo-text-292936)] transition-colors"
+                className="text-sm font-medium text-[#63637B] hover:text-[#292936] transition-colors"
             >
                 {replyCount} {replyCount === 1 ? "reply" : "replies"}
             </button>

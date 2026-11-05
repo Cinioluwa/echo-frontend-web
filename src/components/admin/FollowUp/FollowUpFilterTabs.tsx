@@ -75,13 +75,13 @@ const FollowUpFilterTabs: React.FC<FollowUpFilterTabsProps> = ({
                         onClick={() => onFilterChange(filter.id)}
                         className={`${index === 0 ? "ml-auto" : ""} ${index === filterDefs.length - 1 ? "mr-auto" : ""} flex gap-[6px] sm:gap-[9px] items-center justify-center px-3 sm:px-[18px] py-1.5 sm:py-[9px] relative shrink-0 rounded-[22.5px] whitespace-nowrap transition-all text-xs sm:text-sm border-[1.8px] border-solid ${
                             isActive
-                                ? "bg-[var(--echo-accent)] border-[var(--echo-border-f49b31)] hover:bg-[var(--echo-bg-e28a20)]"
-                                : "bg-[var(--echo-surface-soft)] border-[var(--echo-border-f49b31)] hover:bg-[var(--echo-bg-fdecd8)]"
+                                ? "bg-[#f49b31] border-[#f49b31] hover:bg-[#e28a20]"
+                                : "bg-[#fef5ea] border-[#f49b31] hover:bg-[#fdecd8]"
                         }`}
                         data-node-id={filter.nodeId}
                     >
                         <div
-                            className="bg-[var(--echo-bg-fce6cc)] border-[0.27px] border-[var(--echo-border-f49b31)] border-solid flex items-center justify-center relative rounded-[11.7px] w-[22px] sm:w-[25.2px] h-[22px] sm:h-[25.2px] shrink-0"
+                            className="bg-[#fce6cc] border-[0.27px] border-[#f49b31] border-solid flex items-center justify-center relative rounded-[11.7px] w-[22px] sm:w-[25.2px] h-[22px] sm:h-[25.2px] shrink-0"
                             data-node-id={`${filter.nodeId}-icon-container`}
                         >
                             <img 
@@ -94,7 +94,7 @@ const FollowUpFilterTabs: React.FC<FollowUpFilterTabsProps> = ({
                         
                         <span
                             className={`font-poppins font-semibold text-[10px] sm:text-[11.7px] leading-[15px] sm:leading-[17.55px] ${
-                                isActive ? "text-[var(--echo-text-fef5ea)]" : "text-[var(--echo-text-primary)]"
+                                isActive ? "text-[#fef5ea]" : "text-black"
                             }`}
                         >
                             <span className="inline sm:hidden">{mobileLabels[filter.id]}</span>
@@ -104,8 +104,8 @@ const FollowUpFilterTabs: React.FC<FollowUpFilterTabsProps> = ({
                         <div
                             className={`flex flex-col items-start px-1 sm:px-[7.2px] py-px sm:py-[1.8px] rounded-[18px] border-[0.5px] border-solid shrink-0 ${
                                 isActive
-                                    ? "bg-[var(--echo-surface-soft)] border-[var(--echo-border-f49b31)] text-[var(--echo-text-f49b31)]"
-                                    : "bg-[var(--echo-surface-soft)] border-[var(--echo-border-f49b31)] text-[var(--echo-text-f49b31)]"
+                                    ? "bg-[#fef5ea] border-[#f49b31] text-[#f49b31]"
+                                    : "bg-[#fef5ea] border-[#f49b31] text-[#f49b31]"
                             }`}
                             data-node-id={`${filter.nodeId}-badge`}
                         >

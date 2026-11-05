@@ -104,7 +104,7 @@ const ProposeWaveModal = ({
 
   return (
     <div className="flex font-poppins justify-center items-center z-50 inset-0 fixed bg-black/40">
-      <div className=" mx-5 shadow-2xl rounded-4xl px-[25px] py-2.5 md:p-[30px] bg-[var(--echo-surface)] gap-4 overflow-hidden text-[32px] font-poppins flex  flex-col items-center">
+      <div className=" mx-5 shadow-2xl rounded-4xl px-[25px] py-2.5 md:p-[30px] bg-white gap-4 overflow-hidden text-[32px] font-poppins flex  flex-col items-center">
         <h2 className="font-semibold text-center text-[20px] md:text-[32px]">
           Proposing a wave
         </h2>
@@ -120,7 +120,7 @@ const ProposeWaveModal = ({
           </button>
           <button
             disabled
-            className={`inline-block rounded-tr-[20px] text-[var(--echo-text-on-accent)] bg-[var(--echo-accent)] border-[var(--echo-border-454545)] border-2 border-l rounded-br-[20px] py-6 px-6  sm:py-4 sm:px-8`}
+            className={`inline-block rounded-tr-[20px] text-white bg-[#F49B31] border-[#454545] border-2 border-l rounded-br-[20px] py-6 px-6  sm:py-4 sm:px-8`}
           >
             Wave
           </button>
@@ -145,7 +145,7 @@ const ProposeWaveModal = ({
                   })
                 }
                 value={proposedWaveDetails.solution}
-                className="pl-[11px] py-0.5 resize-none text-[12px] text-[var(--echo-text-454545)] outline-0 flex-1"
+                className="pl-[11px] py-0.5 resize-none text-[12px] text-[#454545] outline-0 flex-1"
               />
             </div>
           </fieldset>
@@ -153,7 +153,7 @@ const ProposeWaveModal = ({
             <button
               type="submit"
               disabled={isSubmitting}
-              className="px-[30px] hover:bg-[var(--echo-bg-d88429)] text-[12px] transition-colors duration-300 ease-in-out py-[5px] cursor-pointer text-[var(--echo-text-on-accent)] rounded-xl bg-[var(--echo-accent)] disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-[30px] hover:bg-[#d88429] text-[12px] transition-colors duration-300 ease-in-out py-[5px] cursor-pointer text-white rounded-xl bg-[#F49B31] disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isSubmitting ? "Posting..." : "Post"}
             </button>

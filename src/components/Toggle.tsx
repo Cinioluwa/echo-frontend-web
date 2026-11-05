@@ -18,9 +18,9 @@ const Toggle = ({ checked = false, onChange, disabled = false }: toggleProps) =>
           disabled={disabled}
           className="sr-only peer"
         />
-        <div className={`w-10 h-6 bg-gray-300 rounded-full peer-checked:bg-[var(--echo-accent)] transition-colors ${disabled ? "bg-gray-200" : ""
+        <div className={`w-10 h-6 bg-gray-300 rounded-full peer-checked:bg-[#F49B31] transition-colors ${disabled ? "bg-gray-200" : ""
           }`}></div>
-        <div className="absolute left-1 top-1 w-4 h-4 bg-[var(--echo-surface)] rounded-full shadow-md peer-checked:translate-x-4 duration-300 transition-transform"></div>
+        <div className="absolute left-1 top-1 w-4 h-4 bg-white rounded-full shadow-md peer-checked:translate-x-4 duration-300 transition-transform"></div>
       </div>
     </label>
   );

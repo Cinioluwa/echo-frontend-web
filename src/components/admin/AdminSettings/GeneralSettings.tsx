@@ -49,7 +49,7 @@ const GeneralSettings: React.FC = () => {
   if (loading) {
     return (
       <div className="flex items-center justify-center p-8">
-        <div className="animate-spin w-8 h-8 border-4 border-[var(--echo-border-f49b31)] border-t-transparent rounded-full" />
+        <div className="animate-spin w-8 h-8 border-4 border-[#f49b31] border-t-transparent rounded-full" />
       </div>
     );
   }
@@ -57,7 +57,7 @@ const GeneralSettings: React.FC = () => {
   return (
     <div className="flex flex-col gap-6 w-full animate-fade-in">
       <div className="pb-4">
-        <h2 className="font-poppins font-semibold text-[18px] text-[var(--echo-text-primary)]">
+        <h2 className="font-poppins font-semibold text-[18px] text-[#212121]">
           Organization Profile
         </h2>
       </div>
@@ -69,7 +69,7 @@ const GeneralSettings: React.FC = () => {
         </div>
       )}
       <div className="flex items-center gap-6">
-        <div className="w-[100px] h-[100px] rounded-full border border-[var(--echo-border-f49b31)] bg-[var(--echo-surface-soft)] flex items-center justify-center overflow-hidden shrink-0">
+        <div className="w-[100px] h-[100px] rounded-full border border-[#f49b31] bg-[#fef5ea] flex items-center justify-center overflow-hidden shrink-0">
           <img
             src={logoUrl}
             alt="Organization Logo"
@@ -82,11 +82,11 @@ const GeneralSettings: React.FC = () => {
         <div className="flex flex-col gap-2 items-start">
           <button
             onClick={() => fileInputRef.current?.click()}
-            className="px-4 py-2 border border-[var(--echo-border-f49b31)] rounded-[10px] bg-[var(--echo-surface)] hover:bg-[var(--echo-surface-soft)] text-[var(--echo-text-f49b31)] font-poppins font-medium text-[14px] transition-colors"
+            className="px-4 py-2 border border-[#f49b31] rounded-[10px] bg-white hover:bg-[#fef5ea] text-[#f49b31] font-poppins font-medium text-[14px] transition-colors"
           >
             Change logo
           </button>
-          <span className="font-poppins text-[12px] text-[var(--echo-text-secondary)]">
+          <span className="font-poppins text-[12px] text-[#8b8e8d]">
             JPG, PNG or GIF. Max size 5MB
           </span>
           <input
@@ -101,26 +101,26 @@ const GeneralSettings: React.FC = () => {
 
       <div className="flex flex-col gap-5 w-full">
         <div className="flex flex-col gap-2 w-full">
-          <label className="font-poppins font-medium text-[14px] text-[var(--echo-text-5e5c58)]">
+          <label className="font-poppins font-medium text-[14px] text-[#5e5c58]">
             Space Name
           </label>
           <input
             type="text"
             value={spaceName}
             onChange={(e) => setSpaceName(e.target.value)}
-            className="w-full px-5 py-3 border border-[var(--echo-border-ffd7a8)] bg-[var(--echo-surface-soft)] rounded-[9px] font-poppins text-[15px] text-[var(--echo-text-primary)] focus:border-[var(--echo-border-f49b31)] outline-none transition-colors"
+            className="w-full px-5 py-3 border border-[#ffd7a8] bg-[#FEF5EA] rounded-[9px] font-poppins text-[15px] text-[#212121] focus:border-[#f49b31] outline-none transition-colors"
           />
         </div>
 
         <div className="flex flex-col gap-2 w-full">
-          <label className="font-poppins font-medium text-[14px] text-[var(--echo-text-5e5c58)]">
+          <label className="font-poppins font-medium text-[14px] text-[#5e5c58]">
             About/Description
           </label>
           <textarea
             rows={6}
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-            className="w-full px-5 py-3 border border-[var(--echo-border-ffd7a8)] bg-[var(--echo-surface-soft)] rounded-[9px] font-poppins text-[15px] text-[var(--echo-text-primary)] focus:border-[var(--echo-border-f49b31)] outline-none transition-colors resize-none"
+            className="w-full px-5 py-3 border border-[#ffd7a8] bg-[#FEF5EA] rounded-[9px] font-poppins text-[15px] text-[#212121] focus:border-[#f49b31] outline-none transition-colors resize-none"
           />
         </div>
       </div>
@@ -129,7 +129,7 @@ const GeneralSettings: React.FC = () => {
         <button
           onClick={handleSave}
           disabled={saving}
-          className="px-6 py-2.5 bg-[var(--echo-accent)] text-[var(--echo-text-on-accent)] font-poppins font-semibold text-[14px] rounded-[10px] hover:bg-[var(--echo-bg-d88429)] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          className="px-6 py-2.5 bg-[#f49b31] text-white font-poppins font-semibold text-[14px] rounded-[10px] hover:bg-[#d88429] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
         >
           {saving ? "Saving..." : "Save Changes"}
         </button>

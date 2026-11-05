@@ -196,10 +196,10 @@ const MakeRequest: React.FC = () => {
                 <AuthCard className="max-w-[537px]">
                     {/* Header */}
                     <div className="flex flex-col gap-2.5 items-center text-center w-full">
-                        <h1 className="text-[22px] sm:text-[26px] md:text-[28px] font-semibold text-[var(--echo-text-primary)] leading-7 sm:leading-8 md:leading-9">
+                        <h1 className="text-[22px] sm:text-[26px] md:text-[28px] font-semibold text-black leading-7 sm:leading-8 md:leading-9">
                             Request New Institution
                         </h1>
-                        <p className="text-[14px] sm:text-[15px] md:text-[16px] font-medium text-[var(--echo-text-4a504e)] opacity-69 leading-5 sm:leading-[21px]">
+                        <p className="text-[14px] sm:text-[15px] md:text-[16px] font-medium text-[#4a504e] opacity-69 leading-5 sm:leading-[21px]">
                             Can't find your institution? Request to add it to Echo
                         </p>
                     </div>
@@ -218,7 +218,7 @@ const MakeRequest: React.FC = () => {
                             <div className="flex flex-col gap-[5px] w-full">
                                 <label
                                     htmlFor="organizationName"
-                                    className="text-[13px] sm:text-[14px] font-medium text-[var(--echo-text-4a504e)]"
+                                    className="text-[13px] sm:text-[14px] font-medium text-[#4a504e]"
                                     style={{ fontFamily: 'Poppins, sans-serif' }}
                                 >
                                     Institution Name <span className="text-red-500">*</span>
@@ -255,7 +255,7 @@ const MakeRequest: React.FC = () => {
                             <div className="flex flex-col gap-[5px] w-full">
                                 <label
                                     htmlFor="website"
-                                    className="text-[13px] sm:text-[14px] font-medium text-[var(--echo-text-4a504e)]"
+                                    className="text-[13px] sm:text-[14px] font-medium text-[#4a504e]"
                                     style={{ fontFamily: 'Poppins, sans-serif' }}
                                 >
                                     Website (Optional)
@@ -283,7 +283,7 @@ const MakeRequest: React.FC = () => {
                             <div className="flex flex-col gap-[5px] w-full">
                                 <label
                                     htmlFor="role"
-                                    className="text-[13px] sm:text-[14px] font-medium text-[var(--echo-text-4a504e)]"
+                                    className="text-[13px] sm:text-[14px] font-medium text-[#4a504e]"
                                     style={{ fontFamily: 'Poppins, sans-serif' }}
                                 >
                                     Your Role (Optional)
@@ -305,12 +305,12 @@ const MakeRequest: React.FC = () => {
                             <div className="flex flex-col gap-[5px] w-full">
                                 <label
                                     htmlFor="additionalNotes"
-                                    className="text-[13px] sm:text-[14px] font-medium text-[var(--echo-text-4a504e)]"
+                                    className="text-[13px] sm:text-[14px] font-medium text-[#4a504e]"
                                     style={{ fontFamily: 'Poppins, sans-serif' }}
                                 >
                                     Additional Notes (Optional)
                                 </label>
-                                <div className="bg-[var(--echo-bg-fbfbfb)] border border-[var(--echo-border-cacaca)] rounded-xl p-[15px] sm:p-[18px] md:p-[21px] focus-within:border-[var(--echo-border-f49b31)] transition-colors duration-200">
+                                <div className="bg-[#fbfbfb] border border-[#cacaca] rounded-xl p-[15px] sm:p-[18px] md:p-[21px] focus-within:border-[#f49b31] transition-colors duration-200">
                                     <textarea
                                         id="additionalNotes"
                                         name="additionalNotes"
@@ -319,7 +319,7 @@ const MakeRequest: React.FC = () => {
                                         placeholder="Any additional information that might help us..."
                                         rows={4}
                                         disabled={isLoading || isOffline}
-                                        className="w-full bg-transparent border-none outline-none text-[12px] sm:text-[13px] text-[var(--echo-text-4a504e)] placeholder:text-[var(--echo-text-737373)] placeholder:italic resize-none disabled:opacity-50 disabled:cursor-not-allowed"
+                                        className="w-full bg-transparent border-none outline-none text-[12px] sm:text-[13px] text-[#4a504e] placeholder:text-[#737373] placeholder:italic resize-none disabled:opacity-50 disabled:cursor-not-allowed"
                                         style={{ fontFamily: 'Poppins, sans-serif', fontWeight: 500 }}
                                     />
                                 </div>

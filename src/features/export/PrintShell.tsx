@@ -73,7 +73,7 @@ const PrintShell = ({ footerTitle, filename, status, errorMessage, children }: P
 
     return (
         <div className="ep-root">
-            <style>{`@page { @bottom-left { content: ${cssString(footerTitle)}; font-family: "Poppins", sans-serif; font-size: 8pt; color: var(--echo-text-854f0b); } }`}</style>
+            <style>{`@page { @bottom-left { content: ${cssString(footerTitle)}; font-family: "Poppins", sans-serif; font-size: 8pt; color: #854f0b; } }`}</style>
             {status === "loading" && <div className="ep-state">Preparing your export…</div>}
             {status === "error" && (
                 <div className="ep-state ep-state--error" role="alert">

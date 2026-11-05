@@ -9,7 +9,6 @@ import { useAuthStore } from "../stores";
 import { LogOut, Settings, HelpCircle } from "lucide-react";
 import UserAvatar from "./UserAvatar";
 import OnboardingOverlay from "./onboarding/OnboardingOverlay";
-import { useTheme } from "../contexts/ThemeContext";
 
 const ProfileDropdown = () => {
   const user = useAuthStore((state) => state.user);
@@ -19,7 +18,6 @@ const ProfileDropdown = () => {
     (state) => state.markOnboardingComplete,
   );
   const navigate = useNavigate();
-  const { preference, setPreference } = useTheme();
 
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -80,57 +78,36 @@ const ProfileDropdown = () => {
       >
         {/* Avatar + desktop-only user name */}
         <div className="flex items-center gap-2">
-          <p className="hidden md:block max-w-[140px] truncate text-[14px] text-[var(--echo-text-primary)] font-medium leading-normal font-['Poppins',sans-serif]">
+          <p className="hidden md:block max-w-[140px] truncate text-[14px] text-black font-medium leading-normal font-['Poppins',sans-serif]">
             {fullName}
           </p>
           <UserAvatar
             user={user}
             size="md"
             responsive
-            bgColor="bg-[var(--echo-accent)]"
-            className="hover:bg-[var(--echo-accent)]-300 transition-colors"
+            bgColor="bg-[#f49b31]"
+            className="hover:bg-[#f49b31]-300 transition-colors"
           />
         </div>
       </button>
 
       {/* Dropdown Menu */}
       {isOpen && (
-        <div className="absolute top-[calc(100%+8px)] right-0 bg-[var(--echo-surface)] rounded-lg shadow-lg border border-[var(--echo-border-cecece)] z-50 w-[220px] md:w-[274px] overflow-hidden">
+        <div className="absolute top-[calc(100%+8px)] right-0 bg-white rounded-lg shadow-lg border border-[#CECECE] z-50 w-[220px] md:w-[274px] overflow-hidden">
           {/* User Profile Section */}
-          <div className="border-b border-[var(--echo-border-cecece)] p-3 md:p-4 flex items-center gap-2.5 md:gap-3">
-            <UserAvatar user={user} size="md" bgColor="bg-[var(--echo-accent)]" />
+          <div className="border-b border-[#CECECE] p-3 md:p-4 flex items-center gap-2.5 md:gap-3">
+            <UserAvatar user={user} size="md" bgColor="bg-[#f49b31]" />
             <div className="flex flex-col gap-0.5 flex-1 min-w-0">
-              <p className="font-medium text-[14px] md:text-[16px] text-[var(--echo-text-primary)] truncate tracking-[-0.14px] md:tracking-[-0.16px]">
+              <p className="font-medium text-[14px] md:text-[16px] text-black truncate tracking-[-0.14px] md:tracking-[-0.16px]">
                 {fullName}
               </p>
               {user?.email && (
-                <p className="font-medium text-[12px] md:text-[14px] text-[var(--echo-text-secondary)] truncate tracking-[-0.12px] md:tracking-[-0.14px]">
+                <p className="font-medium text-[12px] md:text-[14px] text-[#999999] truncate tracking-[-0.12px] md:tracking-[-0.14px]">
                   {user.email}
                 </p>
               )}
             </div>
           </div>
-
-          <fieldset className="theme-control">
-            <legend>Theme</legend>
-            <div className="theme-control-options" role="radiogroup" aria-label="Theme">
-              {(["system", "light", "dark"] as const).map((theme) => (
-                <label
-                  key={theme}
-                  className={`theme-option${preference === theme ? " is-selected" : ""}`}
-                >
-                  <input
-                    type="radio"
-                    name="echo-theme"
-                    value={theme}
-                    checked={preference === theme}
-                    onChange={() => setPreference(theme)}
-                  />
-                  <span>{theme[0].toUpperCase() + theme.slice(1)}</span>
-                </label>
-              ))}
-            </div>
-          </fieldset>
 
           {/* Profile Settings */}
           <button
@@ -138,7 +115,7 @@ const ProfileDropdown = () => {
             className="w-full px-3.5 md:px-4 py-2.5 md:py-3 flex items-center gap-2.5 md:gap-3 hover:bg-gray-50 transition-colors text-left"
           >
             <Settings className="w-[18px] h-[18px] md:w-5 md:h-5 text-gray-600" />
-            <span className="font-medium text-[13px] md:text-[15px] text-[var(--echo-text-primary)]">
+            <span className="font-medium text-[13px] md:text-[15px] text-black">
               Profile Settings
             </span>
           </button>
@@ -152,11 +129,11 @@ const ProfileDropdown = () => {
             className="w-full px-3.5 md:px-4 py-2.5 md:py-3 flex items-center gap-2.5 md:gap-3 hover:bg-gray-50 transition-colors text-left"
           >
             <HelpCircle className="w-[18px] h-[18px] md:w-5 md:h-5 text-gray-600" />
-            <span className="font-medium text-[13px] md:text-[15px] text-[var(--echo-text-primary)]">Help</span>
+            <span className="font-medium text-[13px] md:text-[15px] text-black">Help</span>
           </button>
 
           {/* Divider */}
-          <div className="border-t border-[var(--echo-border-cecece)] mx-4" />
+          <div className="border-t border-[#CECECE] mx-4" />
 
           {/* Sign Out */}
           <button
@@ -164,7 +141,7 @@ const ProfileDropdown = () => {
             className="w-full px-3.5 md:px-4 py-2.5 md:py-3 flex items-center gap-2.5 md:gap-3 hover:bg-gray-50 transition-colors text-left"
           >
             <LogOut className="w-[18px] h-[18px] md:w-5 md:h-5 text-gray-600" />
-            <span className="font-medium text-[13px] md:text-[15px] text-[var(--echo-text-primary)]">Sign Out</span>
+            <span className="font-medium text-[13px] md:text-[15px] text-black">Sign Out</span>
           </button>
         </div>
       )}

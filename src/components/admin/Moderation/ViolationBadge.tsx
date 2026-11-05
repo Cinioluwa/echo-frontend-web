@@ -11,29 +11,29 @@ const ViolationBadge: React.FC<ViolationBadgeProps> = ({ type, className = "" })
         switch (violationType) {
             case "inappropriate-content":
                 return {
-                    bg: "bg-[var(--echo-bg-ffd7d7)]",
-                    text: "text-[var(--echo-text-b01212)]",
+                    bg: "bg-[#ffd7d7]",
+                    text: "text-[#b01212]",
                     iconSrc: "/assets/icon/eye-off.svg",
                     label: "Inappropriate content",
                 };
             case "threats":
                 return {
-                    bg: "bg-[var(--echo-bg-ffd7d7)]",
-                    text: "text-[var(--echo-text-b01212)]",
+                    bg: "bg-[#ffd7d7]",
+                    text: "text-[#b01212]",
                     iconSrc: "/assets/icon/alert.svg",
                     label: "Threats",
                 };
             case "misinformation":
                 return {
-                    bg: "bg-[var(--echo-bg-ffd6a5)]",
-                    text: "text-[var(--echo-text-a3651e)]",
+                    bg: "bg-[#ffd6a5]",
+                    text: "text-[#a3651e]",
                     iconSrc: "/assets/icon/x-circle.svg",
                     label: "Misinformation",
                 };
             default:
                 return {
-                    bg: "bg-[var(--echo-bg-ffd7d7)]",
-                    text: "text-[var(--echo-text-b01212)]",
+                    bg: "bg-[#ffd7d7]",
+                    text: "text-[#b01212]",
                     iconSrc: "/assets/icon/eye-off.svg",
                     label: violationType,
                 };

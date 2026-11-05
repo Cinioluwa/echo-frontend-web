@@ -46,10 +46,10 @@ const SideBar = ({ onCreatePing, onNavigate, variant = "desktop" }: Props) => {
       onClick={onNavigate}
       className={`flex items-center gap-3.5 h-12 ${
         active
-          ? "bg-[var(--echo-accent)] text-[var(--echo-text-on-accent)]"
+          ? "bg-[#F49B31] text-white"
           : mobile
-            ? "border border-[var(--echo-border-f4e3c9)] bg-[var(--echo-surface)] text-[var(--echo-text-4a3728)] hover:bg-[var(--echo-surface-soft)]"
-            : "border border-[var(--echo-border-f49b31)] bg-[var(--echo-surface-soft)] text-[var(--echo-text-primary)] hover:bg-[var(--echo-page)]"
+            ? "border border-[#F4E3C9] bg-white text-[#4A3728] hover:bg-[#FEF5EA]"
+            : "border border-[#F49B31] bg-[#FEF5EA] text-black hover:bg-[#fae9d4]"
       } ${mobile ? "rounded-xl px-4" : "rounded-[15px] pl-6"} w-full cursor-pointer transition-colors`}
     >
       <span className="w-5 h-5 flex items-center justify-center shrink-0">
@@ -66,9 +66,9 @@ const SideBar = ({ onCreatePing, onNavigate, variant = "desktop" }: Props) => {
       {/* Create a Ping Button */}
       <button
         onClick={handleCreateClick}
-        className={`flex items-center gap-3.5 h-12 bg-[var(--echo-accent)] hover:bg-[var(--echo-bg-d88429)] transition-colors cursor-pointer ${
+        className={`flex items-center gap-3.5 h-12 bg-[#F49B31] hover:bg-[#d88429] transition-colors cursor-pointer ${
           mobile ? "rounded-xl px-4 shadow-sm" : "rounded-[15px] pl-6"
-        } w-full text-[var(--echo-text-on-accent)]`}
+        } w-full text-white`}
       >
         <span className="w-5 h-5 flex items-center justify-center shrink-0">
           <FaPlus className="w-4 h-4" />
@@ -104,10 +104,10 @@ const SideBar = ({ onCreatePing, onNavigate, variant = "desktop" }: Props) => {
         to="/history"
         className={`flex items-center gap-3.5 h-12 ${
           isHistoryRoute
-            ? "bg-[var(--echo-accent)] text-[var(--echo-text-on-accent)]"
+            ? "bg-[#F49B31] text-white"
             : mobile
-              ? "border border-[var(--echo-border-f4e3c9)] bg-[var(--echo-surface)] text-[var(--echo-text-4a3728)] hover:bg-[var(--echo-surface-soft)]"
-              : "border border-[var(--echo-border-f49b31)] bg-[var(--echo-surface-soft)] text-[var(--echo-text-primary)] hover:bg-[var(--echo-page)]"
+              ? "border border-[#F4E3C9] bg-white text-[#4A3728] hover:bg-[#FEF5EA]"
+              : "border border-[#F49B31] bg-[#FEF5EA] text-black hover:bg-[#fae9d4]"
         } ${
           mobile ? "rounded-xl px-4" : "rounded-[15px] pl-6"
         } w-full cursor-pointer transition-colors`}

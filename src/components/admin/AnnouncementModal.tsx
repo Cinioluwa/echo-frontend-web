@@ -52,7 +52,7 @@ const AnnouncementModal = ({
 
   return (
     <div className="flex font-poppins justify-center items-center z-50 inset-0 fixed bg-black/40">
-      <div className="mx-5 shadow-2xl w-full max-w-[610px] rounded-4xl px-[25px] py-2.5 md:p-[30px] bg-[var(--echo-surface)] gap-4 overflow-hidden text-[32px] font-poppins flex  flex-col items-center">
+      <div className="mx-5 shadow-2xl w-full max-w-[610px] rounded-4xl px-[25px] py-2.5 md:p-[30px] bg-white gap-4 overflow-hidden text-[32px] font-poppins flex  flex-col items-center">
         <h2 className="font-semibold text-center text-[20px] md:text-[32px]">
           Announcement
         </h2>
@@ -81,7 +81,7 @@ const AnnouncementModal = ({
                   })
                 }
                 value={announcementData.title}
-                className="pl-[11px] text-[12px] text-[var(--echo-text-454545)] outline-0 flex-1"
+                className="pl-[11px] text-[12px] text-[#454545] outline-0 flex-1"
                 autoComplete="off"
               />
             </div>
@@ -106,7 +106,7 @@ const AnnouncementModal = ({
                 }
                 value={announcementData.description}
                 autoComplete="off"
-                className="pl-[11px] text-[12px] mt-0.5 h-full resize-none w-full text-[var(--echo-text-454545)] outline-0 flex-1"
+                className="pl-[11px] text-[12px] mt-0.5 h-full resize-none w-full text-[#454545] outline-0 flex-1"
               />
             </div>
 
@@ -122,7 +122,7 @@ const AnnouncementModal = ({
           <button
             type="submit"
             disabled={loading}
-            className={`text-[18px] my-[25px] text-[var(--echo-text-on-accent)] py-2 text-center w-full bg-[var(--echo-accent)] rounded-[17px] hover:bg-[var(--echo-bg-d88429)] transition ${loading ? "opacity-50 cursor-not-allowed" : ""
+            className={`text-[18px] my-[25px] text-white py-2 text-center w-full bg-[#F49B31] rounded-[17px] hover:bg-[#d88429] transition ${loading ? "opacity-50 cursor-not-allowed" : ""
               }`}
           >
             {loading ? "Publishing..." : "Publish"}

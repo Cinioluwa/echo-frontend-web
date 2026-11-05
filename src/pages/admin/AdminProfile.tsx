@@ -218,7 +218,7 @@ const AdminProfile = () => {
     <div className="overflow-scroll h-screen">
       <ProfileLayout />
       <main className="mt-3 mx-auto h-full p-4 md:p-10">
-        <div className="flex md:border rounded-[15px] border-[var(--echo-border-ffc37b)] p-5 flex-col lg:flex-row gap-0 md:gap-12">
+        <div className="flex md:border rounded-[15px] border-[#FFC37B] p-5 flex-col lg:flex-row gap-0 md:gap-12">
           {/* SIDE PANEL COMPONENT */}
           <AdminProfileSidePanel pages={pages} />
 
@@ -247,7 +247,7 @@ const AdminProfile = () => {
                     )}
                     {uploading && (
                       <div className="absolute inset-0 bg-black/20 rounded-full flex items-center justify-center">
-                        <span className="text-[var(--echo-text-on-accent)] text-xs">Uploading...</span>
+                        <span className="text-white text-xs">Uploading...</span>
                       </div>
                     )}
                   </div>
@@ -255,7 +255,7 @@ const AdminProfile = () => {
                     <button
                       onClick={handleChangeButtonClick}
                       disabled={uploading}
-                      className="px-5 py-2 bg-[var(--echo-surface)] border border-orange-200 rounded-lg text-sm shadow-sm hover:border-orange-300 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="px-5 py-2 bg-white border border-orange-200 rounded-lg text-sm shadow-sm hover:border-orange-300 transition disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       {uploading ? "Uploading..." : "Change Picture"}
                     </button>
@@ -337,7 +337,7 @@ const AdminProfile = () => {
                             !firstName.trim() ||
                             !lastName.trim()
                           }
-                          className="px-4 py-2 bg-orange-500 text-[var(--echo-text-on-accent)] rounded-lg text-sm hover:bg-orange-600 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                          className="px-4 py-2 bg-orange-500 text-white rounded-lg text-sm hover:bg-orange-600 transition disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                           {nameChangeSaving ? "Saving..." : "Save Name"}
                         </button>
@@ -366,7 +366,7 @@ const AdminProfile = () => {
                       <button
                         onClick={() => setEditingName(true)}
                         disabled={!nameChangeStatus.canChangeName}
-                        className="px-4 py-2 bg-[var(--echo-surface)] border border-orange-200 rounded-lg text-sm hover:border-orange-300 transition disabled:opacity-50 disabled:cursor-not-allowed disabled:text-gray-400"
+                        className="px-4 py-2 bg-white border border-orange-200 rounded-lg text-sm hover:border-orange-300 transition disabled:opacity-50 disabled:cursor-not-allowed disabled:text-gray-400"
                       >
                         Edit Name
                       </button>

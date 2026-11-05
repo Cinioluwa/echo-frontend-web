@@ -7,8 +7,8 @@
  * border — first has rounded-l-[25px], last has rounded-r-[25px],
  * middle buttons have flat sides with thin shared borders.
  *
- * Default: bg-[var(--echo-surface-soft)], border-[var(--echo-border-454545)], black text
- * Selected: bg-[var(--echo-accent)], white text
+ * Default: bg-[#fef5ea], border-[#454545], black text
+ * Selected: bg-[#f49b31], white text
  */
 
 import { useEffect, useState } from "react";
@@ -40,7 +40,7 @@ const CategorySelector = ({ categoryId, setFormData }: CategorySelectorProps) =>
 
   if (isLoading) {
     return (
-      <div className="flex items-center px-5 py-2.5 text-[14px] text-[var(--echo-text-454545)] border-2 border-[var(--echo-border-454545)] rounded-[25px]">
+      <div className="flex items-center px-5 py-2.5 text-[14px] text-[#454545] border-2 border-[#454545] rounded-[25px]">
         Loading…
       </div>
     );
@@ -72,8 +72,8 @@ const CategorySelector = ({ categoryId, setFormData }: CategorySelectorProps) =>
               isLast ? "rounded-r-[25px]" : "",
               // Colour states
               isSelected
-                ? "bg-[var(--echo-accent)] border-[var(--echo-border-f49b31)] text-[var(--echo-text-on-accent)]"
-                : "bg-[var(--echo-surface-soft)] border-[var(--echo-border-454545)] text-[var(--echo-text-primary)] hover:bg-[var(--echo-bg-fde8c6)] transition-colors duration-200",
+                ? "bg-[#f49b31] border-[#f49b31] text-white"
+                : "bg-[#fef5ea] border-[#454545] text-black hover:bg-[#fde8c6] transition-colors duration-200",
             ].join(" ")}
           >
             {cat.name}

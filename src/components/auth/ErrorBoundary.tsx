@@ -98,13 +98,13 @@ class ErrorBoundary extends Component<Props, State> {
                         {/* Title */}
                         <div className="text-center w-full">
                             <h1
-                                className="text-[22px] sm:text-[26px] md:text-[28px] font-semibold text-[var(--echo-text-4a504e)] mb-2.5"
+                                className="text-[22px] sm:text-[26px] md:text-[28px] font-semibold text-[#4a504e] mb-2.5"
                                 style={{ fontFamily: "Poppins, sans-serif" }}
                             >
                                 Something Went Wrong
                             </h1>
                             <p
-                                className="text-[12px] sm:text-[13px] text-[var(--echo-text-secondary)] font-normal leading-relaxed"
+                                className="text-[12px] sm:text-[13px] text-[#838383] font-normal leading-relaxed"
                                 style={{ fontFamily: "Poppins, sans-serif" }}
                             >
                                 We encountered an unexpected error. Please try again.
@@ -138,7 +138,7 @@ class ErrorBoundary extends Component<Props, State> {
                             <AuthButton onClick={this.handleReset}>Try Again</AuthButton>
                             <button
                                 onClick={this.handleGoHome}
-                                className="w-full py-3 px-4 text-[14px] font-medium text-[var(--echo-text-secondary)] hover:text-[var(--echo-text-4a504e)] transition-colors"
+                                className="w-full py-3 px-4 text-[14px] font-medium text-[#838383] hover:text-[#4a504e] transition-colors"
                                 style={{ fontFamily: "Poppins, sans-serif" }}
                             >
                                 Go to Home

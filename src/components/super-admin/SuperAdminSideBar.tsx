@@ -21,7 +21,7 @@ const SuperAdminSideBar: React.FC = () => {
   };
 
   return (
-    <div className="w-[240px] h-screen bg-[var(--echo-surface-soft)] border-r border-[var(--echo-border-f49b31)] flex flex-col pt-8 pb-8">
+    <div className="w-[240px] h-screen bg-[#fef5ea] border-r border-[#f49b31] flex flex-col pt-8 pb-8">
       <div className="px-10 mb-12 flex items-center justify-center gap-3">
         <div className="w-[25px] h-[27px]">
           <img src="/assets/images/Echo Logo_black.svg" alt="Echo Logo" className="w-full h-full" />
@@ -37,8 +37,8 @@ const SuperAdminSideBar: React.FC = () => {
               key={item.name}
               to={item.path}
               className={`flex items-center gap-3 px-5 py-4 rounded-xl transition-colors font-semibold ${isActive
-                ? "bg-[var(--echo-accent)] text-[var(--echo-text-on-accent)] "
-                : "text-gray-700 hover:bg-[var(--echo-bg-fceacc)]"
+                ? "bg-[#f49b31] text-white "
+                : "text-gray-700 hover:bg-[#fceacc]"
                 }`}
             >
               {item.icon}
@@ -51,7 +51,7 @@ const SuperAdminSideBar: React.FC = () => {
       <div className="px-5 mt-auto">
         <button
           onClick={handleLogout}
-          className="flex items-center gap-3 px-5 py-4 rounded-xl text-gray-700 hover:bg-[var(--echo-bg-fceacc)] w-full font-semibold transition-colors"
+          className="flex items-center gap-3 px-5 py-4 rounded-xl text-gray-700 hover:bg-[#fceacc] w-full font-semibold transition-colors"
         >
           <LogOut size={20} />
           <span>Logout</span>

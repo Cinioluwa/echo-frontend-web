@@ -39,7 +39,7 @@ const PingActionsDropdown = ({
     const menuItemClass =
         "w-full flex gap-2.5 items-center py-1.5 px-2 hover:bg-gray-50 rounded-[6px] transition-colors text-left";
     const menuLabelClass =
-        "font-['Poppins',sans-serif] font-medium text-[13px] leading-[1.2] text-[var(--echo-text-primary)] whitespace-nowrap";
+        "font-['Poppins',sans-serif] font-medium text-[13px] leading-[1.2] text-black whitespace-nowrap";
 
     // Close dropdown when clicking outside
     useEffect(() => {
@@ -112,7 +112,7 @@ const PingActionsDropdown = ({
                 onMouseEnter={() => setIsHovered(true)}
                 onMouseLeave={() => setIsHovered(false)}
                 aria-label="More actions"
-                className="w-8 h-8 rounded-full flex items-center justify-center hover:bg-[var(--echo-bg-ffc37bab)] transition-colors cursor-pointer"
+                className="w-8 h-8 rounded-full flex items-center justify-center hover:bg-[#FFC37BAB] transition-colors cursor-pointer"
             >
                 <motion.div
                     animate={{ scale: isHovered ? 1.1 : 1 }}
@@ -121,7 +121,7 @@ const PingActionsDropdown = ({
                     <MoreVertical
                         width={21}
                         height={21}
-                        className={isHovered ? "text-[var(--echo-text-primary)]" : "text-[var(--echo-text-4a504e)]"}
+                        className={isHovered ? "text-black" : "text-[#4A504E]"}
                     />
                 </motion.div>
             </button>
@@ -134,7 +134,7 @@ const PingActionsDropdown = ({
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: -8, scale: 0.95 }}
                         transition={{ duration: 0.15 }}
-                        className="absolute right-0 top-full mt-2 bg-[var(--echo-surface)] rounded-lg shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)] py-2 px-2 min-w-[172px] z-50"
+                        className="absolute right-0 top-full mt-2 bg-white rounded-lg shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)] py-2 px-2 min-w-[172px] z-50"
                         onClick={(e) => e.stopPropagation()}
                     >
                         {/* Copy link */}
@@ -142,7 +142,7 @@ const PingActionsDropdown = ({
                             onClick={handleCopyLink}
                             className={menuItemClass}
                         >
-                            <Link2 width={17} height={17} className="text-[var(--echo-text-primary)] shrink-0" />
+                            <Link2 width={17} height={17} className="text-black shrink-0" />
                             <span className={menuLabelClass}>
                                 Copy link
                             </span>
@@ -153,7 +153,7 @@ const PingActionsDropdown = ({
                             onClick={handleReport}
                             className={`${menuItemClass} mt-1`}
                         >
-                            <Flag width={17} height={17} className="text-[var(--echo-text-primary)] shrink-0" />
+                            <Flag width={17} height={17} className="text-black shrink-0" />
                             <span className={menuLabelClass}>
                                 Report
                             </span>
@@ -178,7 +178,7 @@ const PingActionsDropdown = ({
                                     strokeWidth="2"
                                     strokeLinecap="round"
                                     strokeLinejoin="round"
-                                    className="text-[var(--echo-text-primary)] shrink-0"
+                                    className="text-black shrink-0"
                                 >
                                     <path d="M12 20h9" />
                                     <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />

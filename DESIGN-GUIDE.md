@@ -49,35 +49,6 @@ Observed in the app Figma screens:
 
 **Rule of thumb:** cream page, white cards, orange only where the user needs to notice or act.
 
-### 2a. Theme modes
-
-The app supports **System**, **Light**, and **Dark** preferences. System follows
-the device color scheme; manual choices are stored in `localStorage` under
-`echo-theme`.
-
-The guide specifies only the light palette. Dark-mode semantic tokens are
-therefore derived and centralized in `src/index.css`:
-
-| Token | Light | Derived dark value |
-|---|---|---|
-| Page canvas | `#FAE9D4` | `#000000` |
-| Primary surface | `#FEFEFE` | `#111111` |
-| Soft surface | `#FEF5EA` | `#1F1F1F` |
-| Sidebar | `#FFC37B` | `#1F1F1F` |
-| Primary accent | `#F49B31` | `#F49B31` |
-| Text on primary accent | `#FFFFFF` | `#000000` |
-| Primary text | `#171717` | `#FFFFFF` |
-| Secondary text | `#4A504E` (adjusted for WCAG AA) | `#C4C4C4` |
-| Input surface | `#FFFFFF` | `#1F1F1F` |
-| Focus indicator | `#75420B` | `#FFC37B` |
-
-Status, error, and utility color families are also mapped to theme-aware tokens
-in `src/index.css`; their dark shades are derived from existing light values.
-Light-mode text on the primary accent stays white to preserve the app's original
-appearance. Dark mode uses black text on the orange accent. White on `#F49B31`
-does not meet WCAG AA contrast and should be reviewed if the light palette is
-updated.
-
 ---
 
 ## 3. Typography

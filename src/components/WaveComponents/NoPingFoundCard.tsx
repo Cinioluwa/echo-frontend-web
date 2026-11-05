@@ -20,15 +20,15 @@ const NoPingFoundCard = ({ onCreatePing }: Props) => {
             animate="visible"
             className="
       w-full p-6 text-center 
-      border border-[var(--echo-border-7d7d7d)] rounded-[10px] 
-      bg-[var(--echo-surface)]
+      border border-[#7D7D7D] rounded-[10px] 
+      bg-white
     ">
             {/* Empty State Message */}
-            <h4 className="text-[16px] font-semibold text-[var(--echo-text-454545)] mb-2">
+            <h4 className="text-[16px] font-semibold text-[#454545] mb-2">
                 No existing Ping Found
             </h4>
 
-            <p className="text-[12px] text-[var(--echo-text-7d7d7d)] mb-4">
+            <p className="text-[12px] text-[#7D7D7D] mb-4">
                 Seems like you're the first identifying the issue
             </p>
 
@@ -39,8 +39,8 @@ const NoPingFoundCard = ({ onCreatePing }: Props) => {
                 className="
           inline-flex items-center gap-2 
           px-6 py-2.5 
-          bg-[var(--echo-accent)] hover:bg-[var(--echo-bg-e08a20)] 
-          text-[var(--echo-text-on-accent)] text-[14px] font-semibold 
+          bg-[#F49B31] hover:bg-[#E08A20] 
+          text-white text-[14px] font-semibold 
           rounded-[25px] 
           transition-all duration-200
           hover:scale-105 active:scale-95

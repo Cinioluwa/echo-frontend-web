@@ -4,8 +4,8 @@ import "react-loading-skeleton/dist/skeleton.css";
 const CategoriesSkeleton = () => {
   return (
     <SkeletonTheme
-      baseColor="var(--echo-bg-f5f5f4)"
-      highlightColor="var(--echo-surface)"
+      baseColor="#f5f5f4"
+      highlightColor="#ffffff"
       duration={1.2}
     >
       <div className="p-2">

@@ -3,8 +3,8 @@ import "react-loading-skeleton/dist/skeleton.css";
 
 const PingDetailSkeleton = () => {
   return (
-    <SkeletonTheme baseColor="var(--echo-bg-d6d3d1)" highlightColor="var(--echo-bg-f1f5f9)">
-      <div className="rounded-xl bg-[var(--echo-surface)] shadow-sm px-5 py-4 flex flex-col gap-4 w-full">
+    <SkeletonTheme baseColor="#d6d3d1" highlightColor="#f1f5f9">
+      <div className="rounded-xl bg-white shadow-sm px-5 py-4 flex flex-col gap-4 w-full">
         
         {/* Top row */}
         <div className="flex items-center justify-between">

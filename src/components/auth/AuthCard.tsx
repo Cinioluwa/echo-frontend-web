@@ -20,7 +20,7 @@ const AuthCard: React.FC<AuthCardProps> = React.memo(({ children, className = ""
     return (
         <div
             className={`
-        bg-[var(--echo-surface)] rounded-[20px] sm:rounded-[30px]
+        bg-white rounded-[20px] sm:rounded-[30px]
         px-5 py-[30px] sm:px-10 sm:py-10 md:px-[50px] md:py-[50px]
         flex flex-col gap-5 sm:gap-[25px] md:gap-[30px] items-center
         w-full shadow-lg

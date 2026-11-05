@@ -23,7 +23,7 @@ const SelectedPingCard = ({ ping, onDeselect }: Props) => {
             animate="visible"
             className="
         relative p-3 rounded-[10px] 
-        bg-[var(--echo-sidebar)] border border-[var(--echo-border-f49b31)]
+        bg-[#FFC37B] border border-[#F49B31]
         min-h-[49px]
       "
         >
@@ -33,9 +33,9 @@ const SelectedPingCard = ({ ping, onDeselect }: Props) => {
                     {/* Avatar */}
                     <div className="
             w-6 h-6 rounded-full 
-            bg-[var(--echo-accent)] 
+            bg-[#F49B31] 
             flex items-center justify-center 
-            text-[var(--echo-text-on-accent)] text-[10px] font-semibold
+            text-white text-[10px] font-semibold
             shrink-0
           ">
                         {ping.author
@@ -46,13 +46,13 @@ const SelectedPingCard = ({ ping, onDeselect }: Props) => {
 
                     {/* Author Name */}
                     <div className="flex-1">
-                        <p className="text-[12px] font-semibold text-[var(--echo-text-454545)]">
+                        <p className="text-[12px] font-semibold text-[#454545]">
                             {ping.author
                                 ? `${ping.author.firstName} ${ping.author.lastName}`
                                 : "Anonymous"
                             }
                         </p>
-                        <p className="text-[10px] text-[var(--echo-text-7d7d7d)]">
+                        <p className="text-[10px] text-[#7D7D7D]">
                             {formatTimeAgo(ping.createdAt)}
                         </p>
                     </div>
@@ -60,7 +60,7 @@ const SelectedPingCard = ({ ping, onDeselect }: Props) => {
                     {/* Show More Indicator */}
                     <button
                         type="button"
-                        className="text-[10px] text-[var(--echo-text-454545)] flex items-center gap-1 hover:opacity-70"
+                        className="text-[10px] text-[#454545] flex items-center gap-1 hover:opacity-70"
                     >
                         Show more
                         <FiChevronDown className="w-3 h-3" />
@@ -73,8 +73,8 @@ const SelectedPingCard = ({ ping, onDeselect }: Props) => {
                     type="button"
                     className="
             w-5 h-5 rounded-full 
-            bg-[var(--echo-bg-454545)] hover:bg-[var(--echo-bg-000000)]
-            text-[var(--echo-text-on-accent)] 
+            bg-[#454545] hover:bg-[#000000]
+            text-white 
             flex items-center justify-center
             transition-colors duration-200
             shrink-0
@@ -86,7 +86,7 @@ const SelectedPingCard = ({ ping, onDeselect }: Props) => {
             </div>
 
             {/* Ping Title */}
-            <h4 className="text-[14px] font-semibold text-[var(--echo-text-primary)] line-clamp-2">
+            <h4 className="text-[14px] font-semibold text-[#000000] line-clamp-2">
                 {ping.title}
             </h4>
 
@@ -96,7 +96,7 @@ const SelectedPingCard = ({ ping, onDeselect }: Props) => {
                     <span className="
             inline-block text-[10px] font-medium 
             px-2 py-1 rounded-xl 
-            bg-[var(--echo-accent)] text-[var(--echo-text-on-accent)]
+            bg-[#F49B31] text-white
           ">
                         {ping.category.name}
                     </span>

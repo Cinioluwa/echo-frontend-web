@@ -177,7 +177,7 @@ const WaveCard = React.memo(
 
     return (
       <>
-        <div className="bg-[var(--echo-surface)] rounded-[10px] px-2.5 sm:px-[27.5px] py-2.5 sm:py-[23px] flex flex-col gap-3 sm:gap-[17px] w-full min-w-0 overflow-hidden">
+        <div className="bg-white rounded-[10px] px-2.5 sm:px-[27.5px] py-2.5 sm:py-[23px] flex flex-col gap-3 sm:gap-[17px] w-full min-w-0 overflow-hidden">
           {/* Header: avatar + name/time + badge + actions */}
           <div className="flex items-center justify-between gap-1.5 sm:gap-2 min-w-0 w-full">
             <div className="flex items-center gap-2 sm:gap-2.5 min-w-0 flex-1">
@@ -188,7 +188,7 @@ const WaveCard = React.memo(
                     : null
                 }
                 size="md"
-                bgColor="bg-[var(--echo-sidebar)]"
+                bgColor="bg-[#ffc37b]"
                 pictureUrl={
                   currentWave.isAnonymous && currentWave.anonymousProfilePicture
                     ? currentWave.anonymousProfilePicture
@@ -199,11 +199,11 @@ const WaveCard = React.memo(
               />
               <div className="flex flex-col min-w-0">
                 <span
-                  className="font-['Poppins',sans-serif] font-semibold text-[13px] sm:text-[14px] text-[var(--echo-text-primary)] truncate max-w-[95px] xs:max-w-[140px] sm:max-w-none leading-snug whitespace-nowrap"
+                  className="font-['Poppins',sans-serif] font-semibold text-[13px] sm:text-[14px] text-black truncate max-w-[95px] xs:max-w-[140px] sm:max-w-none leading-snug whitespace-nowrap"
                 >
                   {authorName}
                 </span>
-                <span className="font-['Poppins',sans-serif] font-medium text-[10px] text-[var(--echo-text-secondary)] leading-tight whitespace-nowrap">
+                <span className="font-['Poppins',sans-serif] font-medium text-[10px] text-[#8B8E8D] leading-tight whitespace-nowrap">
                   {formatTimeAgo(wave.createdAt)}
                 </span>
               </div>
@@ -242,7 +242,7 @@ const WaveCard = React.memo(
                   value={editInput}
                   onChange={(e) => setEditInput(e.target.value)}
                   disabled={isSavingEdit}
-                  className="w-full text-[12px] font-['Poppins',sans-serif] font-medium p-3 border border-gray-300 rounded-md focus:outline-none focus:border-[var(--echo-border-f49b31)] resize-y min-h-[100px]"
+                  className="w-full text-[12px] font-['Poppins',sans-serif] font-medium p-3 border border-gray-300 rounded-md focus:outline-none focus:border-[#f49b31] resize-y min-h-[100px]"
                   autoFocus
                 />
                 {actionError && <p className="text-red-500 text-sm">{actionError}</p>}
@@ -263,7 +263,7 @@ const WaveCard = React.memo(
                       type="button"
                       onClick={handleSaveEdit}
                       disabled={isSavingEdit || !editInput.trim()}
-                      className="text-[12px] px-3 py-1.5 bg-[var(--echo-accent)] text-[var(--echo-text-on-accent)] rounded-md disabled:opacity-50 cursor-pointer"
+                      className="text-[12px] px-3 py-1.5 bg-[#f49b31] text-white rounded-md disabled:opacity-50 cursor-pointer"
                     >
                       {isSavingEdit ? "Saving..." : "Save"}
                     </button>
@@ -271,7 +271,7 @@ const WaveCard = React.memo(
                 </div>
               </div>
             ) : (
-              <p className="font-['Poppins',sans-serif] font-medium text-[12px] sm:text-[13px] text-[var(--echo-text-primary)] leading-relaxed break-words whitespace-pre-wrap">
+              <p className="font-['Poppins',sans-serif] font-medium text-[12px] sm:text-[13px] text-black leading-relaxed break-words whitespace-pre-wrap">
                 {currentWave.solution}
                 {currentWave.isEdited && <EditedLabel />}
               </p>
@@ -313,7 +313,7 @@ const WaveCard = React.memo(
                 </button>
               )}
               {remainingMediaCount > 0 && (
-                <span className="absolute right-2 top-2 z-20 bg-black/70 text-[var(--echo-text-on-accent)] text-[11px] px-2 py-0.5 rounded-full">
+                <span className="absolute right-2 top-2 z-20 bg-black/70 text-white text-[11px] px-2 py-0.5 rounded-full">
                   +{remainingMediaCount}
                 </span>
               )}
@@ -328,13 +328,13 @@ const WaveCard = React.memo(
                   href={item.url}
                   target="_blank"
                   rel="noreferrer"
-                  className="text-[12px] font-medium text-[var(--echo-text-4a504e)] bg-[var(--echo-surface-soft)] border border-[var(--echo-border-ffc37b)] rounded-xl px-2.5 py-1 hover:bg-[var(--echo-bg-fde8cd)] transition-colors"
+                  className="text-[12px] font-medium text-[#4A504E] bg-[#FEF5EA] border border-[#FFC37B] rounded-xl px-2.5 py-1 hover:bg-[#FDE8CD] transition-colors"
                 >
                   {item.filename ?? "Attachment"}
                 </a>
               ))}
               {fileMedia.length > 2 && (
-                <span className="text-[12px] font-medium text-[var(--echo-text-4a504e)] px-1 py-1">
+                <span className="text-[12px] font-medium text-[#4A504E] px-1 py-1">
                   +{fileMedia.length - 2} more
                 </span>
               )}
@@ -349,14 +349,14 @@ const WaveCard = React.memo(
               disabled={isToggling}
               aria-label={hasSurged ? "Remove surge" : "Surge"}
               className={`flex items-center gap-[5px] px-2.5 md:px-3 py-1 md:py-[5px] rounded-[15px] border border-black cursor-pointer transition-colors duration-200 disabled:opacity-50 ${hasSurged
-                ? "bg-[var(--echo-accent)] text-[var(--echo-text-on-accent)]"
-                : "bg-[var(--echo-surface-soft)] text-[var(--echo-text-4a504e)]"
+                ? "bg-[#F49B31] text-white"
+                : "bg-[#FEF5EA] text-[#4A504E]"
                 }`}
             >
               <SurgeIcon
                 width={12}
                 height={16}
-                fill={hasSurged ? "var(--echo-text-ffffff)" : "var(--echo-text-f49b31)"}
+                fill={hasSurged ? "#FFFFFF" : "#F49B31"}
               />
               <span className="font-['Poppins',sans-serif] font-semibold text-[13px] md:text-[14px] leading-normal">
                 {surgeCount}

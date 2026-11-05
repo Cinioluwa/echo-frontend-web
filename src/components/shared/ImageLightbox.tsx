@@ -70,7 +70,7 @@ const ImageLightbox = ({ src, images = [], initialIndex = 0, alt = "Image", onCl
         <button
           type="button"
           onClick={handleClose}
-          className="absolute top-4 right-4 z-[100000] rounded-full bg-[var(--echo-surface)]/10 p-2 text-[var(--echo-text-on-accent)] hover:bg-[var(--echo-surface)]/25 transition-colors cursor-pointer"
+          className="absolute top-4 right-4 z-[100000] rounded-full bg-white/10 p-2 text-white hover:bg-white/25 transition-colors cursor-pointer"
           aria-label="Close image"
         >
           <X size={22} />
@@ -80,7 +80,7 @@ const ImageLightbox = ({ src, images = [], initialIndex = 0, alt = "Image", onCl
           <button
             type="button"
             onClick={handlePrev}
-            className="absolute left-4 lg:left-8 z-[100000] rounded-full bg-black/50 p-2 lg:p-3 text-[var(--echo-text-on-accent)] hover:bg-black/70 transition-colors cursor-pointer"
+            className="absolute left-4 lg:left-8 z-[100000] rounded-full bg-black/50 p-2 lg:p-3 text-white hover:bg-black/70 transition-colors cursor-pointer"
             aria-label="Previous image"
           >
             <ChevronLeft size={28} />
@@ -104,7 +104,7 @@ const ImageLightbox = ({ src, images = [], initialIndex = 0, alt = "Image", onCl
           <button
             type="button"
             onClick={handleNext}
-            className="absolute right-4 lg:right-8 z-[100000] rounded-full bg-black/50 p-2 lg:p-3 text-[var(--echo-text-on-accent)] hover:bg-black/70 transition-colors cursor-pointer"
+            className="absolute right-4 lg:right-8 z-[100000] rounded-full bg-black/50 p-2 lg:p-3 text-white hover:bg-black/70 transition-colors cursor-pointer"
             aria-label="Next image"
           >
             <ChevronRight size={28} />
@@ -118,7 +118,7 @@ const ImageLightbox = ({ src, images = [], initialIndex = 0, alt = "Image", onCl
               <div
                 key={i}
                 className={`w-1.5 h-1.5 rounded-full transition-all ${
-                  i === currentIndex ? "bg-[var(--echo-surface)] scale-125" : "bg-[var(--echo-surface)]/50"
+                  i === currentIndex ? "bg-white scale-125" : "bg-white/50"
                 }`}
               />
             ))}

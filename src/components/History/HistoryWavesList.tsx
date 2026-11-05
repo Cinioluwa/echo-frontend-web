@@ -136,7 +136,7 @@ const WaveHistoryCard = ({ wave, onDelete }: WaveHistoryCardProps) => {
 
     return (
         <>
-            <div className="bg-[var(--echo-surface)] rounded-[10px] px-5 py-[15px] flex flex-col gap-[15px] w-full max-w-full">
+            <div className="bg-[#FEFEFE] rounded-[10px] px-5 py-[15px] flex flex-col gap-[15px] w-full max-w-full">
                 {/* ─── Header ───────────────────────────── */}
                 <div className="flex items-center justify-between">
                     <div className="flex items-center gap-4">
@@ -145,7 +145,7 @@ const WaveHistoryCard = ({ wave, onDelete }: WaveHistoryCardProps) => {
                             user={typeof wave.author === "object" ? wave.author : null}
                             size="lg"
                             responsive
-                            bgColor="bg-[var(--echo-sidebar)]"
+                            bgColor="bg-[#FFC37B]"
                             className="shrink-0" pictureUrl={
                                 wave.isAnonymous && wave.anonymousProfilePicture
                                     ? wave.anonymousProfilePicture
@@ -153,10 +153,10 @@ const WaveHistoryCard = ({ wave, onDelete }: WaveHistoryCardProps) => {
                             } />
                         {/* Name + timestamp */}
                         <div className="flex flex-col">
-                            <span className="font-['Poppins',sans-serif] font-semibold text-[13px] md:text-[15px] text-[var(--echo-text-primary)] leading-normal">
+                            <span className="font-['Poppins',sans-serif] font-semibold text-[13px] md:text-[15px] text-black leading-normal">
                                 {authorName}
                             </span>
-                            <span className="font-['Poppins',sans-serif] font-medium text-[11px] md:text-[13px] text-[var(--echo-text-secondary)] leading-normal">
+                            <span className="font-['Poppins',sans-serif] font-medium text-[11px] md:text-[13px] text-[#8B8E8D] leading-normal">
                                 {timestamp}
                             </span>
                         </div>
@@ -174,7 +174,7 @@ const WaveHistoryCard = ({ wave, onDelete }: WaveHistoryCardProps) => {
                         <button
                             onClick={handleDeleteClick}
                             aria-label="Delete wave"
-                            className="w-[31px] h-8 rounded-full bg-[var(--echo-surface-soft)] flex items-center justify-center hover:bg-red-100 transition-colors cursor-pointer"
+                            className="w-[31px] h-8 rounded-full bg-[#FEF5EA] flex items-center justify-center hover:bg-red-100 transition-colors cursor-pointer"
                         >
                             <svg
                                 width="16"
@@ -186,7 +186,7 @@ const WaveHistoryCard = ({ wave, onDelete }: WaveHistoryCardProps) => {
                             >
                                 <path
                                     d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"
-                                    stroke="var(--echo-text-ef4444)"
+                                    stroke="#EF4444"
                                     strokeWidth="1.8"
                                     strokeLinecap="round"
                                     strokeLinejoin="round"
@@ -206,7 +206,7 @@ const WaveHistoryCard = ({ wave, onDelete }: WaveHistoryCardProps) => {
                                 className="w-5 h-5 object-contain"
                             />
                         )}
-                        <span className="font-['Poppins',sans-serif] font-medium text-[15px] text-[var(--echo-text-primary)]">
+                        <span className="font-['Poppins',sans-serif] font-medium text-[15px] text-[#171717]">
                             {categoryName}
                         </span>
                     </div>
@@ -214,11 +214,11 @@ const WaveHistoryCard = ({ wave, onDelete }: WaveHistoryCardProps) => {
 
                 {/* ─── Parent ping context ───────────────── */}
                 {wave.ping?.title && (
-                    <p className="font-['Poppins',sans-serif] text-[12px] text-[var(--echo-text-secondary)] leading-normal">
+                    <p className="font-['Poppins',sans-serif] text-[12px] text-[#8B8E8D] leading-normal">
                         Wave on:{" "}
                         <span
                             onClick={() => navigate(`/feed/${wave.ping?.id}`)}
-                            className="text-[var(--echo-text-f49b31)] font-medium cursor-pointer hover:underline transition-all"
+                            className="text-[#F49B31] font-medium cursor-pointer hover:underline transition-all"
                         >
                             {wave.ping.title}
                         </span>
@@ -228,20 +228,20 @@ const WaveHistoryCard = ({ wave, onDelete }: WaveHistoryCardProps) => {
                 {/* ─── Body: title + solution/description ── */}
                 <div className="flex flex-col gap-2">
                     {wave.title && (
-                        <h3 className="font-['Poppins',sans-serif] font-semibold text-[14px] md:text-[16px] text-[var(--echo-text-primary)] leading-normal">
+                        <h3 className="font-['Poppins',sans-serif] font-semibold text-[14px] md:text-[16px] text-black leading-normal">
                             {wave.title}
                         </h3>
                     )}
-                    <p className="font-['Poppins',sans-serif] font-normal text-[12px] md:text-[14px] text-[var(--echo-text-primary)] leading-normal whitespace-pre-wrap">
+                    <p className="font-['Poppins',sans-serif] font-normal text-[12px] md:text-[14px] text-[#171717] leading-normal whitespace-pre-wrap">
                         {wave.description || wave.solution}
                     </p>
                 </div>
 
                 {/* ─── Footer: surge count ──────────────── */}
                 <div className="flex items-center gap-2">
-                    <div className="flex items-center gap-1.5 border border-[var(--echo-border-626665)] rounded-[18px] px-[13px] py-[5px]">
-                        <SurgeIcon width={10} height={13} fill="var(--echo-text-f49b31)" aria-hidden="true" />
-                        <span className="font-['Poppins',sans-serif] font-medium text-[13px] text-[var(--echo-text-primary)]">
+                    <div className="flex items-center gap-1.5 border border-[#626665] rounded-[18px] px-[13px] py-[5px]">
+                        <SurgeIcon width={10} height={13} fill="#F49B31" aria-hidden="true" />
+                        <span className="font-['Poppins',sans-serif] font-medium text-[13px] text-black">
                             {surgeCount}
                         </span>
                     </div>

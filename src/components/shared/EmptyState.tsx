@@ -40,7 +40,7 @@ export const EmptyState = ({
         {actionLabel && onAction && (
             <button
                 onClick={onAction}
-                className="bg-[var(--echo-accent)] text-[var(--echo-text-on-accent)] px-6 py-2 rounded-lg hover:bg-[var(--echo-bg-d88429)] transition"
+                className="bg-[#F49B31] text-white px-6 py-2 rounded-lg hover:bg-[#d88429] transition"
             >
                 {actionLabel}
             </button>

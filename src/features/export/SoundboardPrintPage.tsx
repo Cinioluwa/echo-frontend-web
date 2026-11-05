@@ -86,7 +86,7 @@ const SoundboardPrintPage = () => {
                                         <p className="ep-small">{item.category?.name ?? "Uncategorized"}</p>
                                     </div>
                                     <span className="ep-surge" style={{ gap: 0 }}>
-                                        +<SurgeIcon width={9} height={12} fill="var(--echo-text-f49b31)" />
+                                        +<SurgeIcon width={9} height={12} fill="#F49B31" />
                                         {item.currentRatePerHour.toFixed(1)}/hr
                                     </span>
                                 </div>
@@ -145,7 +145,7 @@ const SoundboardPrintPage = () => {
                                                     </p>
                                                 </div>
                                                 <span className="ep-surge">
-                                                    <SurgeIcon width={9} height={12} fill="var(--echo-text-f49b31)" />
+                                                    <SurgeIcon width={9} height={12} fill="#F49B31" />
                                                     {ping.surgeCount}
                                                 </span>
                                             </div>

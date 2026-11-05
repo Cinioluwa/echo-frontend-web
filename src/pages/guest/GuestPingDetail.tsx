@@ -123,22 +123,22 @@ const GuestPingDetail = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-[var(--echo-page)] flex flex-col items-center justify-center">
-        <Loader2 className="animate-spin text-[var(--echo-text-f49b31)] w-12 h-12" />
-        <p className="mt-4 text-[var(--echo-text-secondary)] font-['Poppins',sans-serif]">Loading ping details...</p>
+      <div className="min-h-screen bg-[#FAE9D4] flex flex-col items-center justify-center">
+        <Loader2 className="animate-spin text-[#F49B31] w-12 h-12" />
+        <p className="mt-4 text-[#626665] font-['Poppins',sans-serif]">Loading ping details...</p>
       </div>
     );
   }
 
   if (error || !pingData) {
     return (
-      <div className="min-h-screen bg-[var(--echo-page)] flex flex-col items-center justify-center p-4">
-        <div className="bg-[var(--echo-surface)] p-8 rounded-[15px] shadow-sm text-center max-w-md w-full border border-[var(--echo-border-f49b31)]/40">
-          <h2 className="font-['Poppins',sans-serif] font-semibold text-[24px] text-[var(--echo-text-primary)] mb-2">Not Found</h2>
-          <p className="font-['Poppins',sans-serif] font-normal text-[14px] text-[var(--echo-text-secondary)] mb-6">{error}</p>
+      <div className="min-h-screen bg-[#FAE9D4] flex flex-col items-center justify-center p-4">
+        <div className="bg-white p-8 rounded-[15px] shadow-sm text-center max-w-md w-full border border-[#F49B31]/40">
+          <h2 className="font-['Poppins',sans-serif] font-semibold text-[24px] text-black mb-2">Not Found</h2>
+          <p className="font-['Poppins',sans-serif] font-normal text-[14px] text-[#626665] mb-6">{error}</p>
           <button
             onClick={() => navigate(loginUrl)}
-            className="font-['Poppins',sans-serif] font-semibold text-[15px] text-[var(--echo-text-on-accent)] bg-[var(--echo-accent)] border border-[var(--echo-border-f49b31)] rounded-[15px] px-5 py-[13px] hover:bg-[var(--echo-bg-d88429)] transition-colors w-full"
+            className="font-['Poppins',sans-serif] font-semibold text-[15px] text-white bg-[#F49B31] border border-[#F49B31] rounded-[15px] px-5 py-[13px] hover:bg-[#d88429] transition-colors w-full"
           >
             Go to App
           </button>
@@ -176,8 +176,8 @@ const GuestPingDetail = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[var(--echo-page)] font-['Poppins',sans-serif] flex flex-col">
-      <header className="bg-[var(--echo-sidebar)] border-b border-[var(--echo-border-f49b31)] px-4 md:px-8 h-[70px] flex items-center justify-between sticky top-0 z-20">
+    <div className="min-h-screen bg-[#FAE9D4] font-['Poppins',sans-serif] flex flex-col">
+      <header className="bg-[#FFC37B] border-b border-[#F49B31] px-4 md:px-8 h-[70px] flex items-center justify-between sticky top-0 z-20">
         <button
           type="button"
           className="flex items-center gap-2 cursor-pointer"
@@ -185,18 +185,18 @@ const GuestPingDetail = () => {
           aria-label="Echo home"
         >
           <img src={logo} className="brightness-0 contrast-200 h-[27px] w-[25px]" alt="" />
-          <span className="font-bold text-xl md:text-2xl text-[var(--echo-text-primary)] leading-none">Echo</span>
+          <span className="font-bold text-xl md:text-2xl text-black leading-none">Echo</span>
         </button>
         <div className="flex items-center gap-3">
           <button
             onClick={() => navigate(loginUrl)}
-            className="font-['Poppins',sans-serif] font-semibold text-[14px] text-[var(--echo-text-primary)] bg-[var(--echo-surface-soft)] hover:bg-[var(--echo-surface)] px-4 h-11 border border-[var(--echo-border-f49b31)] rounded-[15px] transition-colors"
+            className="font-['Poppins',sans-serif] font-semibold text-[14px] text-black bg-[#FEF5EA] hover:bg-white px-4 h-11 border border-[#F49B31] rounded-[15px] transition-colors"
           >
             Sign In
           </button>
           <a
             href={signUpUrl}
-            className="font-['Poppins',sans-serif] font-semibold text-[14px] text-[var(--echo-text-on-accent)] bg-[var(--echo-accent)] border border-[var(--echo-border-f49b31)] rounded-[15px] px-4 h-11 inline-flex items-center hover:bg-[var(--echo-bg-d88429)] transition-colors"
+            className="font-['Poppins',sans-serif] font-semibold text-[14px] text-white bg-[#F49B31] border border-[#F49B31] rounded-[15px] px-4 h-11 inline-flex items-center hover:bg-[#d88429] transition-colors"
           >
             Sign Up
           </a>
@@ -246,7 +246,7 @@ const GuestPingDetail = () => {
 
             {/* Community Pick Wave */}
             {pingData.communityPickWave && (
-              <div className="bg-[var(--echo-surface)] rounded-[15px] md:rounded-[20px] p-5 md:p-6 border border-[var(--echo-border-ffc37b)] shadow-sm flex flex-col gap-3">
+              <div className="bg-white rounded-[15px] md:rounded-[20px] p-5 md:p-6 border border-[#FFC37B] shadow-sm flex flex-col gap-3">
                 <div className="flex items-center justify-between gap-3 flex-wrap">
                   <div className="flex items-center gap-3">
                     {pingData.communityPickWave.author.profilePicture ? (
@@ -256,23 +256,23 @@ const GuestPingDetail = () => {
                         className="w-10 h-10 rounded-full object-cover border border-gray-100"
                       />
                     ) : (
-                      <div className="w-10 h-10 rounded-full bg-[var(--echo-surface-soft)] border border-[var(--echo-border-f49b31)] flex items-center justify-center font-bold text-[var(--echo-text-f49b31)] text-sm">
+                      <div className="w-10 h-10 rounded-full bg-[#FEF5EA] border border-[#F49B31] flex items-center justify-center font-bold text-[#F49B31] text-sm">
                         {pingData.communityPickWave.author.displayName.charAt(0).toUpperCase()}
                       </div>
                     )}
                     <div>
                       <div className="flex items-center gap-2 flex-wrap">
-                        <span className="font-semibold text-[var(--echo-text-primary)] text-sm md:text-base">
+                        <span className="font-semibold text-black text-sm md:text-base">
                           {pingData.communityPickWave.author.displayName}
                         </span>
                         {pingData.communityPickWave.isCommunityPick && (
-                          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-[var(--echo-surface-soft)] text-[var(--echo-text-f49b31)] border border-[var(--echo-border-ffc37b)]">
-                            <Sparkles className="w-3 h-3 text-[var(--echo-text-f49b31)]" />
+                          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-[#FEF5EA] text-[#F49B31] border border-[#FFC37B]">
+                            <Sparkles className="w-3 h-3 text-[#F49B31]" />
                             Community Pick
                           </span>
                         )}
                       </div>
-                      <p className="text-xs text-[var(--echo-text-secondary)]">
+                      <p className="text-xs text-[#626665]">
                         {formatTimeAgo(pingData.communityPickWave.createdAt)}
                         {pingData.communityPickWave.author.department && ` • ${pingData.communityPickWave.author.department}`}
                       </p>
@@ -280,7 +280,7 @@ const GuestPingDetail = () => {
                   </div>
                 </div>
 
-                <p className="text-[var(--echo-text-primary)] text-[14px] md:text-[15px] whitespace-pre-wrap leading-relaxed">
+                <p className="text-black text-[14px] md:text-[15px] whitespace-pre-wrap leading-relaxed">
                   {pingData.communityPickWave.solution}
                 </p>
 
@@ -301,10 +301,10 @@ const GuestPingDetail = () => {
                   <button
                     type="button"
                     onClick={() => handleAccountRequired("wave_surge")}
-                    className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs md:text-sm font-semibold bg-[var(--echo-surface-soft)] text-[var(--echo-text-f49b31)] border border-[var(--echo-border-ffc37b)] hover:bg-orange-100 transition-colors"
+                    className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs md:text-sm font-semibold bg-[#FEF5EA] text-[#F49B31] border border-[#FFC37B] hover:bg-orange-100 transition-colors"
                     title="Sign in to surge this wave"
                   >
-                    <SurgeIcon width={13} height={16} fill="var(--echo-text-f49b31)" />
+                    <SurgeIcon width={13} height={16} fill="#F49B31" />
                     <span>{pingData.communityPickWave.surgeCount} {pingData.communityPickWave.surgeCount === 1 ? 'Surge' : 'Surges'}</span>
                   </button>
 
@@ -312,7 +312,7 @@ const GuestPingDetail = () => {
                     <button
                       type="button"
                       onClick={() => handleAccountRequired("view_more_waves")}
-                      className="text-xs md:text-sm font-semibold text-[var(--echo-text-f49b31)] hover:underline inline-flex items-center gap-1"
+                      className="text-xs md:text-sm font-semibold text-[#F49B31] hover:underline inline-flex items-center gap-1"
                     >
                       <span>View all {pingData.waveCount} solutions</span>
                       <ChevronRight size={14} />
@@ -323,14 +323,14 @@ const GuestPingDetail = () => {
             )}
 
             {pingData.hasMoreWaves && !pingData.communityPickWave && (
-              <div className="bg-[var(--echo-surface)] rounded-[15px] p-5 text-center border border-[var(--echo-border-ffc37b)]/50 shadow-sm flex flex-col items-center gap-2">
+              <div className="bg-white rounded-[15px] p-5 text-center border border-[#FFC37B]/50 shadow-sm flex flex-col items-center gap-2">
                 <p className="text-sm font-medium text-gray-700">
                   {pingData.waveCount} {pingData.waveCount === 1 ? "solution proposed" : "solutions proposed"}
                 </p>
                 <button
                   type="button"
                   onClick={() => handleAccountRequired("view_more_waves")}
-                  className="text-sm font-semibold text-[var(--echo-text-f49b31)] hover:underline"
+                  className="text-sm font-semibold text-[#F49B31] hover:underline"
                 >
                   Sign in to view all solutions
                 </button>
@@ -339,10 +339,10 @@ const GuestPingDetail = () => {
           </div>
 
           <div id="guest-comments" className="min-w-0 scroll-mt-24">
-            <div className="bg-[var(--echo-sidebar)] rounded-[24px] md:rounded-[28px] overflow-hidden flex flex-col">
-              <h2 className="bg-[var(--echo-accent)] text-[var(--echo-text-on-accent)] px-[16px] py-[14px] text-lg font-semibold flex items-center justify-between">
+            <div className="bg-[#FFC37B] rounded-[24px] md:rounded-[28px] overflow-hidden flex flex-col">
+              <h2 className="bg-[#F49B31] text-white px-[16px] py-[14px] text-lg font-semibold flex items-center justify-between">
                 <span>Comments</span>
-                <span className="inline-flex h-6 min-w-6 items-center justify-center rounded-full px-2 text-[13px] font-semibold bg-[var(--echo-surface)] text-[var(--echo-text-f49b31)]">
+                <span className="inline-flex h-6 min-w-6 items-center justify-center rounded-full px-2 text-[13px] font-semibold bg-white text-[#F49B31]">
                   {pingData.commentCount}
                 </span>
               </h2>
@@ -353,7 +353,7 @@ const GuestPingDetail = () => {
                     {pingData.topComments.map((comment) => (
                       <div
                         key={comment.id}
-                        className="bg-[var(--echo-surface)] rounded-[16px] p-3.5 shadow-xs border border-amber-200/60 flex flex-col gap-2"
+                        className="bg-white rounded-[16px] p-3.5 shadow-xs border border-amber-200/60 flex flex-col gap-2"
                       >
                         <div className="flex items-center justify-between gap-2">
                           <div className="flex items-center gap-2.5">
@@ -364,7 +364,7 @@ const GuestPingDetail = () => {
                                 className="w-7 h-7 rounded-full object-cover border border-gray-100"
                               />
                             ) : (
-                              <div className="w-7 h-7 rounded-full bg-[var(--echo-surface-soft)] border border-[var(--echo-border-f49b31)] flex items-center justify-center text-xs font-bold text-[var(--echo-text-f49b31)]">
+                              <div className="w-7 h-7 rounded-full bg-[#FEF5EA] border border-[#F49B31] flex items-center justify-center text-xs font-bold text-[#F49B31]">
                                 {comment.author.displayName.charAt(0).toUpperCase()}
                               </div>
                             )}
@@ -385,9 +385,9 @@ const GuestPingDetail = () => {
                           <button
                             type="button"
                             onClick={() => handleAccountRequired("comment")}
-                            className="inline-flex items-center gap-1 hover:text-[var(--echo-text-f49b31)] transition-colors"
+                            className="inline-flex items-center gap-1 hover:text-[#F49B31] transition-colors"
                           >
-                            <SurgeIcon width={10} height={12} fill="var(--echo-text-9ca3af)" />
+                            <SurgeIcon width={10} height={12} fill="#9ca3af" />
                             <span>{comment.surgeCount}</span>
                           </button>
                         </div>
@@ -398,7 +398,7 @@ const GuestPingDetail = () => {
                       <button
                         type="button"
                         onClick={() => handleAccountRequired("view_more_comments")}
-                        className="w-full py-2.5 bg-[var(--echo-surface)]/90 hover:bg-[var(--echo-surface)] text-[var(--echo-text-f49b31)] font-semibold text-xs md:text-sm rounded-[14px] border border-[var(--echo-border-f49b31)] transition-colors flex items-center justify-center gap-1 shadow-xs"
+                        className="w-full py-2.5 bg-white/90 hover:bg-white text-[#F49B31] font-semibold text-xs md:text-sm rounded-[14px] border border-[#F49B31] transition-colors flex items-center justify-center gap-1 shadow-xs"
                       >
                         <span>View all {pingData.commentCount} comments</span>
                         <ChevronRight size={14} />
@@ -406,20 +406,20 @@ const GuestPingDetail = () => {
                     )}
                   </>
                 ) : (
-                  <div className="bg-[var(--echo-surface)]/80 rounded-[16px] p-6 text-center text-gray-500 text-xs md:text-sm">
+                  <div className="bg-white/80 rounded-[16px] p-6 text-center text-gray-500 text-xs md:text-sm">
                     No comments yet. Be the first to share your voice!
                   </div>
                 )}
               </div>
 
-              <div className="p-3 bg-[var(--echo-accent)]">
+              <div className="p-3 bg-[#F49B31]">
                 <button
                   type="button"
                   onClick={() => handleAccountRequired("comment")}
-                  className="w-full bg-[var(--echo-surface)] hover:bg-amber-50 text-left px-4 py-2.5 rounded-full text-xs md:text-sm text-gray-400 border border-amber-200 shadow-inner flex items-center justify-between cursor-pointer transition-colors"
+                  className="w-full bg-white hover:bg-amber-50 text-left px-4 py-2.5 rounded-full text-xs md:text-sm text-gray-400 border border-amber-200 shadow-inner flex items-center justify-between cursor-pointer transition-colors"
                 >
                   <span>Write a comment...</span>
-                  <Lock size={14} className="text-[var(--echo-text-f49b31)]" />
+                  <Lock size={14} className="text-[#F49B31]" />
                 </button>
               </div>
             </div>

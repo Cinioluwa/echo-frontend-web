@@ -31,7 +31,7 @@ const CommentActionsDropdown = ({
     const menuItemClass =
         "w-full flex gap-2.5 items-center py-2 px-2.5 hover:bg-gray-50 rounded-[8px] transition-colors text-left cursor-pointer";
     const menuLabelClass =
-        "font-['Poppins',sans-serif] font-medium text-[13px] leading-[1.2] text-[var(--echo-text-primary)] whitespace-nowrap";
+        "font-['Poppins',sans-serif] font-medium text-[13px] leading-[1.2] text-black whitespace-nowrap";
 
     // Memoized so the effect below can list it as a dependency without
     // re-subscribing on every render.
@@ -132,12 +132,12 @@ const CommentActionsDropdown = ({
                     setIsOpen(!isOpen);
                 }}
                 aria-label="More actions"
-                className="w-7 h-7 rounded-full flex items-center justify-center hover:bg-[var(--echo-bg-ffc37bab)] transition-colors cursor-pointer"
+                className="w-7 h-7 rounded-full flex items-center justify-center hover:bg-[#FFC37BAB] transition-colors cursor-pointer"
             >
                 <MoreVertical
                     width={16}
                     height={16}
-                    className="text-[var(--echo-text-4a504e)]"
+                    className="text-[#4A504E]"
                 />
             </button>
 
@@ -156,7 +156,7 @@ const CommentActionsDropdown = ({
                             left: `${coords.left}px`,
                             zIndex: 99999,
                         }}
-                        className="bg-[var(--echo-surface)] rounded-[10px] shadow-[0px_8px_24px_rgba(0,0,0,0.18)] border border-[var(--echo-border-eaeaea)] py-1.5 px-1.5 min-w-[172px]"
+                        className="bg-white rounded-[10px] shadow-[0px_8px_24px_rgba(0,0,0,0.18)] border border-[#eaeaea] py-1.5 px-1.5 min-w-[172px]"
                         onClick={(e) => e.stopPropagation()}
                     >
                         {/* Copy link */}
@@ -164,7 +164,7 @@ const CommentActionsDropdown = ({
                             onClick={handleCopyLink}
                             className={menuItemClass}
                         >
-                            <Link2 width={17} height={17} className="text-[var(--echo-text-primary)] shrink-0" />
+                            <Link2 width={17} height={17} className="text-black shrink-0" />
                             <span className={menuLabelClass}>
                                 Copy link
                             </span>
@@ -175,7 +175,7 @@ const CommentActionsDropdown = ({
                             onClick={handleReport}
                             className={`${menuItemClass} mt-0.5`}
                         >
-                            <Flag width={17} height={17} className="text-[var(--echo-text-primary)] shrink-0" />
+                            <Flag width={17} height={17} className="text-black shrink-0" />
                             <span className={menuLabelClass}>
                                 Report
                             </span>
@@ -200,7 +200,7 @@ const CommentActionsDropdown = ({
                                     strokeWidth="2"
                                     strokeLinecap="round"
                                     strokeLinejoin="round"
-                                    className="text-[var(--echo-text-primary)] shrink-0"
+                                    className="text-black shrink-0"
                                 >
                                     <path d="M12 20h9" />
                                     <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />

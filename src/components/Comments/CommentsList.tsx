@@ -88,7 +88,7 @@ const CommentsList = forwardRef<CommentsListHandle, Props>(({ targetType, target
     if (isLoading && !hasLoadedOnce) {
         return (
             <div className="flex justify-center items-center py-8">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[var(--echo-border-f49b31)]"></div>
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#F49B31]"></div>
             </div>
         );
     }
@@ -96,10 +96,10 @@ const CommentsList = forwardRef<CommentsListHandle, Props>(({ targetType, target
     if (hasLoadError && !hasLoadedOnce) {
         return (
             <div className="flex flex-col items-center justify-center gap-1.5 py-7 text-center">
-                <p className="text-[14px] text-[var(--echo-text-primary)]">Failed to load comments</p>
+                <p className="text-[14px] text-white">Failed to load comments</p>
                 <button
                     onClick={() => fetchComments(false)}
-                    className="text-xs text-[var(--echo-text-primary)] underline hover:opacity-80"
+                    className="text-xs text-white underline hover:opacity-80"
                 >
                     Try again
                 </button>
@@ -110,8 +110,8 @@ const CommentsList = forwardRef<CommentsListHandle, Props>(({ targetType, target
     if (comments.length === 0) {
         return (
             <div className="flex flex-col items-center justify-center gap-1.5 py-7 md:py-8 text-center">
-                <p className="text-[15px] font-semibold text-[var(--echo-text-primary)] tracking-wide">No comments yet</p>
-                <p className="text-[13px] font-medium text-[var(--echo-text-primary)]/90">Be the first to comment!</p>
+                <p className="text-[15px] font-semibold text-white tracking-wide">No comments yet</p>
+                <p className="text-[13px] font-medium text-white/90">Be the first to comment!</p>
             </div>
         );
     }

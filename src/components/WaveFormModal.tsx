@@ -149,7 +149,7 @@ const WaveFormModal = ({
 
   return (
     <div className="flex font-poppins justify-center items-center z-50 inset-0 fixed bg-black/40">
-      <div className=" mx-5 shadow-2xl rounded-4xl px-[25px] py-2.5 max-w-[480px] md:p-[30px] bg-[var(--echo-surface)] gap-4 overflow-hidden text-[32px] font-poppins flex  flex-col items-center">
+      <div className=" mx-5 shadow-2xl rounded-4xl px-[25px] py-2.5 max-w-[480px] md:p-[30px] bg-white gap-4 overflow-hidden text-[32px] font-poppins flex  flex-col items-center">
         <h2 className="font-semibold text-center text-[20px] md:text-[32px]">
           What Kind of Post?
         </h2>
@@ -157,17 +157,17 @@ const WaveFormModal = ({
           <button
             onClick={setFormSegment}
             className={`inline-block rounded-tl-[15px] border-black rounded-bl-[15px] border-r-2 ${formSegment === "ping"
-              ? "bg-[var(--echo-accent)] text-[var(--echo-text-on-accent)]"
-              : "bg-[var(--echo-surface-soft)]"
+              ? "bg-[#F49B31] text-white"
+              : "bg-[#FEF5EA]"
               }  py-6 px-6 cursor-pointer sm:py-4 sm:px-8`}
           >
             Ping
           </button>
           <button
             className={`inline-block ${formSegment === "wave"
-              ? "bg-[var(--echo-accent)] text-[var(--echo-text-on-accent)]"
-              : "bg-[var(--echo-surface-soft)]"
-              } rounded-tr-[15px] cursor-pointer text-[var(--echo-text-primary)] rounded-br-[15px] py-6 px-6  sm:py-4 sm:px-8`}
+              ? "bg-[#F49B31] text-white"
+              : "bg-[#FEF5EA]"
+              } rounded-tr-[15px] cursor-pointer text-black rounded-br-[15px] py-6 px-6  sm:py-4 sm:px-8`}
           >
             Wave
           </button>
@@ -197,7 +197,7 @@ const WaveFormModal = ({
                 name="waveTitle"
                 required
                 placeholder="name, header..."
-                className="pl-[11px] text-[12px] text-[var(--echo-text-454545)] outline-0 flex-1"
+                className="pl-[11px] text-[12px] text-[#454545] outline-0 flex-1"
                 onChange={(e) =>
                   setWaveFormData({
                     ...waveFormData,
@@ -220,7 +220,7 @@ const WaveFormModal = ({
                   setWaveFormData({ ...waveFormData, waveDesc: e.target.value })
                 }
                 value={waveFormData.waveDesc}
-                className="pl-[11px] py-0.5 resize-none h-[100px] text-[12px] text-[var(--echo-text-454545)] outline-0 flex-1"
+                className="pl-[11px] py-0.5 resize-none h-[100px] text-[12px] text-[#454545] outline-0 flex-1"
               />
             </div>
 
@@ -236,7 +236,7 @@ const WaveFormModal = ({
                   setWaveFormData({ ...waveFormData, solution: e.target.value })
                 }
                 value={waveFormData.solution}
-                className="pl-[11px] py-0.5 resize-none h-[100px] text-[12px] text-[var(--echo-text-primary)] font-['Poppins',sans-serif] font-medium outline-0 flex-1 placeholder:text-[var(--echo-text-secondary)] placeholder:font-medium"
+                className="pl-[11px] py-0.5 resize-none h-[100px] text-[12px] text-black font-['Poppins',sans-serif] font-medium outline-0 flex-1 placeholder:text-[#9e9e9e] placeholder:font-medium"
               />
             </div>
           </fieldset>
@@ -251,12 +251,12 @@ const WaveFormModal = ({
           </div>
           <div className="w-full flex justify-between">
             <div className="cursor-pointer">
-              <FaLink fontSize={30} color="var(--echo-text-f49b31)" />
+              <FaLink fontSize={30} color="#F49B31" />
             </div>
             <button
               type="submit"
               disabled={isSubmitting}
-              className={`px-[30px] hover:bg-[var(--echo-bg-d88429)] transition-colors duration-300 ease-in-out py-[5px] cursor-pointer text-[var(--echo-text-on-accent)] rounded-xl bg-[var(--echo-accent)] ${isSubmitting ? "opacity-50 cursor-not-allowed" : ""
+              className={`px-[30px] hover:bg-[#d88429] transition-colors duration-300 ease-in-out py-[5px] cursor-pointer text-white rounded-xl bg-[#F49B31] ${isSubmitting ? "opacity-50 cursor-not-allowed" : ""
                 }`}
             >
               {isSubmitting ? "Posting..." : "Post"}

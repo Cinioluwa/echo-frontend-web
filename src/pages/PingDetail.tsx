@@ -345,9 +345,9 @@ const PingDetail = () => {
       <div className="flex items-center">
         <button
           onClick={() => navigate("/feed")}
-          className="flex items-center gap-1.5 md:gap-2.5 bg-[var(--echo-surface)] rounded-full px-3 md:px-5 py-1.5 md:py-2 font-['Poppins',sans-serif] font-semibold text-[13px] md:text-[15px] text-[var(--echo-text-primary)] hover:bg-[var(--echo-sidebar)] transition-colors cursor-pointer shadow-xs border border-[var(--echo-border-f0f0f0)]"
+          className="flex items-center gap-1.5 md:gap-2.5 bg-[#fefefe] rounded-full px-3 md:px-5 py-1.5 md:py-2 font-['Poppins',sans-serif] font-semibold text-[13px] md:text-[15px] text-black hover:bg-[#FFC37B] transition-colors cursor-pointer shadow-xs border border-[#f0f0f0]"
         >
-          <ArrowLeft className="w-4 h-4 md:w-5 md:h-5 text-[var(--echo-text-primary)] stroke-[2.5]" />
+          <ArrowLeft className="w-4 h-4 md:w-5 md:h-5 text-black stroke-[2.5]" />
           <span>Go back to feed</span>
         </button>
       </div>
@@ -411,7 +411,7 @@ const PingDetail = () => {
       {/* ── Wave Header & Cards ───────────────────── */}
       {waves.length > 0 && (
         <div className="flex flex-col gap-2.5">
-          <h2 className="font-['Poppins',sans-serif] font-semibold text-[17px] md:text-[18px] text-[var(--echo-text-primary)] pt-1">
+          <h2 className="font-['Poppins',sans-serif] font-semibold text-[17px] md:text-[18px] text-black pt-1">
             Waves
           </h2>
           <div className="flex flex-col gap-2.5">
@@ -446,7 +446,7 @@ const PingDetail = () => {
           <button
             type="button"
             onClick={loadMoreWaves}
-            className="bg-[var(--echo-surface-soft)] border border-black rounded-[20px] px-5 py-2 font-['Poppins',sans-serif] font-medium  text-[12px] text-[var(--echo-text-primary)] cursor-pointer"
+            className="bg-[#fef5ea] border border-black rounded-[20px] px-5 py-2 font-['Poppins',sans-serif] font-medium  text-[12px] text-black cursor-pointer"
           >
             Load more waves
           </button>
@@ -469,7 +469,7 @@ const PingDetail = () => {
 
             {/* Draggable sheet */}
             <motion.div
-              className="fixed left-0 right-0 bottom-0 min-[1100px]:hidden z-50 flex flex-col h-[65vh] bg-[var(--echo-sidebar)] rounded-t-[30px]"
+              className="fixed left-0 right-0 bottom-0 min-[1100px]:hidden z-50 flex flex-col h-[65vh] bg-[#FFC37B] rounded-t-[30px]"
               initial={{ y: "100%", opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               exit={{ y: "100%", opacity: 0 }}
@@ -486,7 +486,7 @@ const PingDetail = () => {
             >
               {/* Drag handle */}
               <div className="flex justify-center pt-[10px] pb-2 shrink-0 cursor-grab active:cursor-grabbing">
-                <div className="w-12 h-1 bg-[var(--echo-surface)] rounded-full" />
+                <div className="w-12 h-1 bg-white rounded-full" />
               </div>
 
               {/* Comments content with scrollable list and fixed input */}

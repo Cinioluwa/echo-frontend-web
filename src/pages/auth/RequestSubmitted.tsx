@@ -10,8 +10,8 @@ import {
 // Success Icon
 const SuccessIcon = () => (
     <svg width="80" height="80" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-14 h-14 sm:w-16 sm:h-16 md:w-20 md:h-20">
-        <circle cx="12" cy="12" r="10" stroke="var(--echo-text-10b981)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none" />
-        <path d="M9 12l2 2 4-4" stroke="var(--echo-text-10b981)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+        <circle cx="12" cy="12" r="10" stroke="#10b981" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+        <path d="M9 12l2 2 4-4" stroke="#10b981" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
 );
 
@@ -46,13 +46,13 @@ const RequestSubmitted: React.FC = () => {
                 {/* Title */}
                 <div className="text-center w-full">
                     <h1
-                        className="text-[26px] sm:text-[30px] md:text-[32px] font-bold text-[var(--echo-text-10b981)] mb-3 sm:mb-[15px]"
+                        className="text-[26px] sm:text-[30px] md:text-[32px] font-bold text-[#10b981] mb-3 sm:mb-[15px]"
                         style={{ fontFamily: 'Poppins, sans-serif' }}
                     >
                         Request Submitted!
                     </h1>
                     <p
-                        className="text-[13px] sm:text-[14px] text-[var(--echo-text-4a504e)] font-medium leading-relaxed"
+                        className="text-[13px] sm:text-[14px] text-[#4a504e] font-medium leading-relaxed"
                         style={{ fontFamily: 'Poppins, sans-serif' }}
                     >
                         Thank you for your request. We've received your information.
@@ -60,33 +60,33 @@ const RequestSubmitted: React.FC = () => {
                 </div>
 
                 {/* Info Card */}
-                <div className="w-full bg-[var(--echo-bg-f0fdf4)] border border-[var(--echo-border-86efac)] rounded-xl px-4 sm:px-5 py-4 sm:py-[18px]">
+                <div className="w-full bg-[#f0fdf4] border border-[#86efac] rounded-xl px-4 sm:px-5 py-4 sm:py-[18px]">
                     <p
-                        className="text-[12px] sm:text-[13px] text-[var(--echo-text-4a504e)] text-center leading-relaxed"
+                        className="text-[12px] sm:text-[13px] text-[#4a504e] text-center leading-relaxed"
                         style={{ fontFamily: 'Poppins, sans-serif' }}
                     >
-                        We've received your request for <span className="font-semibold text-[var(--echo-text-f49b31)]">{organizationName}</span>.
+                        We've received your request for <span className="font-semibold text-[#f49b31]">{organizationName}</span>.
                         Our team will review it and get back to you shortly.
                     </p>
                 </div>
 
                 {/* Additional Information */}
-                <div className="w-full bg-[var(--echo-surface)] border border-[var(--echo-border-e5e5e5)] rounded-xl px-4 sm:px-5 py-4 sm:py-[18px]">
+                <div className="w-full bg-white border border-[#e5e5e5] rounded-xl px-4 sm:px-5 py-4 sm:py-[18px]">
                     <div className="flex flex-col gap-2.5 sm:gap-3">
-                        <h3 className="text-[13px] sm:text-[14px] font-semibold text-[var(--echo-text-4a504e)]" style={{ fontFamily: 'Poppins, sans-serif' }}>
+                        <h3 className="text-[13px] sm:text-[14px] font-semibold text-[#4a504e]" style={{ fontFamily: 'Poppins, sans-serif' }}>
                             What happens next?
                         </h3>
-                        <ul className="text-[12px] sm:text-[13px] text-[var(--echo-text-4a504e)] leading-relaxed space-y-1.5 sm:space-y-2" style={{ fontFamily: 'Poppins, sans-serif' }}>
+                        <ul className="text-[12px] sm:text-[13px] text-[#4a504e] leading-relaxed space-y-1.5 sm:space-y-2" style={{ fontFamily: 'Poppins, sans-serif' }}>
                             <li className="flex items-start">
-                                <span className="mr-2 text-[var(--echo-text-f49b31)]">•</span>
+                                <span className="mr-2 text-[#f49b31]">•</span>
                                 <span>Our team will verify your institution information</span>
                             </li>
                             <li className="flex items-start">
-                                <span className="mr-2 text-[var(--echo-text-f49b31)]">•</span>
+                                <span className="mr-2 text-[#f49b31]">•</span>
                                 <span>We'll reach out to you via email with updates</span>
                             </li>
                             <li className="flex items-start">
-                                <span className="mr-2 text-[var(--echo-text-f49b31)]">•</span>
+                                <span className="mr-2 text-[#f49b31]">•</span>
                                 <span>Once approved, you'll be able to join and start using Echo</span>
                             </li>
                         </ul>
@@ -105,9 +105,9 @@ const RequestSubmitted: React.FC = () => {
 
                 {/* Contact Info */}
                 <div className="text-center">
-                    <p className="text-[11px] sm:text-[12px] text-[var(--echo-text-secondary)] leading-relaxed" style={{ fontFamily: 'Poppins, sans-serif' }}>
+                    <p className="text-[11px] sm:text-[12px] text-[#838383] leading-relaxed" style={{ fontFamily: 'Poppins, sans-serif' }}>
                         Have questions? Contact us at{" "}
-                        <a href="mailto:support@echo.app" className="text-[var(--echo-text-f49b31)] hover:underline">
+                        <a href="mailto:support@echo.app" className="text-[#f49b31] hover:underline">
                             support@echo.app
                         </a>
                     </p>

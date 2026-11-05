@@ -121,22 +121,22 @@ const CommentsPanel = ({
       ref={panelRef}
       className={`${
         isDrawer
-          ? "bg-[var(--echo-surface-soft)] rounded-t-[30px] h-full"
-          : "bg-[var(--echo-sidebar)] rounded-[24px] md:rounded-[28px] h-auto"
+          ? "bg-[#FEF5EA] rounded-t-[30px] h-full"
+          : "bg-[#FFC37B] rounded-[24px] md:rounded-[28px] h-auto"
       } flex flex-col w-full overflow-hidden overscroll-contain ${className}`}
     >
       {/* Header */}
       <h2
         className={`font-[Poppins,sans-serif] font-semibold shrink-0 ${
           isDrawer
-            ? "text-[var(--echo-text-4a3728)] text-center text-[20px] pt-[10px] px-[15px] pb-2.5 bg-[var(--echo-surface)] border-b border-[var(--echo-border-f4e3c9)]"
-            : "bg-[var(--echo-accent)] text-[var(--echo-text-on-accent)] px-[14px] py-[16px] text-lg"
+            ? "text-[#4A3728] text-center text-[20px] pt-[10px] px-[15px] pb-2.5 bg-white border-b border-[#F4E3C9]"
+            : "bg-[#F49B31] text-white px-[14px] py-[16px] text-lg"
         }`}
       >
         Comments
         <span
           className={`ms-2 inline-flex h-6 min-w-6 items-center justify-center rounded-full px-1.5 text-[13px] font-semibold leading-none tabular-nums ${
-            isDrawer ? "bg-[var(--echo-accent)] text-[var(--echo-text-on-accent)]" : "bg-[var(--echo-surface)] text-[var(--echo-text-f49b31)]"
+            isDrawer ? "bg-[#F49B31] text-white" : "bg-white text-[#F49B31]"
           }`}
         >
           {commentsCount}
@@ -162,7 +162,7 @@ const CommentsPanel = ({
       {/* Comment input */}
       <div
         className={`shrink-0 ${
-          isDrawer ? "bg-[var(--echo-accent)] pt-2 border-t border-[var(--echo-border-e8b35b)]" : "bg-[var(--echo-accent)]"
+          isDrawer ? "bg-[#f49b31] pt-2 border-t border-[#e8b35b]" : "bg-[#f49b31]"
         }`}
       >
         <CommentInput

@@ -88,14 +88,14 @@ const ClaimSpaceModal = ({
         if (event.target === event.currentTarget) onClose();
       }}
     >
-      <section className="max-h-[90vh] w-full max-w-[520px] overflow-y-auto rounded-[20px] border border-black/10 bg-[var(--echo-surface-soft)] p-5 shadow-xl sm:p-8">
+      <section className="max-h-[90vh] w-full max-w-[520px] overflow-y-auto rounded-[20px] border border-black/10 bg-[#FEF5EA] p-5 shadow-xl sm:p-8">
         <div className="mb-6 flex items-center justify-between">
-          <span className="font-['Poppins',sans-serif] text-xl font-bold text-[var(--echo-text-101010)]">Echo</span>
+          <span className="font-['Poppins',sans-serif] text-xl font-bold text-[#101010]">Echo</span>
           <button
             type="button"
             onClick={onClose}
             aria-label="Close claim request"
-            className="rounded-full p-2 text-[var(--echo-text-primary)]/55 hover:bg-[var(--echo-surface)]"
+            className="rounded-full p-2 text-black/55 hover:bg-white"
           >
             ✕
           </button>
@@ -103,39 +103,39 @@ const ClaimSpaceModal = ({
 
         {submitted ? (
           <div role="status" aria-live="polite">
-            <p className="font-['Inter',sans-serif] text-xs font-semibold uppercase tracking-[0.16em] text-[var(--echo-text-e8911a)]">
+            <p className="font-['Inter',sans-serif] text-xs font-semibold uppercase tracking-[0.16em] text-[#E8911A]">
               Claim submitted
             </p>
             <h2 id="claim-space-title" className="mt-2 font-['Poppins',sans-serif] text-2xl font-bold">
               Thank you.
             </h2>
-            <p className="mt-3 font-['Inter',sans-serif] leading-7 text-[var(--echo-text-primary)]/70">
+            <p className="mt-3 font-['Inter',sans-serif] leading-7 text-black/70">
               Echo's team will review your request for {institutionName}. We'll email you when there's an update. The institution remains in review until the agreement is signed.
             </p>
             <button
               type="button"
               onClick={onClose}
-              className="mt-6 rounded-full bg-[var(--echo-accent)] px-6 py-3 font-['Inter',sans-serif] font-semibold text-[var(--echo-text-on-accent)] hover:bg-[var(--echo-bg-e8911a)]"
+              className="mt-6 rounded-full bg-[#F49B31] px-6 py-3 font-['Inter',sans-serif] font-semibold text-white hover:bg-[#E8911A]"
             >
               Done
             </button>
           </div>
         ) : (
           <>
-            <p className="font-['Inter',sans-serif] text-xs font-semibold uppercase tracking-[0.16em] text-[var(--echo-text-e8911a)]">
+            <p className="font-['Inter',sans-serif] text-xs font-semibold uppercase tracking-[0.16em] text-[#E8911A]">
               Institution leadership
             </p>
             <h2 id="claim-space-title" className="mt-2 font-['Poppins',sans-serif] text-2xl font-bold">
               Request to lead {institutionName}
             </h2>
-            <p className="mt-3 font-['Inter',sans-serif] leading-7 text-[var(--echo-text-primary)]/70">
+            <p className="mt-3 font-['Inter',sans-serif] leading-7 text-black/70">
               Your account and verified institutional email will be included with this request. Echo reviews each claim before inviting an authorized representative to sign the Founding Institution Agreement.
             </p>
 
             {user && (
-              <div className="mt-5 rounded-2xl border border-black/10 bg-[var(--echo-surface)] p-4 font-['Inter',sans-serif] text-sm">
+              <div className="mt-5 rounded-2xl border border-black/10 bg-white p-4 font-['Inter',sans-serif] text-sm">
                 <p className="font-medium">{user.firstName} {user.lastName}</p>
-                <p className="mt-1 text-[var(--echo-text-primary)]/60">{user.email}</p>
+                <p className="mt-1 text-black/60">{user.email}</p>
               </div>
             )}
 
@@ -149,7 +149,7 @@ const ClaimSpaceModal = ({
                   value={role}
                   onChange={(event) => setRole(event.target.value)}
                   placeholder="Dean of Student Affairs"
-                  className="mt-2 w-full rounded-xl border border-black/15 bg-[var(--echo-surface)] px-4 py-3 outline-none focus:border-[var(--echo-border-f49b31)] focus:ring-2 focus:ring-[var(--echo-border-ffc37b)]"
+                  className="mt-2 w-full rounded-xl border border-black/15 bg-white px-4 py-3 outline-none focus:border-[#F49B31] focus:ring-2 focus:ring-[#FFC37B]"
                 />
               </label>
               <label className="block font-['Inter',sans-serif] text-sm font-medium">
@@ -159,7 +159,7 @@ const ClaimSpaceModal = ({
                   value={department}
                   onChange={(event) => setDepartment(event.target.value)}
                   placeholder="Student Affairs"
-                  className="mt-2 w-full rounded-xl border border-black/15 bg-[var(--echo-surface)] px-4 py-3 outline-none focus:border-[var(--echo-border-f49b31)] focus:ring-2 focus:ring-[var(--echo-border-ffc37b)]"
+                  className="mt-2 w-full rounded-xl border border-black/15 bg-white px-4 py-3 outline-none focus:border-[#F49B31] focus:ring-2 focus:ring-[#FFC37B]"
                 />
               </label>
 
@@ -169,14 +169,14 @@ const ClaimSpaceModal = ({
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="rounded-full bg-[var(--echo-accent)] px-6 py-3 font-['Inter',sans-serif] font-semibold text-[var(--echo-text-on-accent)] hover:bg-[var(--echo-bg-e8911a)] disabled:cursor-wait disabled:opacity-60"
+                  className="rounded-full bg-[#F49B31] px-6 py-3 font-['Inter',sans-serif] font-semibold text-white hover:bg-[#E8911A] disabled:cursor-wait disabled:opacity-60"
                 >
                   {submitting ? "Submitting…" : "Submit for review"}
                 </button>
                 <button
                   type="button"
                   onClick={onClose}
-                  className="rounded-full border border-black/15 bg-[var(--echo-surface)] px-6 py-3 font-['Inter',sans-serif] font-medium text-[var(--echo-text-primary)]/70 hover:bg-black/5"
+                  className="rounded-full border border-black/15 bg-white px-6 py-3 font-['Inter',sans-serif] font-medium text-black/70 hover:bg-black/5"
                 >
                   Cancel
                 </button>

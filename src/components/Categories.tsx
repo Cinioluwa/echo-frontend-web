@@ -14,7 +14,7 @@ const CountBadge = ({ value }: { value: number }) => {
   const displayValue = value > 99 ? "99+" : String(value);
 
   return (
-    <span className="min-w-[26px] h-[26px] px-1.5 font-medium text-[var(--echo-text-on-accent)] text-[13px] leading-none tabular-nums whitespace-nowrap flex justify-center items-center rounded-full bg-[var(--echo-accent)] shrink-0">
+    <span className="min-w-[26px] h-[26px] px-1.5 font-medium text-white text-[13px] leading-none tabular-nums whitespace-nowrap flex justify-center items-center rounded-full bg-[#F49B31] shrink-0">
       {displayValue}
     </span>
   );
@@ -80,12 +80,12 @@ const Categories = ({
   return (
     <div className={`w-full overflow-hidden ${
       mobile
-        ? "rounded-2xl border border-[var(--echo-border-f4e3c9)] bg-[var(--echo-surface)] shadow-sm"
-        : "rounded-[15px] bg-[var(--echo-bg-fce0b0)]"
+        ? "rounded-2xl border border-[#F4E3C9] bg-white shadow-sm"
+        : "rounded-[15px] bg-[#FCE0B0]"
     }`}>
-      <div className={mobile ? "px-4 pt-4 pb-2" : "bg-[var(--echo-accent)] px-[14px] py-[16px]"}>
+      <div className={mobile ? "px-4 pt-4 pb-2" : "bg-[#F49B31] px-[14px] py-[16px]"}>
         <h2 className={`font-['Poppins',sans-serif] font-semibold leading-none ${
-          mobile ? "text-[16px] text-[var(--echo-text-4a3728)]" : "text-[19px] text-[var(--echo-text-on-accent)]"
+          mobile ? "text-[16px] text-[#4A3728]" : "text-[19px] text-white"
         }`}>
           {mobile ? "Categories" : "Category"}
         </h2>
@@ -97,11 +97,11 @@ const Categories = ({
           onClick={handleClick}
           className={`flex items-center justify-between gap-3 w-full min-h-[48px] px-3.5 rounded-[10px] cursor-pointer transition-colors duration-150 ${
             isAllActive
-              ? mobile ? "bg-[var(--echo-surface-soft)] text-[var(--echo-text-4a3728)]" : "bg-[var(--echo-surface)]"
-              : mobile ? "text-[var(--echo-text-4a3728)] hover:bg-[var(--echo-surface-soft)]" : "hover:bg-[var(--echo-surface)]/70"
+              ? mobile ? "bg-[#FEF5EA] text-[#4A3728]" : "bg-white"
+              : mobile ? "text-[#4A3728] hover:bg-[#FEF5EA]" : "hover:bg-white/70"
           }`}
         >
-          <span className={`font-['Poppins',sans-serif] font-semibold text-[15px] ${mobile ? "text-[var(--echo-text-4a3728)]" : "text-[var(--echo-text-primary)]"}`}>
+          <span className={`font-['Poppins',sans-serif] font-semibold text-[15px] ${mobile ? "text-[#4A3728]" : "text-black"}`}>
             All Categories
           </span>
           <CountBadge value={totalCount || 0} />
@@ -117,8 +117,8 @@ const Categories = ({
                 onClick={() => handleCategoryClick(category)}
                 className={`flex items-center justify-between gap-3 w-full min-h-[48px] px-3 rounded-[10px] cursor-pointer transition-colors duration-150 ${
                   isSelected
-                    ? mobile ? "bg-[var(--echo-surface-soft)]" : "bg-[var(--echo-surface)]"
-                    : mobile ? "hover:bg-[var(--echo-surface-soft)]" : "hover:bg-[var(--echo-surface)]/70"
+                    ? mobile ? "bg-[#FEF5EA]" : "bg-white"
+                    : mobile ? "hover:bg-[#FEF5EA]" : "hover:bg-white/70"
                 }`}
               >
                 <span className="flex items-center gap-[13px] min-w-0">
@@ -127,7 +127,7 @@ const Categories = ({
                     alt=""
                     className="w-[22px] h-[22px] object-contain shrink-0"
                   />
-                  <span className="font-['Poppins',sans-serif] font-semibold text-[15px] text-[var(--echo-text-4a3728)] truncate">
+                  <span className="font-['Poppins',sans-serif] font-semibold text-[15px] text-[#4A3728] truncate">
                     {category.label}
                   </span>
                 </span>

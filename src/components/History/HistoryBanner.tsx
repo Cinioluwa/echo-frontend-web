@@ -123,12 +123,12 @@ const HistoryBanner = () => {
                 {/* Text content */}
                 <div className="relative z-10 flex flex-col items-center justify-center h-full gap-2">
                     <h1
-                        className="font-['Poppins',sans-serif] font-semibold text-[40px] text-[var(--echo-text-on-accent)] text-center leading-normal"
+                        className="font-['Poppins',sans-serif] font-semibold text-[40px] text-white text-center leading-normal"
                     >
                         History
                     </h1>
                     <p
-                        className="font-['Poppins',sans-serif] font-medium text-[20px] text-[var(--echo-text-dadada)] text-center leading-normal"
+                        className="font-['Poppins',sans-serif] font-medium text-[20px] text-[#dadada] text-center leading-normal"
                     >
                         See all the problems you&apos;ve posted, solutions proposed and surges made.
                     </p>
@@ -224,12 +224,12 @@ const HistoryBanner = () => {
                 {/* Text content */}
                 <div className="relative z-10 flex flex-col items-center justify-center h-full gap-1">
                     <h1
-                        className="font-['Poppins',sans-serif] font-semibold text-[20px] text-[var(--echo-text-on-accent)] text-center leading-normal"
+                        className="font-['Poppins',sans-serif] font-semibold text-[20px] text-white text-center leading-normal"
                     >
                         History
                     </h1>
                     <p
-                        className="font-['Poppins',sans-serif] font-medium text-[10px] text-[var(--echo-text-dadada)] text-center leading-normal"
+                        className="font-['Poppins',sans-serif] font-medium text-[10px] text-[#dadada] text-center leading-normal"
                     >
                         See all the problems you&apos;ve posted, solutions proposed and surges made.
                     </p>

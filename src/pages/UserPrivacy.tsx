@@ -87,27 +87,27 @@ const UserPrivacy = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[var(--echo-surface-soft)]">
+    <div className="min-h-screen bg-[#FEF5EA]">
       <ProfileLayout />
       <main className="mt-1 mx-auto h-full w-full max-w-[1200px] p-4 md:p-10 pt-2 md:pt-2 pb-16 md:pb-20">
-        <div className="flex border border-[var(--echo-border-f4e3c9)] rounded-[20px] bg-[var(--echo-surface)] p-4 md:p-7 flex-col lg:flex-row gap-4 lg:gap-8 shadow-sm">
+        <div className="flex border border-[#F4E3C9] rounded-[20px] bg-white p-4 md:p-7 flex-col lg:flex-row gap-4 lg:gap-8 shadow-sm">
           {/* SIDE PANEL COMPONENT */}
 
           <UserProfileSidePanel pages={pages} />
 
           {/* FORM CONTENT */}
-          <div className="flex-1 min-w-0 mb-20 lg:border-l border-[var(--echo-border-f4e3c9)] lg:pl-8 pt-4 lg:pt-0">
-            <h2 className="text-lg md:text-xl text-[var(--echo-text-4a3728)] mb-4 md:mb-6 font-semibold">Email Verification</h2>
+          <div className="flex-1 min-w-0 mb-20 lg:border-l border-[#F4E3C9] lg:pl-8 pt-4 lg:pt-0">
+            <h2 className="text-lg md:text-xl text-[#4A3728] mb-4 md:mb-6 font-semibold">Email Verification</h2>
 
             {/* Verified Status Banner */}
-            <div className="mb-6 md:mb-8 p-4 md:p-6 bg-[var(--echo-surface-soft)] border border-[var(--echo-border-f4e3c9)] rounded-2xl flex items-start gap-4">
+            <div className="mb-6 md:mb-8 p-4 md:p-6 bg-[#FEF5EA] border border-[#F4E3C9] rounded-2xl flex items-start gap-4">
               <HiOutlineCheckBadge
-              className="text-[var(--echo-text-f49b31)] mt-0.5 md:mt-1 shrink-0"
+              className="text-[#F49B31] mt-0.5 md:mt-1 shrink-0"
                 size={22}
               />
               <div>
-              <h3 className="text-[var(--echo-text-4a3728)] text-sm md:text-base font-semibold">Email Verified</h3>
-              <p className="text-[var(--echo-text-6b6259)] text-xs md:text-sm mt-0.5 md:mt-1">
+              <h3 className="text-[#4A3728] text-sm md:text-base font-semibold">Email Verified</h3>
+              <p className="text-[#6B6259] text-xs md:text-sm mt-0.5 md:mt-1">
                   Your email has been verified. You can now enjoy the full
                   features of ECHO
                 </p>
@@ -116,9 +116,9 @@ const UserPrivacy = () => {
 
             {/* Loading Message */}
             {loading && (
-              <div className="mb-6 md:mb-8 p-4 md:p-6 bg-[var(--echo-surface-soft)] border border-[var(--echo-border-ffcd71)] rounded-2xl">
-                <h3 className="text-[var(--echo-text-926b3d)] text-sm md:text-base font-semibold">Loading preferences</h3>
-                <p className="text-[var(--echo-text-926b3d)]/80 text-xs md:text-sm mt-0.5 md:mt-1">
+              <div className="mb-6 md:mb-8 p-4 md:p-6 bg-[#FEF5EA] border border-[#FFCD71] rounded-2xl">
+                <h3 className="text-[#926B3D] text-sm md:text-base font-semibold">Loading preferences</h3>
+                <p className="text-[#926B3D]/80 text-xs md:text-sm mt-0.5 md:mt-1">
                   Fetching your privacy settings...
                 </p>
               </div>
@@ -126,18 +126,18 @@ const UserPrivacy = () => {
 
             {/* Error Message */}
             {error && !loading && (
-              <div className="mb-6 md:mb-8 p-4 md:p-6 bg-[var(--echo-bg-fee2e2)] border border-[var(--echo-border-ef4444)] rounded-2xl">
-                <h3 className="text-[var(--echo-text-991b1b)] text-sm md:text-base font-semibold">Could not load preferences</h3>
-                <p className="text-[var(--echo-text-991b1b)]/70 text-xs md:text-sm mt-0.5 md:mt-1">{error}</p>
+              <div className="mb-6 md:mb-8 p-4 md:p-6 bg-[#FEE2E2] border border-[#EF4444] rounded-2xl">
+                <h3 className="text-[#991B1B] text-sm md:text-base font-semibold">Could not load preferences</h3>
+                <p className="text-[#991B1B]/70 text-xs md:text-sm mt-0.5 md:mt-1">{error}</p>
               </div>
             )}
 
             {/* Update Success Message */}
             {updateMessage && updateMessage.type === "success" && (
-              <div className="mb-8 p-4 md:p-6 bg-[var(--echo-surface-soft)] border border-[var(--echo-border-f4e3c9)] rounded-2xl flex items-start gap-4">
+              <div className="mb-8 p-4 md:p-6 bg-[#FEF5EA] border border-[#F4E3C9] rounded-2xl flex items-start gap-4">
                 <div>
-                  <h3 className="text-[var(--echo-text-4a3728)] text-base font-semibold">Success</h3>
-                  <p className="text-[var(--echo-text-6b6259)] text-sm mt-1">
+                  <h3 className="text-[#4A3728] text-base font-semibold">Success</h3>
+                  <p className="text-[#6B6259] text-sm mt-1">
                     {updateMessage.text}
                   </p>
                 </div>
@@ -146,10 +146,10 @@ const UserPrivacy = () => {
 
             {/* Update Error Message */}
             {updateMessage && updateMessage.type === "error" && (
-              <div className="mb-8 p-6 bg-[var(--echo-bg-fee2e2)] border border-[var(--echo-border-ef4444)] rounded-2xl flex items-start gap-4">
+              <div className="mb-8 p-6 bg-[#FEE2E2] border border-[#EF4444] rounded-2xl flex items-start gap-4">
                 <div>
-                  <h3 className="text-[var(--echo-text-991b1b)] text-base">Update Failed</h3>
-                  <p className="text-[var(--echo-text-991b1b)]/70 text-sm mt-1">
+                  <h3 className="text-[#991B1B] text-base">Update Failed</h3>
+                  <p className="text-[#991B1B]/70 text-sm mt-1">
                     {updateMessage.text}
                   </p>
                 </div>
@@ -160,7 +160,7 @@ const UserPrivacy = () => {
             {userPreference && !loading && (
               <div className="space-y-4">
                 <div className="flex justify-between items-center p-4 md:p-5 bg-transparent border border-orange-200 rounded-2xl">
-                  <span className="text-[var(--echo-text-4a3728)] text-sm md:text-base font-medium">
+                  <span className="text-[#4A3728] text-sm md:text-base font-medium">
                     Comment Anonymously
                   </span>
                   <Toggle
@@ -172,7 +172,7 @@ const UserPrivacy = () => {
                   />
                 </div>
                 <div className="flex justify-between items-center p-4 md:p-5 bg-transparent border border-orange-200 rounded-2xl">
-                  <span className="text-[var(--echo-text-4a3728)] text-sm md:text-base font-medium">
+                  <span className="text-[#4A3728] text-sm md:text-base font-medium">
                     Post Pings Anonymously
                   </span>
                   <Toggle

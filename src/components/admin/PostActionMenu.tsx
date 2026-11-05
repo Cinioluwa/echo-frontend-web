@@ -33,7 +33,7 @@ const PostActionMenu = ({
   };
 
   const menuPanelClass =
-    "absolute right-2 top-14 px-2 py-2 z-50 w-[186px] md:w-56 rounded-xl bg-[var(--echo-surface)] shadow-md border border-gray-100 overflow-hidden";
+    "absolute right-2 top-14 px-2 py-2 z-50 w-[186px] md:w-56 rounded-xl bg-white shadow-md border border-gray-100 overflow-hidden";
   const menuItemClass =
     "w-full rounded-[6px] flex items-center gap-2.5 px-3 py-2 text-left text-[13px] leading-[1.2] text-gray-700 hover:bg-gray-100 transition disabled:opacity-50";
   const menuStatusItemClass =

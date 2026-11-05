@@ -20,14 +20,14 @@ const EmailIcon = () => (
     >
         <path
             d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"
-            stroke="var(--echo-text-f49b31)"
+            stroke="#f49b31"
             strokeWidth="2"
             strokeLinecap="round"
             strokeLinejoin="round"
         />
         <polyline
             points="22,6 12,13 2,6"
-            stroke="var(--echo-text-f49b31)"
+            stroke="#f49b31"
             strokeWidth="2"
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -207,28 +207,28 @@ const Verification: React.FC = () => {
 
                     <div className="text-center w-full">
                         <h1
-                            className="text-[22px] sm:text-[26px] md:text-[28px] font-semibold text-[var(--echo-text-4a504e)] mb-2.5"
+                            className="text-[22px] sm:text-[26px] md:text-[28px] font-semibold text-[#4a504e] mb-2.5"
                             style={{ fontFamily: "Poppins, sans-serif" }}
                         >
                             Verify Your Email
                         </h1>
                         <p
-                            className="text-[12px] sm:text-[13px] text-[var(--echo-text-secondary)] font-normal leading-relaxed"
+                            className="text-[12px] sm:text-[13px] text-[#838383] font-normal leading-relaxed"
                             style={{ fontFamily: "Poppins, sans-serif" }}
                         >
                             We&apos;ve sent a verification link to
                         </p>
                         <p
-                            className="text-[13px] sm:text-[14px] text-[var(--echo-text-f49b31)] font-semibold mt-[5px]"
+                            className="text-[13px] sm:text-[14px] text-[#f49b31] font-semibold mt-[5px]"
                             style={{ fontFamily: "Poppins, sans-serif" }}
                         >
                             {emailDisplay}
                         </p>
                     </div>
 
-                    <div className="w-full bg-[var(--echo-surface-soft)] border border-[var(--echo-border-ffcd71)] rounded-xl px-4 sm:px-5 py-3 sm:py-[15px]">
+                    <div className="w-full bg-[#fef5ea] border border-[#ffcd71] rounded-xl px-4 sm:px-5 py-3 sm:py-[15px]">
                         <p
-                            className="text-[12px] text-[var(--echo-text-4a504e)] text-center leading-relaxed"
+                            className="text-[12px] text-[#4a504e] text-center leading-relaxed"
                             style={{ fontFamily: "Poppins, sans-serif" }}
                         >
                             Please check your inbox and click the verification link to complete your registration.
@@ -295,7 +295,7 @@ const Verification: React.FC = () => {
 
                     <div className="text-center">
                         <p
-                            className="text-[12px] text-[var(--echo-text-secondary)]"
+                            className="text-[12px] text-[#838383]"
                             style={{ fontFamily: "Poppins, sans-serif" }}
                         >
                             Didn&apos;t receive the email? Check your spam folder or click resend above.

@@ -27,7 +27,7 @@ const SuperAdminDashboard: React.FC = () => {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-[400px]">
-        <div className="animate-spin w-12 h-12 border-4 border-[var(--echo-border-f49b31)] border-t-transparent rounded-full" />
+        <div className="animate-spin w-12 h-12 border-4 border-[#f49b31] border-t-transparent rounded-full" />
       </div>
     );
   }
@@ -64,14 +64,14 @@ const SuperAdminDashboard: React.FC = () => {
           label="Total Waves"
         />
         <MetricCard
-          icon={<SurgeIcon width={18} height={24} fill="var(--echo-text-f49b31)" />}
+          icon={<SurgeIcon width={18} height={24} fill="#F49B31" />}
           value={stats?.content?.surges?.toLocaleString() ?? "0"}
           label="Total Surges"
         />
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="bg-[var(--echo-accent)] rounded-2xl p-6 text-[var(--echo-text-on-accent)] shadow-sm flex flex-col justify-between h-[129px]">
+        <div className="bg-[#f49b31] rounded-2xl p-6 text-white shadow-sm flex flex-col justify-between h-[129px]">
           <div className="flex items-center justify-between">
             <h3 className="font-semibold text-lg">Organization Requests Pending Approval</h3>
             <AlertTriangle size={24} />
@@ -82,7 +82,7 @@ const SuperAdminDashboard: React.FC = () => {
           </div>
         </div>
 
-        <div className="bg-[var(--echo-accent)] rounded-2xl p-6 text-[var(--echo-text-on-accent)] shadow-sm flex flex-col justify-between h-[129px]">
+        <div className="bg-[#f49b31] rounded-2xl p-6 text-white shadow-sm flex flex-col justify-between h-[129px]">
           <div className="flex items-center justify-between">
             <h3 className="font-semibold text-lg">Leader Claim Pending Approval</h3>
             <AlertTriangle size={24} />

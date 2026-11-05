@@ -53,7 +53,7 @@ const ContextDropdown = ({
 
   return (
     <div ref={rootRef} className="relative min-w-0">
-      <span className="block font-['Inter',sans-serif] text-xs font-medium text-[var(--echo-text-454545)]">
+      <span className="block font-['Inter',sans-serif] text-xs font-medium text-[#454545]">
         {label}
       </span>
       <button
@@ -65,13 +65,13 @@ const ContextDropdown = ({
         aria-expanded={isOpen}
         aria-controls={`${id}-options`}
         onClick={() => setIsOpen((open) => !open)}
-        className="mt-1 flex min-h-11 w-full min-w-0 items-center justify-between gap-2 rounded-xl border-2 border-[var(--echo-border-ffc37b)] bg-[var(--echo-surface)] px-3 py-2.5 text-left font-['Inter',sans-serif] text-sm text-[var(--echo-text-454545)] transition hover:border-[var(--echo-border-f49b31)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--echo-border-f49b31)]"
+        className="mt-1 flex min-h-11 w-full min-w-0 items-center justify-between gap-2 rounded-xl border-2 border-[#FFC37B] bg-white px-3 py-2.5 text-left font-['Inter',sans-serif] text-sm text-[#454545] transition hover:border-[#F49B31] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#F49B31]"
       >
         <span className="truncate">{selectedOption?.label ?? options[0]?.label}</span>
         <ChevronDown
           size={16}
           aria-hidden="true"
-          className={`shrink-0 text-[var(--echo-text-f49b31)] transition-transform ${isOpen ? "rotate-180" : ""}`}
+          className={`shrink-0 text-[#F49B31] transition-transform ${isOpen ? "rotate-180" : ""}`}
         />
       </button>
       {isOpen && (
@@ -79,7 +79,7 @@ const ContextDropdown = ({
           id={`${id}-options`}
           role="listbox"
           aria-labelledby={`${id}-trigger`}
-          className="absolute inset-x-0 top-full z-50 mt-1 max-h-52 overflow-y-auto rounded-xl border-2 border-[var(--echo-border-f49b31)] bg-[var(--echo-surface)] py-1 shadow-lg"
+          className="absolute inset-x-0 top-full z-50 mt-1 max-h-52 overflow-y-auto rounded-xl border-2 border-[#F49B31] bg-white py-1 shadow-lg"
         >
           {options.map((option) => (
             <button
@@ -91,10 +91,10 @@ const ContextDropdown = ({
                 onChange(option.value);
                 setIsOpen(false);
               }}
-              className={`w-full px-3 py-2 text-left font-['Inter',sans-serif] text-sm transition hover:bg-[var(--echo-surface-soft)] ${
+              className={`w-full px-3 py-2 text-left font-['Inter',sans-serif] text-sm transition hover:bg-[#FEF5EA] ${
                 option.value === value
-                  ? "bg-[var(--echo-surface-soft)] font-semibold text-[var(--echo-text-75420b)]"
-                  : "text-[var(--echo-text-454545)]"
+                  ? "bg-[#FEF5EA] font-semibold text-[#75420B]"
+                  : "text-[#454545]"
               }`}
             >
               {option.label}
@@ -169,13 +169,13 @@ const OptionalPingContext = ({ value, onChange }: OptionalPingContextProps) => {
   return (
     <section
       aria-label="Optional context"
-      className="w-full rounded-2xl border border-[var(--echo-border-e8d6bf)] bg-[var(--echo-bg-fffcf8)] p-3 md:p-4"
+      className="w-full rounded-2xl border border-[#E8D6BF] bg-[#FFFCF8] p-3 md:p-4"
     >
       <div className="mb-3">
-        <h3 className="font-['Poppins',sans-serif] text-sm font-semibold text-[var(--echo-text-454545)]">
+        <h3 className="font-['Poppins',sans-serif] text-sm font-semibold text-[#454545]">
           Optional context
         </h3>
-        <p className="mt-0.5 font-['Inter',sans-serif] text-xs leading-5 text-[var(--echo-text-primary)]/60">
+        <p className="mt-0.5 font-['Inter',sans-serif] text-xs leading-5 text-black/60">
           Help route this Ping. These details apply only to this post.
         </p>
       </div>
@@ -212,7 +212,7 @@ const OptionalPingContext = ({ value, onChange }: OptionalPingContextProps) => {
       {contextError && (
         <p
           role="status"
-          className="mt-3 font-['Inter',sans-serif] text-xs text-[var(--echo-text-8a510e)]"
+          className="mt-3 font-['Inter',sans-serif] text-xs text-[#8A510E]"
         >
           {contextError}
         </p>

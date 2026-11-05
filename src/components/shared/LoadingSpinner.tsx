@@ -13,7 +13,7 @@ export const LoadingSpinner = ({ size = 'md' }: { size?: 'sm' | 'md' | 'lg' }) =
     return (
         <div className="flex justify-center items-center py-8">
             <div
-                className={`animate-spin rounded-full border-b-2 border-[var(--echo-border-f49b31)] ${sizeClasses[size]}`}
+                className={`animate-spin rounded-full border-b-2 border-[#F49B31] ${sizeClasses[size]}`}
             />
         </div>
     );
@@ -21,7 +21,7 @@ export const LoadingSpinner = ({ size = 'md' }: { size?: 'sm' | 'md' | 'lg' }) =
 
 export const FullPageLoader = () => (
     <div className="fixed inset-0 bg-black/20 flex items-center justify-center z-50">
-        <div className="bg-[var(--echo-surface)] p-8 rounded-xl shadow-xl">
+        <div className="bg-white p-8 rounded-xl shadow-xl">
             <LoadingSpinner size="lg" />
             <p className="mt-4 text-gray-600">Loading...</p>
         </div>

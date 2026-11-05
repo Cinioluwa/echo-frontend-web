@@ -75,7 +75,7 @@ const GuestSurgeModal = ({ pingId, pingTitle, onClose, onSuccess }: GuestSurgeMo
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm px-4" onClick={onClose}>
       <div 
-        className="bg-[var(--echo-surface)] rounded-2xl shadow-xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in-95 duration-200"
+        className="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in-95 duration-200"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="relative p-6">
@@ -88,7 +88,7 @@ const GuestSurgeModal = ({ pingId, pingTitle, onClose, onSuccess }: GuestSurgeMo
 
           <div className="text-center mb-6 mt-2">
             <div className="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Mail className="text-[var(--echo-text-f49b31)] w-6 h-6" />
+              <Mail className="text-[#F49B31] w-6 h-6" />
             </div>
             <h2 className="text-2xl font-bold text-gray-900 mb-2">Surge as a Guest</h2>
             <p className="text-gray-600 text-sm">
@@ -122,7 +122,7 @@ const GuestSurgeModal = ({ pingId, pingTitle, onClose, onSuccess }: GuestSurgeMo
               </div>
               <button
                 onClick={() => navigate(`/login?returnTo=${encodeURIComponent(`/feed/${pingId}`)}`)}
-                className="w-full flex justify-center items-center py-3 px-4 border border-transparent rounded-xl shadow-sm text-sm font-bold text-[var(--echo-text-on-accent)] bg-[var(--echo-accent)] hover:bg-[var(--echo-bg-d88429)] transition-colors mb-3"
+                className="w-full flex justify-center items-center py-3 px-4 border border-transparent rounded-xl shadow-sm text-sm font-bold text-white bg-[#F49B31] hover:bg-[#d88429] transition-colors mb-3"
               >
                 Sign In to Echo
               </button>
@@ -151,7 +151,7 @@ const GuestSurgeModal = ({ pingId, pingTitle, onClose, onSuccess }: GuestSurgeMo
                     required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-xl focus:ring-[var(--echo-border-f49b31)] focus:border-[var(--echo-border-f49b31)] outline-none transition-shadow text-[var(--echo-text-primary)]"
+                    className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-xl focus:ring-[#F49B31] focus:border-[#F49B31] outline-none transition-shadow text-black"
                     placeholder="you@example.com"
                   />
                 </div>
@@ -159,7 +159,7 @@ const GuestSurgeModal = ({ pingId, pingTitle, onClose, onSuccess }: GuestSurgeMo
               <button
                 type="submit"
                 disabled={isLoading}
-                className="w-full flex justify-center items-center py-3 px-4 border border-transparent rounded-xl shadow-sm text-sm font-bold text-[var(--echo-text-on-accent)] bg-[var(--echo-accent)] hover:bg-[var(--echo-bg-d88429)] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--echo-border-f49b31)] disabled:opacity-70 transition-colors"
+                className="w-full flex justify-center items-center py-3 px-4 border border-transparent rounded-xl shadow-sm text-sm font-bold text-white bg-[#F49B31] hover:bg-[#d88429] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#F49B31] disabled:opacity-70 transition-colors"
               >
                 {isLoading ? <Loader2 className="animate-spin h-5 w-5" /> : "Send Code"}
               </button>
@@ -178,7 +178,7 @@ const GuestSurgeModal = ({ pingId, pingTitle, onClose, onSuccess }: GuestSurgeMo
                     maxLength={6}
                     value={code}
                     onChange={(e) => setCode(e.target.value.replace(/\D/g, ''))}
-                    className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-xl focus:ring-[var(--echo-border-f49b31)] focus:border-[var(--echo-border-f49b31)] outline-none transition-shadow tracking-widest text-center text-lg font-mono text-[var(--echo-text-primary)]"
+                    className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-xl focus:ring-[#F49B31] focus:border-[#F49B31] outline-none transition-shadow tracking-widest text-center text-lg font-mono text-black"
                     placeholder="000000"
                   />
                 </div>
@@ -186,7 +186,7 @@ const GuestSurgeModal = ({ pingId, pingTitle, onClose, onSuccess }: GuestSurgeMo
               <button
                 type="submit"
                 disabled={isLoading || code.length !== 6}
-                className="w-full flex justify-center items-center py-3 px-4 border border-transparent rounded-xl shadow-sm text-sm font-bold text-[var(--echo-text-on-accent)] bg-[var(--echo-accent)] hover:bg-[var(--echo-bg-d88429)] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--echo-border-f49b31)] disabled:opacity-70 transition-colors"
+                className="w-full flex justify-center items-center py-3 px-4 border border-transparent rounded-xl shadow-sm text-sm font-bold text-white bg-[#F49B31] hover:bg-[#d88429] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#F49B31] disabled:opacity-70 transition-colors"
               >
                 {isLoading ? <Loader2 className="animate-spin h-5 w-5" /> : "Verify & Surge"}
               </button>
