@@ -65,14 +65,14 @@ const SuperAdminOrganizations: React.FC = () => {
   const totalPages = Math.ceil(total / limit);
 
   return (
-    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 flex flex-col h-full overflow-hidden">
+    <div className="bg-[var(--echo-surface)] rounded-2xl shadow-sm border border-gray-100 flex flex-col h-full overflow-hidden">
       <div className="p-6 border-b border-gray-100 flex items-center justify-between gap-4 flex-wrap">
         <div className="flex-1 max-w-md relative">
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
           <input
             type="text"
             placeholder="Search organizations..."
-            className="w-full pl-10 pr-4 py-2 bg-gray-50 border border-gray-200 rounded-lg outline-none focus:border-[#f49b31] transition-colors"
+            className="w-full pl-10 pr-4 py-2 bg-gray-50 border border-gray-200 rounded-lg outline-none focus:border-[var(--echo-border-f49b31)] transition-colors"
           />
         </div>
         <div className="flex items-center gap-4 flex-wrap">
@@ -127,8 +127,8 @@ const SuperAdminOrganizations: React.FC = () => {
                 </td>
                 <td className="px-6 py-4 text-gray-600">{org.domain || "—"}</td>
                 <td className="px-6 py-4">
-                  <span className={`px-3 py-1 rounded-xs text-xs font-bold text-white ${
-                    org.status === 'ACTIVE' ? 'bg-[#01B909]' : 'bg-[#CAC13C]'
+                  <span className={`px-3 py-1 rounded-xs text-xs font-bold text-[var(--echo-text-on-accent)] ${
+                    org.status === 'ACTIVE' ? 'bg-[var(--echo-bg-01b909)]' : 'bg-[var(--echo-bg-cac13c)]'
                   }`}>
                     {org.status}
                   </span>
@@ -146,14 +146,14 @@ const SuperAdminOrganizations: React.FC = () => {
                     <button
                       onClick={() => handleStatusToggle(org.id, org.status)}
                       disabled={actionLoading === org.id}
-                      className="px-4 py-1.5 text-xs font-semibold text-white bg-[#B91C1C] rounded-[8px] hover:bg-red-800 transition-colors disabled:opacity-50"
+                      className="px-4 py-1.5 text-xs font-semibold text-[var(--echo-text-on-accent)] bg-[var(--echo-bg-b91c1c)] rounded-[8px] hover:bg-red-800 transition-colors disabled:opacity-50"
                     >
                       {org.status === 'ACTIVE' ? 'Deactivate' : 'Activate'}
                     </button>
                     <button
                       onClick={() => handleEdit(org)}
                       disabled={actionLoading === org.id}
-                      className="px-4 py-1.5 text-xs font-semibold text-black bg-[#FEF5EA] border border-[#FCA5A5] rounded-[8px] hover:bg-[#FDE8D1] transition-colors disabled:opacity-50"
+                      className="px-4 py-1.5 text-xs font-semibold text-[var(--echo-text-primary)] bg-[var(--echo-surface-soft)] border border-[var(--echo-border-fca5a5)] rounded-[8px] hover:bg-[var(--echo-bg-fde8d1)] transition-colors disabled:opacity-50"
                     >
                       Edit
                     </button>
@@ -193,7 +193,7 @@ const SuperAdminOrganizations: React.FC = () => {
               onClick={() => setPage(i + 1)}
               className={`px-3 py-1 border rounded font-medium ${
                 page === i + 1
-                  ? "border-[#f49b31] bg-[#f49b31] text-white"
+                  ? "border-[var(--echo-border-f49b31)] bg-[var(--echo-accent)] text-[var(--echo-text-on-accent)]"
                   : "border-gray-200 text-gray-600 hover:bg-gray-50"
               }`}
             >

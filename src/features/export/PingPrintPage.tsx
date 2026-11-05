@@ -135,7 +135,7 @@ const PingPrintPage = () => {
                             <div className="ep-kpi">
                                 <p className="ep-kpi-label">Total surges</p>
                                 <p className="ep-kpi-value" style={{ display: "flex", alignItems: "center", gap: "1.5mm" }}>
-                                    <SurgeIcon width={12} height={16} fill="#E8911A" />
+                                    <SurgeIcon width={12} height={16} fill="var(--echo-text-e8911a)" />
                                     {ping.surgeCount}
                                 </p>
                             </div>
@@ -181,7 +181,7 @@ const PingPrintPage = () => {
                                             </span>
                                         )}
                                         <span className="ep-surge">
-                                            <SurgeIcon width={9} height={12} fill="#F49B31" />
+                                            <SurgeIcon width={9} height={12} fill="var(--echo-text-f49b31)" />
                                             {wave._count?.surges ?? wave.surgeCount}
                                         </span>
                                     </div>
@@ -202,7 +202,7 @@ const PingPrintPage = () => {
                             topComments.map((comment, index) => (
                                 <div className="ep-card" key={comment.id} style={index === 0 ? { marginTop: 0 } : undefined}>
                                     <p className="ep-small" style={{ marginTop: 0 }}>
-                                        <strong style={{ color: "#171717" }}>{commentAuthor(comment)}</strong> · {formatAbsolute(comment.createdAt)}
+                                        <strong style={{ color: "var(--echo-text-primary)" }}>{commentAuthor(comment)}</strong> · {formatAbsolute(comment.createdAt)}
                                     </p>
                                     <p className="ep-body" style={{ marginTop: "1mm" }}>{comment.content}</p>
                                 </div>
@@ -236,7 +236,7 @@ const PingPrintPage = () => {
                                         <p className="ep-small">{item.category}</p>
                                     </div>
                                     <span className="ep-surge">
-                                        <SurgeIcon width={9} height={12} fill="#F49B31" />
+                                        <SurgeIcon width={9} height={12} fill="var(--echo-text-f49b31)" />
                                         {item.waveCount}
                                     </span>
                                 </div>

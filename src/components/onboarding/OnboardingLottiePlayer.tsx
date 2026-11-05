@@ -75,14 +75,14 @@ export const OnboardingLottiePlayer = ({
       />
       {isLoading && !hasError && (
         <div
-          className="absolute inset-0 flex items-center justify-center bg-[#FEFBF6]/80"
+          className="absolute inset-0 flex items-center justify-center bg-[var(--echo-bg-fefbf6)]/80"
           aria-label="Loading animation"
         >
-          <div className="h-8 w-8 animate-spin rounded-full border-2 border-[#F49B31] border-t-transparent" />
+          <div className="h-8 w-8 animate-spin rounded-full border-2 border-[var(--echo-border-f49b31)] border-t-transparent" />
         </div>
       )}
       {hasError && (
-        <p className="absolute inset-x-4 bottom-3 text-center font-['Inter',sans-serif] text-xs text-[#5F656F]">
+        <p className="absolute inset-x-4 bottom-3 text-center font-['Inter',sans-serif] text-xs text-[var(--echo-text-5f656f)]">
           This animation isn&apos;t available right now.
         </p>
       )}

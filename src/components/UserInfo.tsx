@@ -69,7 +69,7 @@ const UserInfo = () => {
     return (
       <div className="inline-flex mr-2.5 ml-2.5 md:ml-[55px] items-center gap-2.5 md:mr-[35px]">
         <div className="text-end">
-          <p className="text-[#926B3D] text-[7px] md:text-[12px]">Guest</p>
+          <p className="text-[var(--echo-text-926b3d)] text-[7px] md:text-[12px]">Guest</p>
         </div>
         <span className="w-[50px] inline-flex items-center justify-center h-[50px] cursor-pointer rounded-full bg-gray-200">
           <User className="w-6 h-6 text-gray-500" />
@@ -88,11 +88,11 @@ const UserInfo = () => {
         className="inline-flex items-center gap-2.5 cursor-pointer"
       >
         <div className="text-end">
-          <p className="text-[#926B3D] text-[7px] md:text-[12px]">Welcome back!</p>
+          <p className="text-[var(--echo-text-926b3d)] text-[7px] md:text-[12px]">Welcome back!</p>
           <p className="text-[10px] md:text-[14px]">{fullName}</p>
         </div>
 
-        <span className="w-[50px] inline-flex items-center justify-center h-[50px] cursor-pointer rounded-full bg-[#f49b31] hover:bg-[#f49b31]-300 transition-colors overflow-hidden">
+        <span className="w-[50px] inline-flex items-center justify-center h-[50px] cursor-pointer rounded-full bg-[var(--echo-accent)] hover:bg-[var(--echo-accent)]-300 transition-colors overflow-hidden">
           {user.profilePicture && !imageLoadError ? (
             <img
               src={user.profilePicture}
@@ -108,10 +108,10 @@ const UserInfo = () => {
 
       {/* Dropdown Menu */}
       {isDropdownOpen && (
-        <div className="absolute top-[calc(100%+8px)] right-0 bg-white rounded-tl-lg rounded-tr-lg shadow-lg border border-[#CECECE] z-50 w-[220px] md:w-[274px] overflow-hidden">
+        <div className="absolute top-[calc(100%+8px)] right-0 bg-[var(--echo-surface)] rounded-tl-lg rounded-tr-lg shadow-lg border border-[var(--echo-border-cecece)] z-50 w-[220px] md:w-[274px] overflow-hidden">
           {/* User Profile Section */}
-          <div className="border-b border-[#CECECE] p-3 md:p-4 flex items-center gap-2.5 md:gap-3">
-            <div className="w-[42px] h-[42px] rounded-full bg-[#f49b31] flex items-center justify-center shrink-0 overflow-hidden">
+          <div className="border-b border-[var(--echo-border-cecece)] p-3 md:p-4 flex items-center gap-2.5 md:gap-3">
+            <div className="w-[42px] h-[42px] rounded-full bg-[var(--echo-accent)] flex items-center justify-center shrink-0 overflow-hidden">
               {user.profilePicture && !imageLoadError ? (
                 <img
                   src={user.profilePicture}
@@ -124,10 +124,10 @@ const UserInfo = () => {
               )}
             </div>
             <div className="flex flex-col gap-0.5 flex-1 min-w-0">
-              <p className="font-medium text-[14px] md:text-[16px] text-black truncate tracking-[-0.14px] md:tracking-[-0.16px]">
+              <p className="font-medium text-[14px] md:text-[16px] text-[var(--echo-text-primary)] truncate tracking-[-0.14px] md:tracking-[-0.16px]">
                 {fullName}
               </p>
-              <p className="font-medium text-[12px] md:text-[14px] text-[#999999] truncate tracking-[-0.12px] md:tracking-[-0.14px]">
+              <p className="font-medium text-[12px] md:text-[14px] text-[var(--echo-text-secondary)] truncate tracking-[-0.12px] md:tracking-[-0.14px]">
                 {user.email}
               </p>
             </div>
@@ -139,7 +139,7 @@ const UserInfo = () => {
             className="w-full px-3.5 md:px-4 py-2.5 md:py-3 flex items-center gap-2.5 md:gap-3 hover:bg-gray-50 transition-colors text-left"
           >
             <Settings className="w-[18px] h-[18px] md:w-5 md:h-5 text-gray-600" />
-            <span className="font-medium text-[13px] md:text-[15px] text-black">Profile Settings</span>
+            <span className="font-medium text-[13px] md:text-[15px] text-[var(--echo-text-primary)]">Profile Settings</span>
           </button>
 
           {/* Representative Workspace (for active representatives or admins) */}
@@ -149,9 +149,9 @@ const UserInfo = () => {
                 setIsDropdownOpen(false);
                 navigate("/admin/soundboard");
               }}
-              className="w-full px-3.5 md:px-4 py-2.5 md:py-3 flex items-center gap-2.5 md:gap-3 hover:bg-[#FEF5EA] transition-colors text-left text-[#A85C08]"
+              className="w-full px-3.5 md:px-4 py-2.5 md:py-3 flex items-center gap-2.5 md:gap-3 hover:bg-[var(--echo-surface-soft)] transition-colors text-left text-[var(--echo-text-a85c08)]"
             >
-              <Briefcase className="w-[18px] h-[18px] md:w-5 md:h-5 text-[#A85C08]" />
+              <Briefcase className="w-[18px] h-[18px] md:w-5 md:h-5 text-[var(--echo-text-a85c08)]" />
               <span className="font-medium text-[13px] md:text-[15px]">
                 {user.role === "REPRESENTATIVE" ? "Representative Workspace" : "Admin Soundboard"}
               </span>
@@ -164,11 +164,11 @@ const UserInfo = () => {
             className="w-full px-3.5 md:px-4 py-2.5 md:py-3 flex items-center gap-2.5 md:gap-3 hover:bg-gray-50 transition-colors text-left"
           >
             <HelpCircle className="w-[18px] h-[18px] md:w-5 md:h-5 text-gray-600" />
-            <span className="font-medium text-[13px] md:text-[15px] text-black">Help</span>
+            <span className="font-medium text-[13px] md:text-[15px] text-[var(--echo-text-primary)]">Help</span>
           </button>
 
           {/* Divider */}
-          <div className="border-t border-[#CECECE] mx-4"></div>
+          <div className="border-t border-[var(--echo-border-cecece)] mx-4"></div>
 
           {/* Sign Out Button */}
           <button
@@ -176,7 +176,7 @@ const UserInfo = () => {
             className="w-full px-3.5 md:px-4 py-2.5 md:py-3 flex items-center gap-2.5 md:gap-3 hover:bg-gray-50 transition-colors text-left rounded-bl-lg rounded-br-lg"
           >
             <LogOut className="w-[18px] h-[18px] md:w-5 md:h-5 text-gray-600" />
-            <span className="font-medium text-[13px] md:text-[15px] text-black">Sign Out</span>
+            <span className="font-medium text-[13px] md:text-[15px] text-[var(--echo-text-primary)]">Sign Out</span>
           </button>
         </div>
       )}

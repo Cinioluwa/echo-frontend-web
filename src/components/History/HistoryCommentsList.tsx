@@ -94,7 +94,7 @@ const HistoryCommentsList = ({ isLoading: parentIsLoading = false }: HistoryComm
             {hasNextPage && (
                 <button
                     onClick={loadMore}
-                    className="mt-2 text-sm text-[#F49B31] font-medium self-center cursor-pointer"
+                    className="mt-2 text-sm text-[var(--echo-text-f49b31)] font-medium self-center cursor-pointer"
                 >
                     Load more
                 </button>
@@ -132,21 +132,21 @@ const CommentedPingCard = ({ comment }: CommentedPingCardProps) => {
     const categoryIcon = categoryImages[categoryName] || categoryImages.General;
 
     return (
-        <div className="bg-[#FEFEFE] rounded-[10px] px-5 py-[15px] flex flex-col gap-[13px] w-full">
+        <div className="bg-[var(--echo-surface)] rounded-[10px] px-5 py-[15px] flex flex-col gap-[13px] w-full">
             {/* ─── Ping header ─────────────────────── */}
             <div className="flex items-center gap-4">
                 <UserAvatar
                     user={ping?.author as any}
                     size="lg"
                     responsive
-                    bgColor="bg-[#FFC37B]"
+                    bgColor="bg-[var(--echo-sidebar)]"
                     className="shrink-0"
                 />
                 <div className="flex flex-col">
-                    <span className="font-['Poppins',sans-serif] font-semibold text-[13px] md:text-[15px] text-black leading-normal">
+                    <span className="font-['Poppins',sans-serif] font-semibold text-[13px] md:text-[15px] text-[var(--echo-text-primary)] leading-normal">
                         {pingAuthorName}
                     </span>
-                    <span className="font-['Poppins',sans-serif] font-medium text-[11px] md:text-[13px] text-[#8B8E8D] leading-normal">
+                    <span className="font-['Poppins',sans-serif] font-medium text-[11px] md:text-[13px] text-[var(--echo-text-secondary)] leading-normal">
                         {pingTimestamp}
                     </span>
                 </div>
@@ -162,7 +162,7 @@ const CommentedPingCard = ({ comment }: CommentedPingCardProps) => {
                             className="w-5 h-5 object-contain"
                         />
                     )}
-                    <span className="font-['Poppins',sans-serif] font-medium text-[13px] md:text-[15px] text-[#171717]">
+                    <span className="font-['Poppins',sans-serif] font-medium text-[13px] md:text-[15px] text-[var(--echo-text-primary)]">
                         {categoryName}
                     </span>
                 </div>
@@ -170,24 +170,24 @@ const CommentedPingCard = ({ comment }: CommentedPingCardProps) => {
 
             {/* ─── Ping title ──────────────────────── */}
             {ping?.title && (
-                <h3 className="font-['Poppins',sans-serif] font-semibold text-[14px] md:text-[16px] text-black leading-normal">
+                <h3 className="font-['Poppins',sans-serif] font-semibold text-[14px] md:text-[16px] text-[var(--echo-text-primary)] leading-normal">
                     {ping.title}
                 </h3>
             )}
 
             {/* ─── Divider ─────────────────────────── */}
-            <div className="border-t border-[#E8E8E8]" />
+            <div className="border-t border-[var(--echo-border-e8e8e8)]" />
 
             {/* ─── User's comment (highlighted) ─────── */}
-            <div className="bg-[#FEF5EA] rounded-lg px-[15px] py-2.5 flex flex-col gap-1.5">
-                <span className="font-['Poppins',sans-serif] font-semibold text-[11px] text-[#F49B31] uppercase tracking-wide">
+            <div className="bg-[var(--echo-surface-soft)] rounded-lg px-[15px] py-2.5 flex flex-col gap-1.5">
+                <span className="font-['Poppins',sans-serif] font-semibold text-[11px] text-[var(--echo-text-f49b31)] uppercase tracking-wide">
                     Your comment · {commentTimestamp}
                 </span>
-                <p className="font-['Poppins',sans-serif] font-normal text-[13px] md:text-[14px] text-[#171717] leading-normal">
+                <p className="font-['Poppins',sans-serif] font-normal text-[13px] md:text-[14px] text-[var(--echo-text-primary)] leading-normal">
                     {comment.content}
                 </p>
                 {(comment.replyCount ?? 0) > 0 && (
-                    <span className="font-['Poppins',sans-serif] text-[11px] text-[#8B8E8D]">
+                    <span className="font-['Poppins',sans-serif] text-[11px] text-[var(--echo-text-secondary)]">
                         {comment.replyCount}{" "}
                         {comment.replyCount === 1 ? "reply" : "replies"}
                     </span>

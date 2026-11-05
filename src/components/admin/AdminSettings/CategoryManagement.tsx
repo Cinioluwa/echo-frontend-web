@@ -117,10 +117,10 @@ const CategoryManagement: React.FC = () => {
     <div className="flex flex-col gap-6 w-full animate-fade-in">
       <div className="pb-4 flex flex-col gap-1 md:flex-row md:items-center">
         <div>
-          <h2 className="font-poppins font-semibold text-[18px] text-[#212121]">
+          <h2 className="font-poppins font-semibold text-[18px] text-[var(--echo-text-primary)]">
             Category Management
           </h2>
-          <p className="font-poppins text-[12px] text-black mt-1">
+          <p className="font-poppins text-[12px] text-[var(--echo-text-primary)] mt-1">
             Controls the categories that students can post Pings into
           </p>
         </div>
@@ -134,12 +134,12 @@ const CategoryManagement: React.FC = () => {
       )}
 
       <div className="flex items-center justify-between">
-        <span className="text-black text-[13px] font-medium">
+        <span className="text-[var(--echo-text-primary)] text-[13px] font-medium">
           Drag and drop sortable list of active categories
         </span>
         <button
           onClick={() => setIsAdding(true)}
-          className="mt-3 md:mt-0 px-4 py-2 bg-[#f49b31] text-white rounded-[10px] hover:bg-[#d88429] font-poppins font-semibold text-[13px] flex items-center gap-1.5 self-start transition-colors"
+          className="mt-3 md:mt-0 px-4 py-2 bg-[var(--echo-accent)] text-[var(--echo-text-on-accent)] rounded-[10px] hover:bg-[var(--echo-bg-d88429)] font-poppins font-semibold text-[13px] flex items-center gap-1.5 self-start transition-colors"
         >
           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 4v16m8-8H4" />
@@ -149,9 +149,9 @@ const CategoryManagement: React.FC = () => {
       </div>
 
       {isAdding && (
-        <div className="p-4 bg-white border border-[#f49b31] rounded-[15px] flex flex-col sm:flex-row gap-3 items-end sm:items-center">
+        <div className="p-4 bg-[var(--echo-surface)] border border-[var(--echo-border-f49b31)] rounded-[15px] flex flex-col sm:flex-row gap-3 items-end sm:items-center">
           <div className="flex flex-col gap-1 flex-1 w-full">
-            <label className="font-poppins text-[12px] font-medium text-[#5e5c58]">
+            <label className="font-poppins text-[12px] font-medium text-[var(--echo-text-5e5c58)]">
               Category Name
             </label>
             <input
@@ -159,19 +159,19 @@ const CategoryManagement: React.FC = () => {
               value={newCategoryName}
               onChange={(e) => setNewCategoryName(e.target.value)}
               placeholder="Enter category name"
-              className="px-4 py-2 border border-[#ffd7a8] rounded-[10px] outline-none text-[14px] font-poppins focus:border-[#f49b31]"
+              className="px-4 py-2 border border-[var(--echo-border-ffd7a8)] rounded-[10px] outline-none text-[14px] font-poppins focus:border-[var(--echo-border-f49b31)]"
             />
           </div>
           <div className="flex gap-2">
             <button
               onClick={handleAddCategory}
-              className="px-4 py-2 bg-[#f49b31] text-white font-poppins font-semibold text-[13px] rounded-[10px] hover:bg-[#d88429]"
+              className="px-4 py-2 bg-[var(--echo-accent)] text-[var(--echo-text-on-accent)] font-poppins font-semibold text-[13px] rounded-[10px] hover:bg-[var(--echo-bg-d88429)]"
             >
               Save
             </button>
             <button
               onClick={() => setIsAdding(false)}
-              className="px-4 py-2 bg-[#e5e5e5] text-[#5e5c58] font-poppins font-semibold text-[13px] rounded-[10px] hover:bg-gray-300"
+              className="px-4 py-2 bg-[var(--echo-bg-e5e5e5)] text-[var(--echo-text-5e5c58)] font-poppins font-semibold text-[13px] rounded-[10px] hover:bg-gray-300"
             >
               Cancel
             </button>
@@ -181,14 +181,14 @@ const CategoryManagement: React.FC = () => {
 
       {loading ? (
         <div className="flex items-center justify-center p-8">
-          <div className="animate-spin w-8 h-8 border-4 border-[#f49b31] border-t-transparent rounded-full" />
+          <div className="animate-spin w-8 h-8 border-4 border-[var(--echo-border-f49b31)] border-t-transparent rounded-full" />
         </div>
       ) : (
-        <div className="bg-[#fefaf4] border border-[#ffd7a8] rounded-[5px] overflow-hidden">
+        <div className="bg-[var(--echo-bg-fefaf4)] border border-[var(--echo-border-ffd7a8)] rounded-[5px] overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="bg-[#FFC37B] border-b border-[#ffd7a8] text-black">
+                <tr className="bg-[var(--echo-sidebar)] border-b border-[var(--echo-border-ffd7a8)] text-[var(--echo-text-primary)]">
                   <th className="p-4 font-poppins font-semibold text-[14px] w-2/5">
                     Categories
                   </th>
@@ -209,13 +209,13 @@ const CategoryManagement: React.FC = () => {
                     onDragOver={(e) => handleDragOver(e)}
                     onDrop={(e) => handleDrop(e, index)}
                     onDragEnd={handleDragEnd}
-                    className={`border-b border-[#ffd7a8]/30 last:border-0 hover:bg-[#fff9f1] transition-colors cursor-grab select-none ${
+                    className={`border-b border-[var(--echo-border-ffd7a8)]/30 last:border-0 hover:bg-[var(--echo-bg-fff9f1)] transition-colors cursor-grab select-none ${
                       draggedIndex === index ? "opacity-40 bg-gray-100" : ""
                     }`}
                   >
                     <td className="p-4">
                       <div className="flex items-center gap-3">
-                        <div className="text-[#f49b31] opacity-70 hover:opacity-100 shrink-0">
+                        <div className="text-[var(--echo-text-f49b31)] opacity-70 hover:opacity-100 shrink-0">
                           <img src="/assets/icon/grip.svg" alt="grip handle" className="w-4 h-4 pointer-events-none" />
                         </div>
 
@@ -225,23 +225,23 @@ const CategoryManagement: React.FC = () => {
                               type="text"
                               value={editingName}
                               onChange={(e) => setEditingName(e.target.value)}
-                              className="px-3 py-1 border border-[#f49b31] rounded-[8px] outline-none text-[14px] font-poppins bg-white"
+                              className="px-3 py-1 border border-[var(--echo-border-f49b31)] rounded-[8px] outline-none text-[14px] font-poppins bg-[var(--echo-surface)]"
                             />
                             <button
                               onClick={handleSaveEdit}
-                              className="p-1 bg-[#f49b31] text-white rounded-[6px]"
+                              className="p-1 bg-[var(--echo-accent)] text-[var(--echo-text-on-accent)] rounded-[6px]"
                             >
                               ✔
                             </button>
                             <button
                               onClick={() => setEditingId(null)}
-                              className="p-1 bg-gray-300 text-black rounded-[6px]"
+                              className="p-1 bg-gray-300 text-[var(--echo-text-primary)] rounded-[6px]"
                             >
                               ✖
                             </button>
                           </div>
                         ) : (
-                          <span className="font-poppins font-medium text-[15px] text-[#212121]">
+                          <span className="font-poppins font-medium text-[15px] text-[var(--echo-text-primary)]">
                             {cat.name}
                           </span>
                         )}
@@ -253,12 +253,12 @@ const CategoryManagement: React.FC = () => {
                         <button
                           onClick={() => toggleStatus(cat.id)}
                           className={`w-10 h-5 rounded-full p-0.5 transition-colors duration-200 focus:outline-none ${
-                            cat.isActive ? "bg-[#f49b31]" : "bg-[#e5e5e5]"
+                            cat.isActive ? "bg-[var(--echo-accent)]" : "bg-[var(--echo-bg-e5e5e5)]"
                           }`}
                           aria-label="Toggle status"
                         >
                           <div
-                            className={`bg-white w-4 h-4 rounded-full shadow-sm transform transition-transform duration-200 ${
+                            className={`bg-[var(--echo-surface)] w-4 h-4 rounded-full shadow-sm transform transition-transform duration-200 ${
                               cat.isActive ? "translate-x-5" : "translate-x-0"
                             }`}
                           />
@@ -267,8 +267,8 @@ const CategoryManagement: React.FC = () => {
                         <span
                           className={`px-2.5 py-[5px] rounded-[12px] font-poppins font-medium text-[11px] ${
                             cat.isActive
-                              ? "bg-[#8ECF24] text-[#FEF5EA]"
-                              : "bg-[#B01212] text-[#FEF5EA]"
+                              ? "bg-[var(--echo-bg-8ecf24)] text-[var(--echo-text-fef5ea)]"
+                              : "bg-[var(--echo-bg-b01212)] text-[var(--echo-text-fef5ea)]"
                           }`}
                         >
                           {cat.isActive ? "Active" : "Disabled"}
@@ -280,7 +280,7 @@ const CategoryManagement: React.FC = () => {
                       <div className="flex gap-2">
                         <button
                           onClick={() => handleStartEdit(cat)}
-                          className="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-[#ffd7a8] rounded-[10px] text-[#f49b31] font-poppins font-medium text-[13px] hover:bg-[#fef5ea] transition-colors"
+                          className="flex items-center gap-1.5 px-3 py-1.5 bg-[var(--echo-surface)] border border-[var(--echo-border-ffd7a8)] rounded-[10px] text-[var(--echo-text-f49b31)] font-poppins font-medium text-[13px] hover:bg-[var(--echo-surface-soft)] transition-colors"
                         >
                           <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
@@ -289,7 +289,7 @@ const CategoryManagement: React.FC = () => {
                         </button>
                         <button
                           onClick={() => handleDeleteCategory(cat.id)}
-                          className="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-red-200 rounded-[10px] text-red-600 font-poppins font-medium text-[13px] hover:bg-red-50 transition-colors"
+                          className="flex items-center gap-1.5 px-3 py-1.5 bg-[var(--echo-surface)] border border-red-200 rounded-[10px] text-red-600 font-poppins font-medium text-[13px] hover:bg-red-50 transition-colors"
                         >
                           <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />

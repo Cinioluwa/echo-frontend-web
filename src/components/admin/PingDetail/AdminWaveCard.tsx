@@ -58,13 +58,13 @@ const AdminWaveCard: React.FC<AdminWaveCardProps> = ({ wave, rank, permissions, 
 
     return (
         <div
-            className={`flex w-full min-w-0 flex-col gap-[17px] rounded-[10px] bg-[#fefefe] px-4 py-5 sm:px-[27.5px] sm:py-[23px] ${featured ? "border-[1.5px] border-[#f49b31]" : ""}`}
+            className={`flex w-full min-w-0 flex-col gap-[17px] rounded-[10px] bg-[var(--echo-surface)] px-4 py-5 sm:px-[27.5px] sm:py-[23px] ${featured ? "border-[1.5px] border-[var(--echo-border-f49b31)]" : ""}`}
         >
             <div className="flex min-w-0 items-center gap-2 sm:gap-4 max-[500px]:gap-1">
                 <img src={avatar} alt={authorName} className="size-10 shrink-0 rounded-full object-cover sm:size-[53px] max-[500px]:size-8" />
                 <div className="flex min-w-0 flex-1 flex-col items-start">
-                    <p className="max-w-full truncate whitespace-nowrap font-poppins text-[12px] font-semibold text-black sm:text-[15px] max-[500px]:text-[10px]">{authorName}</p>
-                    <p className="whitespace-nowrap font-poppins text-[9px] font-medium text-[#8b8e8d] sm:text-[13px] max-[500px]:text-[8px]">{timestamp}</p>
+                    <p className="max-w-full truncate whitespace-nowrap font-poppins text-[12px] font-semibold text-[var(--echo-text-primary)] sm:text-[15px] max-[500px]:text-[10px]">{authorName}</p>
+                    <p className="whitespace-nowrap font-poppins text-[9px] font-medium text-[var(--echo-text-secondary)] sm:text-[13px] max-[500px]:text-[8px]">{timestamp}</p>
                 </div>
                 <div className="flex shrink-0 flex-nowrap items-center justify-end gap-1 sm:gap-[5px]">
                     {statusBadge ? (
@@ -90,7 +90,7 @@ const AdminWaveCard: React.FC<AdminWaveCardProps> = ({ wave, rank, permissions, 
                         </BadgeTooltip>
                     ) : (
                         <BadgeTooltip badgeKey="ALTERNATIVE">
-                            <span className={`${WAVE_BADGE_SIZE_CLASS} inline-flex shrink-0 items-center gap-1 rounded-[23px] border-[1.5px] border-[#626665] bg-[#fefefe] px-2 font-poppins text-[10px] font-medium text-black sm:gap-1.5 sm:px-3 sm:text-[12px] md:gap-[7.5px] md:px-[16.5px] md:text-[13.5px]`}>
+                            <span className={`${WAVE_BADGE_SIZE_CLASS} inline-flex shrink-0 items-center gap-1 rounded-[23px] border-[1.5px] border-[var(--echo-border-626665)] bg-[var(--echo-surface)] px-2 font-poppins text-[10px] font-medium text-[var(--echo-text-primary)] sm:gap-1.5 sm:px-3 sm:text-[12px] md:gap-[7.5px] md:px-[16.5px] md:text-[13.5px]`}>
                                 <img src="/assets/icon/dot-blue.svg" alt="" className="size-[6px] shrink-0 sm:size-[7.5px]" />
                                 <span className="truncate whitespace-nowrap">Alternative</span>
                             </span>
@@ -99,17 +99,17 @@ const AdminWaveCard: React.FC<AdminWaveCardProps> = ({ wave, rank, permissions, 
                 </div>
             </div>
 
-            <p className="whitespace-pre-wrap text-justify font-poppins text-[14px] font-medium text-[#626665]">
+            <p className="whitespace-pre-wrap text-justify font-poppins text-[14px] font-medium text-[var(--echo-text-secondary)]">
                 {wave.solution}
             </p>
 
             {status === "REJECTED" && (wave as any).rejectionReason && (
-                <p className="rounded-[10px] border border-[#eb5050] bg-[rgba(255,132,132,0.15)] px-3 py-2 font-poppins text-[12px] text-[#b01212]">
+                <p className="rounded-[10px] border border-[var(--echo-border-eb5050)] bg-[var(--echo-error-surface)] px-3 py-2 font-poppins text-[12px] text-[var(--echo-text-b01212)]">
                     Reason: {(wave as any).rejectionReason}
                 </p>
             )}
 
-            <div className="h-px w-full bg-[#ffc37b]/60" />
+            <div className="h-px w-full bg-[var(--echo-sidebar)]/60" />
 
             <div className="flex min-w-0 flex-row items-center gap-2">
                 <div className="flex min-w-0 flex-1 flex-nowrap items-center gap-[10px] overflow-x-auto pb-1 max-[500px]:gap-1.5">
@@ -117,7 +117,7 @@ const AdminWaveCard: React.FC<AdminWaveCardProps> = ({ wave, rank, permissions, 
                         <button
                             onClick={() => setActiveAction("APPROVED")}
                             disabled={isUpdating}
-                            className={`${actionBase} bg-[#f49b31] text-white`}
+                            className={`${actionBase} bg-[var(--echo-accent)] text-[var(--echo-text-on-accent)]`}
                         >
                             <img src="/assets/images/approve.svg" alt="" className="size-4 max-[500px]:size-3" />
                             Approve
@@ -127,7 +127,7 @@ const AdminWaveCard: React.FC<AdminWaveCardProps> = ({ wave, rank, permissions, 
                         <button
                             onClick={() => setActiveAction("REJECTED")}
                             disabled={isUpdating}
-                            className={`${actionBase} border border-[#eb5050] bg-[rgba(255,132,132,0.15)] text-[#eb5050]`}
+                            className={`${actionBase} border border-[var(--echo-border-eb5050)] bg-[var(--echo-error-surface)] text-[var(--echo-text-eb5050)]`}
                         >
                             <X className="size-4 max-[500px]:size-3" />
                             Reject
@@ -137,7 +137,7 @@ const AdminWaveCard: React.FC<AdminWaveCardProps> = ({ wave, rank, permissions, 
                         <button
                             onClick={() => setActiveAction("UNDER_REVIEW")}
                             disabled={isUpdating}
-                            className={`${actionBase} border border-[#f49b31] bg-[#fef5ea] text-[#f49b31]`}
+                            className={`${actionBase} border border-[var(--echo-border-f49b31)] bg-[var(--echo-surface-soft)] text-[var(--echo-text-f49b31)]`}
                         >
                             <img src="/assets/icon/review.svg" alt="" className="size-4 max-[500px]:size-3" />
                             Review
@@ -147,7 +147,7 @@ const AdminWaveCard: React.FC<AdminWaveCardProps> = ({ wave, rank, permissions, 
                         <button
                             onClick={() => setActiveAction("IN_PROGRESS")}
                             disabled={isUpdating}
-                            className={`${actionBase} w-auto border border-[#f49b31] bg-[#fef5ea] px-4 text-[#f49b31]`}
+                            className={`${actionBase} w-auto border border-[var(--echo-border-f49b31)] bg-[var(--echo-surface-soft)] px-4 text-[var(--echo-text-f49b31)]`}
                         >
                             Mark in progress
                         </button>
@@ -156,17 +156,17 @@ const AdminWaveCard: React.FC<AdminWaveCardProps> = ({ wave, rank, permissions, 
                         <button
                             onClick={() => setActiveAction("COMPLETED")}
                             disabled={isUpdating}
-                            className={`${actionBase} w-auto bg-[#f49b31] px-4 text-white`}
+                            className={`${actionBase} w-auto bg-[var(--echo-accent)] px-4 text-[var(--echo-text-on-accent)]`}
                         >
                             Mark completed
                         </button>
                     )}
-                    {!hasActions && <span className="font-poppins text-[12px] font-medium text-[#8b8e8d]" />}
+                    {!hasActions && <span className="font-poppins text-[12px] font-medium text-[var(--echo-text-secondary)]" />}
                 </div>
 
                 <div className="ml-auto flex shrink-0 items-center gap-1">
-                    <SurgeIcon width={14} height={19} fill="#F49B31" />
-                    <span className="font-poppins text-[28px] font-semibold leading-none text-[#f49b31]">
+                    <SurgeIcon width={14} height={19} fill="var(--echo-text-f49b31)" />
+                    <span className="font-poppins text-[28px] font-semibold leading-none text-[var(--echo-text-f49b31)]">
                         {wave.surgeCount}
                     </span>
                 </div>

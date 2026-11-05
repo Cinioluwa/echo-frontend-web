@@ -48,22 +48,22 @@ const ModerationItem: React.FC<ModerationItemProps> = ({ item, onTakeAction, onD
         <div className="flex flex-col items-start w-full">
             {/* Header - Orange background */}
             {headerText ? (
-                <div className="bg-[#ffc37b] border border-[#f49b31] border-b-2 w-full px-5 sm:px-[21px] py-2 sm:py-2.5 flex items-center justify-start rounded-t-xl">
-                    <p className="font-poppins font-bold text-[14px] sm:text-[16px] text-white whitespace-nowrap">
+                <div className="bg-[var(--echo-sidebar)] border border-[var(--echo-border-f49b31)] border-b-2 w-full px-5 sm:px-[21px] py-2 sm:py-2.5 flex items-center justify-start rounded-t-xl">
+                    <p className="font-poppins font-bold text-[14px] sm:text-[16px] text-[var(--echo-text-on-accent)] whitespace-nowrap">
                         {headerText}&nbsp;
                     </p>
-                    <p className="font-poppins font-semibold text-[14px] sm:text-[16px] text-black truncate">
+                    <p className="font-poppins font-semibold text-[14px] sm:text-[16px] text-[var(--echo-text-primary)] truncate">
                         {item.subject}
                     </p>
-                    <div className="bg-white border border-[#f49b31] rounded-[20px] px-2 py-0.5 ml-2 shrink-0">
-                        <p className="font-poppins font-semibold text-[10px] sm:text-[11px] text-[#f49b31] whitespace-nowrap">
+                    <div className="bg-[var(--echo-surface)] border border-[var(--echo-border-f49b31)] rounded-[20px] px-2 py-0.5 ml-2 shrink-0">
+                        <p className="font-poppins font-semibold text-[10px] sm:text-[11px] text-[var(--echo-text-f49b31)] whitespace-nowrap">
                             {item.category}
                         </p>
                     </div>
                 </div>) : null}
 
             {/* Content - White background */}
-            <div className={`bg-white w-full px-3 sm:px-[27.5px] py-3 sm:py-5 flex flex-col gap-3 sm:gap-[17px] rounded-b-xl ${headerText ? "" : "rounded-t-xl"}`}>
+            <div className={`bg-[var(--echo-surface)] w-full px-3 sm:px-[27.5px] py-3 sm:py-5 flex flex-col gap-3 sm:gap-[17px] rounded-b-xl ${headerText ? "" : "rounded-t-xl"}`}>
                 {/* Author info */}
                 <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center sm:justify-between w-full">
                     <div className="flex gap-3 items-center">
@@ -73,10 +73,10 @@ const ModerationItem: React.FC<ModerationItemProps> = ({ item, onTakeAction, onD
                             className="w-[45px] sm:w-[53px] h-[45px] sm:h-[53px] rounded-full object-cover"
                         />
                         <div className="flex flex-col">
-                            <p className="font-poppins font-semibold text-[13px] sm:text-[15px] text-black">
+                            <p className="font-poppins font-semibold text-[13px] sm:text-[15px] text-[var(--echo-text-primary)]">
                                 {item.author.name}
                             </p>
-                            <p className="font-poppins font-medium text-[12px] sm:text-[13px] text-[#8b8e8d]">
+                            <p className="font-poppins font-medium text-[12px] sm:text-[13px] text-[var(--echo-text-secondary)]">
                                 {item.author.timestamp}
                             </p>
                         </div>
@@ -87,10 +87,10 @@ const ModerationItem: React.FC<ModerationItemProps> = ({ item, onTakeAction, onD
                 </div>
 
                 {/* Divider */}
-                <div className="h-px bg-[#e0e0e0] w-full" />
+                <div className="h-px bg-[var(--echo-bg-e0e0e0)] w-full" />
 
                 {/* Content */}
-                <p className="font-poppins font-medium text-[12px] sm:text-[14px] text-black text-justify">
+                <p className="font-poppins font-medium text-[12px] sm:text-[14px] text-[var(--echo-text-primary)] text-justify">
                     {item.content}
                 </p>
 
@@ -108,7 +108,7 @@ const ModerationItem: React.FC<ModerationItemProps> = ({ item, onTakeAction, onD
                     <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0 pt-2">
                         <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto relative" ref={dropdownRef}>
                             {isDropdownOpen && (
-                                <div className="flex flex-row items-center gap-1 absolute bottom-full left-0 mb-2 bg-white rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.15)] border border-[#e0e0e0]  z-10 font-poppins whitespace-nowrap">
+                                <div className="flex flex-row items-center gap-1 absolute bottom-full left-0 mb-2 bg-[var(--echo-surface)] rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.15)] border border-[var(--echo-border-e0e0e0)]  z-10 font-poppins whitespace-nowrap">
                                     <button
                                         onClick={() => handleActionClick("WARN")}
                                         className="flex items-center gap-1.5 px-3 py-1.5 text-[12px] sm:text-[13px] text-black-50 hover:bg-gray-100 rounded-lg font-medium transition-colors"
@@ -135,7 +135,7 @@ const ModerationItem: React.FC<ModerationItemProps> = ({ item, onTakeAction, onD
                             <button
                                 onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                                 disabled={actionLoading}
-                                className="bg-[#f49b31] hover:bg-[#e68a1f] text-white font-poppins font-semibold text-[11px] sm:text-[13px] px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl flex items-center justify-center gap-2 transition-colors whitespace-nowrap disabled:opacity-50"
+                                className="bg-[var(--echo-accent)] hover:bg-[var(--echo-bg-e68a1f)] text-[var(--echo-text-on-accent)] font-poppins font-semibold text-[11px] sm:text-[13px] px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl flex items-center justify-center gap-2 transition-colors whitespace-nowrap disabled:opacity-50"
                             >
                                 <img src='/assets/icon/take-action.svg' alt='judge' className="w-[28px] h-[28px]" />
                                 {actionLoading ? "..." : "TAKE ACTION"}
@@ -143,13 +143,13 @@ const ModerationItem: React.FC<ModerationItemProps> = ({ item, onTakeAction, onD
                             <button
                                 onClick={() => onDismiss?.(item.id)}
                                 disabled={actionLoading}
-                                className="bg-white border border-[#f49b31] text-[#f49b31] hover:bg-[#fef5ea] font-poppins font-semibold text-[11px] sm:text-[13px] px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl flex items-center justify-center gap-2 transition-colors whitespace-nowrap disabled:opacity-50"
+                                className="bg-[var(--echo-surface)] border border-[var(--echo-border-f49b31)] text-[var(--echo-text-f49b31)] hover:bg-[var(--echo-surface-soft)] font-poppins font-semibold text-[11px] sm:text-[13px] px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl flex items-center justify-center gap-2 transition-colors whitespace-nowrap disabled:opacity-50"
                             >
                                 <span>✕</span>
                                 DISMISS
                             </button>
                         </div>
-                        <div className="flex items-center gap-1.5 text-[#eb5050] self-end sm:self-auto">
+                        <div className="flex items-center gap-1.5 text-[var(--echo-text-eb5050)] self-end sm:self-auto">
                             <span className="text-[18px]">🚩</span>
                             <p className="font-poppins font-semibold text-[18px] sm:text-[24px]">
                                 {item.reportCount}

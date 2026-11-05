@@ -24,7 +24,7 @@ const DeleteConfirmationModal = ({
     return (
         <div className="flex font-poppins justify-center items-center z-50 inset-0 fixed bg-black/40">
             {/* Desktop: 477×333, Mobile: 330×279 */}
-            <div className="bg-white flex flex-col gap-[15px] items-end justify-center overflow-hidden
+            <div className="bg-[var(--echo-surface)] flex flex-col gap-[15px] items-end justify-center overflow-hidden
         px-[15px] py-5 rounded-[20px] w-[330px]
         md:p-6 md:rounded-[30px] md:w-[477px]">
 
@@ -33,21 +33,21 @@ const DeleteConfirmationModal = ({
                     <div className="flex flex-col gap-[5px] items-center justify-center w-full">
                         {/* Trash icon */}
                         <div className="w-[31px] h-8 flex items-center justify-center">
-                            <Trash2 width={20} height={20} className="text-[#b01212]" />
+                            <Trash2 width={20} height={20} className="text-[var(--echo-text-b01212)]" />
                         </div>
 
                         {/* Title */}
-                        <p className="font-semibold leading-[1.46] text-[#282828] text-center w-full
+                        <p className="font-semibold leading-[1.46] text-[var(--echo-text-primary)] text-center w-full
               text-[20px] md:text-[26px]">
                             Are you sure you want to delete?
                         </p>
                     </div>
 
                     {/* Warning text */}
-                    <p className="font-poppins text-[#282828] text-center w-full
+                    <p className="font-poppins text-[var(--echo-text-primary)] text-center w-full
             text-[13px] leading-normal md:text-[16px] md:leading-[26px]">
                         {`The `}
-                        <span className="font-semibold text-[#f49b31]">{itemType}</span>
+                        <span className="font-semibold text-[var(--echo-text-f49b31)]">{itemType}</span>
                         {` would be deleted permanently. Action cannot be reverted`}
                     </p>
                     {errorMessage && (
@@ -63,11 +63,11 @@ const DeleteConfirmationModal = ({
                     <button
                         onClick={onConfirm}
                         disabled={isLoading}
-                        className="bg-[#b01212] flex gap-2 items-center justify-center
-              rounded-lg w-full text-white font-medium tracking-[-0.2px]
+                        className="bg-[var(--echo-bg-b01212)] flex gap-2 items-center justify-center
+              rounded-lg w-full text-[var(--echo-text-on-accent)] font-medium tracking-[-0.2px]
               px-5 py-2 text-[12px] leading-7
               md:px-7 md:py-3 md:text-[16px]
-              hover:bg-[#8e0f0f] transition-colors duration-200 disabled:opacity-60"
+              hover:bg-[var(--echo-bg-8e0f0f)] transition-colors duration-200 disabled:opacity-60"
                     >
                         {isLoading ? "Deleting..." : "Delete"}
                     </button>
@@ -78,7 +78,7 @@ const DeleteConfirmationModal = ({
                         disabled={isLoading}
                         className="flex items-center justify-center rounded-lg w-full
               font-medium tracking-[-0.2px] underline
-              text-[12px] leading-7 text-black
+              text-[12px] leading-7 text-[var(--echo-text-primary)]
               md:text-[16px]
               hover:opacity-70 transition-opacity duration-200"
                     >

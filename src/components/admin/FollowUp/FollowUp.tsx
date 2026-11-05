@@ -221,11 +221,11 @@ const FollowUp: React.FC<FollowUpProps> = ({ mode = "admin" }) => {
     <>
       <div className={`m-0 min-w-0 ${isRep ? "" : isSidebarCollapsed ? "min-[1131px]:ms-[102px]" : "min-[1131px]:ms-[230px]"} flex flex-col gap-4 sm:gap-6 items-start px-3 sm:px-6 py-6 sm:py-8 relative transition-all duration-300`}>
         <div className="flex flex-col gap-1 sm:gap-2 items-start relative w-full">
-          <h1 className={`${isRep ? "block" : "hidden min-[1131px]:block"} font-poppins font-bold text-[24px] sm:text-[32px] leading-normal text-black`}>
+          <h1 className={`${isRep ? "block" : "hidden min-[1131px]:block"} font-poppins font-bold text-[24px] sm:text-[32px] leading-normal text-[var(--echo-text-primary)]`}>
             Follow Up
           </h1>
           {!isRep && <AdminHeader title="Follow Up" />}
-          <p className="font-poppins font-medium text-[13px] sm:text-[16px] leading-normal text-[#8b8e8d]">
+          <p className="font-poppins font-medium text-[13px] sm:text-[16px] leading-normal text-[var(--echo-text-secondary)]">
             Tasks that need your attention to keep the community moving forward
           </p>
         </div>
@@ -251,25 +251,25 @@ const FollowUp: React.FC<FollowUpProps> = ({ mode = "admin" }) => {
       {/* Reject Modal */}
       {rejectModalWaveId !== null && (
         <div className="fixed inset-0 z-[200] bg-black/50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-xl w-full max-w-md p-6 flex flex-col gap-4 shadow-xl">
-            <h2 className="text-xl font-bold font-poppins text-black">Reject Wave</h2>
+          <div className="bg-[var(--echo-surface)] rounded-xl w-full max-w-md p-6 flex flex-col gap-4 shadow-xl">
+            <h2 className="text-xl font-bold font-poppins text-[var(--echo-text-primary)]">Reject Wave</h2>
             <p className="text-sm font-inter text-gray-600">Please provide a reason for rejecting this wave. The author will be notified.</p>
             <textarea
-              className="w-full h-24 p-3 border border-gray-300 rounded-lg resize-none outline-none focus:border-[#f49b31]"
+              className="w-full h-24 p-3 border border-gray-300 rounded-lg resize-none outline-none focus:border-[var(--echo-border-f49b31)]"
               placeholder="Reason for rejection..."
               value={rejectReason}
               onChange={(e) => setRejectReason(e.target.value)}
             />
             <div className="flex items-center justify-end gap-3 mt-2">
               <button
-                className="px-4 py-2 font-poppins font-medium text-gray-600 hover:text-black"
+                className="px-4 py-2 font-poppins font-medium text-gray-600 hover:text-[var(--echo-text-primary)]"
                 onClick={() => setRejectModalWaveId(null)}
                 disabled={rejecting}
               >
                 Cancel
               </button>
               <button
-                className="px-4 py-2 font-poppins font-medium bg-red-500 text-white rounded-lg hover:bg-red-600 disabled:opacity-50"
+                className="px-4 py-2 font-poppins font-medium bg-red-500 text-[var(--echo-text-on-accent)] rounded-lg hover:bg-red-600 disabled:opacity-50"
                 disabled={!rejectReason.trim() || rejecting}
                 onClick={async () => {
                   setRejecting(true);

@@ -220,13 +220,13 @@ const SignUpError: React.FC = () => {
                 {/* Title */}
                 <div className="text-center w-full">
                     <h1
-                        className="text-[22px] sm:text-[26px] md:text-[28px] font-semibold text-[#4a504e] mb-2.5"
+                        className="text-[22px] sm:text-[26px] md:text-[28px] font-semibold text-[var(--echo-text-4a504e)] mb-2.5"
                         style={{ fontFamily: 'Poppins, sans-serif' }}
                     >
                         Sign up to Echo
                     </h1>
                     <p
-                        className="text-[12px] sm:text-[13px] text-[#838383] font-normal"
+                        className="text-[12px] sm:text-[13px] text-[var(--echo-text-secondary)] font-normal"
                         style={{ fontFamily: 'Poppins, sans-serif' }}
                     >
                         Create waves, rally support, track change
@@ -240,11 +240,11 @@ const SignUpError: React.FC = () => {
 
                 {/* Divider */}
                 <div className="w-full flex items-center gap-3 sm:gap-4">
-                    <div className="flex-1 h-px bg-[#e0e0e0]"></div>
-                    <span className="text-[12px] sm:text-[13px] text-[#838383] font-normal" style={{ fontFamily: 'Poppins, sans-serif' }}>
+                    <div className="flex-1 h-px bg-[var(--echo-bg-e0e0e0)]"></div>
+                    <span className="text-[12px] sm:text-[13px] text-[var(--echo-text-secondary)] font-normal" style={{ fontFamily: 'Poppins, sans-serif' }}>
                         or
                     </span>
-                    <div className="flex-1 h-px bg-[#e0e0e0]"></div>
+                    <div className="flex-1 h-px bg-[var(--echo-bg-e0e0e0)]"></div>
                 </div>
 
                 {/* Sign Up Form */}
@@ -303,42 +303,42 @@ const SignUpError: React.FC = () => {
 
                     {/* Password Requirements */}
                     {formData.password && (
-                        <div className="w-full bg-[#fef5ea] border border-[#ffcd71] rounded-xl px-[15px] py-3">
+                        <div className="w-full bg-[var(--echo-surface-soft)] border border-[var(--echo-border-ffcd71)] rounded-xl px-[15px] py-3">
                             <p
-                                className="text-[11px] font-medium text-[#4a504e] mb-2"
+                                className="text-[11px] font-medium text-[var(--echo-text-4a504e)] mb-2"
                                 style={{ fontFamily: 'Poppins, sans-serif' }}
                             >
                                 Password must contain:
                             </p>
                             <ul className="space-y-1">
                                 <li className="flex items-center gap-2">
-                                    <span className={`text-[10px] ${passwordRequirements.length ? 'text-green-600' : 'text-[#838383]'}`}>
+                                    <span className={`text-[10px] ${passwordRequirements.length ? 'text-green-600' : 'text-[var(--echo-text-secondary)]'}`}>
                                         {passwordRequirements.length ? '✓' : '○'}
                                     </span>
                                     <span
-                                        className={`text-[10px] ${passwordRequirements.length ? 'text-green-600 font-medium' : 'text-[#838383]'}`}
+                                        className={`text-[10px] ${passwordRequirements.length ? 'text-green-600 font-medium' : 'text-[var(--echo-text-secondary)]'}`}
                                         style={{ fontFamily: 'Poppins, sans-serif' }}
                                     >
                                         At least 8 characters
                                     </span>
                                 </li>
                                 <li className="flex items-center gap-2">
-                                    <span className={`text-[10px] ${passwordRequirements.number ? 'text-green-600' : 'text-[#838383]'}`}>
+                                    <span className={`text-[10px] ${passwordRequirements.number ? 'text-green-600' : 'text-[var(--echo-text-secondary)]'}`}>
                                         {passwordRequirements.number ? '✓' : '○'}
                                     </span>
                                     <span
-                                        className={`text-[10px] ${passwordRequirements.number ? 'text-green-600 font-medium' : 'text-[#838383]'}`}
+                                        className={`text-[10px] ${passwordRequirements.number ? 'text-green-600 font-medium' : 'text-[var(--echo-text-secondary)]'}`}
                                         style={{ fontFamily: 'Poppins, sans-serif' }}
                                     >
                                         At least one number
                                     </span>
                                 </li>
                                 <li className="flex items-center gap-2">
-                                    <span className={`text-[10px] ${passwordRequirements.special ? 'text-green-600' : 'text-[#838383]'}`}>
+                                    <span className={`text-[10px] ${passwordRequirements.special ? 'text-green-600' : 'text-[var(--echo-text-secondary)]'}`}>
                                         {passwordRequirements.special ? '✓' : '○'}
                                     </span>
                                     <span
-                                        className={`text-[10px] ${passwordRequirements.special ? 'text-green-600 font-medium' : 'text-[#838383]'}`}
+                                        className={`text-[10px] ${passwordRequirements.special ? 'text-green-600 font-medium' : 'text-[var(--echo-text-secondary)]'}`}
                                         style={{ fontFamily: 'Poppins, sans-serif' }}
                                     >
                                         At least one special character
@@ -356,12 +356,12 @@ const SignUpError: React.FC = () => {
 
                 {/* Find Institution Link */}
                 <div className="text-center">
-                    <p className="text-[13px] text-[#838383]" style={{ fontFamily: 'Poppins, sans-serif' }}>
+                    <p className="text-[13px] text-[var(--echo-text-secondary)]" style={{ fontFamily: 'Poppins, sans-serif' }}>
                         Can't find your organization?{' '}
                         <Link
                             to="/find-institution"
                             state={{ email: formData.email, userData: { firstName: formData.firstName, lastName: formData.lastName, password: formData.password } }}
-                            className="text-[#f49b31] font-medium hover:underline"
+                            className="text-[var(--echo-text-f49b31)] font-medium hover:underline"
                         >
                             Find Institution
                         </Link>
@@ -370,9 +370,9 @@ const SignUpError: React.FC = () => {
 
                 {/* Login Link */}
                 <div className="text-center">
-                    <p className="text-[13px] text-[#838383]" style={{ fontFamily: 'Poppins, sans-serif' }}>
+                    <p className="text-[13px] text-[var(--echo-text-secondary)]" style={{ fontFamily: 'Poppins, sans-serif' }}>
                         Already have an account?{' '}
-                        <Link to="/login" className="text-[#f49b31] font-medium hover:underline">
+                        <Link to="/login" className="text-[var(--echo-text-f49b31)] font-medium hover:underline">
                             Log in
                         </Link>
                     </p>

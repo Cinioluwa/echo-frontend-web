@@ -13,12 +13,12 @@ interface Props {
 const WaveWarningBanner = ({ className = "" }: Props) => {
     return (
         <div
-            className={`bg-[#FEF5EA] flex gap-[3px] items-center p-[5px] rounded-[10px] ${className}`}
+            className={`bg-[var(--echo-surface-soft)] flex gap-[3px] items-center p-[5px] rounded-[10px] ${className}`}
             role="alert"
             aria-live="polite"
         >
-            <FiAlertCircle className="w-3 h-3 text-[#454545] shrink-0" />
-            <p className="font-semibold text-[10px] text-[#454545]">
+            <FiAlertCircle className="w-3 h-3 text-[var(--echo-text-454545)] shrink-0" />
+            <p className="font-semibold text-[10px] text-[var(--echo-text-454545)]">
                 You must link a Wave to an existing Ping.
             </p>
         </div>

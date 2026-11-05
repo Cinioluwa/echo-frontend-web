@@ -3,16 +3,16 @@ import BackButton from "../components/shared/BackButton";
 
 const TermsOfUse: React.FC = () => {
     return (
-        <div className="min-h-screen bg-[#fef5ea] flex flex-col items-center py-10 px-5">
-            <div className="w-full max-w-3xl bg-white rounded-[25px] p-8 shadow-sm">
+        <div className="min-h-screen bg-[var(--echo-surface-soft)] flex flex-col items-center py-10 px-5">
+            <div className="w-full max-w-3xl bg-[var(--echo-surface)] rounded-[25px] p-8 shadow-sm">
                 <div className="mb-6">
                     <BackButton />
                 </div>
-                <h1 className="font-['Syne',sans-serif] font-bold text-3xl mb-6 text-black border-b border-[#f49b31] pb-4">
+                <h1 className="font-['Syne',sans-serif] font-bold text-3xl mb-6 text-[var(--echo-text-primary)] border-b border-[var(--echo-border-f49b31)] pb-4">
                     Terms of Use
                 </h1>
                 
-                <div className="font-['Poppins',sans-serif] text-[#454545] space-y-6 leading-relaxed">
+                <div className="font-['Poppins',sans-serif] text-[var(--echo-text-454545)] space-y-6 leading-relaxed">
                     <section>
                         <h2 className="text-xl font-bold mb-2">1. Acceptance of Terms</h2>
                         <p>

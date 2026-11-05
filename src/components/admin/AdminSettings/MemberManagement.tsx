@@ -183,10 +183,10 @@ const MemberManagement: React.FC = () => {
     return (
         <div className="flex flex-col gap-6 w-full animate-fade-in">
             <div className="pb-4">
-                <h2 className="font-poppins font-semibold text-[18px] text-[#212121]">
+                <h2 className="font-poppins font-semibold text-[18px] text-[var(--echo-text-primary)]">
                     Access & Members
                 </h2>
-                <p className="font-poppins text-[12px] text-black mt-1">
+                <p className="font-poppins text-[12px] text-[var(--echo-text-primary)] mt-1">
                     Handles who gets in and who is already inside
                 </p>
             </div>
@@ -202,8 +202,8 @@ const MemberManagement: React.FC = () => {
                 <button
                     onClick={() => setSubTab("policy")}
                     className={`shrink-0 px-4 py-2 rounded-[12px] font-poppins font-semibold text-[13px] transition-all ${subTab === "policy"
-                        ? "bg-[#f49b31] text-white"
-                        : "text-[#414141] bg-[#FFC37B]"
+                        ? "bg-[var(--echo-accent)] text-[var(--echo-text-on-accent)]"
+                        : "text-[var(--echo-text-414141)] bg-[var(--echo-sidebar)]"
                     }`}
                 >
                     Join Policy
@@ -211,8 +211,8 @@ const MemberManagement: React.FC = () => {
                 <button
                     onClick={() => setSubTab("waiting")}
                     className={`shrink-0 px-4 py-2 rounded-[12px] font-poppins font-semibold text-[13px] transition-all relative ${subTab === "waiting"
-                        ? "bg-[#f49b31] text-white"
-                        : "text-[#414141] bg-[#FFC37B]"
+                        ? "bg-[var(--echo-accent)] text-[var(--echo-text-on-accent)]"
+                        : "text-[var(--echo-text-414141)] bg-[var(--echo-sidebar)]"
                     }`}
                 >
                     Waiting Room
@@ -220,8 +220,8 @@ const MemberManagement: React.FC = () => {
                 <button
                     onClick={() => setSubTab("roster")}
                     className={`shrink-0 px-4 py-2 rounded-[12px] font-poppins font-semibold text-[13px] transition-all ${subTab === "roster"
-                        ? "bg-[#f49b31] text-white"
-                        : "text-[#414141] bg-[#FFC37B]"
+                        ? "bg-[var(--echo-accent)] text-[var(--echo-text-on-accent)]"
+                        : "text-[var(--echo-text-414141)] bg-[var(--echo-sidebar)]"
                     }`}
                 >
                     Active Roster
@@ -231,7 +231,7 @@ const MemberManagement: React.FC = () => {
             {subTab === "policy" && (
                 <div className="flex flex-col gap-6 w-full animate-fade-in">
                     <div className="flex flex-col gap-3">
-                        <h3 className="font-poppins font-semibold text-[15px] text-[#212121]">
+                        <h3 className="font-poppins font-semibold text-[15px] text-[var(--echo-text-primary)]">
                             Join Policy
                         </h3>
                         <div className="flex flex-col gap-2.5">
@@ -241,10 +241,10 @@ const MemberManagement: React.FC = () => {
                                     name="join-policy"
                                     checked={joinPolicy === "open"}
                                     onChange={() => handlePolicyChange("open")}
-                                    className="mt-1 accent-[#f49b31] scale-125 shrink-0"
+                                    className="mt-1 accent-[var(--echo-text-f49b31)] scale-125 shrink-0"
                                 />
                                 <div>
-                                    <span className="font-poppins font-medium text-[14px] text-[#212121]">
+                                    <span className="font-poppins font-medium text-[14px] text-[var(--echo-text-primary)]">
                                         Open - Anyone with matching domain joins automatically
                                     </span>
                                 </div>
@@ -255,26 +255,26 @@ const MemberManagement: React.FC = () => {
                                     name="join-policy"
                                     checked={joinPolicy === "approval"}
                                     onChange={() => handlePolicyChange("approval")}
-                                    className="mt-1 accent-[#f49b31] scale-125 shrink-0"
+                                    className="mt-1 accent-[var(--echo-text-f49b31)] scale-125 shrink-0"
                                 />
                                 <div>
-                                    <span className="font-poppins font-medium text-[14px] text-[#212121]">
+                                    <span className="font-poppins font-medium text-[14px] text-[var(--echo-text-primary)]">
                                         Approval Required - All new members need leader approval
                                     </span>
                                 </div>
                             </label>
                         </div>
-                        {policyLoading && <span className="text-[11px] text-[#8b8e8d]">Saving...</span>}
+                        {policyLoading && <span className="text-[11px] text-[var(--echo-text-secondary)]">Saving...</span>}
                     </div>
 
                     <div className="flex flex-col gap-3">
                         <div className="flex items-center justify-between">
-                            <h3 className="font-poppins font-semibold text-[15px] text-[#212121]">
+                            <h3 className="font-poppins font-semibold text-[15px] text-[var(--echo-text-primary)]">
                                 Space Domain
                             </h3>
                             <button
                                 onClick={() => setIsAddingDomain(true)}
-                                className="px-4 py-2.5 flex items-center gap-2 rounded-[12px] bg-[#F49B31] text-white font-poppins font-semibold text-[12px] transition-colors"
+                                className="px-4 py-2.5 flex items-center gap-2 rounded-[12px] bg-[var(--echo-accent)] text-[var(--echo-text-on-accent)] font-poppins font-semibold text-[12px] transition-colors"
                             >
                                 <Plus size={20} className="stroke-current" />
                                 Add New Domain
@@ -282,17 +282,17 @@ const MemberManagement: React.FC = () => {
                         </div>
 
                         {isAddingDomain && (
-                            <div className="flex gap-2 p-3 bg-white border border-[#f49b31] rounded-[12px]">
+                            <div className="flex gap-2 p-3 bg-[var(--echo-surface)] border border-[var(--echo-border-f49b31)] rounded-[12px]">
                                 <input
                                     type="text"
                                     placeholder="@domain.edu"
                                     value={newDomain}
                                     onChange={(e) => setNewDomain(e.target.value)}
-                                    className="px-3 py-1.5 border border-[#ffd7a8] rounded-[8px] outline-none text-[13px] font-poppins flex-1 focus:border-[#f49b31]"
+                                    className="px-3 py-1.5 border border-[var(--echo-border-ffd7a8)] rounded-[8px] outline-none text-[13px] font-poppins flex-1 focus:border-[var(--echo-border-f49b31)]"
                                 />
                                 <button
                                     onClick={addDomain}
-                                    className="px-3 py-1.5 bg-[#f49b31] text-white rounded-[8px] text-[12px] font-semibold hover:bg-[#d88429]"
+                                    className="px-3 py-1.5 bg-[var(--echo-accent)] text-[var(--echo-text-on-accent)] rounded-[8px] text-[12px] font-semibold hover:bg-[var(--echo-bg-d88429)]"
                                 >
                                     Save
                                 </button>
@@ -310,9 +310,9 @@ const MemberManagement: React.FC = () => {
                                 {domains.map((dom, idx) => (
                                     <div
                                         key={idx}
-                                        className="flex items-center justify-between px-5 py-3 border border-[#ffd7a8]/60 bg-white rounded-[15px]"
+                                        className="flex items-center justify-between px-5 py-3 border border-[var(--echo-border-ffd7a8)]/60 bg-[var(--echo-surface)] rounded-[15px]"
                                     >
-                                        <span className="font-poppins font-medium text-[15px] text-[#212121]">
+                                        <span className="font-poppins font-medium text-[15px] text-[var(--echo-text-primary)]">
                                             {dom}
                                         </span>
                                         {domains.length > 1 && (
@@ -334,37 +334,37 @@ const MemberManagement: React.FC = () => {
             {subTab === "waiting" && (
                 <div className="flex flex-col gap-4 w-full animate-fade-in">
                     {waitingLoading ? (
-                        <div className="p-8 text-center font-poppins text-[#8b8e8d]">Loading...</div>
+                        <div className="p-8 text-center font-poppins text-[var(--echo-text-secondary)]">Loading...</div>
                     ) : waitingList.length === 0 ? (
-                        <div className="p-8 text-center bg-white border border-[#ffd7a8]/60 rounded-[20px] font-poppins text-[#8b8e8d]">
+                        <div className="p-8 text-center bg-[var(--echo-surface)] border border-[var(--echo-border-ffd7a8)]/60 rounded-[20px] font-poppins text-[var(--echo-text-secondary)]">
                             No members in the waiting room
                         </div>
                     ) : (
-                        <div className="bg-[#fefaf4] border border-[#ffd7a8] rounded-[20px] overflow-hidden">
+                        <div className="bg-[var(--echo-bg-fefaf4)] border border-[var(--echo-border-ffd7a8)] rounded-[20px] overflow-hidden">
                             <div className="overflow-x-auto">
                                 <table className="w-full text-left border-collapse">
                                     <thead>
-                                        <tr className="bg-[#ffd7a8]/20 border-b border-[#ffd7a8]">
-                                            <th className="p-4 font-poppins font-semibold text-[14px] text-[#926b3d]">Name</th>
-                                            <th className="p-4 font-poppins font-semibold text-[14px] text-[#926b3d]">Email</th>
-                                            <th className="p-4 font-poppins font-semibold text-[14px] text-[#926b3d]">Actions</th>
+                                        <tr className="bg-[var(--echo-bg-ffd7a8)]/20 border-b border-[var(--echo-border-ffd7a8)]">
+                                            <th className="p-4 font-poppins font-semibold text-[14px] text-[var(--echo-text-926b3d)]">Name</th>
+                                            <th className="p-4 font-poppins font-semibold text-[14px] text-[var(--echo-text-926b3d)]">Email</th>
+                                            <th className="p-4 font-poppins font-semibold text-[14px] text-[var(--echo-text-926b3d)]">Actions</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         {waitingList.map((user) => (
-                                            <tr key={user.id} className="border-b border-[#ffd7a8]/30 last:border-0 hover:bg-[#fff9f1] transition-colors">
+                                            <tr key={user.id} className="border-b border-[var(--echo-border-ffd7a8)]/30 last:border-0 hover:bg-[var(--echo-bg-fff9f1)] transition-colors">
                                                 <td className="p-4">
                                                     <div className="flex items-center gap-3">
-                                                        <img src={user.avatarUrl} alt={user.name} className="w-8 h-8 rounded-full border border-[#f49b31]" />
-                                                        <span className="font-poppins font-medium text-[14px] text-[#212121]">{user.name}</span>
+                                                        <img src={user.avatarUrl} alt={user.name} className="w-8 h-8 rounded-full border border-[var(--echo-border-f49b31)]" />
+                                                        <span className="font-poppins font-medium text-[14px] text-[var(--echo-text-primary)]">{user.name}</span>
                                                     </div>
                                                 </td>
-                                                <td className="p-4 font-poppins text-[14px] text-[#5e5c58]">{user.email}</td>
+                                                <td className="p-4 font-poppins text-[14px] text-[var(--echo-text-5e5c58)]">{user.email}</td>
                                                 <td className="p-4">
                                                     <div className="flex gap-2">
                                                         <button
                                                             onClick={() => handleApprove(user.id)}
-                                                            className="px-3.5 py-1.5 bg-[#e2f7e2] text-[#2e7d32] border border-[#2e7d32]/30 rounded-[10px] font-poppins font-semibold text-[12px] hover:bg-[#d4f2d4]"
+                                                            className="px-3.5 py-1.5 bg-[var(--echo-bg-e2f7e2)] text-[var(--echo-text-2e7d32)] border border-[var(--echo-border-2e7d32)]/30 rounded-[10px] font-poppins font-semibold text-[12px] hover:bg-[var(--echo-bg-d4f2d4)]"
                                                         >
                                                             Approve
                                                         </button>
@@ -394,9 +394,9 @@ const MemberManagement: React.FC = () => {
                             placeholder="Search by name or email..."
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
-                            className="w-full px-4 py-2 pl-10 border border-[#ffd7a8] rounded-[15px] font-poppins text-[14px] outline-none focus:border-[#f49b31]"
+                            className="w-full px-4 py-2 pl-10 border border-[var(--echo-border-ffd7a8)] rounded-[15px] font-poppins text-[14px] outline-none focus:border-[var(--echo-border-f49b31)]"
                         />
-                        <div className="absolute left-3 top-1/2 -translate-y-1/2 text-[#f49b31]">
+                        <div className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--echo-text-f49b31)]">
                             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                             </svg>
@@ -404,33 +404,33 @@ const MemberManagement: React.FC = () => {
                     </div>
 
                     {rosterLoading ? (
-                        <div className="p-8 text-center font-poppins text-[#8b8e8d]">Loading...</div>
+                        <div className="p-8 text-center font-poppins text-[var(--echo-text-secondary)]">Loading...</div>
                     ) : (
-                        <div className="bg-[#fefaf4] border border-[#ffd7a8] rounded-[20px] overflow-hidden">
+                        <div className="bg-[var(--echo-bg-fefaf4)] border border-[var(--echo-border-ffd7a8)] rounded-[20px] overflow-hidden">
                             <div className="overflow-x-auto">
                                 <table className="w-full text-left border-collapse">
                                     <thead>
-                                        <tr className="bg-[#ffd7a8]/20 border-b border-[#ffd7a8]">
-                                            <th className="p-4 font-poppins font-semibold text-[14px] text-[#926b3d]">Name</th>
-                                            <th className="p-4 font-poppins font-semibold text-[14px] text-[#926b3d]">Email</th>
-                                            <th className="p-4 font-poppins font-semibold text-[14px] text-[#926b3d]">Role</th>
-                                            <th className="p-4 font-poppins font-semibold text-[14px] text-[#926b3d]">Actions</th>
+                                        <tr className="bg-[var(--echo-bg-ffd7a8)]/20 border-b border-[var(--echo-border-ffd7a8)]">
+                                            <th className="p-4 font-poppins font-semibold text-[14px] text-[var(--echo-text-926b3d)]">Name</th>
+                                            <th className="p-4 font-poppins font-semibold text-[14px] text-[var(--echo-text-926b3d)]">Email</th>
+                                            <th className="p-4 font-poppins font-semibold text-[14px] text-[var(--echo-text-926b3d)]">Role</th>
+                                            <th className="p-4 font-poppins font-semibold text-[14px] text-[var(--echo-text-926b3d)]">Actions</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         {filteredRoster.map((user) => (
-                                            <tr key={user.id} className="border-b border-[#ffd7a8]/30 last:border-0 hover:bg-[#fff9f1] transition-colors">
+                                            <tr key={user.id} className="border-b border-[var(--echo-border-ffd7a8)]/30 last:border-0 hover:bg-[var(--echo-bg-fff9f1)] transition-colors">
                                                 <td className="p-4">
                                                     <div className="flex items-center gap-3">
-                                                        <img src={user.avatarUrl} alt={user.name} className="w-8 h-8 rounded-full border border-[#f49b31]" />
-                                                        <span className="font-poppins font-medium text-[14px] text-[#212121]">{user.name}</span>
+                                                        <img src={user.avatarUrl} alt={user.name} className="w-8 h-8 rounded-full border border-[var(--echo-border-f49b31)]" />
+                                                        <span className="font-poppins font-medium text-[14px] text-[var(--echo-text-primary)]">{user.name}</span>
                                                     </div>
                                                 </td>
-                                                <td className="p-4 font-poppins text-[14px] text-[#5e5c58]">{user.email}</td>
+                                                <td className="p-4 font-poppins text-[14px] text-[var(--echo-text-5e5c58)]">{user.email}</td>
                                                 <td className="p-4">
                                                     <span className={`inline-block whitespace-nowrap px-2 py-0.5 rounded-[6px] font-poppins font-semibold text-[11px] ${
                                                         user.role === "Admin"
-                                                            ? "bg-[#ffefdb] text-[#f49b31]"
+                                                            ? "bg-[var(--echo-bg-ffefdb)] text-[var(--echo-text-f49b31)]"
                                                             : user.role === "Leader"
                                                                 ? "bg-purple-100 text-purple-700"
                                                                 : "bg-gray-100 text-gray-700"
@@ -444,13 +444,13 @@ const MemberManagement: React.FC = () => {
                                                             <>
                                                                 <button
                                                                     onClick={() => changeRole(user.id, user.role === "Leader" ? "Student" : "Leader")}
-                                                                    className="px-3 py-1 bg-white border border-[#ffd7a8] rounded-[10px] text-[#f49b31] font-poppins font-medium text-[12px] hover:bg-[#fef5ea]"
+                                                                    className="px-3 py-1 bg-[var(--echo-surface)] border border-[var(--echo-border-ffd7a8)] rounded-[10px] text-[var(--echo-text-f49b31)] font-poppins font-medium text-[12px] hover:bg-[var(--echo-surface-soft)]"
                                                                 >
                                                                     {user.role === "Leader" ? "Demote" : "Promote"}
                                                                 </button>
                                                                 <button
                                                                     onClick={() => handleRemoveMember(user.id)}
-                                                                    className="px-3 py-1 bg-white border border-red-200 rounded-[10px] text-red-600 font-poppins font-medium text-[12px] hover:bg-red-50"
+                                                                    className="px-3 py-1 bg-[var(--echo-surface)] border border-red-200 rounded-[10px] text-red-600 font-poppins font-medium text-[12px] hover:bg-red-50"
                                                                 >
                                                                     Remove
                                                                 </button>

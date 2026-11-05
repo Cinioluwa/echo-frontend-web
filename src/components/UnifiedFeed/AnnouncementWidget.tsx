@@ -30,24 +30,24 @@ const AnnouncementWidget = ({
 
   return (
     <div
-      className={`bg-white border border-[#FFC37B] overflow-hidden rounded-[15px] flex flex-col w-full ${className}`}
+      className={`bg-[var(--echo-surface)] border border-[var(--echo-border-ffc37b)] overflow-hidden rounded-[15px] flex flex-col w-full ${className}`}
       data-node-id="general-announcement-card"
     >
-      <div className="bg-[#F49B31] w-full px-4 py-3 flex justify-between items-center gap-2">
-        <p className="font-['Inter',sans-serif] font-extrabold text-[14px] flex items-center gap-2 text-white leading-5">
+      <div className="bg-[var(--echo-accent)] w-full px-4 py-3 flex justify-between items-center gap-2">
+        <p className="font-['Inter',sans-serif] font-extrabold text-[14px] flex items-center gap-2 text-[var(--echo-text-on-accent)] leading-5">
           <Megaphone size={16} aria-hidden="true" />
           GENERAL ANNOUNCEMENT
         </p>
-        <span className="font-['Poppins',sans-serif] font-medium text-[11px] text-white/90 whitespace-nowrap">
+        <span className="font-['Poppins',sans-serif] font-medium text-[11px] text-[var(--echo-text-on-accent)]/90 whitespace-nowrap">
           Published {formatTimeAgo(announcement.createdAt)}
         </span>
       </div>
 
-      <div className="p-4 flex flex-col gap-2.5 w-full text-black">
+      <div className="p-4 flex flex-col gap-2.5 w-full text-[var(--echo-text-primary)]">
         <p className="font-['Poppins',sans-serif] font-bold text-[18px] leading-normal wrap-break-word">
           {announcement.title.toUpperCase()}
         </p>
-        <p className="text-[14px] font-['Poppins',sans-serif] font-medium leading-[1.8] text-black/90 whitespace-pre-wrap wrap-break-word">
+        <p className="text-[14px] font-['Poppins',sans-serif] font-medium leading-[1.8] text-[var(--echo-text-primary)]/90 whitespace-pre-wrap wrap-break-word">
           {isExpanded || !isLong
             ? announcement.content
             : announcement.content.slice(0, PREVIEW_LENGTH) + "..."}
@@ -56,13 +56,13 @@ const AnnouncementWidget = ({
           <button
             type="button"
             onClick={() => setIsExpanded((v) => !v)}
-            className="font-['Poppins',sans-serif] font-medium text-[13px] text-[#F49B31] cursor-pointer hover:underline text-left w-fit"
+            className="font-['Poppins',sans-serif] font-medium text-[13px] text-[var(--echo-text-f49b31)] cursor-pointer hover:underline text-left w-fit"
           >
             {isExpanded ? "Show less" : "Show more"}
           </button>
         )}
         {announcement.author && (
-          <span className="font-['Poppins',sans-serif] text-[12px] text-[#626665]">
+          <span className="font-['Poppins',sans-serif] text-[12px] text-[var(--echo-text-secondary)]">
             By {announcement.author.firstName} {announcement.author.lastName}
           </span>
         )}

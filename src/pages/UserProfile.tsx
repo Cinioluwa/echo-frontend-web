@@ -326,15 +326,15 @@ const UserProfile = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#FEF5EA]">
+    <div className="min-h-screen bg-[var(--echo-surface-soft)]">
       <ProfileLayout />
       <main className="mt-1 mx-auto h-full w-full max-w-[1200px] p-4 md:p-10 pt-2 md:pt-2 pb-16 md:pb-20">
-        <div className="flex border border-[#F4E3C9] rounded-[20px] bg-white p-4 md:p-7 flex-col lg:flex-row gap-4 lg:gap-8 shadow-sm">
+        <div className="flex border border-[var(--echo-border-f4e3c9)] rounded-[20px] bg-[var(--echo-surface)] p-4 md:p-7 flex-col lg:flex-row gap-4 lg:gap-8 shadow-sm">
           {/* SIDE PANEL COMPONENT */}
           <UserProfileSidePanel pages={pages} />
           {/* FORM CONTENT */}
-          <div className="flex-1 min-w-0 lg:border-l border-[#F4E3C9] overflow-hidden lg:pl-8 lg:pt-0">
-            <h2 className="text-lg md:text-xl md:mb-6 mb-4 font-semibold text-[#4A3728]">Profile Information</h2>
+          <div className="flex-1 min-w-0 lg:border-l border-[var(--echo-border-f4e3c9)] overflow-hidden lg:pl-8 lg:pt-0">
+            <h2 className="text-lg md:text-xl md:mb-6 mb-4 font-semibold text-[var(--echo-text-4a3728)]">Profile Information</h2>
             {loading || error ? (
               <div className="space-y-6 animate-pulse">
                 <div className="flex items-center gap-6">
@@ -367,7 +367,7 @@ const UserProfile = () => {
                     )}
                   </div>
                   <div className="flex-1">
-                    <label className="px-5 py-2 bg-white border border-[#F4E3C9] rounded-full text-sm shadow-sm hover:bg-[#FEF5EA] transition cursor-pointer inline-block">
+                    <label className="px-5 py-2 bg-[var(--echo-surface)] border border-[var(--echo-border-f4e3c9)] rounded-full text-sm shadow-sm hover:bg-[var(--echo-surface-soft)] transition cursor-pointer inline-block">
                       <input
                         type="file"
                         accept="image/*"
@@ -391,7 +391,7 @@ const UserProfile = () => {
 
                 {/* NAME SECTION (EDITABLE) */}
                 <div className="space-y-4 md:space-y-6 mt-6 md:mt-8 pt-6 md:pt-8 border-t border-gray-200">
-                  <h2 className="text-lg md:text-xl mb-4 md:mb-6 font-semibold text-[#4A3728]">Name Information</h2>
+                  <h2 className="text-lg md:text-xl mb-4 md:mb-6 font-semibold text-[var(--echo-text-4a3728)]">Name Information</h2>
 
                   {editingName ? (
                     // Editing mode
@@ -405,7 +405,7 @@ const UserProfile = () => {
                           value={firstName}
                           onChange={(e) => setFirstName(e.target.value)}
                           disabled={nameChangeSaving}
-                          className="w-full px-4 py-2 border border-[#F4E3C9] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#FFC37B] disabled:bg-[#FEF5EA] text-sm text-[#060B13]"
+                          className="w-full px-4 py-2 border border-[var(--echo-border-f4e3c9)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--echo-border-ffc37b)] disabled:bg-[var(--echo-surface-soft)] text-sm text-[var(--echo-text-primary)]"
                         />
                       </div>
                       <div>
@@ -417,7 +417,7 @@ const UserProfile = () => {
                           value={lastName}
                           onChange={(e) => setLastName(e.target.value)}
                           disabled={nameChangeSaving}
-                          className="w-full px-4 py-2 border border-[#F4E3C9] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#FFC37B] disabled:bg-[#FEF5EA] text-sm text-[#060B13]"
+                          className="w-full px-4 py-2 border border-[var(--echo-border-f4e3c9)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--echo-border-ffc37b)] disabled:bg-[var(--echo-surface-soft)] text-sm text-[var(--echo-text-primary)]"
                         />
                       </div>
 
@@ -445,14 +445,14 @@ const UserProfile = () => {
                             !firstName.trim() ||
                             !lastName.trim()
                           }
-                          className="px-5 py-2 bg-[#F49B31] text-white rounded-full text-sm hover:bg-[#d88429] transition disabled:opacity-50 disabled:cursor-not-allowed"
+                          className="px-5 py-2 bg-[var(--echo-accent)] text-[var(--echo-text-on-accent)] rounded-full text-sm hover:bg-[var(--echo-bg-d88429)] transition disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                           {nameChangeSaving ? "Saving..." : "Save Name"}
                         </button>
                         <button
                           onClick={handleCancelEditName}
                           disabled={nameChangeSaving}
-                          className="px-5 py-2 bg-[#FEF5EA] text-[#4A3728] rounded-full text-sm hover:bg-[#fae9d4] transition disabled:opacity-50"
+                          className="px-5 py-2 bg-[var(--echo-surface-soft)] text-[var(--echo-text-4a3728)] rounded-full text-sm hover:bg-[var(--echo-page)] transition disabled:opacity-50"
                         >
                           Cancel
                         </button>
@@ -474,7 +474,7 @@ const UserProfile = () => {
                       <button
                         onClick={() => setEditingName(true)}
                         disabled={!nameChangeStatus.canChangeName}
-                        className="px-5 py-2 bg-white border border-[#F4E3C9] rounded-full text-sm text-[#4A3728] hover:bg-[#FEF5EA] transition disabled:opacity-50 disabled:cursor-not-allowed disabled:text-gray-400"
+                        className="px-5 py-2 bg-[var(--echo-surface)] border border-[var(--echo-border-f4e3c9)] rounded-full text-sm text-[var(--echo-text-4a3728)] hover:bg-[var(--echo-surface-soft)] transition disabled:opacity-50 disabled:cursor-not-allowed disabled:text-gray-400"
                       >
                         Edit Name
                       </button>
@@ -516,7 +516,7 @@ const UserProfile = () => {
                         )}
                       </div>
                       <div className="flex-1">
-                        <label className="px-5 py-2 bg-white border border-[#F4E3C9] rounded-full text-sm shadow-sm hover:bg-[#FEF5EA] transition cursor-pointer inline-block">
+                        <label className="px-5 py-2 bg-[var(--echo-surface)] border border-[var(--echo-border-f4e3c9)] rounded-full text-sm shadow-sm hover:bg-[var(--echo-surface-soft)] transition cursor-pointer inline-block">
                           <input
                             type="file"
                             accept="image/*"
@@ -533,7 +533,7 @@ const UserProfile = () => {
                           type="button"
                           onClick={handleClearAnonPicture}
                           disabled={uploadingAnonPicture || !anonProfilePicture}
-                          className="text-[11px] text-[#F49B31] mt-1 font-medium hover:underline disabled:text-gray-400 disabled:no-underline disabled:cursor-not-allowed"
+                          className="text-[11px] text-[var(--echo-text-f49b31)] mt-1 font-medium hover:underline disabled:text-gray-400 disabled:no-underline disabled:cursor-not-allowed"
                         >
                           Remove picture
                         </button>
@@ -557,7 +557,7 @@ const UserProfile = () => {
                             value={alias}
                             onChange={(e) => setAlias(e.target.value)}
                             disabled={aliasSaving}
-                            className="w-full px-5 py-3 border border-[#F4E3C9] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#FFC37B] disabled:bg-[#FEF5EA] text-base text-[#060B13]"
+                            className="w-full px-5 py-3 border border-[var(--echo-border-f4e3c9)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--echo-border-ffc37b)] disabled:bg-[var(--echo-surface-soft)] text-base text-[var(--echo-text-primary)]"
                             placeholder="Enter your alias"
                           />
                           {aliasError && (
@@ -570,14 +570,14 @@ const UserProfile = () => {
                             <button
                               onClick={handleSaveAlias}
                               disabled={aliasSaving || !alias.trim()}
-                              className="px-5 py-2 bg-[#F49B31] text-white rounded-full text-sm hover:bg-[#d88429] transition disabled:opacity-50 disabled:cursor-not-allowed"
+                              className="px-5 py-2 bg-[var(--echo-accent)] text-[var(--echo-text-on-accent)] rounded-full text-sm hover:bg-[var(--echo-bg-d88429)] transition disabled:opacity-50 disabled:cursor-not-allowed"
                             >
                               {aliasSaving ? "Saving..." : "Save Alias"}
                             </button>
                             <button
                               onClick={handleCancelEditAlias}
                               disabled={aliasSaving}
-                              className="px-5 py-2 bg-[#FEF5EA] text-[#4A3728] rounded-full text-sm hover:bg-[#fae9d4] transition disabled:opacity-50"
+                              className="px-5 py-2 bg-[var(--echo-surface-soft)] text-[var(--echo-text-4a3728)] rounded-full text-sm hover:bg-[var(--echo-page)] transition disabled:opacity-50"
                             >
                               Cancel
                             </button>
@@ -586,15 +586,15 @@ const UserProfile = () => {
                       ) : (
                         // View mode
                         <div className="space-y-3">
-                          <div className="bg-[#FEF5EA] border border-[#F4E3C9] rounded-xl px-5 py-3">
-                            <p className="text-base text-[#060B13] font-poppins">{alias || "Not set"}</p>
+                          <div className="bg-[var(--echo-surface-soft)] border border-[var(--echo-border-f4e3c9)] rounded-xl px-5 py-3">
+                            <p className="text-base text-[var(--echo-text-primary)] font-poppins">{alias || "Not set"}</p>
                           </div>
                           <p className="text-xs text-gray-500">
                             Your alias can be changed every 30 days
                           </p>
                           <button
                             onClick={() => setEditingAlias(true)}
-                            className="px-5 py-2 bg-white border border-[#F4E3C9] rounded-full text-sm text-[#4A3728] hover:bg-[#FEF5EA] transition"
+                            className="px-5 py-2 bg-[var(--echo-surface)] border border-[var(--echo-border-f4e3c9)] rounded-full text-sm text-[var(--echo-text-4a3728)] hover:bg-[var(--echo-surface-soft)] transition"
                           >
                             Edit Alias
                           </button>

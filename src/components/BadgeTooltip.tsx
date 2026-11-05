@@ -147,10 +147,10 @@ const BadgeTooltip: React.FC<BadgeTooltipProps> = ({
                     role="dialog"
                     onClick={(e) => e.stopPropagation()}
                     style={{ top: coords.top, left: coords.left }}
-                    className="fixed z-[9999] flex w-[220px] flex-col gap-1 rounded-[12px] border border-[#F49B31] bg-[#FEFEFE] p-3 text-left shadow-lg pointer-events-auto"
+                    className="fixed z-[9999] flex w-[220px] flex-col gap-1 rounded-[12px] border border-[var(--echo-border-f49b31)] bg-[var(--echo-surface)] p-3 text-left shadow-lg pointer-events-auto"
                 >
-                    <span className="font-poppins text-[13px] font-semibold text-[#171717]">{info.title}</span>
-                    <span className="font-poppins text-[12px] font-medium leading-snug text-[#626665]">
+                    <span className="font-poppins text-[13px] font-semibold text-[var(--echo-text-primary)]">{info.title}</span>
+                    <span className="font-poppins text-[12px] font-medium leading-snug text-[var(--echo-text-secondary)]">
                         {description ?? info.description}
                     </span>
                 </span>,

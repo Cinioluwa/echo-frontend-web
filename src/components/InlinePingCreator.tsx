@@ -231,7 +231,7 @@ const InlinePingCreator = forwardRef<InlinePingCreatorHandle>((_, ref) => {
   if (state === "collapsed") {
     return (
       <div
-        className="bg-white rounded-[10px] px-3 md:px-5 py-3 md:py-[15px] flex items-center gap-2 md:gap-[13px] cursor-pointer w-full"
+        className="bg-[var(--echo-surface)] rounded-[10px] px-3 md:px-5 py-3 md:py-[15px] flex items-center gap-2 md:gap-[13px] cursor-pointer w-full"
         onClick={handleCollapsedClick}
         role="button"
         tabIndex={0}
@@ -239,9 +239,9 @@ const InlinePingCreator = forwardRef<InlinePingCreatorHandle>((_, ref) => {
           if (e.key === "Enter") handleCollapsedClick();
         }}
       >
-        <UserAvatar user={user} size="lg" responsive bgColor="bg-[#FFC37B]" />
-        <div className="flex-1 h-11 md:h-[50px] border-2 border-[#FFC37B] rounded-2xl md:rounded-[20px] flex items-center pl-4 md:pl-[27px]">
-          <span className="font-['Poppins',sans-serif] font-medium text-[13px] md:text-[14px] text-[#9e9e9e] select-none">
+        <UserAvatar user={user} size="lg" responsive bgColor="bg-[var(--echo-sidebar)]" />
+        <div className="flex-1 h-11 md:h-[50px] border-2 border-[var(--echo-border-ffc37b)] rounded-2xl md:rounded-[20px] flex items-center pl-4 md:pl-[27px]">
+          <span className="font-['Poppins',sans-serif] font-medium text-[13px] md:text-[14px] text-[var(--echo-text-secondary)] select-none">
             What's the problem?
           </span>
         </div>
@@ -251,7 +251,7 @@ const InlinePingCreator = forwardRef<InlinePingCreatorHandle>((_, ref) => {
 
   /* ─── Expanded State ─────────────────────────────────── */
   return (
-    <div className="w-full flex gap-2 md:gap-3 bg-white rounded-[10px] px-3 md:px-5 py-3 md:py-[15px]">
+    <div className="w-full flex gap-2 md:gap-3 bg-[var(--echo-surface)] rounded-[10px] px-3 md:px-5 py-3 md:py-[15px]">
       {/* Left Column: Avatar */}
       <div className="shrink-0">
         <UserAvatar user={user} size="lg" responsive />
@@ -263,18 +263,18 @@ const InlinePingCreator = forwardRef<InlinePingCreatorHandle>((_, ref) => {
         <div className="relative" ref={categoryDropdownRef}>
           <button
             onClick={() => setShowCategoryDropdown(!showCategoryDropdown)}
-            className="flex items-center gap-1 px-3 md:px-4 py-1.5 border-2 border-[#F49B31] rounded-full bg-white hover:bg-[#FEF5EA] transition-colors duration-200 text-[13px] md:text-[14px] font-medium text-[#454545]"
+            className="flex items-center gap-1 px-3 md:px-4 py-1.5 border-2 border-[var(--echo-border-f49b31)] rounded-full bg-[var(--echo-surface)] hover:bg-[var(--echo-surface-soft)] transition-colors duration-200 text-[13px] md:text-[14px] font-medium text-[var(--echo-text-454545)]"
           >
             {pingData.categoryId
               ? categories.find((c) => c.id === pingData.categoryId)?.name ||
               "Select Category"
               : "Select Category"}
-            <ChevronDown size={16} className="text-[#F49B31]" />
+            <ChevronDown size={16} className="text-[var(--echo-text-f49b31)]" />
           </button>
 
           {/* Dropdown Menu */}
           {showCategoryDropdown && (
-            <div className="absolute top-full left-0 mt-2 w-48 bg-white border-2 border-[#F49B31] rounded-lg shadow-lg z-50 max-h-40 overflow-y-auto scrollbar-subtle-rounded">
+            <div className="absolute top-full left-0 mt-2 w-48 bg-[var(--echo-surface)] border-2 border-[var(--echo-border-f49b31)] rounded-lg shadow-lg z-50 max-h-40 overflow-y-auto scrollbar-subtle-rounded">
               {categories.map((cat) => (
                 <button
                   key={cat.id}
@@ -291,7 +291,7 @@ const InlinePingCreator = forwardRef<InlinePingCreatorHandle>((_, ref) => {
                       return newErrors;
                     });
                   }}
-                  className="w-full text-left px-4 py-2 hover:bg-[#FEF5EA] transition-colors text-sm text-[#454545]"
+                  className="w-full text-left px-4 py-2 hover:bg-[var(--echo-surface-soft)] transition-colors text-sm text-[var(--echo-text-454545)]"
                 >
                   {cat.name}
                 </button>
@@ -312,11 +312,11 @@ const InlinePingCreator = forwardRef<InlinePingCreatorHandle>((_, ref) => {
         )}
 
         {/* Title Input */}
-        <div className="flex px-4 md:px-[27px] py-2.5 md:py-3 border-2 border-[#FFC37B] rounded-2xl md:rounded-[20px] focus-within:border-[#F49B31] focus-within:shadow-md transition-all duration-200 bg-white w-full min-h-11 md:h-[50px]">
+        <div className="flex px-4 md:px-[27px] py-2.5 md:py-3 border-2 border-[var(--echo-border-ffc37b)] rounded-2xl md:rounded-[20px] focus-within:border-[var(--echo-border-f49b31)] focus-within:shadow-md transition-all duration-200 bg-[var(--echo-surface)] w-full min-h-11 md:h-[50px]">
           <input
             type="text"
             placeholder="Title*"
-            className="text-[13px] md:text-[14px] text-[#454545] outline-0 flex-1 bg-transparent placeholder:text-[#9e9e9e]"
+            className="text-[13px] md:text-[14px] text-[var(--echo-text-454545)] outline-0 flex-1 bg-transparent placeholder:text-[var(--echo-text-secondary)]"
             onChange={(e) =>
               setPingData((prev) => ({ ...prev, title: e.target.value }))
             }
@@ -333,14 +333,14 @@ const InlinePingCreator = forwardRef<InlinePingCreatorHandle>((_, ref) => {
         {errors.title && <p className="text-red-500 text-xs">{errors.title}</p>}
 
         {/* Body/Description Input */}
-        <div className="flex px-4 md:px-[27px] py-2.5 md:py-3 border-2 border-[#FFC37B] rounded-2xl md:rounded-[20px] focus-within:border-[#F49B31] focus-within:shadow-md transition-all duration-200 bg-white min-h-[84px] md:min-h-[100px] w-full">
+        <div className="flex px-4 md:px-[27px] py-2.5 md:py-3 border-2 border-[var(--echo-border-ffc37b)] rounded-2xl md:rounded-[20px] focus-within:border-[var(--echo-border-f49b31)] focus-within:shadow-md transition-all duration-200 bg-[var(--echo-surface)] min-h-[84px] md:min-h-[100px] w-full">
           <textarea
             placeholder="Body (optional)"
             onChange={(e) =>
               setPingData((prev) => ({ ...prev, description: e.target.value }))
             }
             value={pingData.description}
-            className="text-[13px] md:text-[14px] text-[#454545] outline-0 flex-1 bg-transparent resize-none placeholder:text-[#9e9e9e]"
+            className="text-[13px] md:text-[14px] text-[var(--echo-text-454545)] outline-0 flex-1 bg-transparent resize-none placeholder:text-[var(--echo-text-secondary)]"
             autoComplete="off"
             spellCheck={false}
             data-gramm="false"
@@ -357,7 +357,7 @@ const InlinePingCreator = forwardRef<InlinePingCreatorHandle>((_, ref) => {
               {pingData.photos.map((file, idx) => (
                 <div
                   key={idx}
-                  className="relative w-[100px] h-[100px] rounded-lg overflow-hidden border-2 border-[#F49B31] shadow-sm group"
+                  className="relative w-[100px] h-[100px] rounded-lg overflow-hidden border-2 border-[var(--echo-border-f49b31)] shadow-sm group"
                 >
                   <img
                     src={URL.createObjectURL(file)}
@@ -367,7 +367,7 @@ const InlinePingCreator = forwardRef<InlinePingCreatorHandle>((_, ref) => {
                   <button
                     type="button"
                     onClick={() => handleRemovePhoto(idx)}
-                    className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                    className="absolute top-1 right-1 bg-red-500 text-[var(--echo-text-on-accent)] rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
                   >
                     <Trash2 size={14} />
                   </button>
@@ -393,7 +393,7 @@ const InlinePingCreator = forwardRef<InlinePingCreatorHandle>((_, ref) => {
             disabled={pingData.photos.length >= 3}
             className="cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed transition-opacity"
           >
-            <FaLink className="text-[26px] md:text-[36px]" color="#F49B31" />
+            <FaLink className="text-[26px] md:text-[36px]" color="var(--echo-text-f49b31)" />
           </button>
 
           {/* Hidden Photo Input */}
@@ -408,13 +408,13 @@ const InlinePingCreator = forwardRef<InlinePingCreatorHandle>((_, ref) => {
 
           {/* Post Button with Dropdown */}
           <div className="relative" ref={postMenuRef}>
-            <div className="flex items-center bg-[#FFC37B] rounded-[15px] border-2 border-[#FFC37B] overflow-hidden">
+            <div className="flex items-center bg-[var(--echo-sidebar)] rounded-[15px] border-2 border-[var(--echo-border-ffc37b)] overflow-hidden">
               {/* Post Submit Button - Left side */}
               <button
                 type="button"
                 onClick={handleSubmit}
                 disabled={isPosting}
-                className="flex items-center justify-center px-3 md:px-4 py-1.5 md:py-2 bg-[#F49B31] hover:bg-[#d88429] rounded-[13px] font-medium text-[13px] md:text-sm text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex items-center justify-center px-3 md:px-4 py-1.5 md:py-2 bg-[var(--echo-accent)] hover:bg-[var(--echo-bg-d88429)] rounded-[13px] font-medium text-[13px] md:text-sm text-[var(--echo-text-on-accent)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isPosting ? "Posting..." : "Post"}
               </button>
@@ -423,15 +423,15 @@ const InlinePingCreator = forwardRef<InlinePingCreatorHandle>((_, ref) => {
               <button
                 type="button"
                 onClick={() => setShowPostMenu(!showPostMenu)}
-                className="flex items-center justify-center px-2 py-2 hover:bg-[#f2b866] transition-colors"
+                className="flex items-center justify-center px-2 py-2 hover:bg-[var(--echo-bg-f2b866)] transition-colors"
               >
-                <ChevronDown size={16} className="text-white" />
+                <ChevronDown size={16} className="text-[var(--echo-text-on-accent)]" />
               </button>
             </div>
 
             {/* Post Menu Dropdown */}
             {showPostMenu && (
-              <div className="absolute top-full right-0 mt-2 bg-white rounded-lg shadow-lg p-3 z-50 w-max">
+              <div className="absolute top-full right-0 mt-2 bg-[var(--echo-surface)] rounded-lg shadow-lg p-3 z-50 w-max">
                 <button
                   type="button"
                   onClick={() => {
@@ -440,15 +440,15 @@ const InlinePingCreator = forwardRef<InlinePingCreatorHandle>((_, ref) => {
                       anonymous: !prev.anonymous,
                     }));
                   }}
-                  className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-[#FEF5EA] transition-colors w-full text-left text-sm text-black"
+                  className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-[var(--echo-surface-soft)] transition-colors w-full text-left text-sm text-[var(--echo-text-primary)]"
                 >
                   {/* Anonymous Toggle Switch */}
                   <div
-                    className={`w-9 h-5 flex items-center rounded-full transition-colors ${pingData.anonymous ? "bg-[#F49B31]" : "bg-gray-300"
+                    className={`w-9 h-5 flex items-center rounded-full transition-colors ${pingData.anonymous ? "bg-[var(--echo-accent)]" : "bg-gray-300"
                       }`}
                   >
                     <div
-                      className={`w-4 h-4 rounded-full bg-white transition-transform ${pingData.anonymous ? "translate-x-[18.5px]" : "translate-x-0"
+                      className={`w-4 h-4 rounded-full bg-[var(--echo-surface)] transition-transform ${pingData.anonymous ? "translate-x-[18.5px]" : "translate-x-0"
                         }`}
                     />
                   </div>
@@ -463,7 +463,7 @@ const InlinePingCreator = forwardRef<InlinePingCreatorHandle>((_, ref) => {
         <button
           type="button"
           onClick={handleCancel}
-          className="font-['Poppins',sans-serif] text-[13px] text-[#F49B31] cursor-pointer hover:underline text-left w-fit"
+          className="font-['Poppins',sans-serif] text-[13px] text-[var(--echo-text-f49b31)] cursor-pointer hover:underline text-left w-fit"
         >
           Cancel
         </button>

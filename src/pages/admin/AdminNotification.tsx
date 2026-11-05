@@ -69,7 +69,7 @@ const AdminNotification = () => {
   if (loading) {
     return (
       <div className="overflow-scroll h-screen flex justify-center items-center">
-        <div className="animate-spin w-12 h-12 border-4 border-[#f49b31] border-t-transparent rounded-full" />
+        <div className="animate-spin w-12 h-12 border-4 border-[var(--echo-border-f49b31)] border-t-transparent rounded-full" />
       </div>
     );
   }
@@ -78,15 +78,15 @@ const AdminNotification = () => {
     <div className="overflow-scroll h-screen">
       <ProfileLayout />
       <main className="mt-3 mx-auto h-full p-4 md:p-10">
-        <div className="flex md:border rounded-[15px] border-[#FFC37B] p-5 flex-col lg:flex-row gap-0 md:gap-12">
+        <div className="flex md:border rounded-[15px] border-[var(--echo-border-ffc37b)] p-5 flex-col lg:flex-row gap-0 md:gap-12">
           {/* SIDE PANEL COMPONENT */}
           <AdminProfileSidePanel pages={pages} />
 
           {/* FORM CONTENT */}
           <div className="flex-1 mb-80 md:border-l border-orange-200 md:pl-12 pt-4 md:pt-0">
             <div className="mb-6">
-              <h2 className="text-xl text-[#4A3728] mb-1">Notification</h2>
-              <p className="text-[#7D7D7D] mb-2">
+              <h2 className="text-xl text-[var(--echo-text-4a3728)] mb-1">Notification</h2>
+              <p className="text-[var(--echo-text-7d7d7d)] mb-2">
                 Manage how communication is made with you
               </p>
               {error && (
@@ -97,7 +97,7 @@ const AdminNotification = () => {
             {/* Toggle Options Section */}
             <div className="space-y-4">
               <div className="flex justify-between items-center p-5 bg-transparent border border-orange-200 rounded-2xl">
-                <span className="text-[#4A3728] text-base">
+                <span className="text-[var(--echo-text-4a3728)] text-base">
                   Notify when a ping or wave status is updated
                 </span>
                 <Toggle
@@ -108,7 +108,7 @@ const AdminNotification = () => {
               </div>
 
               <div className="flex justify-between items-center p-5 bg-transparent border border-orange-200 rounded-2xl">
-                <span className="text-[#4A3728] text-base">
+                <span className="text-[var(--echo-text-4a3728)] text-base">
                   Notify when an official response is posted to my ping
                 </span>
                 <Toggle
@@ -119,7 +119,7 @@ const AdminNotification = () => {
               </div>
 
               <div className="flex justify-between items-center p-5 bg-transparent border border-orange-200 rounded-2xl">
-                <span className="text-[#4A3728] text-base">
+                <span className="text-[var(--echo-text-4a3728)] text-base">
                   Notify when announcements are posted
                 </span>
                 <Toggle
@@ -130,7 +130,7 @@ const AdminNotification = () => {
               </div>
 
               <div className="flex justify-between items-center p-5 bg-transparent border border-orange-200 rounded-2xl">
-                <span className="text-[#4A3728] text-base">
+                <span className="text-[var(--echo-text-4a3728)] text-base">
                   Notify when my comments receive surges (likes)
                 </span>
                 <Toggle
@@ -141,7 +141,7 @@ const AdminNotification = () => {
               </div>
 
               <div className="flex justify-between items-center p-5 bg-transparent border border-orange-200 rounded-2xl">
-                <span className="text-[#4A3728] text-base">
+                <span className="text-[var(--echo-text-4a3728)] text-base">
                   Notify when new pings are created in my organization
                 </span>
                 <Toggle
@@ -152,7 +152,7 @@ const AdminNotification = () => {
               </div>
 
               <div className="flex justify-between items-center p-5 bg-transparent border border-orange-200 rounded-2xl">
-                <span className="text-[#4A3728] text-base">
+                <span className="text-[var(--echo-text-4a3728)] text-base">
                   Notify when someone replies to my comment
                 </span>
                 <Toggle

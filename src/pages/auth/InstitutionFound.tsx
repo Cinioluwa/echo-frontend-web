@@ -82,7 +82,7 @@ const InstitutionFound: React.FC = () => {
             <AuthLayout>
                 <AuthCard className="max-w-[537px]">
                     <div className="text-center">
-                        <p className="text-[16px] text-[#4a504e] mb-4">
+                        <p className="text-[16px] text-[var(--echo-text-4a504e)] mb-4">
                             No institution selected. Please try again.
                         </p>
                         <AuthButton
@@ -102,7 +102,7 @@ const InstitutionFound: React.FC = () => {
             <AuthCard className="max-w-[537px]">
                 {/* Success Icon */}
                 <div className="flex flex-col gap-3 sm:gap-[15px] items-center w-full">
-                    <div className="bg-[#f49b31] rounded-full w-[70px] h-[70px] sm:w-[85px] sm:h-[85px] md:w-[100px] md:h-[100px] flex items-center justify-center">
+                    <div className="bg-[var(--echo-accent)] rounded-full w-[70px] h-[70px] sm:w-[85px] sm:h-[85px] md:w-[100px] md:h-[100px] flex items-center justify-center">
                         <svg
                             width="60"
                             height="60"
@@ -122,12 +122,12 @@ const InstitutionFound: React.FC = () => {
                     </div>
 
                     {/* Header */}
-                    <h1 className="text-[22px] sm:text-[26px] md:text-[28px] font-semibold text-black leading-7 sm:leading-8 md:leading-9 text-center min-w-full">
+                    <h1 className="text-[22px] sm:text-[26px] md:text-[28px] font-semibold text-[var(--echo-text-primary)] leading-7 sm:leading-8 md:leading-9 text-center min-w-full">
                         We Found Your Institution
                     </h1>
 
                     {/* Description */}
-                    <p className="text-[13px] sm:text-[14px] font-medium text-[#4a504e] opacity-69 leading-5 sm:leading-[21px] text-center min-w-full">
+                    <p className="text-[13px] sm:text-[14px] font-medium text-[var(--echo-text-4a504e)] opacity-69 leading-5 sm:leading-[21px] text-center min-w-full">
                         You're just one step away from joining {organization.name}. Hit
                         the button and dive right in.
                     </p>

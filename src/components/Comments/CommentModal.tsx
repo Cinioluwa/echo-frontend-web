@@ -32,7 +32,7 @@ const CommentModal = ({ isOpen, onClose, ping, onCommentAdded }: Props) => {
                         animate={{ opacity: 1, scale: 1 }}
                         exit={{ opacity: 0, scale: 0.95 }}
                         transition={{ duration: 0.2 }}
-                        className="bg-white p-5 rounded-4xl flex flex-col gap-[15px] max-w-[800px] w-full max-h-[90vh] overflow-hidden mx-4"
+                        className="bg-[var(--echo-surface)] p-5 rounded-4xl flex flex-col gap-[15px] max-w-[800px] w-full max-h-[90vh] overflow-hidden mx-4"
                     >
                         {/* Header with close button */}
                         <PingHeader

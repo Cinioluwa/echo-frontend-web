@@ -27,31 +27,31 @@ interface Top3WidgetProps {
  */
 const RANK_CONFIGS = [
   {
-    bg: "bg-[#F49B31]",
-    rankColor: "text-white",
+    bg: "bg-[var(--echo-accent)]",
+    rankColor: "text-[var(--echo-text-on-accent)]",
     avatarBg: "#E74F13",
-    titleColor: "text-white",
-    authorColor: "text-white/90",
-    surgeIconFill: "#E74F13",
-    surgeTextColor: "text-[#4A504E]",
+    titleColor: "text-[var(--echo-text-on-accent)]",
+    authorColor: "text-[var(--echo-text-on-accent)]/90",
+    surgeIconFill: "var(--echo-text-e74f13)",
+    surgeTextColor: "text-[var(--echo-text-4a504e)]",
   },
   {
-    bg: "bg-[#FFC37B]",
-    rankColor: "text-[#E97318]",
+    bg: "bg-[var(--echo-sidebar)]",
+    rankColor: "text-[var(--echo-text-e97318)]",
     avatarBg: "#FF6B6B",
-    titleColor: "text-[#454545]",
-    authorColor: "text-[#454545]",
-    surgeIconFill: "#E97318",
-    surgeTextColor: "text-[#4A504E]",
+    titleColor: "text-[var(--echo-text-454545)]",
+    authorColor: "text-[var(--echo-text-454545)]",
+    surgeIconFill: "var(--echo-text-e97318)",
+    surgeTextColor: "text-[var(--echo-text-4a504e)]",
   },
   {
-    bg: "bg-[#FEF5EA]",
-    rankColor: "text-[#F49B31]",
+    bg: "bg-[var(--echo-surface-soft)]",
+    rankColor: "text-[var(--echo-text-f49b31)]",
     avatarBg: "#FFC37B",
-    titleColor: "text-black",
-    authorColor: "text-black",
-    surgeIconFill: "#F49B31",
-    surgeTextColor: "text-[#4A504E]",
+    titleColor: "text-[var(--echo-text-primary)]",
+    authorColor: "text-[var(--echo-text-primary)]",
+    surgeIconFill: "var(--echo-text-f49b31)",
+    surgeTextColor: "text-[var(--echo-text-4a504e)]",
   },
 ];
 
@@ -131,7 +131,7 @@ const Top3Item: React.FC<Top3ItemProps> = ({ ping, index }) => {
               : undefined
           }
           bgColor="bg-transparent"
-          className="w-full! h-full! text-[10px]! font-bold text-white"
+          className="w-full! h-full! text-[10px]! font-bold text-[var(--echo-text-on-accent)]"
         />
       </div>
       {/* Title & Author */}
@@ -161,7 +161,7 @@ const Top3Item: React.FC<Top3ItemProps> = ({ ping, index }) => {
         <SurgeIcon
           width={10}
           height={13}
-          fill={hasSurged ? "#E74F13" : config.surgeIconFill}
+          fill={hasSurged ? "var(--echo-text-e74f13)" : config.surgeIconFill}
         />
         <span
           className={`font-['Poppins',sans-serif] font-semibold text-[11px] leading-normal ${config.surgeTextColor}`}
@@ -177,13 +177,13 @@ const Top3Widget = ({ pings = [] }: Top3WidgetProps) => {
   const top3 = pings.slice(0, 3);
 
   return (
-    <div className="bg-white border border-[#F49B31]/40 rounded-[15px] flex flex-col gap-2.5 items-start p-4 pt-3 pb-4 w-full lg:w-[300px]">
+    <div className="bg-[var(--echo-surface)] border border-[var(--echo-border-f49b31)]/40 rounded-[15px] flex flex-col gap-2.5 items-start p-4 pt-3 pb-4 w-full lg:w-[300px]">
       {/* Header */}
       <div className="flex justify-between pb-2 w-full items-center">
-        <h3 className="font-['Poppins',sans-serif] font-semibold text-[18px] text-black leading-normal">
+        <h3 className="font-['Poppins',sans-serif] font-semibold text-[18px] text-[var(--echo-text-primary)] leading-normal">
           Top Pings
         </h3>
-        <span className="font-['Poppins',sans-serif] font-semibold text-[10px] text-[#626665]">
+        <span className="font-['Poppins',sans-serif] font-semibold text-[10px] text-[var(--echo-text-secondary)]">
           This week
         </span>
       </div>

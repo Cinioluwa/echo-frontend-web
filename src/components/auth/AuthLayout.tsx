@@ -19,7 +19,7 @@ interface AuthLayoutProps {
 const AuthLayout: React.FC<AuthLayoutProps> = React.memo(({ children }) => {
   return (
     <div
-      className="min-h-screen flex items-center justify-center px-4 py-8 sm:px-6 lg:px-8 bg-[#FEF5EA] bg-cover bg-center bg-no-repeat"
+      className="auth-layout min-h-screen flex items-center justify-center px-4 py-8 sm:px-6 lg:px-8 bg-[var(--echo-surface-soft)] bg-cover bg-center bg-no-repeat"
       style={{
         backgroundImage: `url("${background}")`,
         backgroundSize: "cover",

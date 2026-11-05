@@ -32,11 +32,11 @@ const PostSuccessModal = ({ setPostSuccessModal, formSegment }: Props) => {
       <div
         role="status"
         aria-live="polite"
-        className="bg-[#ffc37b] flex gap-2 items-center overflow-hidden
+        className="bg-[var(--echo-sidebar)] flex gap-2 items-center overflow-hidden
           px-[11px] py-2.5 rounded-[15px] font-poppins shadow-lg"
       >
         {/* Orange icon circle */}
-        <div className="bg-[#f49b31] mix-blend-luminosity rounded-full shrink-0 w-[30px] h-[30px] flex items-center justify-center">
+        <div className="bg-[var(--echo-accent)] mix-blend-luminosity rounded-full shrink-0 w-[30px] h-[30px] flex items-center justify-center">
           <svg
             className="w-4 h-4"
             viewBox="0 0 16 16"
@@ -55,7 +55,7 @@ const PostSuccessModal = ({ setPostSuccessModal, formSegment }: Props) => {
         </div>
 
         {/* Message */}
-        <p className="font-medium text-[16px] leading-normal whitespace-nowrap text-[#454545]">
+        <p className="font-medium text-[16px] leading-normal whitespace-nowrap text-[var(--echo-text-454545)]">
           {message}
         </p>
       </div>

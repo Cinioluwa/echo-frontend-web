@@ -65,8 +65,8 @@ const AdminProfileSidePanel = ({ pages }: Pages) => {
             }
           }}
           className={`flex items-center md:my-1 gap-5 px-7 py-3 rounded-xl whitespace-nowrap transition-all shrink-0 ${item.active
-              ? "bg-[#E8A355] text-white shadow-lg shadow-orange-200"
-              : "bg-[#FEF5EA] hover:bg-orange-100"
+              ? "bg-[var(--echo-bg-e8a355)] text-[var(--echo-text-on-accent)] shadow-lg shadow-orange-200"
+              : "bg-[var(--echo-surface-soft)] hover:bg-orange-100"
             }`}
         >
           {item.icon}

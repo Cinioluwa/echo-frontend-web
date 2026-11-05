@@ -5,7 +5,7 @@
  */
 export const EditedLabel = () => (
   <span 
-    className="text-[10px] text-[#999] italic ml-1 select-none" 
+    className="text-[10px] text-[var(--echo-text-secondary)] italic ml-1 select-none" 
     aria-label="This post was edited after posting"
   >
     (edited)

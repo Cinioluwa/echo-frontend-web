@@ -41,17 +41,17 @@ const AdminAnnouncementCard: React.FC<AdminAnnouncementCardProps> = ({
     if (!announcement) {
         return (
             <div
-                className={`min-w-0 bg-white border border-[#FFC37B] rounded-[15px] px-4 py-4 flex items-center justify-between gap-3 ${className}`}
+                className={`min-w-0 bg-[var(--echo-surface)] border border-[var(--echo-border-ffc37b)] rounded-[15px] px-4 py-4 flex items-center justify-between gap-3 ${className}`}
                 data-node-id="admin-announcement-card"
             >
-                <p className="font-poppins text-[14px] text-[#626665]">
+                <p className="font-poppins text-[14px] text-[var(--echo-text-secondary)]">
                     No general announcement is currently live for your institution.
                 </p>
                 {onPublish && (
                     <button
                         type="button"
                         onClick={onPublish}
-                        className="font-poppins text-[13px] font-medium text-[#F49B31] hover:underline cursor-pointer whitespace-nowrap"
+                        className="font-poppins text-[13px] font-medium text-[var(--echo-text-f49b31)] hover:underline cursor-pointer whitespace-nowrap"
                     >
                         Publish one
                     </button>

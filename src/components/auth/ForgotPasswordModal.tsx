@@ -57,7 +57,7 @@ const ForgotPasswordModal: React.FC<ForgotPasswordModalProps> = ({ isOpen, onClo
             {/* Modal */}
             <div className="fixed inset-0 flex items-center justify-center z-50 p-4">
                 <div
-                    className="bg-white rounded-[20px] sm:rounded-[30px] p-6 sm:p-8 md:p-10 max-w-md w-full shadow-lg animate-fade-in"
+                    className="bg-[var(--echo-surface)] rounded-[20px] sm:rounded-[30px] p-6 sm:p-8 md:p-10 max-w-md w-full shadow-lg animate-fade-in"
                     onClick={(e) => e.stopPropagation()}
                 >
                     {/* Header */}
@@ -85,7 +85,7 @@ const ForgotPasswordModal: React.FC<ForgotPasswordModalProps> = ({ isOpen, onClo
                         <>
                             {/* Title */}
                             <h2
-                                className="text-[22px] sm:text-[24px] font-semibold text-black mb-2"
+                                className="text-[22px] sm:text-[24px] font-semibold text-[var(--echo-text-primary)] mb-2"
                                 style={{ fontFamily: "Poppins, sans-serif" }}
                             >
                                 Forgot Password?
@@ -111,7 +111,7 @@ const ForgotPasswordModal: React.FC<ForgotPasswordModalProps> = ({ isOpen, onClo
                                             setValidationError(null);
                                         }}
                                         placeholder="Enter your email..."
-                                        className="w-full px-4 py-3 border border-orange-200 rounded-xl text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#f49b31] transition"
+                                        className="w-full px-4 py-3 border border-orange-200 rounded-xl text-sm bg-[var(--echo-surface)] focus:outline-none focus:ring-2 focus:ring-[var(--echo-border-f49b31)] transition"
                                         style={{ fontFamily: "Poppins, sans-serif" }}
                                         disabled={loading}
                                         autoComplete="email"
@@ -127,7 +127,7 @@ const ForgotPasswordModal: React.FC<ForgotPasswordModalProps> = ({ isOpen, onClo
                                 <button
                                     type="submit"
                                     disabled={loading}
-                                    className="w-full py-3 bg-[#f49b31] text-white rounded-lg font-medium transition-all duration-200 hover:bg-[#e08a2a] disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-[#f49b31] focus:ring-offset-2"
+                                    className="w-full py-3 bg-[var(--echo-accent)] text-[var(--echo-text-on-accent)] rounded-lg font-medium transition-all duration-200 hover:bg-[var(--echo-bg-e08a2a)] disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-[var(--echo-border-f49b31)] focus:ring-offset-2"
                                     style={{ fontFamily: "Poppins, sans-serif" }}
                                 >
                                     {loading ? "Sending..." : "Send Reset Link"}
@@ -137,7 +137,7 @@ const ForgotPasswordModal: React.FC<ForgotPasswordModalProps> = ({ isOpen, onClo
                                 <button
                                     type="button"
                                     onClick={handleClose}
-                                    className="w-full py-3 border border-orange-200 text-[#4A3728] rounded-lg font-medium transition-colors hover:bg-orange-50"
+                                    className="w-full py-3 border border-orange-200 text-[var(--echo-text-4a3728)] rounded-lg font-medium transition-colors hover:bg-orange-50"
                                     style={{ fontFamily: "Poppins, sans-serif" }}
                                     disabled={loading}
                                 >
@@ -169,7 +169,7 @@ const ForgotPasswordModal: React.FC<ForgotPasswordModalProps> = ({ isOpen, onClo
                                 </div>
 
                                 <h2
-                                    className="text-[22px] sm:text-[24px] font-semibold text-black mb-2"
+                                    className="text-[22px] sm:text-[24px] font-semibold text-[var(--echo-text-primary)] mb-2"
                                     style={{ fontFamily: "Poppins, sans-serif" }}
                                 >
                                     Check Your Inbox
@@ -179,7 +179,7 @@ const ForgotPasswordModal: React.FC<ForgotPasswordModalProps> = ({ isOpen, onClo
                                     className="text-sm text-gray-600 mb-4"
                                     style={{ fontFamily: "Poppins, sans-serif" }}
                                 >
-                                    If an account exists for <span className="font-semibold text-[#4A3728]">{email}</span>, you will receive a password reset link shortly.
+                                    If an account exists for <span className="font-semibold text-[var(--echo-text-4a3728)]">{email}</span>, you will receive a password reset link shortly.
                                 </p>
 
                                 <p
@@ -192,7 +192,7 @@ const ForgotPasswordModal: React.FC<ForgotPasswordModalProps> = ({ isOpen, onClo
                                 {/* Done Button */}
                                 <button
                                     onClick={handleClose}
-                                    className="w-full py-3 bg-[#f49b31] text-white rounded-lg font-medium transition-all duration-200 hover:bg-[#e08a2a] focus:outline-none focus:ring-2 focus:ring-[#f49b31] focus:ring-offset-2"
+                                    className="w-full py-3 bg-[var(--echo-accent)] text-[var(--echo-text-on-accent)] rounded-lg font-medium transition-all duration-200 hover:bg-[var(--echo-bg-e08a2a)] focus:outline-none focus:ring-2 focus:ring-[var(--echo-border-f49b31)] focus:ring-offset-2"
                                     style={{ fontFamily: "Poppins, sans-serif" }}
                                 >
                                     Done

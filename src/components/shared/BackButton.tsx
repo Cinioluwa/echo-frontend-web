@@ -44,17 +44,17 @@ const BackButton = ({
         px-5 py-2 rounded-full shadow-xs
         transition-colors duration-200
         ${isActive
-                    ? "bg-[#ffc37b] border-[0.8px] border-[#f49b31] text-white"
-                    : "bg-[#fefefe] border border-[#f0f0f0] text-black hover:bg-[#ffc37b] hover:border-[#f49b31] hover:text-white"
+                    ? "bg-[var(--echo-sidebar)] border-[0.8px] border-[var(--echo-border-f49b31)] text-[var(--echo-text-on-accent)]"
+                    : "bg-[var(--echo-surface)] border border-[var(--echo-border-f0f0f0)] text-[var(--echo-text-primary)] hover:bg-[var(--echo-sidebar)] hover:border-[var(--echo-border-f49b31)] hover:text-[var(--echo-text-on-accent)]"
                 }
         ${className ?? ""}
       `}
             aria-label={label}
         >
-            <ArrowLeft className={`w-5 h-5 shrink-0 stroke-[2.5] ${isActive ? "text-white" : "text-black"}`} />
+            <ArrowLeft className={`w-5 h-5 shrink-0 stroke-[2.5] ${isActive ? "text-[var(--echo-text-on-accent)]" : "text-[var(--echo-text-primary)]"}`} />
 
             {/* Label */}
-            <span className={`font-semibold text-[15px] leading-none whitespace-nowrap font-['Poppins',sans-serif] ${isActive ? "text-white" : "text-black"}`}>
+            <span className={`font-semibold text-[15px] leading-none whitespace-nowrap font-['Poppins',sans-serif] ${isActive ? "text-[var(--echo-text-on-accent)]" : "text-[var(--echo-text-primary)]"}`}>
                 {label}
             </span>
         </button>

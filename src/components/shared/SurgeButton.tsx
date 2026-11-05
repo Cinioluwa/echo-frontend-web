@@ -36,8 +36,8 @@ const SurgeButton = ({
         border border-solid flex gap-[5px] items-center justify-center
         px-2.5 py-[5px] rounded-[15px] transition-colors duration-200
         ${surged
-                    ? "bg-[#f49b31] border-[#f49b31] text-white"
-                    : "bg-[#fef5ea] border-black text-[#4a504e]"
+                    ? "bg-[var(--echo-accent)] border-[var(--echo-border-f49b31)] text-[var(--echo-text-on-accent)]"
+                    : "bg-[var(--echo-surface-soft)] border-black text-[var(--echo-text-4a504e)]"
                 }
         disabled:opacity-50 disabled:cursor-not-allowed
         ${className ?? ""}
@@ -46,13 +46,13 @@ const SurgeButton = ({
             <SurgeIcon
                 width={12}
                 height={16}
-                fill={surged ? "white" : "#4a504e"}
+                fill={surged ? "white" : "var(--echo-text-4a504e)"}
                 className="shrink-0"
                 aria-hidden="true"
             />
 
             {/* Count */}
-            <span className={`font-semibold text-[14px] leading-normal text-right whitespace-nowrap font-poppins ${surged ? "text-white" : "text-[#4a504e]"}`}>
+            <span className={`font-semibold text-[14px] leading-normal text-right whitespace-nowrap font-poppins ${surged ? "text-[var(--echo-text-on-accent)]" : "text-[var(--echo-text-4a504e)]"}`}>
                 {count}
             </span>
         </button>

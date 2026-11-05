@@ -33,7 +33,7 @@ const CommentCountButton = ({
         flex gap-[3px] items-center justify-center
         px-2.5 rounded-[18px] transition-colors duration-200
         ${active
-                    ? "bg-[#f49b31] border border-[#f49b31] py-[7px]"
+                    ? "bg-[var(--echo-accent)] border border-[var(--echo-border-f49b31)] py-[7px]"
                     : "border border-black py-[7px]"
                 }
         disabled:opacity-50 disabled:cursor-not-allowed
@@ -61,7 +61,7 @@ const CommentCountButton = ({
             {/* Count */}
             <span
                 className={`font-bold uppercase leading-[0.94] whitespace-nowrap
-          ${active ? "text-[14px] text-white" : "text-[12px] text-black"}
+          ${active ? "text-[14px] text-[var(--echo-text-on-accent)]" : "text-[12px] text-[var(--echo-text-primary)]"}
           font-['Baloo_Bhai_2',sans-serif]`}
             >
                 {count}

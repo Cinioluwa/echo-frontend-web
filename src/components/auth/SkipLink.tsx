@@ -21,9 +21,9 @@ const SkipLink: React.FC = () => {
                 sr-only focus:not-sr-only
                 focus:absolute focus:top-4 focus:left-4 focus:z-50
                 focus:px-4 focus:py-2
-                focus:bg-[#f49b31] focus:text-white
+                focus:bg-[var(--echo-accent)] focus:text-[var(--echo-text-on-accent)]
                 focus:rounded-lg focus:shadow-lg
-                focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#f49b31]
+                focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--echo-border-f49b31)]
                 font-medium text-sm
                 transition-opacity duration-200
             "

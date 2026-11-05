@@ -73,22 +73,22 @@ const AdminMobileMenu = ({ setMenu, menu }: Props) => {
             role="dialog"
             aria-modal="true"
             aria-label="Admin navigation"
-            className="fixed inset-y-0 left-0 z-50 flex h-dvh w-[min(88vw,360px)] flex-col overflow-y-auto bg-[#FEF5EA] shadow-2xl min-[1131px]:hidden"
+            className="fixed inset-y-0 left-0 z-50 flex h-dvh w-[min(88vw,360px)] flex-col overflow-y-auto bg-[var(--echo-surface-soft)] shadow-2xl min-[1131px]:hidden"
             initial={{ x: "-100%" }}
             animate={{ x: 0 }}
             exit={{ x: "-100%" }}
             transition={{ type: "tween", ease: [0.22, 0.61, 0.36, 1], duration: 0.28 }}
           >
-            <div className="sticky top-0 z-10 flex items-center justify-between border-b border-[#F4E3C9] bg-[#FEF5EA] px-5 py-4">
+            <div className="sticky top-0 z-10 flex items-center justify-between border-b border-[var(--echo-border-f4e3c9)] bg-[var(--echo-surface-soft)] px-5 py-4">
               <div className="flex items-center gap-2">
                 <img src="/assets/images/Echo Logo_black.svg" alt="" className="h-6 w-[22px] brightness-0 contrast-200" />
-                <span className="font-['Poppins',sans-serif] text-xl font-bold leading-none text-black">Echo</span>
+                <span className="font-['Poppins',sans-serif] text-xl font-bold leading-none text-[var(--echo-text-primary)]">Echo</span>
               </div>
               <button
                 type="button"
                 onClick={handleClick}
                 aria-label="Close menu"
-                className="flex h-10 w-10 items-center justify-center rounded-full bg-white text-[#4A3728] shadow-sm transition-colors hover:bg-[#fae9d4]"
+                className="flex h-10 w-10 items-center justify-center rounded-full bg-[var(--echo-surface)] text-[var(--echo-text-4a3728)] shadow-sm transition-colors hover:bg-[var(--echo-page)]"
               >
                 <X size={20} />
               </button>
@@ -104,14 +104,14 @@ const AdminMobileMenu = ({ setMenu, menu }: Props) => {
                       to={to}
                       onClick={handleClick}
                       aria-current={active ? "page" : undefined}
-                      className={`flex w-full items-center gap-3 rounded-full border border-[#F49B31] px-5 py-3 text-left text-[15px] font-semibold transition-colors ${
-                        active ? "border-0 bg-[#FFC37B] text-[#212121]" : "bg-white text-[#212121] hover:bg-[#FEF5EA]"
+                      className={`flex w-full items-center gap-3 rounded-full border border-[var(--echo-border-f49b31)] px-5 py-3 text-left text-[15px] font-semibold transition-colors ${
+                        active ? "border-0 bg-[var(--echo-sidebar)] text-[var(--echo-text-primary)]" : "bg-[var(--echo-surface)] text-[var(--echo-text-primary)] hover:bg-[var(--echo-surface-soft)]"
                       }`}
                     >
                       {icon ? (
                         <img src={icon} alt="" className={`h-5 w-5 shrink-0 ${active ? "brightness-0" : ""}`} />
                       ) : (
-                        <Building2 className={`h-5 w-5 shrink-0 ${active ? "text-[#212121]" : "text-[#F49B31]"}`} aria-hidden="true" />
+                        <Building2 className={`h-5 w-5 shrink-0 ${active ? "text-[var(--echo-text-primary)]" : "text-[var(--echo-text-f49b31)]"}`} aria-hidden="true" />
                       )}
                       {label}
                     </Link>

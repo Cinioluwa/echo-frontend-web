@@ -18,9 +18,9 @@ const AdminPingWaves: React.FC<AdminPingWavesProps> = ({ waves, permissions, onU
 
     return (
         <div className="flex w-full flex-col gap-5">
-            <h2 className="font-poppins text-[30px] font-bold text-[#171717]">Waves</h2>
+            <h2 className="font-poppins text-[30px] font-bold text-[var(--echo-text-primary)]">Waves</h2>
             {topWaves.length === 0 ? (
-                <p className="rounded-[10px] bg-[#fefefe] px-6 py-8 text-center font-poppins text-[14px] font-medium text-[#8b8e8d]">
+                <p className="rounded-[10px] bg-[var(--echo-surface)] px-6 py-8 text-center font-poppins text-[14px] font-medium text-[var(--echo-text-secondary)]">
                     No waves have been proposed for this ping yet.
                 </p>
             ) : (

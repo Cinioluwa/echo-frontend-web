@@ -36,7 +36,7 @@ export const ExportPingsButton = () => {
         <button
             onClick={handleExport}
             disabled={loading}
-            className="flex items-center gap-2 px-4 py-2 bg-[#F49B31] text-white rounded-lg hover:bg-[#d88429] transition disabled:opacity-50"
+            className="flex items-center gap-2 px-4 py-2 bg-[var(--echo-accent)] text-[var(--echo-text-on-accent)] rounded-lg hover:bg-[var(--echo-bg-d88429)] transition disabled:opacity-50"
         >
             {loading ? (
                 <>

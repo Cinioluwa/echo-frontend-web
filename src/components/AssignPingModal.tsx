@@ -139,19 +139,19 @@ const AssignPingModal = ({
         if (event.target === event.currentTarget) onClose();
       }}
     >
-      <section className="w-full max-w-[520px] rounded-[20px] border border-black/10 bg-[#FEF5EA] p-5 shadow-xl sm:p-8">
+      <section className="w-full max-w-[520px] rounded-[20px] border border-black/10 bg-[var(--echo-surface-soft)] p-5 shadow-xl sm:p-8">
         <div className="flex items-start justify-between gap-4">
           <div>
-            <p className="font-['Inter',sans-serif] text-xs font-semibold uppercase tracking-[0.16em] text-[#A85C08]">Representative inbox</p>
+            <p className="font-['Inter',sans-serif] text-xs font-semibold uppercase tracking-[0.16em] text-[var(--echo-text-a85c08)]">Representative inbox</p>
             <h2 id="assign-ping-title" className="mt-2 font-['Poppins',sans-serif] text-2xl font-bold">Assign this Ping</h2>
-            <p className="mt-2 line-clamp-2 font-['Inter',sans-serif] text-sm leading-6 text-black/65">{ping.title}</p>
+            <p className="mt-2 line-clamp-2 font-['Inter',sans-serif] text-sm leading-6 text-[var(--echo-text-primary)]/65">{ping.title}</p>
           </div>
-          <button type="button" onClick={onClose} aria-label="Close assignment" className="rounded-full p-2 text-black/55 hover:bg-white">✕</button>
+          <button type="button" onClick={onClose} aria-label="Close assignment" className="rounded-full p-2 text-[var(--echo-text-primary)]/55 hover:bg-[var(--echo-surface)]">✕</button>
         </div>
 
         <div className="mt-5 flex flex-wrap gap-2" role="tablist" aria-label="Assignment type">
-          <button type="button" role="tab" aria-selected={target === "representative"} onClick={() => { setTarget("representative"); setSelectedId(""); setError(null); }} className={`rounded-full px-4 py-2 font-['Inter',sans-serif] text-sm font-semibold ${target === "representative" ? "bg-[#F49B31] text-white" : "border border-black/10 bg-white text-black/70"}`}>Representative</button>
-          <button type="button" role="tab" aria-selected={target === "body"} onClick={() => { setTarget("body"); setSelectedId(""); setError(null); }} className={`rounded-full px-4 py-2 font-['Inter',sans-serif] text-sm font-semibold ${target === "body" ? "bg-[#F49B31] text-white" : "border border-black/10 bg-white text-black/70"}`}>Body</button>
+          <button type="button" role="tab" aria-selected={target === "representative"} onClick={() => { setTarget("representative"); setSelectedId(""); setError(null); }} className={`rounded-full px-4 py-2 font-['Inter',sans-serif] text-sm font-semibold ${target === "representative" ? "bg-[var(--echo-accent)] text-[var(--echo-text-on-accent)]" : "border border-black/10 bg-[var(--echo-surface)] text-[var(--echo-text-primary)]/70"}`}>Representative</button>
+          <button type="button" role="tab" aria-selected={target === "body"} onClick={() => { setTarget("body"); setSelectedId(""); setError(null); }} className={`rounded-full px-4 py-2 font-['Inter',sans-serif] text-sm font-semibold ${target === "body" ? "bg-[var(--echo-accent)] text-[var(--echo-text-on-accent)]" : "border border-black/10 bg-[var(--echo-surface)] text-[var(--echo-text-primary)]/70"}`}>Body</button>
         </div>
 
         <form onSubmit={handleSubmit} className="mt-5">
@@ -162,7 +162,7 @@ const AssignPingModal = ({
               disabled={loading || submitting}
               value={selectedId}
               onChange={(event) => setSelectedId(event.target.value)}
-              className="mt-2 block w-full rounded-xl border border-black/15 bg-white px-4 py-3 outline-none focus:border-[#F49B31] focus:ring-2 focus:ring-[#FFC37B] disabled:opacity-60"
+              className="mt-2 block w-full rounded-xl border border-black/15 bg-[var(--echo-surface)] px-4 py-3 outline-none focus:border-[var(--echo-border-f49b31)] focus:ring-2 focus:ring-[var(--echo-border-ffc37b)] disabled:opacity-60"
             >
               <option value="">{loading ? "Loading available targets…" : "Select a target"}</option>
               {targets.map((item) => (
@@ -172,13 +172,13 @@ const AssignPingModal = ({
           </label>
 
           {error && <p role="alert" className="mt-4 rounded-xl border border-red-200 bg-red-50 p-3 font-['Inter',sans-serif] text-sm text-red-800">{error}</p>}
-          {!loading && targets.length === 0 && !error && <p className="mt-3 font-['Inter',sans-serif] text-sm text-black/60">No active {target === "representative" ? "representatives" : "bodies"} are available.</p>}
+          {!loading && targets.length === 0 && !error && <p className="mt-3 font-['Inter',sans-serif] text-sm text-[var(--echo-text-primary)]/60">No active {target === "representative" ? "representatives" : "bodies"} are available.</p>}
 
           <div className="mt-6 flex flex-wrap gap-3">
-            <button type="submit" disabled={loading || submitting || targets.length === 0} className="rounded-full bg-[#F49B31] px-6 py-3 font-['Inter',sans-serif] font-semibold text-white hover:bg-[#E8911A] disabled:cursor-wait disabled:opacity-55">
+            <button type="submit" disabled={loading || submitting || targets.length === 0} className="rounded-full bg-[var(--echo-accent)] px-6 py-3 font-['Inter',sans-serif] font-semibold text-[var(--echo-text-on-accent)] hover:bg-[var(--echo-bg-e8911a)] disabled:cursor-wait disabled:opacity-55">
               {submitting ? "Assigning…" : "Assign Ping"}
             </button>
-            <button type="button" onClick={onClose} className="rounded-full border border-black/15 bg-white px-6 py-3 font-['Inter',sans-serif] font-medium text-black/70 hover:bg-black/5">Cancel</button>
+            <button type="button" onClick={onClose} className="rounded-full border border-black/15 bg-[var(--echo-surface)] px-6 py-3 font-['Inter',sans-serif] font-medium text-[var(--echo-text-primary)]/70 hover:bg-black/5">Cancel</button>
           </div>
         </form>
       </section>

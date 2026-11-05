@@ -59,7 +59,7 @@ const PhotoUploader = ({
             <button
                 type="button"
                 onClick={handleAddPhotoClick}
-                className="flex items-center gap-1.5 px-3 py-1.5 bg-[#FEF5EA] hover:bg-[#f2e8d9] text-[#454545] rounded-lg transition-colors duration-200 text-sm font-medium"
+                className="flex items-center gap-1.5 px-3 py-1.5 bg-[var(--echo-surface-soft)] hover:bg-[var(--echo-bg-f2e8d9)] text-[var(--echo-text-454545)] rounded-lg transition-colors duration-200 text-sm font-medium"
                 disabled={photos.length >= maxPhotos}
             >
                 <FiPaperclip className="w-4 h-4" />
@@ -80,7 +80,7 @@ const PhotoUploader = ({
             {visiblePhotos.map((photo, index) => (
                 <div
                     key={index}
-                    className="relative group w-16 h-16 rounded-xs overflow-hidden border border-[#7D7D7D]"
+                    className="relative group w-16 h-16 rounded-xs overflow-hidden border border-[var(--echo-border-7d7d7d)]"
                 >
                     <img
                         src={getPhotoUrl(photo)}
@@ -90,7 +90,7 @@ const PhotoUploader = ({
                     <button
                         type="button"
                         onClick={() => handleRemovePhoto(index)}
-                        className="absolute top-0.5 right-0.5 bg-red-500 text-white rounded-full p-0.5 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                        className="absolute top-0.5 right-0.5 bg-red-500 text-[var(--echo-text-on-accent)] rounded-full p-0.5 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
                     >
                         <FiX className="w-3 h-3" />
                     </button>
@@ -99,7 +99,7 @@ const PhotoUploader = ({
 
             {/* Remaining Photos Badge */}
             {remainingCount > 0 && (
-                <div className="flex items-center justify-center w-16 h-16 rounded-xs bg-[#F49B31] text-white font-semibold text-sm border border-[#F49B31]">
+                <div className="flex items-center justify-center w-16 h-16 rounded-xs bg-[var(--echo-accent)] text-[var(--echo-text-on-accent)] font-semibold text-sm border border-[var(--echo-border-f49b31)]">
                     +{remainingCount}
                 </div>
             )}

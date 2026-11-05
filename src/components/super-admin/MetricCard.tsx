@@ -8,9 +8,9 @@ interface MetricCardProps {
 
 export const MetricCard: React.FC<MetricCardProps> = ({ icon, value, label }) => {
   return (
-    <div className="bg-white rounded-2xl p-6 shadow-sm border border-[#FFC37B] flex flex-col justify-between h-[148px]">
+    <div className="bg-[var(--echo-surface)] rounded-2xl p-6 shadow-sm border border-[var(--echo-border-ffc37b)] flex flex-col justify-between h-[148px]">
       <div className="flex items-start justify-between">
-        <div className="w-10 h-10  text-[#f49b31]">
+        <div className="w-10 h-10  text-[var(--echo-text-f49b31)]">
           {icon}
         </div>
       </div>

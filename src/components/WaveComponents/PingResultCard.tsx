@@ -22,7 +22,7 @@ const highlightSearchTerm = (text: string, query: string): ReactNode => {
 
     return parts.map((part, i) =>
         regex.test(part) ? (
-            <mark key={i} className="bg-[#FFC37B] text-[#000000] font-semibold">
+            <mark key={i} className="bg-[var(--echo-sidebar)] text-[var(--echo-text-primary)] font-semibold">
                 {part}
             </mark>
         ) : (
@@ -49,22 +49,22 @@ const PingResultCard = ({ ping, searchQuery, onClick, isSelected = false }: Prop
         w-full text-left p-3 rounded-[10px] border
         transition-all duration-200
         ${isSelected
-                    ? 'border-[#F49B31] bg-[#FEF5EA]'
-                    : 'border-[#7D7D7D] bg-white hover:border-[#F49B31]'
+                    ? 'border-[var(--echo-border-f49b31)] bg-[var(--echo-surface-soft)]'
+                    : 'border-[var(--echo-border-7d7d7d)] bg-[var(--echo-surface)] hover:border-[var(--echo-border-f49b31)]'
                 }
       `}
             type="button"
         >
             {/* Title and Category */}
             <div className="flex items-start justify-between gap-2 mb-2">
-                <h4 className="text-[14px] font-semibold text-[#454545] flex-1 line-clamp-2">
+                <h4 className="text-[14px] font-semibold text-[var(--echo-text-454545)] flex-1 line-clamp-2">
                     {highlightSearchTerm(ping.title, searchQuery)}
                 </h4>
 
                 {ping.category && (
                     <span className="
             text-[10px] font-medium px-2 py-1 rounded-xl 
-            bg-[#F49B31] text-white whitespace-nowrap shrink-0
+            bg-[var(--echo-accent)] text-[var(--echo-text-on-accent)] whitespace-nowrap shrink-0
           ">
                         {ping.category.name}
                     </span>
@@ -74,8 +74,8 @@ const PingResultCard = ({ ping, searchQuery, onClick, isSelected = false }: Prop
             {/* Content Preview */}
             {ping.content && (
                 <div className="
-          bg-[#F5F5F5] rounded-[5px] p-2 
-          text-[12px] text-[#7D7D7D] 
+          bg-[var(--echo-bg-f5f5f5)] rounded-[5px] p-2 
+          text-[12px] text-[var(--echo-text-7d7d7d)] 
           line-clamp-2
         ">
                     {ping.content}
@@ -83,7 +83,7 @@ const PingResultCard = ({ ping, searchQuery, onClick, isSelected = false }: Prop
             )}
 
             {/* Metadata */}
-            <div className="flex items-center gap-3 mt-2 text-[10px] text-[#7D7D7D]">
+            <div className="flex items-center gap-3 mt-2 text-[10px] text-[var(--echo-text-7d7d7d)]">
                 {ping.author && (
                     <span>By {ping.author.firstName} {ping.author.lastName}</span>
                 )}

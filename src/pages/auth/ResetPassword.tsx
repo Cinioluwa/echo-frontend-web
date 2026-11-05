@@ -110,13 +110,13 @@ const ResetPassword = () => {
                         {/* Header Section */}
                         <div className="flex flex-col gap-2.5 items-center text-center w-full">
                             <h1
-                                className="text-[22px] sm:text-[26px] md:text-[28px] leading-7 sm:leading-8 md:leading-9 text-black"
+                                className="text-[22px] sm:text-[26px] md:text-[28px] leading-7 sm:leading-8 md:leading-9 text-[var(--echo-text-primary)]"
                                 style={{ fontFamily: "Poppins, sans-serif", fontWeight: 600 }}
                             >
                                 Reset Password
                             </h1>
                             <p
-                                className="text-[14px] sm:text-base leading-5 sm:leading-[21px] text-[#4a504e] opacity-[0.69]"
+                                className="text-[14px] sm:text-base leading-5 sm:leading-[21px] text-[var(--echo-text-4a504e)] opacity-[0.69]"
                                 style={{ fontFamily: "Poppins, sans-serif", fontWeight: 500 }}
                             >
                                 Enter a new password for your account
@@ -143,7 +143,7 @@ const ResetPassword = () => {
                                         onChange={handleInputChange}
                                         placeholder="New Password"
                                         disabled={loading}
-                                        className="w-full px-4 py-3 border border-orange-200 rounded-xl text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#f49b31] transition"
+                                        className="w-full px-4 py-3 border border-orange-200 rounded-xl text-sm bg-[var(--echo-surface)] focus:outline-none focus:ring-2 focus:ring-[var(--echo-border-f49b31)] transition"
                                         style={{ fontFamily: "Poppins, sans-serif" }}
                                         minLength={8}
                                         required
@@ -168,7 +168,7 @@ const ResetPassword = () => {
                                         }}
                                         placeholder="Confirm Password"
                                         disabled={loading}
-                                        className="w-full px-4 py-3 border border-orange-200 rounded-xl text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#f49b31] transition"
+                                        className="w-full px-4 py-3 border border-orange-200 rounded-xl text-sm bg-[var(--echo-surface)] focus:outline-none focus:ring-2 focus:ring-[var(--echo-border-f49b31)] transition"
                                         style={{ fontFamily: "Poppins, sans-serif" }}
                                         minLength={8}
                                         required
@@ -198,7 +198,7 @@ const ResetPassword = () => {
                                 Remember your password?{" "}
                                 <Link
                                     to="/login"
-                                    className="text-[#f49b31] hover:text-[#e08a2a] transition-colors font-medium"
+                                    className="text-[var(--echo-text-f49b31)] hover:text-[var(--echo-text-e08a2a)] transition-colors font-medium"
                                 >
                                     Log in
                                 </Link>
@@ -228,7 +228,7 @@ const ResetPassword = () => {
 
                             <div>
                                 <h2
-                                    className="text-[22px] sm:text-[26px] font-semibold text-black mb-2"
+                                    className="text-[22px] sm:text-[26px] font-semibold text-[var(--echo-text-primary)] mb-2"
                                     style={{ fontFamily: "Poppins, sans-serif" }}
                                 >
                                     Password Reset Successful

@@ -6,6 +6,7 @@ import { RouterProvider } from 'react-router-dom'
 import router from './components/routes.tsx'
 import AppErrorBoundary from './components/shared/AppErrorBoundary.tsx'
 import { tryAutoReloadForChunkError } from './utils/chunkRetry.ts'
+import { ThemeProvider } from './contexts/ThemeContext.tsx'
 
 // Enable Immer MapSet plugin for Zustand stores using Set/Map
 enableMapSet()
@@ -44,7 +45,9 @@ if ('serviceWorker' in navigator) {
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <AppErrorBoundary>
-      <RouterProvider router={router}></RouterProvider>
+      <ThemeProvider>
+        <RouterProvider router={router}></RouterProvider>
+      </ThemeProvider>
     </AppErrorBoundary>
   </StrictMode>,
 )

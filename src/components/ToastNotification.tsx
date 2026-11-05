@@ -10,9 +10,9 @@ const AUTO_DISMISS_MS = 5500;
 const ICONS: Partial<Record<NotificationType, string | ReactNode>> = {
   NEW_WAVE_ON_PING: '🌊',
   NEW_COMMENT_ON_POST: '💬',
-  PING_SURGED_MILESTONE: <SurgeIcon width={13} height={17} fill="#F49B31" />,
+  PING_SURGED_MILESTONE: <SurgeIcon width={13} height={17} fill="var(--echo-text-f49b31)" />,
   COMMENT_REPLY: '↩️',
-  COMMENT_SURGE: <SurgeIcon width={13} height={17} fill="#F49B31" />,
+  COMMENT_SURGE: <SurgeIcon width={13} height={17} fill="var(--echo-text-f49b31)" />,
   WAVE_STATUS_UPDATED: '📋',
   PING_STATUS_UPDATED: '📋',
   WAVE_APPROVED: '✅',
@@ -61,7 +61,7 @@ const ToastItem = ({ notification }: ToastItemProps) => {
       id={`toast-notification-${notification.id}`}
       role="status"
       aria-live="polite"
-      className="flex items-start gap-3 bg-white border border-[#FFC37B] rounded-xl
+      className="flex items-start gap-3 bg-[var(--echo-surface)] border border-[var(--echo-border-ffc37b)] rounded-xl
         shadow-[0_4px_20px_rgba(0,0,0,0.12)] p-3 w-[300px] cursor-pointer
         animate-slide-in hover:shadow-[0_4px_24px_rgba(0,0,0,0.18)]
         transition-shadow duration-200"
@@ -74,10 +74,10 @@ const ToastItem = ({ notification }: ToastItemProps) => {
 
       {/* Content */}
       <div className="flex-1 min-w-0">
-        <p className="font-semibold text-[13px] text-[#4A3728] truncate font-['Poppins',sans-serif]">
+        <p className="font-semibold text-[13px] text-[var(--echo-text-4a3728)] truncate font-['Poppins',sans-serif]">
           {notification.title}
         </p>
-        <p className="text-[11px] text-[#7D7D7D] line-clamp-2 leading-snug font-['Poppins',sans-serif]">
+        <p className="text-[11px] text-[var(--echo-text-7d7d7d)] line-clamp-2 leading-snug font-['Poppins',sans-serif]">
           {notification.body}
         </p>
       </div>
@@ -88,7 +88,7 @@ const ToastItem = ({ notification }: ToastItemProps) => {
           e.stopPropagation();
           dismissToast(notification.id);
         }}
-        className="shrink-0 text-[#CECECE] hover:text-[#7D7D7D] transition-colors -mt-0.5"
+        className="shrink-0 text-[var(--echo-text-cecece)] hover:text-[var(--echo-text-7d7d7d)] transition-colors -mt-0.5"
         aria-label="Dismiss notification"
       >
         <X size={14} />

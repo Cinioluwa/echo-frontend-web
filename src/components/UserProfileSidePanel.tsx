@@ -56,8 +56,8 @@ const UserProfileSidePanel = ({ pages }: Pages) => {
           }}
           className={`flex min-h-11 items-center gap-3 cursor-pointer px-4 py-2.5 lg:my-1 lg:gap-4 lg:px-5 lg:py-3 rounded-xl whitespace-nowrap transition-colors shrink-0 ${
             item.active
-              ? "bg-[#F49B31] text-white"
-              : "bg-[#FEF5EA] text-[#4A3728] hover:bg-[#fae9d4]"
+              ? "bg-[var(--echo-accent)] text-[var(--echo-text-on-accent)]"
+              : "bg-[var(--echo-surface-soft)] text-[var(--echo-text-4a3728)] hover:bg-[var(--echo-page)]"
           }`}
         >
           {item.icon}

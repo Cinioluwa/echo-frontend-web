@@ -113,7 +113,7 @@ const CommentInput = ({
     if (readOnly) {
         return (
             <div
-                className={`bg-[#f49b31] flex gap-2.5 items-center px-[15px] py-3 ${isDrawer ? "rounded-b-none" : "rounded-b-[24px] md:rounded-b-[28px]"} w-full`}
+                className={`bg-[var(--echo-accent)] flex gap-2.5 items-center px-[15px] py-3 ${isDrawer ? "rounded-b-none" : "rounded-b-[24px] md:rounded-b-[28px]"} w-full`}
                 data-node-id="4790:11755"
                 ref={containerRef}
                 onClick={onAccountRequired}
@@ -133,15 +133,15 @@ const CommentInput = ({
                         user={null}
                         size="md"
                         className="!w-[38px] !h-[38px] md:!w-[42px] md:!h-[42px]"
-                        bgColor="bg-[#FFC37B]"
-                        textColor="text-[#4A3728]"
+                        bgColor="bg-[var(--echo-sidebar)]"
+                        textColor="text-[var(--echo-text-4a3728)]"
                     />
                 </div>
 
                 {/* Read-only input placeholder */}
                 <div className="flex-1 min-w-0">
-                    <div className="bg-white flex h-[38px] md:h-[42px] items-center px-3.5 rounded-[30px] w-full">
-                        <div className="text-[#9E9E9E] text-[13px] md:text-[14px] font-['Poppins',sans-serif] font-normal leading-none">
+                    <div className="bg-[var(--echo-surface)] flex h-[38px] md:h-[42px] items-center px-3.5 rounded-[30px] w-full">
+                        <div className="text-[var(--echo-text-secondary)] text-[13px] md:text-[14px] font-['Poppins',sans-serif] font-normal leading-none">
                             What do you have to say?
                         </div>
                     </div>
@@ -152,7 +152,7 @@ const CommentInput = ({
 
     return (
         <div
-            className={`bg-[#f49b31] flex gap-2.5 ${isFocused ? "items-start" : "items-center"} px-[15px] py-3 ${isDrawer ? "rounded-b-none" : "rounded-b-[24px] md:rounded-b-[28px]"} w-full`}
+            className={`bg-[var(--echo-accent)] flex gap-2.5 ${isFocused ? "items-start" : "items-center"} px-[15px] py-3 ${isDrawer ? "rounded-b-none" : "rounded-b-[24px] md:rounded-b-[28px]"} w-full`}
             data-node-id="4790:11755"
             ref={containerRef}
         >
@@ -162,8 +162,8 @@ const CommentInput = ({
                     user={user}
                     size="md"
                     className="!w-[38px] !h-[38px] md:!w-[42px] md:!h-[42px]"
-                    bgColor="bg-[#FFC37B]"
-                    textColor="text-[#4A3728]"
+                    bgColor="bg-[var(--echo-sidebar)]"
+                    textColor="text-[var(--echo-text-4a3728)]"
                 />
             </div>
 
@@ -173,22 +173,22 @@ const CommentInput = ({
                     /* Default state - button */
                     <button
                         onClick={() => setIsFocused(true)}
-                        className="bg-white flex h-[38px] md:h-[42px] items-center px-3.5 rounded-[30px] w-full cursor-pointer hover:bg-gray-50 transition-colors shadow-xs"
+                        className="bg-[var(--echo-surface)] flex h-[38px] md:h-[42px] items-center px-3.5 rounded-[30px] w-full cursor-pointer hover:bg-gray-50 transition-colors shadow-xs"
                         data-node-id="5210:15041"
                     >
-                        <div className="text-[#626665] text-[13px] md:text-[14px] font-['Poppins',sans-serif] font-normal leading-none">
+                        <div className="text-[var(--echo-text-secondary)] text-[13px] md:text-[14px] font-['Poppins',sans-serif] font-normal leading-none">
                             What do you have to say?
                         </div>
                     </button>
                 ) : (
                     /* Active state - textarea with button */
-                    <div className="bg-white flex flex-col gap-1.5 items-stretch justify-between min-h-[70px] md:min-h-[64px] px-3 pt-2 pb-1.5 rounded-[16px] transition-all duration-200" data-node-id="5210:15043">
+                    <div className="bg-[var(--echo-surface)] flex flex-col gap-1.5 items-stretch justify-between min-h-[70px] md:min-h-[64px] px-3 pt-2 pb-1.5 rounded-[16px] transition-all duration-200" data-node-id="5210:15043">
                         <textarea
                             value={content}
                             onChange={(e) => setContent(e.target.value)}
                             placeholder="What do you have to say?"
                             autoFocus
-                            className="w-full flex-1 p-0 text-[13px] md:text-[14px] text-[#292936] placeholder:text-[#626665] resize-none focus:outline-none font-['Poppins',sans-serif] bg-transparent min-h-[40px] md:min-h-[35px]"
+                            className="w-full flex-1 p-0 text-[13px] md:text-[14px] text-[var(--echo-text-292936)] placeholder:text-[var(--echo-text-secondary)] resize-none focus:outline-none font-['Poppins',sans-serif] bg-transparent min-h-[40px] md:min-h-[35px]"
                             disabled={isSubmitting}
                         />
 
@@ -197,10 +197,10 @@ const CommentInput = ({
                             type="button"
                             onClick={handleSubmit}
                             disabled={isSubmitting || !content.trim()}
-                            className="self-end bg-[#F49B31] inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-[18px] text-white text-[13px] font-['Poppins',sans-serif] font-medium leading-none hover:bg-[#d88429] transition-colors disabled:opacity-50 disabled:cursor-not-allowed shrink-0 cursor-pointer"
+                            className="self-end bg-[var(--echo-accent)] inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-[18px] text-[var(--echo-text-on-accent)] text-[13px] font-['Poppins',sans-serif] font-medium leading-none hover:bg-[var(--echo-bg-d88429)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed shrink-0 cursor-pointer"
                             data-node-id="5210:15071"
                         >
-                            <FaPlus className="w-3.5 h-3.5 text-white" />
+                            <FaPlus className="w-3.5 h-3.5 text-[var(--echo-text-on-accent)]" />
                             <span>{isSubmitting ? "..." : "Comment"}</span>
                         </button>
                     </div>

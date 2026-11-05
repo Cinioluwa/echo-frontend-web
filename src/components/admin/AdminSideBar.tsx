@@ -100,12 +100,12 @@ const AdminSideBar: React.FC<AdminSidebarProps> = ({
 
   const navButtonClass = (isActive: boolean) =>
     `w-full overflow-hidden rounded-[15px] px-5 py-3 justify-start flex items-center gap-3 transition-colors duration-300 ease-in-out border ${isActive
-      ? "bg-[#f49b31] border-[#f49b31]"
-      : "bg-transparent border-[#f49b31] hover:bg-[#fef5ea]"
+      ? "bg-[var(--echo-accent)] border-[var(--echo-border-f49b31)]"
+      : "bg-transparent border-[var(--echo-border-f49b31)] hover:bg-[var(--echo-surface-soft)]"
     }`;
 
   const navTextClass = (isActive: boolean) =>
-    `min-w-0 flex-1 overflow-hidden whitespace-nowrap text-left font-semibold text-[15px] leading-[normal] transition-opacity duration-300 ease-in-out ${isSidebarCollapsed ? "opacity-0" : "opacity-100"} ${isActive ? "text-[#fef5ea]" : "text-[#212121]"}`;
+    `min-w-0 flex-1 overflow-hidden whitespace-nowrap text-left font-semibold text-[15px] leading-[normal] transition-opacity duration-300 ease-in-out ${isSidebarCollapsed ? "opacity-0" : "opacity-100"} ${isActive ? "text-[var(--echo-text-fef5ea)]" : "text-[var(--echo-text-primary)]"}`;
 
   const navIconClass = (isActive: boolean) =>
     `w-5 h-5 ${isActive ? "brightness-0 invert" : "brightness-90"}`;
@@ -132,14 +132,14 @@ const AdminSideBar: React.FC<AdminSidebarProps> = ({
 
   return (
     <div
-      className={`hidden h-screen shrink-0 min-[1131px]:flex bg-[#fef5ea] border-r border-b border-[#f49b31] rounded-br-[20px] px-5 ${isSidebarCollapsed ? "w-[102px]" : "w-[230px]"} flex-col gap-5 overflow-visible pt-5 pb-[30px] transition-[width,padding] duration-300 ease-in-out will-change-[width]`}
+      className={`hidden h-screen shrink-0 min-[1131px]:flex bg-[var(--echo-surface-soft)] border-r border-b border-[var(--echo-border-f49b31)] rounded-br-[20px] px-5 ${isSidebarCollapsed ? "w-[102px]" : "w-[230px]"} flex-col gap-5 overflow-visible pt-5 pb-[30px] transition-[width,padding] duration-300 ease-in-out will-change-[width]`}
       data-node-id="admin-soundboard-sidebar"
     >
       {/* Logo Section */}
       <div className="relative flex w-full items-center justify-between">
         <div className={`flex min-w-0 items-center gap-2 `}>
           <img src="/assets/images/Echo Logo_black.svg" alt="Echo Logo" className="h-[27px] w-[25px] shrink-0" />
-          <h1 className={`text-[#212121] font-bold text-[20px] leading-[normal] whitespace-nowrap transition-opacity duration-300 ease-in-out ${isSidebarCollapsed ? "pointer-events-none absolute left-[33px] opacity-0" : "opacity-100"}`}>
+          <h1 className={`text-[var(--echo-text-primary)] font-bold text-[20px] leading-[normal] whitespace-nowrap transition-opacity duration-300 ease-in-out ${isSidebarCollapsed ? "pointer-events-none absolute left-[33px] opacity-0" : "opacity-100"}`}>
             Echo
           </h1>
         </div>
@@ -207,7 +207,7 @@ const AdminSideBar: React.FC<AdminSidebarProps> = ({
         {(!isRepresentative || isRepresentativeManager) && (
           <Link to="/admin/institution">
             <button className={navButtonClass(currentPage === "institution")}>
-              <Building2 className={`h-5 w-5 shrink-0 ${currentPage === "institution" ? "text-white" : "text-[#F49B31]"}`} aria-hidden="true" />
+              <Building2 className={`h-5 w-5 shrink-0 ${currentPage === "institution" ? "text-[var(--echo-text-on-accent)]" : "text-[var(--echo-text-f49b31)]"}`} aria-hidden="true" />
               <span className={navTextClass(currentPage === "institution")}>
                 {isRepresentative ? "Delegation & Scope" : "Institution"}
               </span>
@@ -220,7 +220,7 @@ const AdminSideBar: React.FC<AdminSidebarProps> = ({
       <div className="relative mt-auto mb-2 w-full" ref={dropdownRef}>
         <button
           onClick={() => setIsOpen(!isOpen)}
-          className={`bg-transparent border border-[#f49b31] rounded-[15px] flex items-center hover:bg-[#fef5ea] transition-colors duration-300 ease-in-out w-full justify-start px-[7px] py-2 ${isSidebarCollapsed ? "gap-0" : "gap-2.5"}`}
+          className={`bg-transparent border border-[var(--echo-border-f49b31)] rounded-[15px] flex items-center hover:bg-[var(--echo-surface-soft)] transition-colors duration-300 ease-in-out w-full justify-start px-[7px] py-2 ${isSidebarCollapsed ? "gap-0" : "gap-2.5"}`}
         >
           {/* Avatar */}
           {userAvatar || user?.profilePicture ? (
@@ -230,19 +230,19 @@ const AdminSideBar: React.FC<AdminSidebarProps> = ({
               className="w-[45px] h-[45px] rounded-full object-cover shrink-0"
             />
           ) : (
-            <div className="w-[45px] h-[45px] rounded-full bg-[#f49b31] flex items-center justify-center shrink-0 text-[#fef5ea] font-bold text-[18px]">
+            <div className="w-[45px] h-[45px] rounded-full bg-[var(--echo-accent)] flex items-center justify-center shrink-0 text-[var(--echo-text-fef5ea)] font-bold text-[18px]">
               {displayFullName.charAt(0).toUpperCase()}
             </div>
           )}
 
           {/* User Info */}
           <div className={`min-w-0 flex-1 overflow-hidden whitespace-nowrap text-left transition-opacity duration-300 ease-in-out ${isSidebarCollapsed ? "opacity-0" : "opacity-100"}`}>
-              <p className="text-[#212121] font-medium text-[14px] leading-[normal] text-left truncate">
+              <p className="text-[var(--echo-text-primary)] font-medium text-[14px] leading-[normal] text-left truncate">
                 {displayFullName}
               </p>
               <div className="flex items-center gap-[5px] mt-[5px]">
                 <img src="/assets/icon/badge-check.svg" alt="Echo Badge" className="w-[15px] h-[15px]" />
-                <span className="text-[#926b3d] font-medium text-[12px] leading-[normal]">
+                <span className="text-[var(--echo-text-926b3d)] font-medium text-[12px] leading-[normal]">
                   {displayBadge}
                 </span>
               </div>
@@ -251,16 +251,16 @@ const AdminSideBar: React.FC<AdminSidebarProps> = ({
 
         {/* Dropdown Menu */}
         {isOpen && (
-          <div className="absolute bottom-0 left-[calc(100%+8px)] max-h-[calc(100vh-16px)] overflow-y-auto bg-white rounded-lg shadow-lg border border-[#CECECE] z-50 w-[220px] md:w-[204px] overflow-hidden">
+          <div className="absolute bottom-0 left-[calc(100%+8px)] max-h-[calc(100vh-16px)] overflow-y-auto bg-[var(--echo-surface)] rounded-lg shadow-lg border border-[var(--echo-border-cecece)] z-50 w-[220px] md:w-[204px] overflow-hidden">
             {/* User Profile Section */}
-            <div className="border-b border-[#CECECE] p-3 md:p-4 flex items-center gap-2.5 md:gap-3">
-              <UserAvatar user={user} size="md" bgColor="bg-[#f49b31]" pictureUrl={userAvatar || undefined} />
+            <div className="border-b border-[var(--echo-border-cecece)] p-3 md:p-4 flex items-center gap-2.5 md:gap-3">
+              <UserAvatar user={user} size="md" bgColor="bg-[var(--echo-accent)]" pictureUrl={userAvatar || undefined} />
               <div className="flex flex-col gap-0.5 flex-1 min-w-0">
-                <p className="font-medium text-[14px] md:text-[16px] text-black truncate tracking-[-0.14px] md:tracking-[-0.16px] text-left">
+                <p className="font-medium text-[14px] md:text-[16px] text-[var(--echo-text-primary)] truncate tracking-[-0.14px] md:tracking-[-0.16px] text-left">
                   {displayFullName}
                 </p>
                 {displayEmail && (
-                  <p className="font-medium text-[12px] md:text-[14px] text-[#999999] truncate tracking-[-0.12px] md:tracking-[-0.14px] text-left">
+                  <p className="font-medium text-[12px] md:text-[14px] text-[var(--echo-text-secondary)] truncate tracking-[-0.12px] md:tracking-[-0.14px] text-left">
                     {displayEmail}
                   </p>
                 )}
@@ -273,7 +273,7 @@ const AdminSideBar: React.FC<AdminSidebarProps> = ({
               className="w-full px-3.5 md:px-4 py-2.5 md:py-3 flex items-center gap-2.5 md:gap-3 hover:bg-gray-50 transition-colors text-left"
             >
               <Settings className="w-[18px] h-[18px] md:w-5 md:h-5 text-gray-600" />
-              <span className="font-medium text-[13px] md:text-[15px] text-black">
+              <span className="font-medium text-[13px] md:text-[15px] text-[var(--echo-text-primary)]">
                 Profile Settings
               </span>
             </button>
@@ -287,11 +287,11 @@ const AdminSideBar: React.FC<AdminSidebarProps> = ({
               className="w-full px-3.5 md:px-4 py-2.5 md:py-3 flex items-center gap-2.5 md:gap-3 hover:bg-gray-50 transition-colors text-left"
             >
               <HelpCircle className="w-[18px] h-[18px] md:w-5 md:h-5 text-gray-600" />
-              <span className="font-medium text-[13px] md:text-[15px] text-black">Help</span>
+              <span className="font-medium text-[13px] md:text-[15px] text-[var(--echo-text-primary)]">Help</span>
             </button>
 
             {/* Divider */}
-            <div className="border-t border-[#CECECE] mx-4" />
+            <div className="border-t border-[var(--echo-border-cecece)] mx-4" />
 
             {/* Sign Out */}
             <button
@@ -299,7 +299,7 @@ const AdminSideBar: React.FC<AdminSidebarProps> = ({
               className="w-full px-3.5 md:px-4 py-2.5 md:py-3 flex items-center gap-2.5 md:gap-3 hover:bg-gray-50 transition-colors text-left"
             >
               <LogOut className="w-[18px] h-[18px] md:w-5 md:h-5 text-gray-600" />
-              <span className="font-medium text-[13px] md:text-[15px] text-black">Sign Out</span>
+              <span className="font-medium text-[13px] md:text-[15px] text-[var(--echo-text-primary)]">Sign Out</span>
             </button>
           </div>
         )}

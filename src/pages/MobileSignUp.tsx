@@ -87,12 +87,12 @@ const MobileSignUp = () => {
       {/* Mobile Sign Up page */}
       <main className="   flex   items-center justify-center">
         {/* Sign Up container */}
-        <div className="p-[38px] md:flex  bg-white  gap-8 rounded-4xl">
+        <div className="p-[38px] md:flex  bg-[var(--echo-surface)]  gap-8 rounded-4xl">
           <div className="flex flex-col  mx-2.5 md:mx-0 items-center mt-[70px] justify-center">
             <span className="block font-semibold max-w-[330px] text-center text-4xl ">
               Echo: Your Voice at CU
             </span>
-            <p className="block font-normal mt-[15px] mb-[15px] text-1xl text-center text-[#838383]">
+            <p className="block font-normal mt-[15px] mb-[15px] text-1xl text-center text-[var(--echo-text-secondary)]">
               Create waves, rally support and drive change on campus.
             </p>
 
@@ -109,8 +109,8 @@ const MobileSignUp = () => {
             )}
 
             <form onSubmit={handleSubmitSignUp} className="flex flex-col justify-center items-center mb-8 w-full">
-              <p className="hidden   justify-center gap-3 mt-4 mb-20 text-[#838383]">
-                <span className="w-7 pr-2 py-1  inline-flex items-center justify-center border-r border-r-[#CACACA]">
+              <p className="hidden   justify-center gap-3 mt-4 mb-20 text-[var(--echo-text-secondary)]">
+                <span className="w-7 pr-2 py-1  inline-flex items-center justify-center border-r border-r-[var(--echo-border-cacaca)]">
                   <img src={email} alt="" />
                 </span>
                 Sign up with Email
@@ -163,29 +163,29 @@ const MobileSignUp = () => {
               <button
                 type="submit"
                 disabled={loading}
-                className=" flex items-center justify-center px-20 py-[7px] whitespace-nowrap  text-white  h-8 cursor-pointer bg-[#F49B31] rounded-[9px] disabled:opacity-50 disabled:cursor-not-allowed"
+                className=" flex items-center justify-center px-20 py-[7px] whitespace-nowrap  text-[var(--echo-text-on-accent)]  h-8 cursor-pointer bg-[var(--echo-accent)] rounded-[9px] disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {loading ? "Creating account..." : "Sign up"}
               </button>
-              <div className="flex items-center my-[30px] text-[#ACAAAA] justify-center gap-[5px] md:hidden">
+              <div className="flex items-center my-[30px] text-[var(--echo-text-acaaaa)] justify-center gap-[5px] md:hidden">
                 <img src={email} alt="" />
                 Sign up with email
               </div>
             </form>
-            <p className="text-[#838383] text-center text-xs leading-relaxed">
+            <p className="text-[var(--echo-text-secondary)] text-center text-xs leading-relaxed">
               By creating an account, you agree to Echo&apos;s
             </p>
-            <div className="flex flex-wrap justify-center gap-1 text-sm font-semibold text-[#F49B31] mt-1.5">
+            <div className="flex flex-wrap justify-center gap-1 text-sm font-semibold text-[var(--echo-text-f49b31)] mt-1.5">
               <a href="https://www.echo-ng.com/terms" target="_blank" rel="noopener noreferrer">Terms of Use</a>
-              <span className="font-medium text-[#838383]">and</span>
+              <span className="font-medium text-[var(--echo-text-secondary)]">and</span>
               <a href="https://www.echo-ng.com/privacy" target="_blank" rel="noopener noreferrer">Privacy Policy</a>
             </div>
-            <div className=" mb-5 md:mb-5 pt-[30px] border-t border-[#D3CECE] mt-10 self-end w-full">
-              <p className="text-center text-[#838383] ">
+            <div className=" mb-5 md:mb-5 pt-[30px] border-t border-[var(--echo-border-d3cece)] mt-10 self-end w-full">
+              <p className="text-center text-[var(--echo-text-secondary)] ">
                 Already have an account?
                 <Link
                   to="/"
-                  className="pl-1 text-[#F49B31] whitespace-nowrap cursor-pointer"
+                  className="pl-1 text-[var(--echo-text-f49b31)] whitespace-nowrap cursor-pointer"
                 >
                   Log in
                 </Link>

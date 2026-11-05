@@ -33,7 +33,7 @@ const AdminAccount = () => {
     <div className="overflow-scroll h-screen">
       <ProfileLayout />
       <main className="mt-3 mx-auto h-full p-4 md:p-10">
-        <div className="flex md:border rounded-[15px] border-[#FFC37B] p-5 flex-col lg:flex-row gap-0 md:gap-12">
+        <div className="flex md:border rounded-[15px] border-[var(--echo-border-ffc37b)] p-5 flex-col lg:flex-row gap-0 md:gap-12">
           {/* SIDE PANEL COMPONENT */}
 
           <AdminProfileSidePanel pages={pages} />
@@ -42,26 +42,26 @@ const AdminAccount = () => {
           <div className="flex-1 md:border-l border-orange-200 md:pl-12 pt-4 md:pt-0">
             {/* Account Section */}
             <section className="mb-10">
-              <h2 className="text-xl text-[#4A3728] mb-1">Account</h2>
+              <h2 className="text-xl text-[var(--echo-text-4a3728)] mb-1">Account</h2>
               <p className="text-sm text-gray-400 mb-6">Manage your account</p>
 
               <div className="flex justify-between items-center p-6 bg-transparent border border-orange-200 rounded-2xl">
                 <div>
-                  <h3 className="text-base text-[#4A3728]">Sign out</h3>
+                  <h3 className="text-base text-[var(--echo-text-4a3728)]">Sign out</h3>
                   <p className="text-sm text-gray-400">
                     Sign out of your account on this device
                   </p>
                 </div>
                 <button
                   onClick={handleSignOut}
-                  className="flex items-center gap-2 px-6 py-2 bg-white border border-orange-200 rounded-xl text-sm text-[#4A3728] hover:bg-orange-50 transition">
+                  className="flex items-center gap-2 px-6 py-2 bg-[var(--echo-surface)] border border-orange-200 rounded-xl text-sm text-[var(--echo-text-4a3728)] hover:bg-orange-50 transition">
                   <HiOutlineLogout size={18} />
                   Sign out
                 </button>
               </div>
               <div className="flex justify-between items-center mt-5 p-6 bg-transparent border border-orange-200 rounded-2xl">
                 <div>
-                  <h3 className="text-base text-[#4A3728]">
+                  <h3 className="text-base text-[var(--echo-text-4a3728)]">
                     Enable Two Factor Authentication for added security on your
                     account
                   </h3>
@@ -103,7 +103,7 @@ const AdminAccount = () => {
                     </p>
                   </div>
                 </div>
-                <button className="flex items-center justify-center gap-2 px-6 py-3 bg-[#D96666] text-white rounded-xl text-sm **font-bold** hover:bg-red-700 transition shadow-sm">
+                <button className="flex items-center justify-center gap-2 px-6 py-3 bg-[var(--echo-bg-d96666)] text-[var(--echo-text-on-accent)] rounded-xl text-sm **font-bold** hover:bg-red-700 transition shadow-sm">
                   <HiOutlineTrash size={18} />
                   Delete Account
                 </button>

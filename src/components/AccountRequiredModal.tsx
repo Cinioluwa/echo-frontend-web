@@ -124,24 +124,24 @@ const AccountRequiredModal = ({
         aria-modal="true"
         aria-labelledby="account-required-title"
         aria-describedby="account-required-description"
-        className="bg-white rounded-[15px] border border-[#F49B31]/40 shadow-xl w-full max-w-md overflow-hidden"
+        className="bg-[var(--echo-surface)] rounded-[15px] border border-[var(--echo-border-f49b31)]/40 shadow-xl w-full max-w-md overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="relative p-6">
           <button
             type="button"
             onClick={onClose}
-            className="absolute top-4 right-4 p-2 text-[#626665] hover:text-black hover:bg-[#FEF5EA] rounded-full transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#F49B31]"
+            className="absolute top-4 right-4 p-2 text-[var(--echo-text-secondary)] hover:text-[var(--echo-text-primary)] hover:bg-[var(--echo-surface-soft)] rounded-full transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--echo-border-f49b31)]"
             aria-label="Close"
           >
             <X size={20} />
           </button>
 
           <div className="text-center">
-            <h2 id="account-required-title" className="font-['Poppins',sans-serif] font-semibold text-[30px] text-black mb-3 leading-snug">
+            <h2 id="account-required-title" className="font-['Poppins',sans-serif] font-semibold text-[30px] text-[var(--echo-text-primary)] mb-3 leading-snug">
               {heading}
             </h2>
-            <p id="account-required-description" className="font-['Poppins',sans-serif] font-normal text-[14px] text-[#626665] mb-6 leading-relaxed">
+            <p id="account-required-description" className="font-['Poppins',sans-serif] font-normal text-[14px] text-[var(--echo-text-secondary)] mb-6 leading-relaxed">
               {body}
             </p>
 
@@ -149,13 +149,13 @@ const AccountRequiredModal = ({
               <a
                 ref={primaryActionRef}
                 href={signUpUrl}
-                className="font-['Poppins',sans-serif] font-semibold text-[15px] text-white bg-[#F49B31] border border-[#F49B31] rounded-[15px] px-5 h-12 inline-flex items-center justify-center hover:bg-[#d88429] transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black"
+                className="font-['Poppins',sans-serif] font-semibold text-[15px] text-[var(--echo-text-on-accent)] bg-[var(--echo-accent)] border border-[var(--echo-border-f49b31)] rounded-[15px] px-5 h-12 inline-flex items-center justify-center hover:bg-[var(--echo-bg-d88429)] transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black"
               >
                 Create an Account
               </a>
               <a
                 href={signInUrl}
-                className="font-['Poppins',sans-serif] font-medium text-[14px] text-[#F49B31] underline underline-offset-4 hover:text-[#d88429] transition-colors text-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#F49B31]"
+                className="font-['Poppins',sans-serif] font-medium text-[14px] text-[var(--echo-text-f49b31)] underline underline-offset-4 hover:text-[var(--echo-text-d88429)] transition-colors text-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--echo-border-f49b31)]"
               >
                 Already have an account? Sign in
               </a>

@@ -186,18 +186,18 @@ const UnifiedFeed = () => {
 
       {/* ── Feed list ── */}
       {error && pings.length === 0 ? (
-        <div role="alert" className="rounded-2xl border border-red-200 bg-white p-5 font-['Inter',sans-serif] text-sm text-red-800">
+        <div role="alert" className="rounded-2xl border border-red-200 bg-[var(--echo-surface)] p-5 font-['Inter',sans-serif] text-sm text-red-800">
           {error}
         </div>
       ) : isLoading && pings.length === 0 ? (
         <UnifiedFeedSkeleton />
       ) : pings.length === 0 ? (
-        <div className="text-center py-16 text-[#4A504E] text-sm">
+        <div className="text-center py-16 text-[var(--echo-text-4a504e)] text-sm">
           No pings yet. Be the first to raise an issue!
         </div>
       ) : (
         <div className="flex flex-col gap-[15px] w-full">
-          {error && <p role="alert" className="rounded-xl border border-red-200 bg-white p-3 font-['Inter',sans-serif] text-sm text-red-800">{error}</p>}
+          {error && <p role="alert" className="rounded-xl border border-red-200 bg-[var(--echo-surface)] p-3 font-['Inter',sans-serif] text-sm text-red-800">{error}</p>}
           {pings.map((ping) => (
             <div className="relative group" key={ping.id}>
               <UnifiedPingCard
@@ -214,7 +214,7 @@ const UnifiedFeed = () => {
             <button
               onClick={handleLoadMore}
               disabled={isLoading}
-              className="mx-auto mt-2 px-6 py-2 bg-[#FEF5EA] border border-[#F49B31] rounded-[15px] text-[#F49B31] font-semibold text-[14px] hover:bg-[#FAE9D4] transition-colors disabled:opacity-50"
+              className="mx-auto mt-2 px-6 py-2 bg-[var(--echo-surface-soft)] border border-[var(--echo-border-f49b31)] rounded-[15px] text-[var(--echo-text-f49b31)] font-semibold text-[14px] hover:bg-[var(--echo-page)] transition-colors disabled:opacity-50"
             >
               {isLoading ? "Loading…" : "Load more"}
             </button>

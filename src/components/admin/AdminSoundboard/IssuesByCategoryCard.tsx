@@ -33,11 +33,11 @@ const IssuesByCategoryCard: React.FC<IssuesByCategoryCardProps> = ({
 
     return (
         <div
-            className={`bg-white border border-[rgba(244,155,49,0.3)] rounded-xl p-5 flex flex-col gap-5 ${className}`}
+            className={`bg-[var(--echo-surface)] border border-[rgba(244,155,49,0.3)] rounded-xl p-5 flex flex-col gap-5 ${className}`}
             data-node-id="issues-by-category-card"
         >
             {/* Title */}
-            <h3 className="font-poppins text-[#212121] font-semibold text-[18px] leading-6">
+            <h3 className="font-poppins text-[var(--echo-text-primary)] font-semibold text-[18px] leading-6">
                 Issues by category
             </h3>
 
@@ -46,7 +46,7 @@ const IssuesByCategoryCard: React.FC<IssuesByCategoryCardProps> = ({
                 {categories.map((category, index) => (
                     <div
                         key={index}
-                        className={`flex flex-col gap-3 bg-[#FEF5EA] p-4 border-[0.5px] border-[#F49B31] rounded-xl ${onCategoryClick ? "cursor-pointer hover:bg-[#FDE8D0] transition-colors" : ""}`}
+                        className={`flex flex-col gap-3 bg-[var(--echo-surface-soft)] p-4 border-[0.5px] border-[var(--echo-border-f49b31)] rounded-xl ${onCategoryClick ? "cursor-pointer hover:bg-[var(--echo-bg-fde8d0)] transition-colors" : ""}`}
                         onClick={() => onCategoryClick?.(category)}
                     >
                         {/* Category Header */}
@@ -57,26 +57,26 @@ const IssuesByCategoryCard: React.FC<IssuesByCategoryCardProps> = ({
                                 </div>
                             )}
                             <div className="flex-1">
-                                <p className="text-[#212121] font-medium text-[14px] leading-4">
+                                <p className="text-[var(--echo-text-primary)] font-medium text-[14px] leading-4">
                                     {category.name}
                                 </p>
-                                <p className="text-[#5e5c58] text-[12px] leading-3.5">
+                                <p className="text-[var(--echo-text-5e5c58)] text-[12px] leading-3.5">
                                     {category.openCount} open
                                 </p>
                             </div>
                             {/* Resolved Percentage */}
-                            <p className="text-[#212121] font-bold text-[24px] leading-[normal]">
+                            <p className="text-[var(--echo-text-primary)] font-bold text-[24px] leading-[normal]">
                                 {category.resolved}%
-                                <span className="text-[#5e5c58] font-medium text-[11px] leading-4 block">
+                                <span className="text-[var(--echo-text-5e5c58)] font-medium text-[11px] leading-4 block">
                                     resolved
                                 </span>
                             </p>
                         </div>
 
                         {/* Progress Bar */}
-                        <div className="w-full h-1 bg-[#e0e0e0] rounded-full overflow-hidden">
+                        <div className="w-full h-1 bg-[var(--echo-bg-e0e0e0)] rounded-full overflow-hidden">
                             <div
-                                className="h-full bg-[#f49b31] rounded-full"
+                                className="h-full bg-[var(--echo-accent)] rounded-full"
                                 style={{ width: `${category.resolved}%` }}
                             />
                         </div>
@@ -86,15 +86,15 @@ const IssuesByCategoryCard: React.FC<IssuesByCategoryCardProps> = ({
                             {category.issues.slice(0, 2).map((issue) => (
                                 <button onClick={() => navigate(`/admin/soundboard/${issue.id}`)} key={issue.id} className="flex items-start justify-between p-2 w-full text-left hover:bg-gray-50 rounded-lg transition-colors cursor-pointer">
                                     <div className="flex-1">
-                                        <p className="text-[#212121] font-medium text-[12px] leading-4">
+                                        <p className="text-[var(--echo-text-primary)] font-medium text-[12px] leading-4">
                                             {issue.title}
                                         </p>
-                                        <p className="text-[#f49b31] text-[10px] leading-3.5">
+                                        <p className="text-[var(--echo-text-f49b31)] text-[10px] leading-3.5">
                                             {issue.postedTime}
                                         </p>
                                     </div>
-                                    <div className="ml-2 flex shrink-0 items-center gap-1 text-[#f49b31] font-semibold text-[12px]">
-                                        <SurgeIcon width={9} height={12} fill="#F49B31" />
+                                    <div className="ml-2 flex shrink-0 items-center gap-1 text-[var(--echo-text-f49b31)] font-semibold text-[12px]">
+                                        <SurgeIcon width={9} height={12} fill="var(--echo-text-f49b31)" />
                                         {issue.count}
                                     </div>
                                 </button>

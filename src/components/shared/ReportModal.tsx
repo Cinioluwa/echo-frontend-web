@@ -34,43 +34,43 @@ const OFFENSE_OPTIONS: OffenseOption[] = [
     id: "Inappropriate content",
     label: "Inappropriate content",
     icon: EyeOff,
-    bgClass: "bg-[#FFD7D7]",
-    textClass: "text-[#B01212]",
+    bgClass: "bg-[var(--echo-bg-ffd7d7)]",
+    textClass: "text-[var(--echo-text-b01212)]",
   },
   {
     id: "Threats",
     label: "Threats",
     icon: AlertOctagon,
-    bgClass: "bg-[#FFD7D7]",
-    textClass: "text-[#B01212]",
+    bgClass: "bg-[var(--echo-bg-ffd7d7)]",
+    textClass: "text-[var(--echo-text-b01212)]",
   },
   {
     id: "Harassment",
     label: "Harassment",
     icon: Frown,
-    bgClass: "bg-[#FFD6A5]",
-    textClass: "text-[#A3651E]",
+    bgClass: "bg-[var(--echo-bg-ffd6a5)]",
+    textClass: "text-[var(--echo-text-a3651e)]",
   },
   {
     id: "Misinformation",
     label: "Misinformation",
     icon: XCircle,
-    bgClass: "bg-[#FFD6A5]",
-    textClass: "text-[#A3651E]",
+    bgClass: "bg-[var(--echo-bg-ffd6a5)]",
+    textClass: "text-[var(--echo-text-a3651e)]",
   },
   {
     id: "Other",
     label: "Other",
     icon: MoreHorizontal,
-    bgClass: "bg-[#CACACA]",
-    textClass: "text-[#454545]",
+    bgClass: "bg-[var(--echo-bg-cacaca)]",
+    textClass: "text-[var(--echo-text-454545)]",
   },
   {
     id: "Spam",
     label: "Spam",
     icon: Megaphone,
-    bgClass: "bg-[#FFD6A5]",
-    textClass: "text-[#A3651E]",
+    bgClass: "bg-[var(--echo-bg-ffd6a5)]",
+    textClass: "text-[var(--echo-text-a3651e)]",
   },
 ];
 
@@ -169,7 +169,7 @@ const ReportModal: React.FC<ReportModalProps> = ({
       aria-labelledby="report-modal-title"
     >
       <div
-        className="bg-white rounded-[20px] p-5 sm:p-7 w-full max-w-[560px] shadow-2xl border border-black/10 relative flex flex-col gap-4 sm:gap-5"
+        className="bg-[var(--echo-surface)] rounded-[20px] p-5 sm:p-7 w-full max-w-[560px] shadow-2xl border border-black/10 relative flex flex-col gap-4 sm:gap-5"
         onClick={(e) => e.stopPropagation()}
       >
         {/* ─── Header: Flag Icon + Title ─── */}
@@ -185,14 +185,14 @@ const ReportModal: React.FC<ReportModalProps> = ({
           >
             <path
               d="M5 65V41M5 41V11M5 41L12.412 39.5177C17.3636 38.5274 22.4963 38.9984 27.1847 40.874C32.2655 42.9062 37.8572 43.2857 43.166 41.9585L43.8092 41.7977C45.6845 41.3288 47 39.644 47 37.7111V15.6101C47 13.2684 44.7995 11.5502 42.5276 12.1181C37.634 13.3415 32.4791 12.9917 27.7958 11.1183L27.1847 10.8739C22.4963 8.99852 17.3636 8.52728 12.412 9.51761L5 11M5 11V5"
-              stroke="#F49B31"
+              stroke="var(--echo-text-f49b31)"
               strokeWidth="9"
               strokeLinecap="round"
             />
           </svg>
           <h2
             id="report-modal-title"
-            className="text-[22px] sm:text-[28px] font-['Poppins',sans-serif] font-semibold text-[#000000] text-center tracking-tight"
+            className="text-[22px] sm:text-[28px] font-['Poppins',sans-serif] font-semibold text-[var(--echo-text-primary)] text-center tracking-tight"
           >
             Report the User?
           </h2>
@@ -206,10 +206,10 @@ const ReportModal: React.FC<ReportModalProps> = ({
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-4 sm:gap-5">
           {/* ─── Offense Box ─── */}
-          <div className="border border-[#626665] rounded-[10px] p-3 sm:p-4 bg-white flex flex-col gap-2.5">
+          <div className="border border-[var(--echo-border-626665)] rounded-[10px] p-3 sm:p-4 bg-[var(--echo-surface)] flex flex-col gap-2.5">
             {/* Desktop Layout: static 2-column grid of options */}
             <div className="hidden sm:block">
-              <span className="block font-['Poppins',sans-serif] font-semibold text-[14px] text-black mb-3">
+              <span className="block font-['Poppins',sans-serif] font-semibold text-[14px] text-[var(--echo-text-primary)] mb-3">
                 Offense:
               </span>
               <div className="grid grid-cols-2 gap-x-6 sm:gap-x-8 gap-y-3">
@@ -224,8 +224,8 @@ const ReportModal: React.FC<ReportModalProps> = ({
                       <div
                         className={`w-[18px] h-[18px] rounded-[4px] border flex items-center justify-center transition-colors shrink-0 ${
                           isChecked
-                            ? "bg-[#F49B31] border-[#F49B31] text-white"
-                            : "border-black/40 bg-white group-hover:border-black/60"
+                            ? "bg-[var(--echo-accent)] border-[var(--echo-border-f49b31)] text-[var(--echo-text-on-accent)]"
+                            : "border-black/40 bg-[var(--echo-surface)] group-hover:border-black/60"
                         }`}
                       >
                         {isChecked && (
@@ -255,13 +255,13 @@ const ReportModal: React.FC<ReportModalProps> = ({
             {/* Mobile Layout: Expandable Dropdown with listed options when closed */}
             <div className="sm:hidden flex flex-col gap-2" ref={mobileDropdownRef}>
               <div className="flex items-center justify-between">
-                <span className="font-['Poppins',sans-serif] font-semibold text-[13px] text-black">
+                <span className="font-['Poppins',sans-serif] font-semibold text-[13px] text-[var(--echo-text-primary)]">
                   Offense:
                 </span>
                 <button
                   type="button"
                   onClick={() => setIsMobileDropdownOpen((prev) => !prev)}
-                  className="flex items-center gap-1.5 text-xs text-[#626665] font-['Poppins',sans-serif] hover:text-black transition-colors cursor-pointer py-0.5 px-1.5 rounded"
+                  className="flex items-center gap-1.5 text-xs text-[var(--echo-text-secondary)] font-['Poppins',sans-serif] hover:text-[var(--echo-text-primary)] transition-colors cursor-pointer py-0.5 px-1.5 rounded"
                 >
                   <span>
                     {selectedOffenses.length === 0
@@ -309,8 +309,8 @@ const ReportModal: React.FC<ReportModalProps> = ({
                           <div
                             className={`w-[18px] h-[18px] rounded-[4px] border flex items-center justify-center transition-colors shrink-0 ${
                               isChecked
-                                ? "bg-[#F49B31] border-[#F49B31] text-white"
-                                : "border-black/40 bg-white"
+                                ? "bg-[var(--echo-accent)] border-[var(--echo-border-f49b31)] text-[var(--echo-text-on-accent)]"
+                                : "border-black/40 bg-[var(--echo-surface)]"
                             }`}
                           >
                             {isChecked && (
@@ -339,8 +339,8 @@ const ReportModal: React.FC<ReportModalProps> = ({
           </div>
 
           {/* ─── Description Box ─── */}
-          <div className="border border-[#626665] rounded-[10px] px-3.5 py-2.5 flex flex-col sm:flex-row sm:items-start gap-1 sm:gap-2 bg-white focus-within:border-black transition-colors">
-            <span className="font-['Poppins',sans-serif] font-semibold text-[13px] sm:text-[14px] text-black shrink-0 sm:pt-0.5">
+          <div className="border border-[var(--echo-border-626665)] rounded-[10px] px-3.5 py-2.5 flex flex-col sm:flex-row sm:items-start gap-1 sm:gap-2 bg-[var(--echo-surface)] focus-within:border-black transition-colors">
+            <span className="font-['Poppins',sans-serif] font-semibold text-[13px] sm:text-[14px] text-[var(--echo-text-primary)] shrink-0 sm:pt-0.5">
               Description :
             </span>
             <textarea
@@ -349,7 +349,7 @@ const ReportModal: React.FC<ReportModalProps> = ({
               onFocus={() => setIsMobileDropdownOpen(false)}
               placeholder="“Add more details or context (optional)”"
               rows={2}
-              className="w-full bg-transparent outline-none text-xs sm:text-sm text-[#060B13] placeholder:italic placeholder:text-[#7D7D7D] resize-none font-['Poppins',sans-serif] min-h-[46px] leading-relaxed"
+              className="w-full bg-transparent outline-none text-xs sm:text-sm text-[var(--echo-text-primary)] placeholder:italic placeholder:text-[var(--echo-text-7d7d7d)] resize-none font-['Poppins',sans-serif] min-h-[46px] leading-relaxed"
               disabled={loading}
             />
           </div>
@@ -362,7 +362,7 @@ const ReportModal: React.FC<ReportModalProps> = ({
                 loading ||
                 (selectedOffenses.length === 0 && !reason.trim())
               }
-              className="flex-1 h-[47px] bg-[#F49B31] text-white hover:bg-[#d88429] font-['Poppins',sans-serif] font-medium text-[14px] rounded-[12.75px] flex items-center justify-center transition-colors cursor-pointer disabled:opacity-50 shadow-xs"
+              className="flex-1 h-[47px] bg-[var(--echo-accent)] text-[var(--echo-text-on-accent)] hover:bg-[var(--echo-bg-d88429)] font-['Poppins',sans-serif] font-medium text-[14px] rounded-[12.75px] flex items-center justify-center transition-colors cursor-pointer disabled:opacity-50 shadow-xs"
             >
               {loading ? (
                 <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
@@ -374,7 +374,7 @@ const ReportModal: React.FC<ReportModalProps> = ({
               type="button"
               onClick={handleClose}
               disabled={loading}
-              className="flex-1 h-[47px] bg-[#FEF5EA] border-[1.5px] border-[#F49B31] text-[#F49B31] hover:bg-[#FDEBD0] font-['Poppins',sans-serif] font-medium text-[14px] rounded-[12.75px] flex items-center justify-center transition-colors cursor-pointer disabled:opacity-50"
+              className="flex-1 h-[47px] bg-[var(--echo-surface-soft)] border-[1.5px] border-[var(--echo-border-f49b31)] text-[var(--echo-text-f49b31)] hover:bg-[var(--echo-bg-fdebd0)] font-['Poppins',sans-serif] font-medium text-[14px] rounded-[12.75px] flex items-center justify-center transition-colors cursor-pointer disabled:opacity-50"
             >
               Cancel
             </button>

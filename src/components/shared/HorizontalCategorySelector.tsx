@@ -32,7 +32,7 @@ const HorizontalCategorySelector = ({
 
     if (isLoading) {
         return (
-            <div className="flex items-center justify-center py-4 text-sm text-[#7D7D7D]">
+            <div className="flex items-center justify-center py-4 text-sm text-[var(--echo-text-7d7d7d)]">
                 Loading categories...
             </div>
         );
@@ -56,8 +56,8 @@ const HorizontalCategorySelector = ({
                 ${isFirst ? "rounded-l-[25px]" : ""}
                 ${isLast ? "rounded-r-[25px]" : ""}
                 ${isSelected
-                                    ? "bg-[#F49B31] text-white shadow-md"
-                                    : "bg-[#FEF5EA] text-[#454545] hover:bg-[#f2e8d9]"
+                                    ? "bg-[var(--echo-accent)] text-[var(--echo-text-on-accent)] shadow-md"
+                                    : "bg-[var(--echo-surface-soft)] text-[var(--echo-text-454545)] hover:bg-[var(--echo-bg-f2e8d9)]"
                                 }
               `}
                             type="button"

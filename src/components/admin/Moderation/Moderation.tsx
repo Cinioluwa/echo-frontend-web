@@ -115,15 +115,15 @@ const Moderation: React.FC<ModerationProps> = ({ mode = "admin" }) => {
   };
 
   return (
-    <div className={`w-full relative ${isRep ? "" : "min-h-screen bg-[#FCFCFC]"}`} data-node-id="moderation-page">
+    <div className={`w-full relative ${isRep ? "" : "min-h-screen bg-[var(--echo-bg-fcfcfc)]"}`} data-node-id="moderation-page">
       <ToastContainer toasts={toasts} onDismiss={removeToast} />
       <div className={`m-0 min-w-0 ${isRep ? "" : isSidebarCollapsed ? "min-[1131px]:ms-[102px]" : "min-[1131px]:ms-[230px]"} flex flex-col gap-4 sm:gap-6 items-start px-3 sm:px-6 py-6 sm:py-8 relative transition-all duration-300`}>
         <div className="flex flex-col gap-1 sm:gap-2 items-start relative w-full">
-          <h1 className={`${isRep ? "block" : "hidden min-[1131px]:block"} font-poppins font-bold text-[24px] sm:text-[32px] leading-normal text-black`}>
+          <h1 className={`${isRep ? "block" : "hidden min-[1131px]:block"} font-poppins font-bold text-[24px] sm:text-[32px] leading-normal text-[var(--echo-text-primary)]`}>
             Moderation
           </h1>
           {!isRep && <AdminHeader title="Moderation" />}
-          <p className="font-poppins font-medium text-[13px] sm:text-[16px] leading-normal text-[#8b8e8d]">
+          <p className="font-poppins font-medium text-[13px] sm:text-[16px] leading-normal text-[var(--echo-text-secondary)]">
             Flagged posts from your community awaiting your review
           </p>
         </div>
@@ -152,8 +152,8 @@ const Moderation: React.FC<ModerationProps> = ({ mode = "admin" }) => {
               key={f}
               onClick={() => setActiveFilter(f)}
               className={`shrink-0 whitespace-nowrap px-3 py-1.5 rounded-lg font-poppins font-semibold text-[12px] transition-colors ${activeFilter === f
-                ? "bg-[#f49b31] text-white"
-                : "bg-white border border-[#f49b31] text-[#f49b31] hover:bg-[#fef5ea]"
+                ? "bg-[var(--echo-accent)] text-[var(--echo-text-on-accent)]"
+                : "bg-[var(--echo-surface)] border border-[var(--echo-border-f49b31)] text-[var(--echo-text-f49b31)] hover:bg-[var(--echo-surface-soft)]"
                 }`}
             >
               {f === "all" ? "All" : f === "pending" ? "Pending" : f === "resolved" ? "Resolved" : "Dismissed"}

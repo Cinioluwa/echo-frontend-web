@@ -50,12 +50,17 @@ const UserAvatar = ({
     className = "",
     initialsOnly = false,
     responsive = false,
-    bgColor = "bg-[#f49b31]",
-    textColor = "text-white",
+    bgColor = "bg-[var(--echo-accent)]",
+    textColor,
     pictureUrl,
 }: UserAvatarProps) => {
     const [imageLoadError, setImageLoadError] = useState(false);
     const activePicture = pictureUrl || user?.profilePicture || "";
+    const fallbackTextColor =
+        textColor ??
+        (bgColor === "bg-[var(--echo-sidebar)]"
+            ? "text-[var(--echo-text-on-sidebar)]"
+            : "text-[var(--echo-text-on-accent)]");
 
     useEffect(() => {
         setImageLoadError(false);
@@ -85,7 +90,7 @@ const UserAvatar = ({
             <div
                 className={`${sizeClass} rounded-full ${bgColor} flex items-center justify-center overflow-hidden shrink-0 ${className}`}
             >
-                <User className={`w-2/3 h-2/3 ${textColor}`} />
+                <User className={`w-2/3 h-2/3 ${fallbackTextColor}`} />
             </div>
         );
     }
@@ -113,7 +118,7 @@ const UserAvatar = ({
     // Fallback to initials
     return (
         <div
-            className={`${sizeClass} rounded-full ${bgColor} flex items-center justify-center overflow-hidden shrink-0 font-semibold ${textColor} ${className}`}
+            className={`${sizeClass} rounded-full ${bgColor} flex items-center justify-center overflow-hidden shrink-0 font-semibold ${fallbackTextColor} ${className}`}
         >
             {initials}
         </div>

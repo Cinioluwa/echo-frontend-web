@@ -139,7 +139,7 @@ const UnifiedPingCard = ({
     <>
       <div
         className={[
-          "bg-[#FEFEFE] rounded-[10px] px-2.5 sm:px-4 md:px-5 py-2.5 sm:py-3 md:py-[15px] flex flex-col gap-[15px] cursor-pointer hover:shadow-sm transition-shadow w-full overflow-hidden",
+          "bg-[var(--echo-surface)] rounded-[10px] px-2.5 sm:px-4 md:px-5 py-2.5 sm:py-3 md:py-[15px] flex flex-col gap-[15px] cursor-pointer hover:shadow-sm transition-shadow w-full overflow-hidden",
           isHistoryContext ? "max-w-full min-w-0" : "",
           "text-wrap",
         ].join(" ")}
@@ -175,7 +175,7 @@ const UnifiedPingCard = ({
                 }
                 size="lg"
                 responsive
-                bgColor="bg-[#FFC37B]"
+                bgColor="bg-[var(--echo-sidebar)]"
                 className="shrink-0"
                 pictureUrl={
                   currentPing.isAnonymous && currentPing.anonymousProfilePicture
@@ -193,11 +193,11 @@ const UnifiedPingCard = ({
                 ].join(" ")}
               >
                 <span
-                  className="font-['Poppins',sans-serif] font-semibold text-[clamp(12px,3vw,15px)] text-black leading-normal truncate whitespace-nowrap max-w-[95px] xs:max-w-[140px] sm:max-w-none"
+                  className="font-['Poppins',sans-serif] font-semibold text-[clamp(12px,3vw,15px)] text-[var(--echo-text-primary)] leading-normal truncate whitespace-nowrap max-w-[95px] xs:max-w-[140px] sm:max-w-none"
                 >
                   {authorName}
                 </span>
-                <span className="font-['Poppins',sans-serif] font-medium text-[clamp(10px,2.4vw,13px)] text-[#8B8E8D] leading-normal whitespace-nowrap">
+                <span className="font-['Poppins',sans-serif] font-medium text-[clamp(10px,2.4vw,13px)] text-[var(--echo-text-secondary)] leading-normal whitespace-nowrap">
                   {timestamp}
                 </span>
               </div>
@@ -250,7 +250,7 @@ const UnifiedPingCard = ({
                   className="w-[13px] h-[13px] md:w-5 md:h-5 object-contain shrink-0"
                 />
               )}
-              <span className="font-['Poppins',sans-serif] font-medium text-[clamp(11px,2.8vw,15px)] text-[#171717] truncate">
+              <span className="font-['Poppins',sans-serif] font-medium text-[clamp(11px,2.8vw,15px)] text-[var(--echo-text-primary)] truncate">
                 {categoryName}
               </span>
             </div>
@@ -264,12 +264,12 @@ const UnifiedPingCard = ({
             isHistoryContext ? "min-w-0" : "",
           ].join(" ")}
         >
-          <h3 className="font-['Poppins',sans-serif] font-semibold text-[clamp(13px,3.1vw,16px)] text-black leading-normal wrap-break-words overflow-hidden">
+          <h3 className="font-['Poppins',sans-serif] font-semibold text-[clamp(13px,3.1vw,16px)] text-[var(--echo-text-primary)] leading-normal wrap-break-words overflow-hidden">
             {currentPing.title}
           </h3>
           {currentPing.content && (
             <p
-              className="font-['Poppins',sans-serif] font-medium text-[clamp(11px,2.7vw,14px)] text-black/70 leading-relaxed wrap-break-words overflow-hidden line-clamp-3 whitespace-pre-wrap"
+              className="font-['Poppins',sans-serif] font-medium text-[clamp(11px,2.7vw,14px)] text-[var(--echo-text-primary)]/70 leading-relaxed wrap-break-words overflow-hidden line-clamp-3 whitespace-pre-wrap"
             >
               {currentPing.content}
             </p>
@@ -293,12 +293,12 @@ const UnifiedPingCard = ({
             onClick={handleSurge}
             disabled={isToggling}
             aria-label={hasSurged ? "Remove surge" : "Surge"}
-            className={`flex items-center gap-[5px] px-2.5 md:px-3 py-1 md:py-[5px] rounded-[15px] border border-black cursor-pointer transition-colors disabled:opacity-50 ${hasSurged ? "bg-[#F49B31] text-white" : "bg-[#FEF5EA] text-[#4A504E]"}`}
+            className={`flex items-center gap-[5px] px-2.5 md:px-3 py-1 md:py-[5px] rounded-[15px] border border-black cursor-pointer transition-colors disabled:opacity-50 ${hasSurged ? "bg-[var(--echo-accent)] text-[var(--echo-text-on-accent)]" : "bg-[var(--echo-surface-soft)] text-[var(--echo-text-4a504e)]"}`}
           >
             <SurgeIcon
               width={12}
               height={16}
-              fill={hasSurged ? "#FFFFFF" : "#F49B31"}
+              fill={hasSurged ? "var(--echo-text-ffffff)" : "var(--echo-text-f49b31)"}
             />
             <span className="font-['Poppins',sans-serif] font-semibold text-[13px] md:text-[14px] leading-normal">
               {surgeCount}
@@ -317,7 +317,7 @@ const UnifiedPingCard = ({
                 className="h-[22px] w-5 md:h-[27px] md:w-[25px]"
                 alt="waveIcon"
               />
-              <span className="font-['Inter',sans-serif] font-medium text-[clamp(10px,2.5vw,14px)] text-[#63637B] leading-5 whitespace-nowrap">
+              <span className="font-['Inter',sans-serif] font-medium text-[clamp(10px,2.5vw,14px)] text-[var(--echo-text-63637b)] leading-5 whitespace-nowrap">
                 {waveCount} <span className="md:hidden">Waves</span>
                 <span className="hidden md:inline">Waves Proposed</span>
               </span>
@@ -326,14 +326,14 @@ const UnifiedPingCard = ({
             {/* Comment count */}
             <button
               onClick={handleCommentandWaveClick}
-              className="flex items-center gap-1 hover:text-[#F49B31] transition-colors cursor-pointer"
+              className="flex items-center gap-1 hover:text-[var(--echo-text-f49b31)] transition-colors cursor-pointer"
             >
               <img
                 src={commentIcon}
                 className="h-[22px] w-5 md:h-[27px] md:w-[25px]"
                 alt="commentIcon"
               />
-              <span className="font-['Inter',sans-serif] font-medium text-[clamp(10px,2.5vw,14px)] text-[#63637B] leading-5 whitespace-nowrap">
+              <span className="font-['Inter',sans-serif] font-medium text-[clamp(10px,2.5vw,14px)] text-[var(--echo-text-63637b)] leading-5 whitespace-nowrap">
                 {commentCount} Comments
               </span>
             </button>

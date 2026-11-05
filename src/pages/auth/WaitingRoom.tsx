@@ -112,7 +112,7 @@ const WaitingRoom: React.FC = () => {
             <AuthLayout>
                 <AuthCard>
                     <div className="w-full text-center py-10">
-                        <p className="text-[#4a504e] text-[14px]" style={{ fontFamily: 'Poppins, sans-serif' }}>
+                        <p className="text-[var(--echo-text-4a504e)] text-[14px]" style={{ fontFamily: 'Poppins, sans-serif' }}>
                             Loading...
                         </p>
                     </div>
@@ -126,7 +126,7 @@ const WaitingRoom: React.FC = () => {
             <AuthCard className="px-[30px] sm:px-[50px] py-[50px] gap-5 sm:gap-[30px]">
                 {/* Icon Box - Orange circle with white checkmark */}
                 <div
-                    className="flex items-center justify-center rounded-full bg-[#f49b31] w-[70px] h-[70px] sm:w-[100px] sm:h-[100px] p-[5.6px]"
+                    className="flex items-center justify-center rounded-full bg-[var(--echo-accent)] w-[70px] h-[70px] sm:w-[100px] sm:h-[100px] p-[5.6px]"
                     style={{ flexShrink: 0 }}
                 >
                     <div className="w-10 h-10 sm:w-[60px] sm:h-[60px]">
@@ -137,7 +137,7 @@ const WaitingRoom: React.FC = () => {
                 {/* Header Section */}
                 <div className="flex flex-col gap-2.5 items-center w-full">
                     <h1
-                        className="text-[24px] sm:text-[28px] font-semibold text-black text-center leading-[30px] sm:leading-9"
+                        className="text-[24px] sm:text-[28px] font-semibold text-[var(--echo-text-primary)] text-center leading-[30px] sm:leading-9"
                         style={{ fontFamily: 'Poppins, sans-serif' }}
                     >
                         You're in line...
@@ -147,7 +147,7 @@ const WaitingRoom: React.FC = () => {
                 {/* Message Section */}
                 <div className="flex flex-col gap-2.5 items-center w-full">
                     <p
-                        className="text-[13px] sm:text-[14px] text-[#4a504e] text-center leading-[21px] font-medium opacity-[0.69]"
+                        className="text-[13px] sm:text-[14px] text-[var(--echo-text-4a504e)] text-center leading-[21px] font-medium opacity-[0.69]"
                         style={{ fontFamily: 'Poppins, sans-serif' }}
                     >
                         Your request to join {organizationName} is pending approval. We'll notify you once you're in.
@@ -156,21 +156,21 @@ const WaitingRoom: React.FC = () => {
 
                 {/* Footer Section - Terms and Privacy */}
                 <div className="flex flex-col gap-[15px] items-center px-5 w-full mt-2.5">
-                    <div className="flex gap-1 text-[9px] sm:text-[14px] text-[#f49b31] leading-3.5 font-medium" style={{ fontFamily: 'Poppins, sans-serif' }}>
+                    <div className="flex gap-1 text-[9px] sm:text-[14px] text-[var(--echo-text-f49b31)] leading-3.5 font-medium" style={{ fontFamily: 'Poppins, sans-serif' }}>
                         <a
                             href="https://www.echo-ng.com/terms"
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="hover:text-[#e08a2a] transition-colors"
+                            className="hover:text-[var(--echo-text-e08a2a)] transition-colors"
                         >
                             Terms of Use
                         </a>
-                        <span className="text-[#838383]">and</span>
+                        <span className="text-[var(--echo-text-secondary)]">and</span>
                         <a
                             href="https://www.echo-ng.com/privacy"
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="hover:text-[#e08a2a] transition-colors"
+                            className="hover:text-[var(--echo-text-e08a2a)] transition-colors"
                         >
                             Privacy Policy
                         </a>

@@ -85,7 +85,7 @@ const InlineWavePreview = ({
         <>
             <div className="h-px w-full bg-black/10" />
             <div className="flex flex-col gap-[13px] w-full max-w-full">
-            <p className="font-['Poppins',sans-serif] font-medium text-[clamp(12px,2.8vw,13px)] text-[#171717] w-fit">
+            <p className="font-['Poppins',sans-serif] font-medium text-[clamp(12px,2.8vw,13px)] text-[var(--echo-text-primary)] w-fit">
                 Waves
             </p>
             <div className="flex flex-col xl:flex-row gap-2.5 md:gap-5 w-full">
@@ -104,7 +104,7 @@ const InlineWavePreview = ({
                     return (
                         <div
                             key={wave.id}
-                            className="bg-[#FFC37B] flex-1 flex items-center justify-between px-[7px] py-2 md:py-2.5 rounded-xl min-h-[52px] md:h-[55px] min-w-0"
+                            className="bg-[var(--echo-sidebar)] flex-1 flex items-center justify-between px-[7px] py-2 md:py-2.5 rounded-xl min-h-[52px] md:h-[55px] min-w-0"
                         >
                             {/* Author info */}
                             <div className="flex items-center gap-1.5 shrink-0">
@@ -112,7 +112,7 @@ const InlineWavePreview = ({
                                     user={typeof wave.author === "object" ? wave.author : null}
                                     size="sm"
                                     responsive
-                                    bgColor="bg-[#F49B31]"
+                                    bgColor="bg-[var(--echo-accent)]"
                                     pictureUrl={
                                         wave.isAnonymous && wave.anonymousProfilePicture
                                             ? wave.anonymousProfilePicture
@@ -120,10 +120,10 @@ const InlineWavePreview = ({
                                     }
                                 />
                                 <div className="flex flex-col gap-[3px] md:gap-[5px]">
-                                    <span className="font-['Poppins',sans-serif] font-semibold text-[clamp(8px,2.2vw,11px)] text-black whitespace-nowrap leading-normal">
+                                    <span className="font-['Poppins',sans-serif] font-semibold text-[clamp(8px,2.2vw,11px)] text-[var(--echo-text-primary)] whitespace-nowrap leading-normal">
                                         {authorName}
                                     </span>
-                                    <span className="font-['Poppins',sans-serif] font-medium text-[clamp(7px,2vw,9px)] text-[#454545] whitespace-nowrap leading-normal">
+                                    <span className="font-['Poppins',sans-serif] font-medium text-[clamp(7px,2vw,9px)] text-[var(--echo-text-454545)] whitespace-nowrap leading-normal">
                                         {timestamp}
                                     </span>
                                 </div>
@@ -131,15 +131,15 @@ const InlineWavePreview = ({
 
                             {/* Solution text */}
                             <div className="flex-1 text-center px-2 min-w-0  text-ellipsis line-clamp-2 truncate overflow-y-scroll">
-                                <p className="font-['Poppins',sans-serif] font-medium md:font-semibold text-wrap text-[clamp(9px,2.4vw,10px)] text-black truncate leading-normal ">
+                                <p className="font-['Poppins',sans-serif] font-medium md:font-semibold text-wrap text-[clamp(9px,2.4vw,10px)] text-[var(--echo-text-primary)] truncate leading-normal ">
                                     {wave.solution.length > 30 ? wave.solution.substring(0, 30) + "..." : wave.solution}
                                 </p>
                             </div>
 
                             {/* Surge count */}
                             <div className="flex items-center gap-[5px] shrink-0">
-                                <SurgeIcon width={12} height={16} fill="#F49B31" />
-                                <span className="font-['Poppins',sans-serif] font-semibold text-[clamp(12px,2.8vw,14px)] text-[#4A504E] leading-normal">
+                                <SurgeIcon width={12} height={16} fill="var(--echo-text-f49b31)" />
+                                <span className="font-['Poppins',sans-serif] font-semibold text-[clamp(12px,2.8vw,14px)] text-[var(--echo-text-4a504e)] leading-normal">
                                     {wave.surgeCount || wave._count?.surges || 0}
                                 </span>
                             </div>

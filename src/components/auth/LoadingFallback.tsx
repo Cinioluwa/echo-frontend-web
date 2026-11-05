@@ -10,10 +10,10 @@ const LoadingFallback: React.FC = () => {
         <div
             className="min-h-screen flex items-center justify-center"
             style={{
-                background: 'linear-gradient(135deg, #f5ebe0 0%, #fef5ea 100%)',
+                background: 'linear-gradient(135deg, var(--echo-page) 0%, var(--echo-surface-soft) 100%)',
                 backgroundImage: `
-                    radial-gradient(circle, #ffc37b 1px, transparent 1px),
-                    radial-gradient(circle, #ffc37b 1px, transparent 1px)
+                    radial-gradient(circle, var(--echo-sidebar) 1px, transparent 1px),
+                    radial-gradient(circle, var(--echo-sidebar) 1px, transparent 1px)
                 `,
                 backgroundSize: '50px 50px, 40px 40px',
                 backgroundPosition: '0 0, 25px 25px'
@@ -22,11 +22,11 @@ const LoadingFallback: React.FC = () => {
             aria-live="polite"
             aria-label="Loading"
         >
-            <div className="bg-white rounded-[30px] px-[50px] py-[50px] shadow-lg animate-pulse">
+            <div className="bg-[var(--echo-surface)] rounded-[30px] px-[50px] py-[50px] shadow-lg animate-pulse">
                 <div className="flex flex-col items-center gap-4">
                     {/* Spinning loader */}
                     <svg
-                        className="animate-spin h-12 w-12 text-[#f49b31]"
+                        className="animate-spin h-12 w-12 text-[var(--echo-text-f49b31)]"
                         xmlns="http://www.w3.org/2000/svg"
                         fill="none"
                         viewBox="0 0 24 24"
@@ -47,7 +47,7 @@ const LoadingFallback: React.FC = () => {
                         ></path>
                     </svg>
                     <p
-                        className="text-[#4a504e] text-sm font-medium"
+                        className="text-[var(--echo-text-4a504e)] text-sm font-medium"
                         style={{ fontFamily: 'Poppins, sans-serif' }}
                     >
                         Loading...

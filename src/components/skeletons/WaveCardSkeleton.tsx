@@ -3,8 +3,8 @@ import "react-loading-skeleton/dist/skeleton.css";
 
 const WaveCardSkeleton = () => {
   return (
-    <SkeletonTheme baseColor="#e7e5e4" highlightColor="#f8fafc">
-      <div className="bg-white rounded-[10px] px-[27.5px] py-[23px] flex flex-col gap-[17px] w-full min-w-full">
+    <SkeletonTheme baseColor="var(--echo-bg-e7e5e4)" highlightColor="var(--echo-bg-f8fafc)">
+      <div className="bg-[var(--echo-surface)] rounded-[10px] px-[27.5px] py-[23px] flex flex-col gap-[17px] w-full min-w-full">
         {/* Header */}
         <div className="flex items-center justify-between">
           {/* Avatar + name */}

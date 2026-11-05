@@ -32,7 +32,7 @@ const EchoLogo: React.FC<EchoLogoProps> = ({ className = "", size = "md" }) => {
 
             {/* Echo Text */}
             <span
-                className={`font-bold ${currentSize.text} text-[#ffc37b] leading-none`}
+                className={`font-bold ${currentSize.text} text-[var(--echo-text-ffc37b)] leading-none`}
                 style={{ fontFamily: 'Poppins, sans-serif', fontWeight: 700 }}
             >
                 Echo

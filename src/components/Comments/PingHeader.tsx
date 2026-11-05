@@ -21,8 +21,8 @@ const PingHeader = ({ authorName, timestamp, onClose }: Props) => {
 
                 {/* User details */}
                 <div className="flex flex-col items-start">
-                    <p className="text-sm font-semibold text-[#63637B]">{authorName}</p>
-                    <p className="text-xs text-[#9191A8]">
+                    <p className="text-sm font-semibold text-[var(--echo-text-63637b)]">{authorName}</p>
+                    <p className="text-xs text-[var(--echo-text-9191a8)]">
                         published Ping · {formatTimeAgo(timestamp)}
                     </p>
                 </div>

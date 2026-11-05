@@ -14,14 +14,14 @@ const AdminMobileNavBar = () => {
   return (
     <>
       <div className="h-[64px] min-[1131px]:hidden" aria-hidden="true" />
-      <div className="fixed left-3 right-3 top-[10px] z-30 rounded-[22px] bg-[#FFC37B]/95 shadow-lg backdrop-blur min-[1131px]:hidden">
+      <div className="fixed left-3 right-3 top-[10px] z-30 rounded-[22px] bg-[var(--echo-sidebar)]/95 shadow-lg backdrop-blur min-[1131px]:hidden">
         <div className="relative flex items-center justify-between gap-2 px-3 py-2">
           <button
             type="button"
             onClick={() => setMenuOpen(true)}
             aria-label="Open admin menu"
             aria-expanded={menuOpen}
-            className="flex h-[34px] w-[34px] shrink-0 items-center justify-center rounded-full bg-white shadow-sm transition-transform active:scale-95"
+            className="flex h-[34px] w-[34px] shrink-0 items-center justify-center rounded-full bg-[var(--echo-surface)] shadow-sm transition-transform active:scale-95"
           >
             <img src={menuBar} alt="" className="h-[17px] w-[17px] object-contain" />
           </button>
@@ -37,7 +37,7 @@ const AdminMobileNavBar = () => {
               className="h-[25px] w-[23px] brightness-0 contrast-200"
               alt=""
             />
-            <span className="font-['Poppins',sans-serif] text-[24px] font-bold leading-normal text-black">
+            <span className="font-['Poppins',sans-serif] text-[24px] font-bold leading-normal text-[var(--echo-text-primary)]">
               Echo
             </span>
           </button>

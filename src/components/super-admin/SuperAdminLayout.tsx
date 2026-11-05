@@ -16,7 +16,7 @@ const SuperAdminLayout: React.FC = () => {
   const title = getPageTitle(location.pathname);
 
   return (
-    <div className="flex h-screen w-full bg-[#fcf9f2] overflow-hidden">
+    <div className="flex h-screen w-full bg-[var(--echo-bg-fcf9f2)] overflow-hidden">
       <SuperAdminSideBar />
       <div className="flex-1 flex flex-col h-full overflow-hidden">
         <SuperAdminTopBar title={title} />

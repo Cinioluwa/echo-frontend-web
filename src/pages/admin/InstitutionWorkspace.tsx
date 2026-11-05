@@ -770,42 +770,42 @@ const InstitutionWorkspace = ({ mode = "admin" }: { mode?: "admin" | "rep" }) =>
   const tabClass = (tab: WorkspaceTab) =>
     `flex shrink-0 items-center gap-2 px-5 py-2.5 rounded-[12px] font-poppins font-semibold text-[13px] sm:text-[14px] border transition-all ${
       activeTab === tab
-        ? "bg-[#f49b31] border-[#f49b31] text-white shadow-md shadow-[#f49b31]/10"
-        : "bg-white border-[#ffd7a8] text-[#926b3d] hover:bg-[#fef5ea]"
+        ? "bg-[var(--echo-accent)] border-[var(--echo-border-f49b31)] text-[var(--echo-text-on-accent)] shadow-md shadow-[var(--echo-border-f49b31)]/10"
+        : "bg-[var(--echo-surface)] border-[var(--echo-border-ffd7a8)] text-[var(--echo-text-926b3d)] hover:bg-[var(--echo-surface-soft)]"
     }`;
 
   const inputClass =
-    "mt-1.5 block w-full rounded-xl border-2 border-[#FFC37B] bg-white px-4 py-2.5 font-['Inter',sans-serif] text-sm text-[#454545] outline-none transition focus:border-[#F49B31] focus:ring-2 focus:ring-[#FFC37B]/20";
+    "mt-1.5 block w-full rounded-xl border-2 border-[var(--echo-border-ffc37b)] bg-[var(--echo-surface)] px-4 py-2.5 font-['Inter',sans-serif] text-sm text-[var(--echo-text-454545)] outline-none transition focus:border-[var(--echo-border-f49b31)] focus:ring-2 focus:ring-[var(--echo-border-ffc37b)]/20";
   const primaryBtnClass =
-    "rounded-full bg-[#f49b31] px-6 py-2.5 font-poppins text-sm font-semibold text-white shadow-sm transition hover:bg-[#e8911a] disabled:cursor-wait disabled:opacity-50";
+    "rounded-full bg-[var(--echo-accent)] px-6 py-2.5 font-poppins text-sm font-semibold text-[var(--echo-text-on-accent)] shadow-sm transition hover:bg-[var(--echo-bg-e8911a)] disabled:cursor-wait disabled:opacity-50";
 
   const Shell = embedded ? React.Fragment : AdminPageProvider;
   const shellProps = embedded ? {} : { initialPage: "institution" as const };
 
   return (
     <Shell {...shellProps}>
-      <div className={embedded ? "w-full min-w-0" : "min-h-screen w-full min-w-0 bg-[#FCFCFC]"}>
+      <div className={embedded ? "w-full min-w-0" : "min-h-screen w-full min-w-0 bg-[var(--echo-bg-fcfcfc)]"}>
         {!embedded && <AdminLayout />}
         <main
           className={`min-w-0 ${
             embedded
               ? "pb-10"
-              : `min-h-screen bg-[#FCFCFC] px-4 py-6 sm:px-8 sm:py-8 pb-24 ${
+              : `min-h-screen bg-[var(--echo-bg-fcfcfc)] px-4 py-6 sm:px-8 sm:py-8 pb-24 ${
                   isSidebarCollapsed ? "min-[1131px]:ms-[102px]" : "min-[1131px]:ms-[230px]"
                 }`
           } transition-all duration-300`}
         >
           <div className="flex min-w-0 w-full flex-col items-start gap-6">
             {/* Header Row */}
-            <div className="flex flex-col gap-2 items-start relative w-full border-b border-[#ffd7a8] pb-4">
+            <div className="flex flex-col gap-2 items-start relative w-full border-b border-[var(--echo-border-ffd7a8)] pb-4">
               <div className="flex w-full flex-col items-start gap-1 sm:gap-2">
-                <h1 className={`${embedded ? "block" : "hidden min-[1131px]:block"} font-poppins font-bold text-[24px] sm:text-[32px] leading-normal text-black`}>
+                <h1 className={`${embedded ? "block" : "hidden min-[1131px]:block"} font-poppins font-bold text-[24px] sm:text-[32px] leading-normal text-[var(--echo-text-primary)]`}>
                   {isRepresentativeManager ? "Delegation & Scope" : "Institution"}
                 </h1>
                 {!embedded && (
                   <AdminHeader title={isRepresentativeManager ? "Delegation & Scope" : "Institution"} />
                 )}
-                <p className="font-poppins font-medium text-[13px] sm:text-[16px] leading-normal text-[#8b8e8d]">
+                <p className="font-poppins font-medium text-[13px] sm:text-[16px] leading-normal text-[var(--echo-text-secondary)]">
                   {isRepresentativeManager
                     ? "Manage representatives and the issues within their assigned scope."
                     : "Manage your institution, members, representative teams, categories, and posting rules."}
@@ -902,24 +902,24 @@ const InstitutionWorkspace = ({ mode = "admin" }: { mode?: "admin" | "rep" }) =>
             {loading ? (
               <div
                 role="status"
-                className="w-full rounded-[20px] border border-[#ffd7a8] bg-white p-12 text-center font-poppins text-[#8b8e8d]"
+                className="w-full rounded-[20px] border border-[var(--echo-border-ffd7a8)] bg-[var(--echo-surface)] p-12 text-center font-poppins text-[var(--echo-text-secondary)]"
               >
                 Loading institution workspace…
               </div>
             ) : (
               <div className="flex w-full flex-col gap-6">
                 {activeTab === "organization" && canManageOrganizationSettings && (
-                  <section className="rounded-[20px] border border-[#ffd7a8] bg-white p-5 sm:p-8">
+                  <section className="rounded-[20px] border border-[var(--echo-border-ffd7a8)] bg-[var(--echo-surface)] p-5 sm:p-8">
                     <GeneralSettings />
                   </section>
                 )}
                 {activeTab === "members" && canManageOrganizationSettings && (
-                  <section className="rounded-[20px] border border-[#ffd7a8] bg-white p-5 sm:p-8">
+                  <section className="rounded-[20px] border border-[var(--echo-border-ffd7a8)] bg-[var(--echo-surface)] p-5 sm:p-8">
                     <MemberManagement />
                   </section>
                 )}
                 {activeTab === "rules" && canManageOrganizationSettings && (
-                  <section className="rounded-[20px] border border-[#ffd7a8] bg-white p-5 sm:p-8">
+                  <section className="rounded-[20px] border border-[var(--echo-border-ffd7a8)] bg-[var(--echo-surface)] p-5 sm:p-8">
                     <RulesSettings />
                   </section>
                 )}
@@ -928,22 +928,22 @@ const InstitutionWorkspace = ({ mode = "admin" }: { mode?: "admin" | "rep" }) =>
                   <section className="flex flex-col gap-6 w-full animate-fade-in">
                     <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                       <div>
-                        <h2 className="font-poppins font-semibold text-[18px] text-[#212121]">
+                        <h2 className="font-poppins font-semibold text-[18px] text-[var(--echo-text-primary)]">
                           Academic Structure
                         </h2>
-                        <p className="font-poppins text-[12px] text-[#8b8e8d] mt-1">
+                        <p className="font-poppins text-[12px] text-[var(--echo-text-secondary)] mt-1">
                           Create colleges and organize their departments for your institution.
                         </p>
                       </div>
                     </div>
 
-                    <div className="rounded-[20px] border border-[#ffd7a8] bg-white p-6 shadow-sm">
+                    <div className="rounded-[20px] border border-[var(--echo-border-ffd7a8)] bg-[var(--echo-surface)] p-6 shadow-sm">
                       <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                         <div>
-                          <h3 className="font-poppins font-semibold text-[16px] text-[#212121]">
+                          <h3 className="font-poppins font-semibold text-[16px] text-[var(--echo-text-primary)]">
                             Colleges
                           </h3>
-                          <p className="mt-1 font-poppins text-xs text-[#8b8e8d]">
+                          <p className="mt-1 font-poppins text-xs text-[var(--echo-text-secondary)]">
                             Create colleges and assign departments to keep academic units organized.
                           </p>
                         </div>
@@ -962,23 +962,23 @@ const InstitutionWorkspace = ({ mode = "admin" }: { mode?: "admin" | "rep" }) =>
                         <div className="overflow-x-auto">
                           <table className="w-full min-w-[560px] border-collapse text-left font-['Inter',sans-serif] text-sm">
                             <thead>
-                              <tr className="border-b border-[#ffd7a8]/50 text-[#8b8e8d] font-poppins text-xs">
+                              <tr className="border-b border-[var(--echo-border-ffd7a8)]/50 text-[var(--echo-text-secondary)] font-poppins text-xs">
                                 <th className="pb-3 pr-4 font-semibold uppercase tracking-wider">College Name</th>
                                 <th className="pb-3 pr-4 font-semibold uppercase tracking-wider">Code</th>
                                 <th className="pb-3 pr-4 text-right font-semibold uppercase tracking-wider">Departments</th>
                                 <th className="pb-3 text-right font-semibold uppercase tracking-wider">Actions</th>
                               </tr>
                             </thead>
-                            <tbody className="divide-y divide-[#ffd7a8]/30">
+                            <tbody className="divide-y divide-[var(--echo-bg-ffd7a8)]/30">
                               {colleges.map((college) => (
-                                <tr key={college.id} className="transition-colors hover:bg-[#FEF5EA]/40">
-                                  <td className="py-3.5 pr-4 font-medium text-[#212121]">{college.name}</td>
+                                <tr key={college.id} className="transition-colors hover:bg-[var(--echo-surface-soft)]/40">
+                                  <td className="py-3.5 pr-4 font-medium text-[var(--echo-text-primary)]">{college.name}</td>
                                   <td className="py-3.5 pr-4">
-                                    <span className="inline-block rounded-md bg-[#FEF5EA] px-2.5 py-1 text-xs font-semibold text-[#F49B31]">
+                                    <span className="inline-block rounded-md bg-[var(--echo-surface-soft)] px-2.5 py-1 text-xs font-semibold text-[var(--echo-text-f49b31)]">
                                       {college.code}
                                     </span>
                                   </td>
-                                  <td className="py-3.5 pr-4 text-right font-semibold text-[#454545]">
+                                  <td className="py-3.5 pr-4 text-right font-semibold text-[var(--echo-text-454545)]">
                                     {departments.filter((department) => department.collegeId === college.id).length}
                                   </td>
                                   <td className="py-3.5 text-right">
@@ -986,7 +986,7 @@ const InstitutionWorkspace = ({ mode = "admin" }: { mode?: "admin" | "rep" }) =>
                                       type="button"
                                       aria-label={`Edit ${college.name}`}
                                       onClick={() => openCollegeEditor(college)}
-                                      className="rounded-full p-2 text-[#75420B] hover:bg-[#FEF5EA]"
+                                      className="rounded-full p-2 text-[var(--echo-text-75420b)] hover:bg-[var(--echo-surface-soft)]"
                                     >
                                       <Pencil size={16} />
                                     </button>
@@ -1005,19 +1005,19 @@ const InstitutionWorkspace = ({ mode = "admin" }: { mode?: "admin" | "rep" }) =>
                           </table>
                         </div>
                       ) : (
-                        <div className="rounded-xl bg-[#FEF5EA] p-6 text-center">
-                          <p className="font-poppins text-sm text-[#75420B]">No colleges added yet.</p>
+                        <div className="rounded-xl bg-[var(--echo-surface-soft)] p-6 text-center">
+                          <p className="font-poppins text-sm text-[var(--echo-text-75420b)]">No colleges added yet.</p>
                         </div>
                       )}
                     </div>
 
-                    <div className="rounded-[20px] border border-[#ffd7a8] bg-white p-6 shadow-sm">
+                    <div className="rounded-[20px] border border-[var(--echo-border-ffd7a8)] bg-[var(--echo-surface)] p-6 shadow-sm">
                       <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                         <div>
-                          <h3 className="font-poppins font-semibold text-[16px] text-[#212121]">
+                          <h3 className="font-poppins font-semibold text-[16px] text-[var(--echo-text-primary)]">
                             Departments
                           </h3>
-                          <p className="mt-1 font-poppins text-xs text-[#8b8e8d]">
+                          <p className="mt-1 font-poppins text-xs text-[var(--echo-text-secondary)]">
                             Add departments and optionally place each under its college.
                           </p>
                         </div>
@@ -1036,7 +1036,7 @@ const InstitutionWorkspace = ({ mode = "admin" }: { mode?: "admin" | "rep" }) =>
                         <div className="overflow-x-auto">
                           <table className="w-full min-w-[720px] border-collapse text-left font-['Inter',sans-serif] text-sm">
                             <thead>
-                              <tr className="border-b border-[#ffd7a8]/50 text-[#8b8e8d] font-poppins text-xs">
+                              <tr className="border-b border-[var(--echo-border-ffd7a8)]/50 text-[var(--echo-text-secondary)] font-poppins text-xs">
                                 <th className="pb-3 pr-4 font-semibold uppercase tracking-wider">
                                   Department Name
                                 </th>
@@ -1054,24 +1054,24 @@ const InstitutionWorkspace = ({ mode = "admin" }: { mode?: "admin" | "rep" }) =>
                                 </th>
                               </tr>
                             </thead>
-                            <tbody className="divide-y divide-[#ffd7a8]/30">
+                            <tbody className="divide-y divide-[var(--echo-bg-ffd7a8)]/30">
                               {departments.map((dept) => (
                                 <tr
                                   key={dept.id}
-                                  className="transition-colors hover:bg-[#FEF5EA]/40"
+                                  className="transition-colors hover:bg-[var(--echo-surface-soft)]/40"
                                 >
-                                  <td className="py-3.5 pr-4 font-medium text-[#212121]">
+                                  <td className="py-3.5 pr-4 font-medium text-[var(--echo-text-primary)]">
                                     {dept.name}
                                   </td>
                                   <td className="py-3.5 pr-4">
-                                    <span className="inline-block rounded-md bg-[#FEF5EA] px-2.5 py-1 text-xs font-semibold text-[#F49B31]">
+                                    <span className="inline-block rounded-md bg-[var(--echo-surface-soft)] px-2.5 py-1 text-xs font-semibold text-[var(--echo-text-f49b31)]">
                                       {dept.code}
                                     </span>
                                   </td>
-                                  <td className="py-3.5 pr-4 text-[#454545]">
+                                  <td className="py-3.5 pr-4 text-[var(--echo-text-454545)]">
                                     {dept.college?.code ?? "—"}
                                   </td>
-                                  <td className="py-3.5 text-right font-semibold text-[#454545]">
+                                  <td className="py-3.5 text-right font-semibold text-[var(--echo-text-454545)]">
                                     {dept._count?.pings ?? 0}
                                   </td>
                                   <td className="py-3.5 text-right">
@@ -1079,7 +1079,7 @@ const InstitutionWorkspace = ({ mode = "admin" }: { mode?: "admin" | "rep" }) =>
                                       type="button"
                                       aria-label={`Edit ${dept.name}`}
                                       onClick={() => openDepartmentEditor(dept)}
-                                      className="rounded-full p-2 text-[#75420B] hover:bg-[#FEF5EA]"
+                                      className="rounded-full p-2 text-[var(--echo-text-75420b)] hover:bg-[var(--echo-surface-soft)]"
                                     >
                                       <Pencil size={16} />
                                     </button>
@@ -1098,8 +1098,8 @@ const InstitutionWorkspace = ({ mode = "admin" }: { mode?: "admin" | "rep" }) =>
                           </table>
                         </div>
                       ) : (
-                        <div className="rounded-xl bg-[#FEF5EA] p-6 text-center">
-                          <p className="font-poppins text-sm text-[#75420B]">
+                        <div className="rounded-xl bg-[var(--echo-surface-soft)] p-6 text-center">
+                          <p className="font-poppins text-sm text-[var(--echo-text-75420b)]">
                             No departments added yet.
                           </p>
                         </div>
@@ -1113,10 +1113,10 @@ const InstitutionWorkspace = ({ mode = "admin" }: { mode?: "admin" | "rep" }) =>
                   <section className="flex flex-col gap-6 w-full animate-fade-in">
                     <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                       <div>
-                        <h2 className="font-poppins font-semibold text-[18px] text-[#212121]">
+                        <h2 className="font-poppins font-semibold text-[18px] text-[var(--echo-text-primary)]">
                           Representative Bodies & Committees
                         </h2>
-                        <p className="font-poppins text-[12px] text-[#8b8e8d] mt-1">
+                        <p className="font-poppins text-[12px] text-[var(--echo-text-secondary)] mt-1">
                           Official executive councils, hall committees, and departmental bodies. Click any body to inspect its assigned executives and metrics.
                         </p>
                       </div>
@@ -1137,14 +1137,14 @@ const InstitutionWorkspace = ({ mode = "admin" }: { mode?: "admin" | "rep" }) =>
                             <article
                               key={body.id}
                               onClick={() => setSelectedBody(body)}
-                              className="group cursor-pointer rounded-[20px] border border-[#ffd7a8] bg-white p-5 shadow-sm transition-all hover:border-[#F49B31] hover:shadow-md"
+                              className="group cursor-pointer rounded-[20px] border border-[var(--echo-border-ffd7a8)] bg-[var(--echo-surface)] p-5 shadow-sm transition-all hover:border-[var(--echo-border-f49b31)] hover:shadow-md"
                             >
                               <div className="flex items-start justify-between gap-2">
                                 <div>
-                                  <span className="inline-block rounded-md bg-[#FEF5EA] px-2.5 py-0.5 text-xs font-semibold text-[#F49B31] font-poppins">
+                                  <span className="inline-block rounded-md bg-[var(--echo-surface-soft)] px-2.5 py-0.5 text-xs font-semibold text-[var(--echo-text-f49b31)] font-poppins">
                                     {body.department?.code ?? "Institution-Wide"}
                                   </span>
-                                  <h3 className="mt-2 font-poppins font-bold text-lg text-[#212121] group-hover:text-[#F49B31] transition-colors">
+                                  <h3 className="mt-2 font-poppins font-bold text-lg text-[var(--echo-text-primary)] group-hover:text-[var(--echo-text-f49b31)] transition-colors">
                                     {body.name}
                                   </h3>
                                 </div>
@@ -1160,17 +1160,17 @@ const InstitutionWorkspace = ({ mode = "admin" }: { mode?: "admin" | "rep" }) =>
                                   >
                                     <Trash2 size={16} />
                                   </button>
-                                  <div className="rounded-full bg-[#FEF5EA] p-2 text-[#F49B31] group-hover:bg-[#F49B31] group-hover:text-white transition-all">
+                                  <div className="rounded-full bg-[var(--echo-surface-soft)] p-2 text-[var(--echo-text-f49b31)] group-hover:bg-[var(--echo-accent)] group-hover:text-[var(--echo-text-on-accent)] transition-all">
                                     <ChevronRight size={16} />
                                   </div>
                                 </div>
                               </div>
 
-                              <p className="mt-2 font-['Inter',sans-serif] text-xs text-[#8b8e8d] line-clamp-2">
+                              <p className="mt-2 font-['Inter',sans-serif] text-xs text-[var(--echo-text-secondary)] line-clamp-2">
                                 {body.description || "No description provided."}
                               </p>
 
-                              <div className="mt-4 border-t border-[#ffd7a8]/40 pt-3 flex items-center justify-between text-xs font-poppins text-[#75420B]">
+                              <div className="mt-4 border-t border-[var(--echo-border-ffd7a8)]/40 pt-3 flex items-center justify-between text-xs font-poppins text-[var(--echo-text-75420b)]">
                                 <span>👥 {repCount} {repCount === 1 ? "representative" : "representatives"}</span>
                                 <span>📌 {body._count?.assignedPings ?? 0} assigned</span>
                               </div>
@@ -1179,8 +1179,8 @@ const InstitutionWorkspace = ({ mode = "admin" }: { mode?: "admin" | "rep" }) =>
                         })}
                       </div>
                     ) : (
-                      <div className="rounded-[20px] border border-[#ffd7a8] bg-white p-8 text-center">
-                        <p className="font-poppins text-sm text-[#75420B]">
+                      <div className="rounded-[20px] border border-[var(--echo-border-ffd7a8)] bg-[var(--echo-surface)] p-8 text-center">
+                        <p className="font-poppins text-sm text-[var(--echo-text-75420b)]">
                           No representative bodies created yet.
                         </p>
                       </div>
@@ -1194,10 +1194,10 @@ const InstitutionWorkspace = ({ mode = "admin" }: { mode?: "admin" | "rep" }) =>
                     <div className={`flex flex-col sm:flex-row sm:items-center gap-4 ${isRepresentativeManager ? "sm:justify-end" : "sm:justify-between"}`}>
                       {!isRepresentativeManager && (
                         <div>
-                          <h2 className="font-poppins font-semibold text-[18px] text-[#212121]">
+                          <h2 className="font-poppins font-semibold text-[18px] text-[var(--echo-text-primary)]">
                             Representative Delegation & Scope
                           </h2>
-                          <p className="font-poppins text-[12px] text-[#8b8e8d] mt-1">
+                          <p className="font-poppins text-[12px] text-[var(--echo-text-secondary)] mt-1">
                             Empower student leaders with specific departmental and category authority without exposing university-wide administrative controls.
                           </p>
                         </div>
@@ -1212,12 +1212,12 @@ const InstitutionWorkspace = ({ mode = "admin" }: { mode?: "admin" | "rep" }) =>
                       </button>
                     </div>
 
-                    <div className="rounded-[20px] border border-[#ffd7a8] bg-white p-6 shadow-sm">
+                    <div className="rounded-[20px] border border-[var(--echo-border-ffd7a8)] bg-[var(--echo-surface)] p-6 shadow-sm">
                       {representatives.length ? (
                         <div className="overflow-x-auto">
                           <table className="w-full min-w-[700px] border-collapse text-left font-['Inter',sans-serif] text-sm">
                             <thead>
-                              <tr className="border-b border-[#ffd7a8]/50 text-[#8b8e8d] font-poppins text-xs">
+                              <tr className="border-b border-[var(--echo-border-ffd7a8)]/50 text-[var(--echo-text-secondary)] font-poppins text-xs">
                                 <th className="pb-3 pr-4 font-semibold uppercase tracking-wider">
                                   Representative
                                 </th>
@@ -1238,21 +1238,21 @@ const InstitutionWorkspace = ({ mode = "admin" }: { mode?: "admin" | "rep" }) =>
                                 </th>
                               </tr>
                             </thead>
-                            <tbody className="divide-y divide-[#ffd7a8]/30">
+                            <tbody className="divide-y divide-[var(--echo-bg-ffd7a8)]/30">
                               {representatives.map((rep) => (
                                 <tr
                                   key={rep.id}
-                                  className="transition-colors hover:bg-[#FEF5EA]/40"
+                                  className="transition-colors hover:bg-[var(--echo-surface-soft)]/40"
                                 >
                                   <td className="py-3.5 pr-4">
-                                    <span className="block font-medium text-[#212121]">
+                                    <span className="block font-medium text-[var(--echo-text-primary)]">
                                       {rep.user.firstName} {rep.user.lastName}
                                     </span>
-                                    <span className="text-xs text-[#8b8e8d]">
+                                    <span className="text-xs text-[var(--echo-text-secondary)]">
                                       {rep.user.email}
                                     </span>
                                     {rep.title && (
-                                      <span className="block text-xs font-semibold text-[#F49B31]">
+                                      <span className="block text-xs font-semibold text-[var(--echo-text-f49b31)]">
                                         {rep.title}
                                       </span>
                                     )}
@@ -1261,16 +1261,16 @@ const InstitutionWorkspace = ({ mode = "admin" }: { mode?: "admin" | "rep" }) =>
                                     <button
                                       type="button"
                                       onClick={() => rep.body && setSelectedBody(rep.body)}
-                                      className="font-medium text-[#F49B31] hover:underline"
+                                      className="font-medium text-[var(--echo-text-f49b31)] hover:underline"
                                     >
                                       {rep.body?.name ?? "—"}
                                     </button>
                                   </td>
-                                  <td className="py-3.5 pr-4 text-[#454545]">
+                                  <td className="py-3.5 pr-4 text-[var(--echo-text-454545)]">
                                     {rep.department?.name ?? "All departments"}
                                   </td>
                                   <td className="py-3.5 pr-4">
-                                    <span className="inline-block rounded-full bg-[#FEF5EA] px-2.5 py-0.5 text-xs text-[#75420B] font-medium">
+                                    <span className="inline-block rounded-full bg-[var(--echo-surface-soft)] px-2.5 py-0.5 text-xs text-[var(--echo-text-75420b)] font-medium">
                                       {rep.responsibilities === "*"
                                         ? "All categories"
                                         : rep.responsibilities.split(",").join(", ")}
@@ -1297,7 +1297,7 @@ const InstitutionWorkspace = ({ mode = "admin" }: { mode?: "admin" | "rep" }) =>
                                   </td>
                                   <td className="py-3.5 text-right">
                                     {rep.userId === user?.id ? (
-                                      <span className="inline-flex rounded-full bg-black/5 px-3 py-1 font-poppins text-xs font-medium text-black/40">
+                                      <span className="inline-flex rounded-full bg-black/5 px-3 py-1 font-poppins text-xs font-medium text-[var(--echo-text-primary)]/40">
                                         You
                                       </span>
                                     ) : (
@@ -1317,8 +1317,8 @@ const InstitutionWorkspace = ({ mode = "admin" }: { mode?: "admin" | "rep" }) =>
                           </table>
                         </div>
                       ) : (
-                        <div className="rounded-xl bg-[#FEF5EA] p-6 text-center">
-                          <p className="font-poppins text-sm text-[#75420B]">
+                        <div className="rounded-xl bg-[var(--echo-surface-soft)] p-6 text-center">
+                          <p className="font-poppins text-sm text-[var(--echo-text-75420b)]">
                             No representatives assigned yet.
                           </p>
                         </div>
@@ -1332,10 +1332,10 @@ const InstitutionWorkspace = ({ mode = "admin" }: { mode?: "admin" | "rep" }) =>
                   <section className="flex flex-col gap-6 w-full animate-fade-in">
                     <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                       <div>
-                        <h2 className="font-poppins font-semibold text-[18px] text-[#212121]">
+                        <h2 className="font-poppins font-semibold text-[18px] text-[var(--echo-text-primary)]">
                           Ping Categories
                         </h2>
-                        <p className="font-poppins text-[12px] text-[#8b8e8d] mt-1">
+                        <p className="font-poppins text-[12px] text-[var(--echo-text-secondary)] mt-1">
                           Categories organize community Pings and define representative responsibilities.
                         </p>
                       </div>
@@ -1351,13 +1351,13 @@ const InstitutionWorkspace = ({ mode = "admin" }: { mode?: "admin" | "rep" }) =>
                       </button>
                     </div>
 
-                    <div className="rounded-[20px] border border-[#ffd7a8] bg-white p-6 shadow-sm">
+                    <div className="rounded-[20px] border border-[var(--echo-border-ffd7a8)] bg-[var(--echo-surface)] p-6 shadow-sm">
                         {categories.length ? (
                           <ul className="grid gap-2.5 sm:grid-cols-2">
                             {categories.map((category) => (
                               <li
                                 key={category.id}
-                                className="rounded-xl border border-[#ffd7a8]/50 bg-[#FEF5EA]/30 p-3.5 flex items-center justify-between gap-2"
+                                className="rounded-xl border border-[var(--echo-border-ffd7a8)]/50 bg-[var(--echo-surface-soft)]/30 p-3.5 flex items-center justify-between gap-2"
                               >
                                 {editingCategoryId === category.id ? (
                                   <form
@@ -1369,12 +1369,12 @@ const InstitutionWorkspace = ({ mode = "admin" }: { mode?: "admin" | "rep" }) =>
                                       maxLength={100}
                                       value={editingCategoryName}
                                       onChange={(e) => setEditingCategoryName(e.target.value)}
-                                      className="flex-1 rounded-lg border-2 border-[#FFC37B] px-3 py-1.5 text-sm"
+                                      className="flex-1 rounded-lg border-2 border-[var(--echo-border-ffc37b)] px-3 py-1.5 text-sm"
                                     />
                                     <button
                                       type="submit"
                                       disabled={saving}
-                                      className="rounded-full bg-[#f49b31] px-3 py-1.5 text-xs font-semibold text-white"
+                                      className="rounded-full bg-[var(--echo-accent)] px-3 py-1.5 text-xs font-semibold text-[var(--echo-text-on-accent)]"
                                     >
                                       Save
                                     </button>
@@ -1391,7 +1391,7 @@ const InstitutionWorkspace = ({ mode = "admin" }: { mode?: "admin" | "rep" }) =>
                                   </form>
                                 ) : (
                                   <>
-                                    <span className="font-poppins font-medium text-sm text-[#212121]">
+                                    <span className="font-poppins font-medium text-sm text-[var(--echo-text-primary)]">
                                       {category.name}
                                     </span>
                                     <div className="flex shrink-0 items-center gap-1">
@@ -1403,7 +1403,7 @@ const InstitutionWorkspace = ({ mode = "admin" }: { mode?: "admin" | "rep" }) =>
                                           setEditingCategoryId(category.id);
                                           setEditingCategoryName(category.name);
                                         }}
-                                        className="rounded-full p-2 text-[#75420B] hover:bg-[#FEF5EA]"
+                                        className="rounded-full p-2 text-[var(--echo-text-75420b)] hover:bg-[var(--echo-surface-soft)]"
                                       >
                                         <Pencil size={16} />
                                       </button>
@@ -1422,7 +1422,7 @@ const InstitutionWorkspace = ({ mode = "admin" }: { mode?: "admin" | "rep" }) =>
                             ))}
                           </ul>
                         ) : (
-                          <p className="text-sm text-[#8b8e8d]">No categories available.</p>
+                          <p className="text-sm text-[var(--echo-text-secondary)]">No categories available.</p>
                         )}
                     </div>
                   </section>
@@ -1434,23 +1434,23 @@ const InstitutionWorkspace = ({ mode = "admin" }: { mode?: "admin" | "rep" }) =>
                     className="flex flex-col gap-6 w-full animate-fade-in"
                   >
                     <div>
-                      <h2 className="font-poppins font-semibold text-[18px] text-[#212121]">
+                      <h2 className="font-poppins font-semibold text-[18px] text-[var(--echo-text-primary)]">
                         Ping Context Choices (Halls & Levels)
                       </h2>
-                      <p className="font-poppins text-[12px] text-[#8b8e8d] mt-1">
+                      <p className="font-poppins text-[12px] text-[var(--echo-text-secondary)] mt-1">
                         These dynamic options populate the student Ping composer and save automatically when added or removed.
                       </p>
                     </div>
 
                     <div className="grid gap-6 md:grid-cols-2">
                       {/* Halls Card */}
-                      <div className="rounded-[20px] border border-[#ffd7a8] bg-white p-6 shadow-sm">
+                      <div className="rounded-[20px] border border-[var(--echo-border-ffd7a8)] bg-[var(--echo-surface)] p-6 shadow-sm">
                         <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                           <div>
-                            <h3 className="font-poppins font-semibold text-[#212121]">
+                            <h3 className="font-poppins font-semibold text-[var(--echo-text-primary)]">
                               Halls of Residence
                             </h3>
-                            <p className="mt-1 font-['Inter',sans-serif] text-xs text-[#8b8e8d]">
+                            <p className="mt-1 font-['Inter',sans-serif] text-xs text-[var(--echo-text-secondary)]">
                               Add halls or residential blocks available on your campus.
                             </p>
                           </div>
@@ -1471,7 +1471,7 @@ const InstitutionWorkspace = ({ mode = "admin" }: { mode?: "admin" | "rep" }) =>
                           {hallOptions.map((hall) => (
                             <li
                               key={hall}
-                              className="inline-flex items-center gap-1.5 rounded-full border border-[#FFC37B] bg-[#FEF5EA] py-1 pl-3 pr-1.5 font-poppins text-xs font-medium text-[#75420B]"
+                              className="inline-flex items-center gap-1.5 rounded-full border border-[var(--echo-border-ffc37b)] bg-[var(--echo-surface-soft)] py-1 pl-3 pr-1.5 font-poppins text-xs font-medium text-[var(--echo-text-75420b)]"
                             >
                               {hall}
                               <button
@@ -1479,14 +1479,14 @@ const InstitutionWorkspace = ({ mode = "admin" }: { mode?: "admin" | "rep" }) =>
                                 aria-label={`Remove ${hall}`}
                                 disabled={saving}
                                 onClick={() => handleRemoveHall(hall)}
-                                className="rounded-full px-1.5 py-0.5 hover:bg-[#FFC37B] disabled:cursor-wait disabled:opacity-50"
+                                className="rounded-full px-1.5 py-0.5 hover:bg-[var(--echo-sidebar)] disabled:cursor-wait disabled:opacity-50"
                               >
                                 ×
                               </button>
                             </li>
                           ))}
                           {!hallOptions.length && (
-                            <li className="font-poppins text-xs text-[#8b8e8d]">
+                            <li className="font-poppins text-xs text-[var(--echo-text-secondary)]">
                               No halls configured.
                             </li>
                           )}
@@ -1494,13 +1494,13 @@ const InstitutionWorkspace = ({ mode = "admin" }: { mode?: "admin" | "rep" }) =>
                       </div>
 
                       {/* Levels Card */}
-                      <div className="rounded-[20px] border border-[#ffd7a8] bg-white p-6 shadow-sm">
+                      <div className="rounded-[20px] border border-[var(--echo-border-ffd7a8)] bg-[var(--echo-surface)] p-6 shadow-sm">
                         <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                           <div>
-                            <h3 className="font-poppins font-semibold text-[#212121]">
+                            <h3 className="font-poppins font-semibold text-[var(--echo-text-primary)]">
                               Academic Levels
                             </h3>
-                            <p className="mt-1 font-['Inter',sans-serif] text-xs text-[#8b8e8d]">
+                            <p className="mt-1 font-['Inter',sans-serif] text-xs text-[var(--echo-text-secondary)]">
                               Study years available for issue tagging.
                             </p>
                           </div>
@@ -1521,7 +1521,7 @@ const InstitutionWorkspace = ({ mode = "admin" }: { mode?: "admin" | "rep" }) =>
                           {levelOptions.map((level) => (
                             <li
                               key={level}
-                              className="inline-flex items-center gap-1.5 rounded-full border border-[#FFC37B] bg-[#FEF5EA] py-1 pl-3 pr-1.5 font-poppins text-xs font-medium text-[#75420B]"
+                              className="inline-flex items-center gap-1.5 rounded-full border border-[var(--echo-border-ffc37b)] bg-[var(--echo-surface-soft)] py-1 pl-3 pr-1.5 font-poppins text-xs font-medium text-[var(--echo-text-75420b)]"
                             >
                               {level}L
                               <button
@@ -1529,14 +1529,14 @@ const InstitutionWorkspace = ({ mode = "admin" }: { mode?: "admin" | "rep" }) =>
                                 aria-label={`Remove ${level}L`}
                                 disabled={saving}
                                 onClick={() => handleRemoveLevel(level)}
-                                className="rounded-full px-1.5 py-0.5 hover:bg-[#FFC37B] disabled:cursor-wait disabled:opacity-50"
+                                className="rounded-full px-1.5 py-0.5 hover:bg-[var(--echo-sidebar)] disabled:cursor-wait disabled:opacity-50"
                               >
                                 ×
                               </button>
                             </li>
                           ))}
                           {!levelOptions.length && (
-                            <li className="font-poppins text-xs text-[#8b8e8d]">
+                            <li className="font-poppins text-xs text-[var(--echo-text-secondary)]">
                               No levels configured.
                             </li>
                           )}
@@ -1557,24 +1557,24 @@ const InstitutionWorkspace = ({ mode = "admin" }: { mode?: "admin" | "rep" }) =>
             onClick={() => setSelectedBody(null)}
           >
             <div
-              className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-[24px] border border-[#ffd7a8] bg-white p-6 sm:p-8 shadow-xl"
+              className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-[24px] border border-[var(--echo-border-ffd7a8)] bg-[var(--echo-surface)] p-6 sm:p-8 shadow-xl"
               onClick={(e) => e.stopPropagation()}
             >
               {/* Header */}
-              <div className="flex items-start justify-between gap-4 border-b border-[#ffd7a8]/50 pb-4">
+              <div className="flex items-start justify-between gap-4 border-b border-[var(--echo-border-ffd7a8)]/50 pb-4">
                 <div>
                   <div className="flex items-center gap-2">
-                    <span className="rounded-md bg-[#FEF5EA] px-2.5 py-0.5 text-xs font-semibold text-[#F49B31] font-poppins">
+                    <span className="rounded-md bg-[var(--echo-surface-soft)] px-2.5 py-0.5 text-xs font-semibold text-[var(--echo-text-f49b31)] font-poppins">
                       {selectedBody.department?.code
                         ? `${selectedBody.department.name} (${selectedBody.department.code})`
                         : "Institution-Wide Body"}
                     </span>
                   </div>
-                  <h2 className="mt-2 font-poppins font-bold text-2xl text-[#212121]">
+                  <h2 className="mt-2 font-poppins font-bold text-2xl text-[var(--echo-text-primary)]">
                     {selectedBody.name}
                   </h2>
                   {selectedBody.description && (
-                    <p className="mt-1 font-['Inter',sans-serif] text-sm text-[#8b8e8d]">
+                    <p className="mt-1 font-['Inter',sans-serif] text-sm text-[var(--echo-text-secondary)]">
                       {selectedBody.description}
                     </p>
                   )}
@@ -1582,7 +1582,7 @@ const InstitutionWorkspace = ({ mode = "admin" }: { mode?: "admin" | "rep" }) =>
                 <button
                   type="button"
                   onClick={() => setSelectedBody(null)}
-                  className="rounded-full p-2 text-black/40 hover:bg-[#FEF5EA] hover:text-black transition-colors"
+                  className="rounded-full p-2 text-[var(--echo-text-primary)]/40 hover:bg-[var(--echo-surface-soft)] hover:text-[var(--echo-text-primary)] transition-colors"
                 >
                   <X size={20} />
                 </button>
@@ -1590,27 +1590,27 @@ const InstitutionWorkspace = ({ mode = "admin" }: { mode?: "admin" | "rep" }) =>
 
               {/* Metrics Grid */}
               <div className="mt-6 grid grid-cols-2 sm:grid-cols-3 gap-3">
-                <div className="rounded-xl border border-[#ffd7a8]/60 bg-[#FEF5EA]/40 p-4">
-                  <span className="block font-poppins text-xs font-medium text-[#8b8e8d]">
+                <div className="rounded-xl border border-[var(--echo-border-ffd7a8)]/60 bg-[var(--echo-surface-soft)]/40 p-4">
+                  <span className="block font-poppins text-xs font-medium text-[var(--echo-text-secondary)]">
                     Assigned Executives
                   </span>
-                  <span className="mt-1 block font-poppins text-2xl font-bold text-[#F49B31]">
+                  <span className="mt-1 block font-poppins text-2xl font-bold text-[var(--echo-text-f49b31)]">
                     {bodyRepresentatives.length}
                   </span>
                 </div>
-                <div className="rounded-xl border border-[#ffd7a8]/60 bg-[#FEF5EA]/40 p-4">
-                  <span className="block font-poppins text-xs font-medium text-[#8b8e8d]">
+                <div className="rounded-xl border border-[var(--echo-border-ffd7a8)]/60 bg-[var(--echo-surface-soft)]/40 p-4">
+                  <span className="block font-poppins text-xs font-medium text-[var(--echo-text-secondary)]">
                     Assigned Issues
                   </span>
-                  <span className="mt-1 block font-poppins text-2xl font-bold text-[#212121]">
+                  <span className="mt-1 block font-poppins text-2xl font-bold text-[var(--echo-text-primary)]">
                     {selectedBody._count?.assignedPings ?? 0}
                   </span>
                 </div>
-                <div className="rounded-xl border border-[#ffd7a8]/60 bg-[#FEF5EA]/40 p-4 col-span-2 sm:col-span-1">
-                  <span className="block font-poppins text-xs font-medium text-[#8b8e8d]">
+                <div className="rounded-xl border border-[var(--echo-border-ffd7a8)]/60 bg-[var(--echo-surface-soft)]/40 p-4 col-span-2 sm:col-span-1">
+                  <span className="block font-poppins text-xs font-medium text-[var(--echo-text-secondary)]">
                     Target Scope
                   </span>
-                  <span className="mt-1 block font-poppins text-sm font-semibold text-[#212121]">
+                  <span className="mt-1 block font-poppins text-sm font-semibold text-[var(--echo-text-primary)]">
                     {selectedBody.department?.code ?? "All Campus"}
                   </span>
                 </div>
@@ -1619,7 +1619,7 @@ const InstitutionWorkspace = ({ mode = "admin" }: { mode?: "admin" | "rep" }) =>
               {/* Assigned People Section */}
               <div className="mt-8">
                 <div className="flex items-center justify-between pb-3">
-                  <h3 className="font-poppins font-semibold text-lg text-[#212121]">
+                  <h3 className="font-poppins font-semibold text-lg text-[var(--echo-text-primary)]">
                     Assigned Representatives ({bodyRepresentatives.length})
                   </h3>
                   <button
@@ -1628,42 +1628,42 @@ const InstitutionWorkspace = ({ mode = "admin" }: { mode?: "admin" | "rep" }) =>
                       openAssignModalForBody(selectedBody);
                       setSelectedBody(null);
                     }}
-                    className="font-poppins text-xs font-semibold text-[#F49B31] hover:underline"
+                    className="font-poppins text-xs font-semibold text-[var(--echo-text-f49b31)] hover:underline"
                   >
                     + Add Executive
                   </button>
                 </div>
 
                 {bodyRepresentatives.length ? (
-                  <div className="divide-y divide-[#ffd7a8]/40 border border-[#ffd7a8]/40 rounded-xl overflow-hidden">
+                  <div className="divide-y divide-[var(--echo-bg-ffd7a8)]/40 border border-[var(--echo-border-ffd7a8)]/40 rounded-xl overflow-hidden">
                     {bodyRepresentatives.map((rep) => (
                       <div
                         key={rep.id}
-                        className="p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 hover:bg-[#FEF5EA]/20 transition-colors"
+                        className="p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 hover:bg-[var(--echo-surface-soft)]/20 transition-colors"
                       >
                         <div>
                           <div className="flex items-center gap-2">
-                            <span className="font-poppins font-semibold text-sm text-[#212121]">
+                            <span className="font-poppins font-semibold text-sm text-[var(--echo-text-primary)]">
                               {rep.user.firstName} {rep.user.lastName}
                             </span>
                             {rep.title && (
-                              <span className="rounded bg-[#FEF5EA] px-2 py-0.5 text-xs font-semibold text-[#F49B31]">
+                              <span className="rounded bg-[var(--echo-surface-soft)] px-2 py-0.5 text-xs font-semibold text-[var(--echo-text-f49b31)]">
                                 {rep.title}
                               </span>
                             )}
                           </div>
-                          <span className="text-xs text-[#8b8e8d]">{rep.user.email}</span>
-                          <div className="mt-1.5 flex flex-wrap gap-1.5 text-xs text-[#75420B]">
-                            <span className="rounded bg-[#FEF5EA] px-2 py-0.5">
+                          <span className="text-xs text-[var(--echo-text-secondary)]">{rep.user.email}</span>
+                          <div className="mt-1.5 flex flex-wrap gap-1.5 text-xs text-[var(--echo-text-75420b)]">
+                            <span className="rounded bg-[var(--echo-surface-soft)] px-2 py-0.5">
                               Scope: {rep.responsibilities === "*" ? "All categories" : rep.responsibilities}
                             </span>
                             {rep.scopeLevel && (
-                              <span className="rounded bg-[#FEF5EA] px-2 py-0.5">
+                              <span className="rounded bg-[var(--echo-surface-soft)] px-2 py-0.5">
                                 {rep.scopeLevel}L
                               </span>
                             )}
                             {rep.scopeHall && (
-                              <span className="rounded bg-[#FEF5EA] px-2 py-0.5">
+                              <span className="rounded bg-[var(--echo-surface-soft)] px-2 py-0.5">
                                 {rep.scopeHall}
                               </span>
                             )}
@@ -1672,7 +1672,7 @@ const InstitutionWorkspace = ({ mode = "admin" }: { mode?: "admin" | "rep" }) =>
 
                         <div className="flex items-center gap-2 self-end sm:self-center">
                           {rep.userId === user?.id ? (
-                            <span className="rounded-full bg-black/5 px-3 py-1 font-poppins text-xs font-medium text-black/40">
+                            <span className="rounded-full bg-black/5 px-3 py-1 font-poppins text-xs font-medium text-[var(--echo-text-primary)]/40">
                               You
                             </span>
                           ) : (
@@ -1689,8 +1689,8 @@ const InstitutionWorkspace = ({ mode = "admin" }: { mode?: "admin" | "rep" }) =>
                     ))}
                   </div>
                 ) : (
-                  <div className="rounded-xl bg-[#FEF5EA] p-6 text-center">
-                    <p className="font-poppins text-sm text-[#75420B]">
+                  <div className="rounded-xl bg-[var(--echo-surface-soft)] p-6 text-center">
+                    <p className="font-poppins text-sm text-[var(--echo-text-75420b)]">
                       No representatives currently assigned to {selectedBody.name}.
                     </p>
                     <button
@@ -1717,15 +1717,15 @@ const InstitutionWorkspace = ({ mode = "admin" }: { mode?: "admin" | "rep" }) =>
             onClick={() => setIsAddingDepartment(false)}
           >
             <div
-              className="relative w-full max-w-xl max-h-[90vh] overflow-y-auto rounded-[24px] border border-[#ffd7a8] bg-white p-6 sm:p-8 shadow-xl"
+              className="relative w-full max-w-xl max-h-[90vh] overflow-y-auto rounded-[24px] border border-[var(--echo-border-ffd7a8)] bg-[var(--echo-surface)] p-6 sm:p-8 shadow-xl"
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="flex items-center justify-between border-b border-[#ffd7a8]/50 pb-3">
-                <h3 className="font-poppins font-bold text-lg text-[#212121]">Add Department</h3>
+              <div className="flex items-center justify-between border-b border-[var(--echo-border-ffd7a8)]/50 pb-3">
+                <h3 className="font-poppins font-bold text-lg text-[var(--echo-text-primary)]">Add Department</h3>
                 <button
                   type="button"
                   onClick={() => setIsAddingDepartment(false)}
-                  className="rounded-full p-1 text-black/40 hover:bg-[#FEF5EA]"
+                  className="rounded-full p-1 text-[var(--echo-text-primary)]/40 hover:bg-[var(--echo-surface-soft)]"
                 >
                   <X size={18} />
                 </button>
@@ -1736,10 +1736,10 @@ const InstitutionWorkspace = ({ mode = "admin" }: { mode?: "admin" | "rep" }) =>
                   {departmentDrafts.map((draft, index) => (
                     <fieldset
                       key={index}
-                      className="rounded-xl border border-[#ffd7a8]/60 bg-[#FEF5EA]/30 p-4"
+                      className="rounded-xl border border-[var(--echo-border-ffd7a8)]/60 bg-[var(--echo-surface-soft)]/30 p-4"
                     >
                       <div className="mb-3 flex items-center justify-between">
-                        <legend className="font-poppins text-sm font-semibold text-[#212121]">
+                        <legend className="font-poppins text-sm font-semibold text-[var(--echo-text-primary)]">
                           Department {index + 1}
                         </legend>
                         {departmentDrafts.length > 1 && (
@@ -1757,7 +1757,7 @@ const InstitutionWorkspace = ({ mode = "admin" }: { mode?: "admin" | "rep" }) =>
                           </button>
                         )}
                       </div>
-                      <label className="block font-poppins text-xs font-medium text-[#454545]">
+                      <label className="block font-poppins text-xs font-medium text-[var(--echo-text-454545)]">
                         Department Name
                         <input
                           required
@@ -1774,7 +1774,7 @@ const InstitutionWorkspace = ({ mode = "admin" }: { mode?: "admin" | "rep" }) =>
                           className={inputClass}
                         />
                       </label>
-                      <label className="mt-3 block font-poppins text-xs font-medium text-[#454545]">
+                      <label className="mt-3 block font-poppins text-xs font-medium text-[var(--echo-text-454545)]">
                         Short Code
                         <input
                           required
@@ -1791,7 +1791,7 @@ const InstitutionWorkspace = ({ mode = "admin" }: { mode?: "admin" | "rep" }) =>
                           className={inputClass}
                         />
                       </label>
-                      <label className="mt-3 block font-poppins text-xs font-medium text-[#454545]">
+                      <label className="mt-3 block font-poppins text-xs font-medium text-[var(--echo-text-454545)]">
                         College (optional)
                         <select
                           value={draft.collegeId}
@@ -1820,7 +1820,7 @@ const InstitutionWorkspace = ({ mode = "admin" }: { mode?: "admin" | "rep" }) =>
                 <button
                   type="button"
                   onClick={() => setDepartmentDrafts((current) => [...current, createDepartmentDraft()])}
-                  className="inline-flex w-fit items-center gap-2 rounded-full border border-[#f49b31] bg-[#FEF5EA] px-4 py-2 font-poppins text-xs font-semibold text-[#75420B] hover:bg-[#FFC37B]"
+                  className="inline-flex w-fit items-center gap-2 rounded-full border border-[var(--echo-border-f49b31)] bg-[var(--echo-surface-soft)] px-4 py-2 font-poppins text-xs font-semibold text-[var(--echo-text-75420b)] hover:bg-[var(--echo-sidebar)]"
                 >
                   <Plus size={16} /> Add another department
                 </button>
@@ -1848,15 +1848,15 @@ const InstitutionWorkspace = ({ mode = "admin" }: { mode?: "admin" | "rep" }) =>
             onClick={() => setIsAddingCollege(false)}
           >
             <div
-              className="relative w-full max-w-xl max-h-[90vh] overflow-y-auto rounded-[24px] border border-[#ffd7a8] bg-white p-6 sm:p-8 shadow-xl"
+              className="relative w-full max-w-xl max-h-[90vh] overflow-y-auto rounded-[24px] border border-[var(--echo-border-ffd7a8)] bg-[var(--echo-surface)] p-6 sm:p-8 shadow-xl"
               onClick={(event) => event.stopPropagation()}
             >
-              <div className="flex items-center justify-between border-b border-[#ffd7a8]/50 pb-3">
-                <h3 className="font-poppins font-bold text-lg text-[#212121]">Add Colleges</h3>
+              <div className="flex items-center justify-between border-b border-[var(--echo-border-ffd7a8)]/50 pb-3">
+                <h3 className="font-poppins font-bold text-lg text-[var(--echo-text-primary)]">Add Colleges</h3>
                 <button
                   type="button"
                   onClick={() => setIsAddingCollege(false)}
-                  className="rounded-full p-1 text-black/40 hover:bg-[#FEF5EA]"
+                  className="rounded-full p-1 text-[var(--echo-text-primary)]/40 hover:bg-[var(--echo-surface-soft)]"
                   aria-label="Close add college dialog"
                 >
                   <X size={18} />
@@ -1868,10 +1868,10 @@ const InstitutionWorkspace = ({ mode = "admin" }: { mode?: "admin" | "rep" }) =>
                   {collegeDrafts.map((draft, index) => (
                     <fieldset
                       key={index}
-                      className="rounded-xl border border-[#ffd7a8]/60 bg-[#FEF5EA]/30 p-4"
+                      className="rounded-xl border border-[var(--echo-border-ffd7a8)]/60 bg-[var(--echo-surface-soft)]/30 p-4"
                     >
                       <div className="mb-3 flex items-center justify-between">
-                        <legend className="font-poppins text-sm font-semibold text-[#212121]">
+                        <legend className="font-poppins text-sm font-semibold text-[var(--echo-text-primary)]">
                           College {index + 1}
                         </legend>
                         {collegeDrafts.length > 1 && (
@@ -1889,7 +1889,7 @@ const InstitutionWorkspace = ({ mode = "admin" }: { mode?: "admin" | "rep" }) =>
                           </button>
                         )}
                       </div>
-                      <label className="block font-poppins text-xs font-medium text-[#454545]">
+                      <label className="block font-poppins text-xs font-medium text-[var(--echo-text-454545)]">
                         College Name
                         <input
                           required
@@ -1906,7 +1906,7 @@ const InstitutionWorkspace = ({ mode = "admin" }: { mode?: "admin" | "rep" }) =>
                           className={inputClass}
                         />
                       </label>
-                      <label className="mt-3 block font-poppins text-xs font-medium text-[#454545]">
+                      <label className="mt-3 block font-poppins text-xs font-medium text-[var(--echo-text-454545)]">
                         Short Code
                         <input
                           required
@@ -1924,16 +1924,16 @@ const InstitutionWorkspace = ({ mode = "admin" }: { mode?: "admin" | "rep" }) =>
                         />
                       </label>
                       <fieldset className="mt-4">
-                        <legend className="font-poppins text-xs font-medium text-[#454545]">
+                        <legend className="font-poppins text-xs font-medium text-[var(--echo-text-454545)]">
                           Existing Departments
                         </legend>
-                        <p className="mb-2 mt-1 font-poppins text-[11px] text-[#8b8e8d]">
+                        <p className="mb-2 mt-1 font-poppins text-[11px] text-[var(--echo-text-secondary)]">
                           Select existing departments. A department already assigned to another college will move here.
                         </p>
                         {departments.length ? (
-                          <div className="max-h-36 space-y-2 overflow-y-auto rounded-xl border border-[#ffd7a8]/60 bg-white p-3">
+                          <div className="max-h-36 space-y-2 overflow-y-auto rounded-xl border border-[var(--echo-border-ffd7a8)]/60 bg-[var(--echo-surface)] p-3">
                             {departments.map((department) => (
-                              <label key={department.id} className="flex items-start gap-2 font-poppins text-xs text-[#454545]">
+                              <label key={department.id} className="flex items-start gap-2 font-poppins text-xs text-[var(--echo-text-454545)]">
                                 <input
                                   type="checkbox"
                                   checked={draft.departmentIds.includes(String(department.id))}
@@ -1951,7 +1951,7 @@ const InstitutionWorkspace = ({ mode = "admin" }: { mode?: "admin" | "rep" }) =>
                                       ),
                                     )
                                   }
-                                  className="mt-0.5 accent-[#F49B31]"
+                                  className="mt-0.5 accent-[var(--echo-text-f49b31)]"
                                 />
                                 <span>
                                   {department.name} ({department.code})
@@ -1963,7 +1963,7 @@ const InstitutionWorkspace = ({ mode = "admin" }: { mode?: "admin" | "rep" }) =>
                             ))}
                           </div>
                         ) : (
-                          <p className="rounded-xl bg-white p-3 font-poppins text-xs text-[#8b8e8d]">
+                          <p className="rounded-xl bg-[var(--echo-surface)] p-3 font-poppins text-xs text-[var(--echo-text-secondary)]">
                             Create departments first to assign them to a college.
                           </p>
                         )}
@@ -1974,7 +1974,7 @@ const InstitutionWorkspace = ({ mode = "admin" }: { mode?: "admin" | "rep" }) =>
                 <button
                   type="button"
                   onClick={() => setCollegeDrafts((current) => [...current, createCollegeDraft()])}
-                  className="inline-flex w-fit items-center gap-2 rounded-full border border-[#f49b31] bg-[#FEF5EA] px-4 py-2 font-poppins text-xs font-semibold text-[#75420B] hover:bg-[#FFC37B]"
+                  className="inline-flex w-fit items-center gap-2 rounded-full border border-[var(--echo-border-f49b31)] bg-[var(--echo-surface-soft)] px-4 py-2 font-poppins text-xs font-semibold text-[var(--echo-text-75420b)] hover:bg-[var(--echo-sidebar)]"
                 >
                   <Plus size={16} /> Add another college
                 </button>
@@ -2001,15 +2001,15 @@ const InstitutionWorkspace = ({ mode = "admin" }: { mode?: "admin" | "rep" }) =>
             onClick={() => setEditingCollege(null)}
           >
             <div
-              className="relative max-h-[90vh] w-full max-w-xl overflow-y-auto rounded-[24px] border border-[#ffd7a8] bg-white p-6 shadow-xl sm:p-8"
+              className="relative max-h-[90vh] w-full max-w-xl overflow-y-auto rounded-[24px] border border-[var(--echo-border-ffd7a8)] bg-[var(--echo-surface)] p-6 shadow-xl sm:p-8"
               onClick={(event) => event.stopPropagation()}
             >
-              <div className="flex items-center justify-between border-b border-[#ffd7a8]/50 pb-3">
-                <h3 className="font-poppins text-lg font-bold text-[#212121]">Edit College</h3>
+              <div className="flex items-center justify-between border-b border-[var(--echo-border-ffd7a8)]/50 pb-3">
+                <h3 className="font-poppins text-lg font-bold text-[var(--echo-text-primary)]">Edit College</h3>
                 <button
                   type="button"
                   onClick={() => setEditingCollege(null)}
-                  className="rounded-full p-1 text-black/40 hover:bg-[#FEF5EA]"
+                  className="rounded-full p-1 text-[var(--echo-text-primary)]/40 hover:bg-[var(--echo-surface-soft)]"
                   aria-label="Close edit college dialog"
                 >
                   <X size={18} />
@@ -2017,7 +2017,7 @@ const InstitutionWorkspace = ({ mode = "admin" }: { mode?: "admin" | "rep" }) =>
               </div>
               {error && <p role="alert" className="mt-3 text-sm text-red-700">{error}</p>}
               <form onSubmit={handleUpdateCollege} className="mt-4 flex flex-col gap-4">
-                <label className="block font-poppins text-xs font-medium text-[#454545]">
+                <label className="block font-poppins text-xs font-medium text-[var(--echo-text-454545)]">
                   College Name
                   <input
                     required
@@ -2031,7 +2031,7 @@ const InstitutionWorkspace = ({ mode = "admin" }: { mode?: "admin" | "rep" }) =>
                     className={inputClass}
                   />
                 </label>
-                <label className="block font-poppins text-xs font-medium text-[#454545]">
+                <label className="block font-poppins text-xs font-medium text-[var(--echo-text-454545)]">
                   Short Code
                   <input
                     required
@@ -2046,16 +2046,16 @@ const InstitutionWorkspace = ({ mode = "admin" }: { mode?: "admin" | "rep" }) =>
                   />
                 </label>
                 <fieldset>
-                  <legend className="font-poppins text-xs font-medium text-[#454545]">
+                  <legend className="font-poppins text-xs font-medium text-[var(--echo-text-454545)]">
                     Departments
                   </legend>
-                  <p className="mb-2 mt-1 font-poppins text-[11px] text-[#8b8e8d]">
+                  <p className="mb-2 mt-1 font-poppins text-[11px] text-[var(--echo-text-secondary)]">
                     Choose from existing departments. Selecting one assigned to another college moves it here; unselected departments will be unassigned from this college.
                   </p>
                   {departments.length ? (
-                    <div className="max-h-48 space-y-2 overflow-y-auto rounded-xl border border-[#ffd7a8]/60 bg-[#FEF5EA]/30 p-3">
+                    <div className="max-h-48 space-y-2 overflow-y-auto rounded-xl border border-[var(--echo-border-ffd7a8)]/60 bg-[var(--echo-surface-soft)]/30 p-3">
                       {departments.map((department) => (
-                        <label key={department.id} className="flex items-start gap-2 font-poppins text-xs text-[#454545]">
+                        <label key={department.id} className="flex items-start gap-2 font-poppins text-xs text-[var(--echo-text-454545)]">
                           <input
                             type="checkbox"
                             checked={editingCollege.departmentIds.includes(String(department.id))}
@@ -2071,7 +2071,7 @@ const InstitutionWorkspace = ({ mode = "admin" }: { mode?: "admin" | "rep" }) =>
                                   : current,
                               )
                             }
-                            className="mt-0.5 accent-[#F49B31]"
+                            className="mt-0.5 accent-[var(--echo-text-f49b31)]"
                           />
                           <span>
                             {department.name} ({department.code})
@@ -2083,7 +2083,7 @@ const InstitutionWorkspace = ({ mode = "admin" }: { mode?: "admin" | "rep" }) =>
                       ))}
                     </div>
                   ) : (
-                    <p className="rounded-xl bg-[#FEF5EA]/30 p-3 font-poppins text-xs text-[#8b8e8d]">
+                    <p className="rounded-xl bg-[var(--echo-surface-soft)]/30 p-3 font-poppins text-xs text-[var(--echo-text-secondary)]">
                       There are no existing departments to assign.
                     </p>
                   )}
@@ -2111,15 +2111,15 @@ const InstitutionWorkspace = ({ mode = "admin" }: { mode?: "admin" | "rep" }) =>
             onClick={() => setEditingDepartment(null)}
           >
             <div
-              className="relative max-h-[90vh] w-full max-w-xl overflow-y-auto rounded-[24px] border border-[#ffd7a8] bg-white p-6 shadow-xl sm:p-8"
+              className="relative max-h-[90vh] w-full max-w-xl overflow-y-auto rounded-[24px] border border-[var(--echo-border-ffd7a8)] bg-[var(--echo-surface)] p-6 shadow-xl sm:p-8"
               onClick={(event) => event.stopPropagation()}
             >
-              <div className="flex items-center justify-between border-b border-[#ffd7a8]/50 pb-3">
-                <h3 className="font-poppins text-lg font-bold text-[#212121]">Edit Department</h3>
+              <div className="flex items-center justify-between border-b border-[var(--echo-border-ffd7a8)]/50 pb-3">
+                <h3 className="font-poppins text-lg font-bold text-[var(--echo-text-primary)]">Edit Department</h3>
                 <button
                   type="button"
                   onClick={() => setEditingDepartment(null)}
-                  className="rounded-full p-1 text-black/40 hover:bg-[#FEF5EA]"
+                  className="rounded-full p-1 text-[var(--echo-text-primary)]/40 hover:bg-[var(--echo-surface-soft)]"
                   aria-label="Close edit department dialog"
                 >
                   <X size={18} />
@@ -2127,7 +2127,7 @@ const InstitutionWorkspace = ({ mode = "admin" }: { mode?: "admin" | "rep" }) =>
               </div>
               {error && <p role="alert" className="mt-3 text-sm text-red-700">{error}</p>}
               <form onSubmit={handleUpdateDepartment} className="mt-4 flex flex-col gap-4">
-                <label className="block font-poppins text-xs font-medium text-[#454545]">
+                <label className="block font-poppins text-xs font-medium text-[var(--echo-text-454545)]">
                   Department Name
                   <input
                     required
@@ -2141,7 +2141,7 @@ const InstitutionWorkspace = ({ mode = "admin" }: { mode?: "admin" | "rep" }) =>
                     className={inputClass}
                   />
                 </label>
-                <label className="block font-poppins text-xs font-medium text-[#454545]">
+                <label className="block font-poppins text-xs font-medium text-[var(--echo-text-454545)]">
                   Short Code
                   <input
                     required
@@ -2155,7 +2155,7 @@ const InstitutionWorkspace = ({ mode = "admin" }: { mode?: "admin" | "rep" }) =>
                     className={inputClass}
                   />
                 </label>
-                <label className="block font-poppins text-xs font-medium text-[#454545]">
+                <label className="block font-poppins text-xs font-medium text-[var(--echo-text-454545)]">
                   College (optional)
                   <select
                     value={editingDepartment.collegeId}
@@ -2197,16 +2197,16 @@ const InstitutionWorkspace = ({ mode = "admin" }: { mode?: "admin" | "rep" }) =>
             onClick={() => setIsAddingCategory(false)}
           >
             <div
-              className="w-full max-w-xl max-h-[90vh] overflow-y-auto rounded-[24px] border border-[#ffd7a8] bg-white p-6 shadow-xl sm:p-8"
+              className="w-full max-w-xl max-h-[90vh] overflow-y-auto rounded-[24px] border border-[var(--echo-border-ffd7a8)] bg-[var(--echo-surface)] p-6 shadow-xl sm:p-8"
               onClick={(event) => event.stopPropagation()}
             >
-              <div className="flex items-center justify-between border-b border-[#ffd7a8]/50 pb-3">
-                <h3 className="font-poppins text-lg font-bold text-[#212121]">Add Categories</h3>
+              <div className="flex items-center justify-between border-b border-[var(--echo-border-ffd7a8)]/50 pb-3">
+                <h3 className="font-poppins text-lg font-bold text-[var(--echo-text-primary)]">Add Categories</h3>
                 <button
                   type="button"
                   aria-label="Close add categories dialog"
                   onClick={() => setIsAddingCategory(false)}
-                  className="rounded-full p-1 text-black/40 hover:bg-[#FEF5EA]"
+                  className="rounded-full p-1 text-[var(--echo-text-primary)]/40 hover:bg-[var(--echo-surface-soft)]"
                 >
                   <X size={18} />
                 </button>
@@ -2216,7 +2216,7 @@ const InstitutionWorkspace = ({ mode = "admin" }: { mode?: "admin" | "rep" }) =>
                 <div className="max-h-[60vh] space-y-3 overflow-y-auto pr-1">
                   {categoryDrafts.map((draft, index) => (
                     <div key={index} className="flex items-end gap-2">
-                      <label className="block flex-1 font-poppins text-xs font-medium text-[#454545]">
+                      <label className="block flex-1 font-poppins text-xs font-medium text-[var(--echo-text-454545)]">
                         Category {index + 1}
                         <input
                           required
@@ -2253,7 +2253,7 @@ const InstitutionWorkspace = ({ mode = "admin" }: { mode?: "admin" | "rep" }) =>
                 <button
                   type="button"
                   onClick={() => setCategoryDrafts((current) => [...current, ""])}
-                  className="inline-flex w-fit items-center gap-2 rounded-full border border-[#f49b31] bg-[#FEF5EA] px-4 py-2 font-poppins text-xs font-semibold text-[#75420B] hover:bg-[#FFC37B]"
+                  className="inline-flex w-fit items-center gap-2 rounded-full border border-[var(--echo-border-f49b31)] bg-[var(--echo-surface-soft)] px-4 py-2 font-poppins text-xs font-semibold text-[var(--echo-text-75420b)] hover:bg-[var(--echo-sidebar)]"
                 >
                   <Plus size={16} /> Add another category
                 </button>
@@ -2280,16 +2280,16 @@ const InstitutionWorkspace = ({ mode = "admin" }: { mode?: "admin" | "rep" }) =>
             onClick={() => setIsAddingHalls(false)}
           >
             <div
-              className="w-full max-w-xl max-h-[90vh] overflow-y-auto rounded-[24px] border border-[#ffd7a8] bg-white p-6 shadow-xl sm:p-8"
+              className="w-full max-w-xl max-h-[90vh] overflow-y-auto rounded-[24px] border border-[var(--echo-border-ffd7a8)] bg-[var(--echo-surface)] p-6 shadow-xl sm:p-8"
               onClick={(event) => event.stopPropagation()}
             >
-              <div className="flex items-center justify-between border-b border-[#ffd7a8]/50 pb-3">
-                <h3 className="font-poppins text-lg font-bold text-[#212121]">Add Halls</h3>
+              <div className="flex items-center justify-between border-b border-[var(--echo-border-ffd7a8)]/50 pb-3">
+                <h3 className="font-poppins text-lg font-bold text-[var(--echo-text-primary)]">Add Halls</h3>
                 <button
                   type="button"
                   aria-label="Close add halls dialog"
                   onClick={() => setIsAddingHalls(false)}
-                  className="rounded-full p-1 text-black/40 hover:bg-[#FEF5EA]"
+                  className="rounded-full p-1 text-[var(--echo-text-primary)]/40 hover:bg-[var(--echo-surface-soft)]"
                 >
                   <X size={18} />
                 </button>
@@ -2299,7 +2299,7 @@ const InstitutionWorkspace = ({ mode = "admin" }: { mode?: "admin" | "rep" }) =>
                 <div className="max-h-[60vh] space-y-3 overflow-y-auto pr-1">
                   {hallDrafts.map((draft, index) => (
                     <div key={index} className="flex items-end gap-2">
-                      <label className="block flex-1 font-poppins text-xs font-medium text-[#454545]">
+                      <label className="block flex-1 font-poppins text-xs font-medium text-[var(--echo-text-454545)]">
                         Hall {index + 1}
                         <input
                           required
@@ -2336,7 +2336,7 @@ const InstitutionWorkspace = ({ mode = "admin" }: { mode?: "admin" | "rep" }) =>
                 <button
                   type="button"
                   onClick={() => setHallDrafts((current) => [...current, ""])}
-                  className="inline-flex w-fit items-center gap-2 rounded-full border border-[#f49b31] bg-[#FEF5EA] px-4 py-2 font-poppins text-xs font-semibold text-[#75420B] hover:bg-[#FFC37B]"
+                  className="inline-flex w-fit items-center gap-2 rounded-full border border-[var(--echo-border-f49b31)] bg-[var(--echo-surface-soft)] px-4 py-2 font-poppins text-xs font-semibold text-[var(--echo-text-75420b)] hover:bg-[var(--echo-sidebar)]"
                 >
                   <Plus size={16} /> Add another hall
                 </button>
@@ -2363,16 +2363,16 @@ const InstitutionWorkspace = ({ mode = "admin" }: { mode?: "admin" | "rep" }) =>
             onClick={() => setIsAddingLevels(false)}
           >
             <div
-              className="w-full max-w-xl max-h-[90vh] overflow-y-auto rounded-[24px] border border-[#ffd7a8] bg-white p-6 shadow-xl sm:p-8"
+              className="w-full max-w-xl max-h-[90vh] overflow-y-auto rounded-[24px] border border-[var(--echo-border-ffd7a8)] bg-[var(--echo-surface)] p-6 shadow-xl sm:p-8"
               onClick={(event) => event.stopPropagation()}
             >
-              <div className="flex items-center justify-between border-b border-[#ffd7a8]/50 pb-3">
-                <h3 className="font-poppins text-lg font-bold text-[#212121]">Add Academic Levels</h3>
+              <div className="flex items-center justify-between border-b border-[var(--echo-border-ffd7a8)]/50 pb-3">
+                <h3 className="font-poppins text-lg font-bold text-[var(--echo-text-primary)]">Add Academic Levels</h3>
                 <button
                   type="button"
                   aria-label="Close add academic levels dialog"
                   onClick={() => setIsAddingLevels(false)}
-                  className="rounded-full p-1 text-black/40 hover:bg-[#FEF5EA]"
+                  className="rounded-full p-1 text-[var(--echo-text-primary)]/40 hover:bg-[var(--echo-surface-soft)]"
                 >
                   <X size={18} />
                 </button>
@@ -2382,7 +2382,7 @@ const InstitutionWorkspace = ({ mode = "admin" }: { mode?: "admin" | "rep" }) =>
                 <div className="max-h-[60vh] space-y-3 overflow-y-auto pr-1">
                   {levelDrafts.map((draft, index) => (
                     <div key={index} className="flex items-end gap-2">
-                      <label className="block flex-1 font-poppins text-xs font-medium text-[#454545]">
+                      <label className="block flex-1 font-poppins text-xs font-medium text-[var(--echo-text-454545)]">
                         Level {index + 1}
                         <input
                           required
@@ -2421,7 +2421,7 @@ const InstitutionWorkspace = ({ mode = "admin" }: { mode?: "admin" | "rep" }) =>
                 <button
                   type="button"
                   onClick={() => setLevelDrafts((current) => [...current, ""])}
-                  className="inline-flex w-fit items-center gap-2 rounded-full border border-[#f49b31] bg-[#FEF5EA] px-4 py-2 font-poppins text-xs font-semibold text-[#75420B] hover:bg-[#FFC37B]"
+                  className="inline-flex w-fit items-center gap-2 rounded-full border border-[var(--echo-border-f49b31)] bg-[var(--echo-surface-soft)] px-4 py-2 font-poppins text-xs font-semibold text-[var(--echo-text-75420b)] hover:bg-[var(--echo-sidebar)]"
                 >
                   <Plus size={16} /> Add another level
                 </button>
@@ -2449,24 +2449,24 @@ const InstitutionWorkspace = ({ mode = "admin" }: { mode?: "admin" | "rep" }) =>
             onClick={() => setIsAddingBody(false)}
           >
             <div
-              className="relative w-full max-w-md rounded-[24px] border border-[#ffd7a8] bg-white p-6 sm:p-8 shadow-xl"
+              className="relative w-full max-w-md rounded-[24px] border border-[var(--echo-border-ffd7a8)] bg-[var(--echo-surface)] p-6 sm:p-8 shadow-xl"
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="flex items-center justify-between border-b border-[#ffd7a8]/50 pb-3">
-                <h3 className="font-poppins font-bold text-lg text-[#212121]">
+              <div className="flex items-center justify-between border-b border-[var(--echo-border-ffd7a8)]/50 pb-3">
+                <h3 className="font-poppins font-bold text-lg text-[var(--echo-text-primary)]">
                   Create Representative Body
                 </h3>
                 <button
                   type="button"
                   onClick={() => setIsAddingBody(false)}
-                  className="rounded-full p-1 text-black/40 hover:bg-[#FEF5EA]"
+                  className="rounded-full p-1 text-[var(--echo-text-primary)]/40 hover:bg-[var(--echo-surface-soft)]"
                 >
                   <X size={18} />
                 </button>
               </div>
 
               <form onSubmit={handleCreateBody} className="mt-4 flex flex-col gap-4">
-                <label className="block font-poppins text-xs font-medium text-[#454545]">
+                <label className="block font-poppins text-xs font-medium text-[var(--echo-text-454545)]">
                   Body Name
                   <input
                     required
@@ -2477,7 +2477,7 @@ const InstitutionWorkspace = ({ mode = "admin" }: { mode?: "admin" | "rep" }) =>
                     className={inputClass}
                   />
                 </label>
-                <label className="block font-poppins text-xs font-medium text-[#454545]">
+                <label className="block font-poppins text-xs font-medium text-[var(--echo-text-454545)]">
                   Associated Department (optional)
                   <select
                     value={bodyDepartmentId}
@@ -2492,7 +2492,7 @@ const InstitutionWorkspace = ({ mode = "admin" }: { mode?: "admin" | "rep" }) =>
                     ))}
                   </select>
                 </label>
-                <label className="block font-poppins text-xs font-medium text-[#454545]">
+                <label className="block font-poppins text-xs font-medium text-[var(--echo-text-454545)]">
                   Description (optional)
                   <textarea
                     rows={3}
@@ -2527,17 +2527,17 @@ const InstitutionWorkspace = ({ mode = "admin" }: { mode?: "admin" | "rep" }) =>
             onClick={() => setIsAssigningRep(false)}
           >
             <div
-              className="relative w-full max-w-xl max-h-[90vh] overflow-y-auto rounded-[24px] border border-[#ffd7a8] bg-white p-6 sm:p-8 shadow-xl"
+              className="relative w-full max-w-xl max-h-[90vh] overflow-y-auto rounded-[24px] border border-[var(--echo-border-ffd7a8)] bg-[var(--echo-surface)] p-6 sm:p-8 shadow-xl"
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="flex items-center justify-between border-b border-[#ffd7a8]/50 pb-3">
-                <h3 className="font-poppins font-bold text-lg text-[#212121]">
+              <div className="flex items-center justify-between border-b border-[var(--echo-border-ffd7a8)]/50 pb-3">
+                <h3 className="font-poppins font-bold text-lg text-[var(--echo-text-primary)]">
                   Assign Representative
                 </h3>
                 <button
                   type="button"
                   onClick={() => setIsAssigningRep(false)}
-                  className="rounded-full p-1 text-black/40 hover:bg-[#FEF5EA]"
+                  className="rounded-full p-1 text-[var(--echo-text-primary)]/40 hover:bg-[var(--echo-surface-soft)]"
                 >
                   <X size={18} />
                 </button>
@@ -2545,7 +2545,7 @@ const InstitutionWorkspace = ({ mode = "admin" }: { mode?: "admin" | "rep" }) =>
 
               <form onSubmit={handleCreateRepresentative} className="mt-4 flex flex-col gap-4">
                 <div className="grid gap-4 sm:grid-cols-2">
-                  <label className="block font-poppins text-xs font-medium text-[#454545]">
+                  <label className="block font-poppins text-xs font-medium text-[var(--echo-text-454545)]">
                     Institutional Email
                     <input
                       required
@@ -2557,7 +2557,7 @@ const InstitutionWorkspace = ({ mode = "admin" }: { mode?: "admin" | "rep" }) =>
                       className={inputClass}
                     />
                   </label>
-                  <label className="block font-poppins text-xs font-medium text-[#454545]">
+                  <label className="block font-poppins text-xs font-medium text-[var(--echo-text-454545)]">
                     Title / Position
                     <input
                       maxLength={160}
@@ -2570,7 +2570,7 @@ const InstitutionWorkspace = ({ mode = "admin" }: { mode?: "admin" | "rep" }) =>
                 </div>
 
                 <div className="grid gap-4 sm:grid-cols-2">
-                  <label className="block font-poppins text-xs font-medium text-[#454545]">
+                  <label className="block font-poppins text-xs font-medium text-[var(--echo-text-454545)]">
                     Representative Body
                     <select
                       required
@@ -2591,7 +2591,7 @@ const InstitutionWorkspace = ({ mode = "admin" }: { mode?: "admin" | "rep" }) =>
                     </select>
                   </label>
 
-                  <label className="block font-poppins text-xs font-medium text-[#454545]">
+                  <label className="block font-poppins text-xs font-medium text-[var(--echo-text-454545)]">
                     Department Scope
                     <select
                       value={repDepartmentId}
@@ -2609,7 +2609,7 @@ const InstitutionWorkspace = ({ mode = "admin" }: { mode?: "admin" | "rep" }) =>
                 </div>
 
                 <div className="grid gap-4 sm:grid-cols-2">
-                  <label className="block font-poppins text-xs font-medium text-[#454545]">
+                  <label className="block font-poppins text-xs font-medium text-[var(--echo-text-454545)]">
                     Level Scope (optional)
                     <select
                       value={repScopeLevel}
@@ -2625,7 +2625,7 @@ const InstitutionWorkspace = ({ mode = "admin" }: { mode?: "admin" | "rep" }) =>
                     </select>
                   </label>
 
-                  <label className="block font-poppins text-xs font-medium text-[#454545]">
+                  <label className="block font-poppins text-xs font-medium text-[var(--echo-text-454545)]">
                     Hall Scope (optional)
                     <select
                       value={repScopeHall}
@@ -2643,11 +2643,11 @@ const InstitutionWorkspace = ({ mode = "admin" }: { mode?: "admin" | "rep" }) =>
                 </div>
 
                 {/* Categories */}
-                <fieldset className="rounded-xl border border-[#ffd7a8]/60 bg-[#FEF5EA]/30 p-4">
-                  <legend className="font-poppins text-xs font-semibold text-[#212121]">
+                <fieldset className="rounded-xl border border-[var(--echo-border-ffd7a8)]/60 bg-[var(--echo-surface-soft)]/30 p-4">
+                  <legend className="font-poppins text-xs font-semibold text-[var(--echo-text-primary)]">
                     Category Responsibilities
                   </legend>
-                  <label className="mt-2 inline-flex items-center gap-2 font-poppins text-xs font-medium text-[#454545]">
+                  <label className="mt-2 inline-flex items-center gap-2 font-poppins text-xs font-medium text-[var(--echo-text-454545)]">
                     <input
                       type="checkbox"
                       checked={allCategories}
@@ -2655,7 +2655,7 @@ const InstitutionWorkspace = ({ mode = "admin" }: { mode?: "admin" | "rep" }) =>
                         setAllCategories(e.target.checked);
                         if (e.target.checked) setSelectedCategoryIds([]);
                       }}
-                      className="accent-[#F49B31]"
+                      className="accent-[var(--echo-text-f49b31)]"
                     />
                     All categories
                   </label>
@@ -2665,7 +2665,7 @@ const InstitutionWorkspace = ({ mode = "admin" }: { mode?: "admin" | "rep" }) =>
                       {categories.map((cat) => (
                         <label
                           key={cat.id}
-                          className="inline-flex items-center gap-1.5 rounded-full border border-[#FFC37B] bg-white px-3 py-1 font-poppins text-xs text-[#75420B]"
+                          className="inline-flex items-center gap-1.5 rounded-full border border-[var(--echo-border-ffc37b)] bg-[var(--echo-surface)] px-3 py-1 font-poppins text-xs text-[var(--echo-text-75420b)]"
                         >
                           <input
                             type="checkbox"
@@ -2675,7 +2675,7 @@ const InstitutionWorkspace = ({ mode = "admin" }: { mode?: "admin" | "rep" }) =>
                                 e.target.checked ? [...curr, cat.id] : curr.filter((id) => id !== cat.id),
                               )
                             }
-                            className="accent-[#F49B31]"
+                            className="accent-[var(--echo-text-f49b31)]"
                           />
                           {cat.name}
                         </label>
@@ -2686,7 +2686,7 @@ const InstitutionWorkspace = ({ mode = "admin" }: { mode?: "admin" | "rep" }) =>
                     <button
                       type="button"
                       onClick={() => setAllCategories(false)}
-                      className="mt-1 block font-poppins text-xs text-[#F49B31] underline"
+                      className="mt-1 block font-poppins text-xs text-[var(--echo-text-f49b31)] underline"
                     >
                       Choose specific categories
                     </button>
@@ -2694,12 +2694,12 @@ const InstitutionWorkspace = ({ mode = "admin" }: { mode?: "admin" | "rep" }) =>
                 </fieldset>
 
                 {/* Permissions Switches */}
-                <fieldset className="rounded-xl border border-[#ffd7a8]/60 bg-[#FEF5EA]/30 p-4">
-                  <legend className="font-poppins text-xs font-semibold text-[#212121]">
+                <fieldset className="rounded-xl border border-[var(--echo-border-ffd7a8)]/60 bg-[var(--echo-surface-soft)]/30 p-4">
+                  <legend className="font-poppins text-xs font-semibold text-[var(--echo-text-primary)]">
                     Permissions
                   </legend>
                   {user?.role === "REPRESENTATIVE" && (
-                    <p className="mt-1 font-poppins text-[11px] text-[#8b8e8d]">
+                    <p className="mt-1 font-poppins text-[11px] text-[var(--echo-text-secondary)]">
                       You can only grant permissions that are already assigned to you.
                     </p>
                   )}
@@ -2717,7 +2717,7 @@ const InstitutionWorkspace = ({ mode = "admin" }: { mode?: "admin" | "rep" }) =>
                     ).map(([key, label]) => (
                       <label
                         key={key}
-                        className="flex items-center gap-2 rounded-lg border border-[#ffd7a8]/50 bg-white p-2.5 font-poppins text-xs text-[#454545]"
+                        className="flex items-center gap-2 rounded-lg border border-[var(--echo-border-ffd7a8)]/50 bg-[var(--echo-surface)] p-2.5 font-poppins text-xs text-[var(--echo-text-454545)]"
                       >
                         <input
                           type="checkbox"
@@ -2726,7 +2726,7 @@ const InstitutionWorkspace = ({ mode = "admin" }: { mode?: "admin" | "rep" }) =>
                           onChange={(e) =>
                             setPermissions((curr) => ({ ...curr, [key]: e.target.checked }))
                           }
-                          className="accent-[#F49B31] disabled:cursor-not-allowed"
+                          className="accent-[var(--echo-text-f49b31)] disabled:cursor-not-allowed"
                         />
                         {label}
                       </label>

@@ -9,6 +9,32 @@
 
     <!-- Theme color (Android chrome bar + iOS status bar) -->
     <meta name="theme-color" content="#f49b31" />
+    <script>
+      (function () {
+        var preference = "system";
+        try {
+          var saved = localStorage.getItem("echo-theme");
+          if (saved === "light" || saved === "dark" || saved === "system") {
+            preference = saved;
+          }
+        } catch (error) {
+          console.warn("[Theme] Could not read the saved theme preference:", error);
+        }
+        var activeTheme =
+          preference === "system"
+            ? window.matchMedia("(prefers-color-scheme: dark)").matches
+              ? "dark"
+              : "light"
+            : preference;
+        document.documentElement.dataset.theme = activeTheme;
+        document.documentElement.dataset.themePreference = preference;
+        document.documentElement.style.colorScheme = activeTheme;
+        document.querySelector('meta[name="theme-color"]').content =
+          activeTheme === "dark" ? "#000000" : "#f49b31";
+        document.querySelector('link[rel="manifest"]').href =
+          activeTheme === "dark" ? "/manifest-dark.json" : "/manifest.json";
+      })();
+    </script>
 
     <!-- iOS PWA support -->
     <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -72,7 +98,7 @@
         position: fixed;
         inset: 0;
         z-index: 99999;
-        background-color: #ffffff;
+        background-color: var(--echo-surface);
         display: none;
         flex-direction: column;
         align-items: center;

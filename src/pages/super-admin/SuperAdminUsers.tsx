@@ -81,7 +81,7 @@ const SuperAdminUsers: React.FC = () => {
   const totalPages = Math.ceil(total / limit);
 
   return (
-    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 flex flex-col h-full overflow-hidden">
+    <div className="bg-[var(--echo-surface)] rounded-2xl shadow-sm border border-gray-100 flex flex-col h-full overflow-hidden">
       <div className="p-6 border-b border-gray-100 flex items-center justify-between gap-4 flex-wrap">
         <div className="flex-1 max-w-md relative">
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
@@ -90,7 +90,7 @@ const SuperAdminUsers: React.FC = () => {
             placeholder="Search Users"
             value={search}
             onChange={(e) => { setSearch(e.target.value); setPage(1); }}
-            className="w-full pl-10 pr-4 py-2 bg-gray-50 border border-gray-200 rounded-lg outline-none focus:border-[#f49b31] transition-colors"
+            className="w-full pl-10 pr-4 py-2 bg-gray-50 border border-gray-200 rounded-lg outline-none focus:border-[var(--echo-border-f49b31)] transition-colors"
           />
         </div>
         <div className="flex items-center gap-4 flex-wrap">
@@ -157,9 +157,9 @@ const SuperAdminUsers: React.FC = () => {
                 <td className="px-6 py-4 text-gray-600">{user.organization?.name || "—"}</td>
                 <td className="px-6 py-4">
                   <span className={`px-4 py-1.5 rounded-full block w-[88px] text-center text-xs font-semibold ${
-                    user.role === 'ADMIN' ? 'bg-[#fef5ea] border border-[#f49b31] text-black' :
+                    user.role === 'ADMIN' ? 'bg-[var(--echo-surface-soft)] border border-[var(--echo-border-f49b31)] text-[var(--echo-text-primary)]' :
                     user.role === 'SUPER_ADMIN' ? 'bg-purple-100 text-purple-700 border border-purple-300' :
-                    'bg-[#FCDCAE] text-black'
+                    'bg-[var(--echo-bg-fcdcae)] text-[var(--echo-text-primary)]'
                   }`}>
                     {user.role === 'SUPER_ADMIN' ? 'Super Admin' : user.role.charAt(0) + user.role.slice(1).toLowerCase()}
                   </span>
@@ -180,7 +180,7 @@ const SuperAdminUsers: React.FC = () => {
                       <button
                         onClick={() => handleBan(user.id)}
                         disabled={actionLoading === user.id}
-                        className="px-4 py-1.5 text-xs font-semibold text-white bg-[#B91C1C] rounded-[8px] hover:bg-red-800 transition-colors disabled:opacity-50"
+                        className="px-4 py-1.5 text-xs font-semibold text-[var(--echo-text-on-accent)] bg-[var(--echo-bg-b91c1c)] rounded-[8px] hover:bg-red-800 transition-colors disabled:opacity-50"
                       >
                         Ban
                       </button>
@@ -188,7 +188,7 @@ const SuperAdminUsers: React.FC = () => {
                       <button
                         onClick={() => handleUnban(user.id)}
                         disabled={actionLoading === user.id}
-                        className="px-4 py-1.5 text-xs font-semibold text-white bg-green-600 rounded-[8px] hover:bg-green-700 transition-colors disabled:opacity-50"
+                        className="px-4 py-1.5 text-xs font-semibold text-[var(--echo-text-on-accent)] bg-green-600 rounded-[8px] hover:bg-green-700 transition-colors disabled:opacity-50"
                       >
                         Activate
                       </button>
@@ -196,7 +196,7 @@ const SuperAdminUsers: React.FC = () => {
                     <button
                       onClick={() => handleRoleChange(user.id)}
                       disabled={actionLoading === user.id}
-                      className="px-4 py-1.5 text-xs font-semibold text-black bg-[#FEF5EA] border border-[#FCA5A5] rounded-[8px] hover:bg-[#FDE8D1] transition-colors whitespace-nowrap disabled:opacity-50"
+                      className="px-4 py-1.5 text-xs font-semibold text-[var(--echo-text-primary)] bg-[var(--echo-surface-soft)] border border-[var(--echo-border-fca5a5)] rounded-[8px] hover:bg-[var(--echo-bg-fde8d1)] transition-colors whitespace-nowrap disabled:opacity-50"
                     >
                       Change Role
                     </button>
@@ -236,7 +236,7 @@ const SuperAdminUsers: React.FC = () => {
               onClick={() => setPage(i + 1)}
               className={`px-3 py-1 border rounded font-medium ${
                 page === i + 1
-                  ? "border-[#f49b31] bg-[#f49b31] text-white"
+                  ? "border-[var(--echo-border-f49b31)] bg-[var(--echo-accent)] text-[var(--echo-text-on-accent)]"
                   : "border-gray-200 text-gray-600 hover:bg-gray-50"
               }`}
             >

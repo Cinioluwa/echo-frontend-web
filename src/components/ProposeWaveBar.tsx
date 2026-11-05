@@ -190,7 +190,7 @@ const ProposeWaveBar = ({
   if (readOnly) {
     return (
       <div
-        className="bg-[#fefefe] border-2 border-[#ffc37b] rounded-[16px] md:rounded-[20px] mb-4 md:mb-5 p-2 md:p-2.5 flex items-center gap-2 md:gap-[13px] w-full max-w-full cursor-pointer"
+        className="bg-[var(--echo-surface)] border-2 border-[var(--echo-border-ffc37b)] rounded-[16px] md:rounded-[20px] mb-4 md:mb-5 p-2 md:p-2.5 flex items-center gap-2 md:gap-[13px] w-full max-w-full cursor-pointer"
         onClick={onAccountRequired}
         onKeyDown={(e) => {
           if (e.key === "Enter" || e.key === " ") {
@@ -203,11 +203,11 @@ const ProposeWaveBar = ({
         aria-label="Account required to propose a wave"
       >
         <div className="shrink-0 flex items-center justify-center">
-          <UserAvatar user={null} size="md" responsive bgColor="bg-[#ffc37b]" />
+          <UserAvatar user={null} size="md" responsive bgColor="bg-[var(--echo-sidebar)]" />
         </div>
         <div className="flex-1 min-w-0">
           <div className="w-full flex items-center gap-2">
-            <span className="text-[#9E9E9E] text-[13px] md:text-[14px] font-['Poppins',sans-serif] font-medium">
+            <span className="text-[var(--echo-text-secondary)] text-[13px] md:text-[14px] font-['Poppins',sans-serif] font-medium">
               What's your solution?
             </span>
           </div>
@@ -220,7 +220,7 @@ const ProposeWaveBar = ({
     <form
       ref={formRef}
       onSubmit={handleSubmit}
-      className={`bg-white rounded-[16px] md:rounded-[25px] mb-4 md:mb-5 p-2 md:p-2.5 flex ${isActive ? "items-start" : "items-center"} gap-2 md:gap-[13px] w-full max-w-full transition-all duration-200`}
+      className={`bg-[var(--echo-surface)] rounded-[16px] md:rounded-[25px] mb-4 md:mb-5 p-2 md:p-2.5 flex ${isActive ? "items-start" : "items-center"} gap-2 md:gap-[13px] w-full max-w-full transition-all duration-200`}
     >
       {/* Hidden file input */}
       <input
@@ -235,14 +235,14 @@ const ProposeWaveBar = ({
 
       {/* Avatar */}
       <div className={`shrink-0 flex items-center justify-center transition-all duration-200 ${isActive ? "mt-1 md:mt-1.5" : ""}`}>
-        <UserAvatar user={user} size="md" responsive bgColor="bg-[#ffc37b]" />
+        <UserAvatar user={user} size="md" responsive bgColor="bg-[var(--echo-sidebar)]" />
       </div>
 
       {/* Main input container */}
       <div className="flex-1 min-w-0 flex flex-col">
         {/* Input area */}
         <div
-          className={`w-full bg-[#fefefe] border-2 border-[#ffc37b] rounded-[16px] md:rounded-[20px] transition-all duration-200 flex flex-col justify-between ${
+          className={`w-full bg-[var(--echo-surface)] border-2 border-[var(--echo-border-ffc37b)] rounded-[16px] md:rounded-[20px] transition-all duration-200 flex flex-col justify-between ${
             isActive
               ? "px-3 md:px-4 pt-2.5 pb-2 md:pt-3 md:pb-2"
               : "px-3 md:px-4 py-2 md:py-2.5"
@@ -257,7 +257,7 @@ const ProposeWaveBar = ({
             placeholder="What's your solution?"
             rows={1}
             disabled={isSubmitting || isUploading}
-            className={`w-full bg-transparent border-0 p-0 text-[13px] md:text-[14px] text-black outline-none resize-none font-['Poppins',sans-serif] font-medium placeholder:text-[#9e9e9e] placeholder:font-medium focus:ring-0 transition-[min-height] duration-200 ${
+            className={`w-full bg-transparent border-0 p-0 text-[13px] md:text-[14px] text-[var(--echo-text-primary)] outline-none resize-none font-['Poppins',sans-serif] font-medium placeholder:text-[var(--echo-text-secondary)] placeholder:font-medium focus:ring-0 transition-[min-height] duration-200 ${
               isActive
                 ? "leading-[1.4] min-h-[40px] md:min-h-[48px] max-h-[140px] overflow-y-auto"
                 : // Line-height matches the min-height so the placeholder sits
@@ -268,11 +268,11 @@ const ProposeWaveBar = ({
 
           {/* Uploaded files preview */}
           {uploadedFiles.length > 0 && (
-            <div className="flex flex-wrap gap-2 mt-2 pb-2 border-b border-[#ffc37b]">
+            <div className="flex flex-wrap gap-2 mt-2 pb-2 border-b border-[var(--echo-border-ffc37b)]">
               {uploadedFiles.map((file) => (
                 <div
                   key={file.id}
-                  className="flex items-center gap-1 bg-[#fff9f0] px-2.5 py-1 rounded-lg text-xs text-[#454545]"
+                  className="flex items-center gap-1 bg-[var(--echo-bg-fff9f0)] px-2.5 py-1 rounded-lg text-xs text-[var(--echo-text-454545)]"
                 >
                   <span className="truncate max-w-[150px]">
                     {file.filename}
@@ -281,7 +281,7 @@ const ProposeWaveBar = ({
                     type="button"
                     onClick={() => removeFile(file.id)}
                     disabled={isSubmitting}
-                    className="shrink-0 text-[#ffc37b] hover:text-[#F49B31] transition-colors"
+                    className="shrink-0 text-[var(--echo-text-ffc37b)] hover:text-[var(--echo-text-f49b31)] transition-colors"
                   >
                     ✕
                   </button>
@@ -316,11 +316,11 @@ const ProposeWaveBar = ({
             <button
               type="submit"
               disabled={isSubmitting || isUploading || !solution.trim()}
-              className="bg-[#fef5ea] border border-black rounded-[16px] md:rounded-[20px] px-2.5 md:px-3 py-1 md:py-1.5 flex items-center gap-1 md:gap-[5px] cursor-pointer hover:bg-[#f9eedb] disabled:opacity-50 disabled:cursor-not-allowed transition-colors shrink-0 self-end"
+              className="bg-[var(--echo-surface-soft)] border border-black rounded-[16px] md:rounded-[20px] px-2.5 md:px-3 py-1 md:py-1.5 flex items-center gap-1 md:gap-[5px] cursor-pointer hover:bg-[var(--echo-bg-f9eedb)] disabled:opacity-50 disabled:cursor-not-allowed transition-colors shrink-0 self-end"
             >
               {/* Wave icon */}
               <img src={waveIcon} alt="Wave" className="size-5 md:size-6" />
-              <span className="font-['Baloo_Bhai_2',sans-serif] font-bold text-[12px] md:text-[14px] text-black uppercase whitespace-nowrap">
+              <span className="font-['Baloo_Bhai_2',sans-serif] font-bold text-[12px] md:text-[14px] text-[var(--echo-text-primary)] uppercase whitespace-nowrap">
                 {isUploading
                   ? "Uploading..."
                   : isSubmitting

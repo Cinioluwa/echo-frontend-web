@@ -24,10 +24,10 @@ interface AdminPingCardProps {
 const getProgressBadge = (ping: AdminPing) => {
   const status = ping.progressStatus || "NONE";
   const map: Record<string, { label: string; bg: string; text: string }> = {
-    NONE: { label: "Open", bg: "#F3F4F6", text: "#374151" },
-    ACKNOWLEDGED: { label: "Acknowledged", bg: "#1F2937", text: "#FFFFFF" },
-    IN_PROGRESS: { label: "In Progress", bg: "#DBEAFE", text: "#1E40AF" },
-    RESOLVED: { label: "Resolved", bg: "#FEF5EA", text: "#F49B31" },
+    NONE: { label: "Open", bg: "var(--echo-bg-f3f4f6)", text: "var(--echo-text-374151)" },
+    ACKNOWLEDGED: { label: "Acknowledged", bg: "var(--echo-bg-1f2937)", text: "var(--echo-text-ffffff)" },
+    IN_PROGRESS: { label: "In Progress", bg: "var(--echo-bg-dbeafe)", text: "var(--echo-text-1e40af)" },
+    RESOLVED: { label: "Resolved", bg: "var(--echo-surface-soft)", text: "var(--echo-text-f49b31)" },
   };
   const cfg = map[status] || map.NONE;
   return (
@@ -37,7 +37,7 @@ const getProgressBadge = (ping: AdminPing) => {
     >
       <span
         className="w-1.5 h-1.5 rounded-full"
-        style={{ backgroundColor: cfg.text === "#FFFFFF" ? "#FFFFFF" : cfg.text }}
+        style={{ backgroundColor: cfg.text === "var(--echo-text-ffffff)" ? "var(--echo-text-ffffff)" : cfg.text }}
       />
       {cfg.label}
     </span>
@@ -124,7 +124,7 @@ const AdminPingCard = ({ pings, onUpdate }: AdminPingCardProps) => {
 
       <div
         onClick={handleCardClick}
-        className="m-[15px] md:m-0 bg-white rounded-[10px] border border-[#F0EDE8] hover:border-[#F49B31]/30 hover:shadow-md transition-all duration-150 cursor-pointer overflow-hidden"
+        className="m-[15px] md:m-0 bg-[var(--echo-surface)] rounded-[10px] border border-[var(--echo-border-f0ede8)] hover:border-[var(--echo-border-f49b31)]/30 hover:shadow-md transition-all duration-150 cursor-pointer overflow-hidden"
       >
         {/* Card header: title + menu */}
         <div className="flex justify-between items-start gap-3 px-5 pt-4 pb-2">
@@ -132,7 +132,7 @@ const AdminPingCard = ({ pings, onUpdate }: AdminPingCardProps) => {
             <span className="cursor-pointer mt-0.5 flex-shrink-0">
               <img src={dropdown} alt="" />
             </span>
-            <p className="text-[13px] md:text-[14px] font-semibold text-[#1a1a1a] leading-snug line-clamp-2">
+            <p className="text-[13px] md:text-[14px] font-semibold text-[var(--echo-text-1a1a1a)] leading-snug line-clamp-2">
               {pings.title}
             </p>
           </div>
@@ -141,7 +141,7 @@ const AdminPingCard = ({ pings, onUpdate }: AdminPingCardProps) => {
             {getProgressBadge(pings)}
             <span
               onClick={(e) => { e.stopPropagation(); setOpenMenu(true); }}
-              className="cursor-pointer p-1 rounded hover:bg-[#FEF5EA] transition-colors"
+              className="cursor-pointer p-1 rounded hover:bg-[var(--echo-surface-soft)] transition-colors"
             >
               <img src={waveMenu} alt="options" />
             </span>
@@ -166,15 +166,15 @@ const AdminPingCard = ({ pings, onUpdate }: AdminPingCardProps) => {
               className="w-8 h-8 rounded-full object-cover flex-shrink-0"
             />
             <div className="flex flex-col">
-              <span className="text-[12px] md:text-[13px] font-semibold text-[#1a1a1a] truncate max-w-[150px]">
+              <span className="text-[12px] md:text-[13px] font-semibold text-[var(--echo-text-1a1a1a)] truncate max-w-[150px]">
                 {authorName}
               </span>
-              <span className="text-[#8B8E8D] text-[11px]">{postedLabel}</span>
+              <span className="text-[var(--echo-text-secondary)] text-[11px]">{postedLabel}</span>
             </div>
           </div>
 
           {pings.category && (
-            <div className="flex items-center gap-1.5 text-[11px] md:text-[12px] text-[#626665]">
+            <div className="flex items-center gap-1.5 text-[11px] md:text-[12px] text-[var(--echo-text-secondary)]">
               {categoryIcon && (
                 <img src={categoryIcon} alt={pings.category.name} className="w-4 h-4" />
               )}
@@ -185,7 +185,7 @@ const AdminPingCard = ({ pings, onUpdate }: AdminPingCardProps) => {
 
         {/* Content */}
         <div className="px-5 pb-3">
-          <p className="text-[#626665] text-[13px] line-clamp-3 border-b border-[#F0EDE8] pb-3">
+          <p className="text-[var(--echo-text-secondary)] text-[13px] line-clamp-3 border-b border-[var(--echo-border-f0ede8)] pb-3">
             {pings.content}
           </p>
         </div>
@@ -193,7 +193,7 @@ const AdminPingCard = ({ pings, onUpdate }: AdminPingCardProps) => {
         {/* Footer: stats + actions */}
         <div className="flex justify-between items-center px-5 py-2.5">
           {/* Left: comment + wave counts */}
-          <div className="flex items-center gap-3 text-[#8B8E8D] text-[12px]">
+          <div className="flex items-center gap-3 text-[var(--echo-text-secondary)] text-[12px]">
             <div className="flex items-center gap-1">
               <MessageSquare className="w-3.5 h-3.5" />
               <span>{commentCount}</span>
@@ -205,14 +205,14 @@ const AdminPingCard = ({ pings, onUpdate }: AdminPingCardProps) => {
               </div>
             )}
             <div className="flex items-center gap-1">
-              <SurgeIcon width={11} height={14} fill="#F49B31" />
+              <SurgeIcon width={11} height={14} fill="var(--echo-text-f49b31)" />
               <span>{surgeCount} surges</span>
             </div>
           </div>
 
           {/* Right: acknowledge + engagement dropdown */}
           <div
-            className="flex bg-[#EF6E0B] rounded-[20px]"
+            className="flex bg-[var(--echo-bg-ef6e0b)] rounded-[20px]"
             onClick={(e) => e.stopPropagation()}
           >
             <button
@@ -220,8 +220,8 @@ const AdminPingCard = ({ pings, onUpdate }: AdminPingCardProps) => {
               disabled={loading || acknowledged}
               className={`transition-colors duration-150 cursor-pointer ${
                 acknowledged
-                  ? "bg-[#8B8E8D] text-white font-bold"
-                  : "bg-[#FEF5EA] hover:bg-[#f2e8d9]"
+                  ? "bg-[var(--echo-bg-8b8e8d)] text-[var(--echo-text-on-accent)] font-bold"
+                  : "bg-[var(--echo-surface-soft)] hover:bg-[var(--echo-bg-f2e8d9)]"
               } ${
                 loading ? "opacity-50 cursor-not-allowed" : ""
               } py-1.5 lg:py-2 lg:px-4 flex text-[11px] font-bold items-center gap-2 border rounded-[20px] px-4`}
@@ -235,7 +235,7 @@ const AdminPingCard = ({ pings, onUpdate }: AdminPingCardProps) => {
             </button>
 
             <button
-              className="bg-[#EF6E0B] rounded-[20px] py-1.5 lg:py-2 pl-2 pr-3"
+              className="bg-[var(--echo-bg-ef6e0b)] rounded-[20px] py-1.5 lg:py-2 pl-2 pr-3"
               onClick={() => setOpenEngagementMenu(true)}
             >
               <img src={dropdown_menu} alt="more" />

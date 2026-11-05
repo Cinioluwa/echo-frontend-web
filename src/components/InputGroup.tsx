@@ -110,8 +110,8 @@ const InputGroup = ({
   const inputType = showPasswordToggle && isPasswordVisible ? "text" : type;
 
   return (
-    <div className="mb-4.5 w-full flex items-center bg-[#FBFBFB] italic text-[#CACACA] justify-start h-16 relative border overflow-hidden border-[#CACACA] rounded-xl">
-      <span className="w-7 pr-2 left-5 py-1 absolute flex items-center justify-center border-r border-r-[#CACACA]">
+    <div className="mb-4.5 w-full flex items-center bg-[var(--echo-bg-fbfbfb)] italic text-[var(--echo-text-cacaca)] justify-start h-16 relative border overflow-hidden border-[var(--echo-border-cacaca)] rounded-xl">
+      <span className="w-7 pr-2 left-5 py-1 absolute flex items-center justify-center border-r border-r-[var(--echo-border-cacaca)]">
         <img src={iconSrc} alt="" />
       </span>
       <input
@@ -133,7 +133,7 @@ const InputGroup = ({
           onClick={() => setIsPasswordVisible(!isPasswordVisible)}
           disabled={disabled}
           aria-label={isPasswordVisible ? "Hide password" : "Show password"}
-          className="pr-5 py-1 flex items-center justify-center text-[#f49b31] hover:text-[#f49b31] transition-all duration-300 ease-in-out cursor-pointer disabled:cursor-not-allowed disabled:opacity-50"
+          className="pr-5 py-1 flex items-center justify-center text-[var(--echo-text-f49b31)] hover:text-[var(--echo-text-f49b31)] transition-all duration-300 ease-in-out cursor-pointer disabled:cursor-not-allowed disabled:opacity-50"
         >
           <AnimatedEyeIcon isOpen={isPasswordVisible} />
         </button>

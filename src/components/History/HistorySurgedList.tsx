@@ -87,7 +87,7 @@ const HistorySurgedList = ({ isLoading: parentIsLoading = false }: HistorySurged
             {hasNextPage && (
                 <button
                     onClick={loadMore}
-                    className="mt-2 text-sm text-[#F49B31] font-medium self-center cursor-pointer"
+                    className="mt-2 text-sm text-[var(--echo-text-f49b31)] font-medium self-center cursor-pointer"
                 >
                     Load more
                 </button>

@@ -18,7 +18,7 @@ const OfflineIndicator: React.FC = () => {
 
     return (
         <div
-            className="fixed top-0 left-0 right-0 z-50 bg-red-500 text-white py-2 px-4 text-center animate-slide-down"
+            className="fixed top-0 left-0 right-0 z-50 bg-red-500 text-[var(--echo-text-on-accent)] py-2 px-4 text-center animate-slide-down"
             role="alert"
             aria-live="assertive"
         >
