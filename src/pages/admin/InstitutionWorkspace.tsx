@@ -27,6 +27,7 @@ import institutionAdminService, {
   type RepresentativeBody,
   type RepresentativePermissions,
   type RepresentativeProfile,
+  type BodyMemberItem,
 } from "../../api/services/institutionAdmin.service";
 
 type WorkspaceTab =
@@ -90,6 +91,14 @@ const InstitutionWorkspace = ({ mode = "admin" }: { mode?: "admin" | "rep" }) =>
 
   // Body drilldown detail state
   const [selectedBody, setSelectedBody] = useState<RepresentativeBody | null>(null);
+
+  // Body Members state (for private / members-only discussions)
+  const [bodyMembers, setBodyMembers] = useState<BodyMemberItem[]>([]);
+  const [loadingBodyMembers, setLoadingBodyMembers] = useState(false);
+  const [isAddingBodyMembers, setIsAddingBodyMembers] = useState(false);
+  const [bodyMemberEmails, setBodyMemberEmails] = useState("");
+  const [bodyMemberSearch, setBodyMemberSearch] = useState("");
+  const [bodyMemberFeedback, setBodyMemberFeedback] = useState<{ message: string; isError?: boolean } | null>(null);
 
   // Modal open states
   const [isAddingDepartment, setIsAddingDepartment] = useState(false);
@@ -754,6 +763,73 @@ const InstitutionWorkspace = ({ mode = "admin" }: { mode?: "admin" | "rep" }) =>
     );
   };
 
+  const loadBodyMembers = useCallback(async (bodyId: number) => {
+    try {
+      setLoadingBodyMembers(true);
+      const res = await institutionAdminService.getBodyMembers(bodyId, { limit: 200 });
+      setBodyMembers(res.members || []);
+    } catch (err: any) {
+      console.error("Failed to load body members", err);
+    } finally {
+      setLoadingBodyMembers(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (selectedBody?.id) {
+      loadBodyMembers(selectedBody.id);
+      setBodyMemberSearch("");
+      setBodyMemberFeedback(null);
+    } else {
+      setBodyMembers([]);
+    }
+  }, [selectedBody?.id, loadBodyMembers]);
+
+  const handleAddBodyMembers = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedBody || !bodyMemberEmails.trim()) return;
+
+    const emails = bodyMemberEmails
+      .split(/[\n,;\s]+/)
+      .map((em) => em.trim().toLowerCase())
+      .filter((em) => em.length > 0 && em.includes("@"));
+
+    if (emails.length === 0) {
+      setBodyMemberFeedback({
+        message: "Please enter at least one valid email address.",
+        isError: true,
+      });
+      return;
+    }
+
+    try {
+      setSaving(true);
+      setBodyMemberFeedback(null);
+      const result = await institutionAdminService.addBodyMembers(selectedBody.id, { emails });
+      setBodyMemberFeedback({
+        message: `Successfully added ${result.addedCount} member(s)!`,
+      });
+      setBodyMemberEmails("");
+      await loadBodyMembers(selectedBody.id);
+    } catch (err: any) {
+      const msg = err.response?.data?.message || err.response?.data?.error || err.message || "Failed to add members.";
+      setBodyMemberFeedback({ message: msg, isError: true });
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleRemoveBodyMember = async (userId: number) => {
+    if (!selectedBody) return;
+    if (!window.confirm("Remove this member from private body access?")) return;
+    try {
+      await institutionAdminService.removeBodyMember(selectedBody.id, userId);
+      setBodyMembers((prev) => prev.filter((m) => m.userId !== userId));
+    } catch (err: any) {
+      console.error("Failed to remove member", err);
+    }
+  };
+
   const openAssignModalForBody = (body: RepresentativeBody) => {
     setRepBodyId(String(body.id));
     setRepDepartmentId(body.department?.id ? String(body.department.id) : "");
@@ -765,6 +841,17 @@ const InstitutionWorkspace = ({ mode = "admin" }: { mode?: "admin" | "rep" }) =>
     if (!selectedBody) return [];
     return representatives.filter((r) => r.body?.id === selectedBody.id);
   }, [representatives, selectedBody]);
+
+  // Filter enrolled members for currently selected body by search query
+  const filteredBodyMembers = useMemo(() => {
+    if (!bodyMemberSearch.trim()) return bodyMembers;
+    const q = bodyMemberSearch.toLowerCase();
+    return bodyMembers.filter((m) => {
+      const name = `${m.user.firstName || ""} ${m.user.lastName || ""}`.toLowerCase();
+      const email = m.user.email.toLowerCase();
+      return name.includes(q) || email.includes(q);
+    });
+  }, [bodyMembers, bodyMemberSearch]);
 
   // Tab styling matching AdminSettings.tsx exactly
   const tabClass = (tab: WorkspaceTab) =>
@@ -1589,7 +1676,7 @@ const InstitutionWorkspace = ({ mode = "admin" }: { mode?: "admin" | "rep" }) =>
               </div>
 
               {/* Metrics Grid */}
-              <div className="mt-6 grid grid-cols-2 sm:grid-cols-3 gap-3">
+              <div className="mt-6 grid grid-cols-2 sm:grid-cols-4 gap-3">
                 <div className="rounded-xl border border-[#ffd7a8]/60 bg-[#FEF5EA]/40 p-4">
                   <span className="block font-poppins text-xs font-medium text-[#8b8e8d]">
                     Assigned Executives
@@ -1600,17 +1687,25 @@ const InstitutionWorkspace = ({ mode = "admin" }: { mode?: "admin" | "rep" }) =>
                 </div>
                 <div className="rounded-xl border border-[#ffd7a8]/60 bg-[#FEF5EA]/40 p-4">
                   <span className="block font-poppins text-xs font-medium text-[#8b8e8d]">
+                    Enrolled Members
+                  </span>
+                  <span className="mt-1 block font-poppins text-2xl font-bold text-[#F49B31]">
+                    {bodyMembers.length}
+                  </span>
+                </div>
+                <div className="rounded-xl border border-[#ffd7a8]/60 bg-[#FEF5EA]/40 p-4">
+                  <span className="block font-poppins text-xs font-medium text-[#8b8e8d]">
                     Assigned Issues
                   </span>
                   <span className="mt-1 block font-poppins text-2xl font-bold text-[#212121]">
                     {selectedBody._count?.assignedPings ?? 0}
                   </span>
                 </div>
-                <div className="rounded-xl border border-[#ffd7a8]/60 bg-[#FEF5EA]/40 p-4 col-span-2 sm:col-span-1">
+                <div className="rounded-xl border border-[#ffd7a8]/60 bg-[#FEF5EA]/40 p-4">
                   <span className="block font-poppins text-xs font-medium text-[#8b8e8d]">
                     Target Scope
                   </span>
-                  <span className="mt-1 block font-poppins text-sm font-semibold text-[#212121]">
+                  <span className="mt-1 block font-poppins text-sm font-semibold text-[#212121] truncate">
                     {selectedBody.department?.code ?? "All Campus"}
                   </span>
                 </div>
@@ -1703,6 +1798,104 @@ const InstitutionWorkspace = ({ mode = "admin" }: { mode?: "admin" | "rep" }) =>
                     >
                       Assign First Executive
                     </button>
+                  </div>
+                )}
+              </div>
+
+              {/* Enrolled Body Members Section (For Private / Members-Only Discussions) */}
+              <div className="mt-8 border-t border-[#ffd7a8]/50 pt-6">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pb-3">
+                  <div>
+                    <h3 className="font-poppins font-semibold text-lg text-[#212121]">
+                      Enrolled Members ({bodyMembers.length})
+                    </h3>
+                    <p className="text-xs text-[#8b8e8d]">
+                      Members who have private access to view and participate in members-only discussions for {selectedBody.name}.
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsAddingBodyMembers(true);
+                      setBodyMemberFeedback(null);
+                    }}
+                    className={`${primaryBtnClass} text-xs shrink-0`}
+                  >
+                    + Batch Add Members
+                  </button>
+                </div>
+
+                {bodyMembers.length > 5 && (
+                  <div className="mb-4">
+                    <input
+                      type="text"
+                      placeholder="Search enrolled members by name or email..."
+                      value={bodyMemberSearch}
+                      onChange={(e) => setBodyMemberSearch(e.target.value)}
+                      className="w-full rounded-xl border border-[#ffd7a8] bg-[#FEF5EA]/30 px-3.5 py-2 text-xs font-poppins placeholder:text-black/40 focus:border-[#F49B31] focus:outline-none"
+                    />
+                  </div>
+                )}
+
+                {loadingBodyMembers ? (
+                  <div className="py-8 text-center text-xs text-[#8b8e8d] font-poppins">
+                    Loading members...
+                  </div>
+                ) : filteredBodyMembers.length ? (
+                  <div className="max-h-[300px] overflow-y-auto divide-y divide-[#ffd7a8]/40 border border-[#ffd7a8]/40 rounded-xl">
+                    {filteredBodyMembers.map((member) => (
+                      <div
+                        key={member.id}
+                        className="p-3.5 flex items-center justify-between gap-3 hover:bg-[#FEF5EA]/20 transition-colors"
+                      >
+                        <div className="flex items-center gap-3 min-w-0">
+                          <div className="w-8 h-8 rounded-full bg-[#FEF5EA] border border-[#ffd7a8] flex items-center justify-center font-bold text-xs text-[#F49B31] shrink-0 overflow-hidden">
+                            {member.user.avatarUrl ? (
+                              <img src={member.user.avatarUrl} alt="" className="w-full h-full object-cover" />
+                            ) : (
+                              (member.user.firstName?.[0] || member.user.email[0]).toUpperCase()
+                            )}
+                          </div>
+                          <div className="min-w-0">
+                            <span className="block font-poppins font-semibold text-xs text-[#212121] truncate">
+                              {member.user.firstName && member.user.lastName
+                                ? `${member.user.firstName} ${member.user.lastName}`
+                                : member.user.email.split("@")[0]}
+                            </span>
+                            <span className="block text-[11px] text-[#8b8e8d] truncate">
+                              {member.user.email}
+                            </span>
+                          </div>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveBodyMember(member.userId)}
+                          className="rounded-full border border-red-200 px-2.5 py-1 text-[11px] font-semibold text-red-600 hover:bg-red-50 shrink-0"
+                        >
+                          Remove
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="rounded-xl bg-[#FEF5EA]/60 p-6 text-center border border-[#ffd7a8]/40">
+                    <p className="font-poppins text-xs text-[#75420B]">
+                      {bodyMemberSearch
+                        ? "No members match your search."
+                        : `No members enrolled in ${selectedBody.name} yet.`}
+                    </p>
+                    {!bodyMemberSearch && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setIsAddingBodyMembers(true);
+                          setBodyMemberFeedback(null);
+                        }}
+                        className={`${primaryBtnClass} mt-3 text-xs`}
+                      >
+                        Batch Add Members
+                      </button>
+                    )}
                   </div>
                 )}
               </div>
@@ -2435,6 +2628,97 @@ const InstitutionWorkspace = ({ mode = "admin" }: { mode?: "admin" | "rep" }) =>
                   </button>
                   <button type="submit" disabled={saving} className={primaryBtnClass}>
                     {saving ? "Saving…" : `Add ${levelDrafts.length} Level${levelDrafts.length === 1 ? "" : "s"}`}
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
+
+        {/* ────────── MODAL: BATCH ADD BODY MEMBERS ────────── */}
+        {isAddingBodyMembers && selectedBody && (
+          <div
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4 animate-fade-in"
+            onClick={() => setIsAddingBodyMembers(false)}
+          >
+            <div
+              className="relative w-full max-w-lg overflow-y-auto rounded-[24px] border border-[#ffd7a8] bg-white p-6 sm:p-8 shadow-xl"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex items-center justify-between border-b border-[#ffd7a8]/50 pb-3">
+                <div>
+                  <h3 className="font-poppins font-bold text-lg text-[#212121]">
+                    Add Members to {selectedBody.name}
+                  </h3>
+                  <p className="text-xs text-[#8b8e8d] mt-0.5">
+                    Batch import member emails for private body discussions.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setIsAddingBodyMembers(false)}
+                  className="rounded-full p-1 text-black/40 hover:bg-[#FEF5EA]"
+                >
+                  <X size={18} />
+                </button>
+              </div>
+
+              {bodyMemberFeedback && (
+                <div
+                  className={`mt-4 rounded-xl p-3 text-xs font-poppins ${
+                    bodyMemberFeedback.isError
+                      ? "bg-red-50 text-red-700 border border-red-200"
+                      : "bg-emerald-50 text-emerald-800 border border-emerald-200"
+                  }`}
+                >
+                  {bodyMemberFeedback.message}
+                </div>
+              )}
+
+              <form onSubmit={handleAddBodyMembers} className="mt-4 flex flex-col gap-4">
+                <div>
+                  <label className="block text-xs font-semibold text-[#212121] mb-1 font-poppins">
+                    Member Email Addresses
+                  </label>
+                  <p className="text-[11px] text-[#8b8e8d] mb-2 font-['Inter',sans-serif]">
+                    Paste one or more student/member emails separated by commas, spaces, or newlines.
+                  </p>
+                  <textarea
+                    rows={6}
+                    value={bodyMemberEmails}
+                    onChange={(e) => setBodyMemberEmails(e.target.value)}
+                    placeholder="john.doe@covenantuniversity.edu.ng&#10;jane.smith@covenantuniversity.edu.ng&#10;..."
+                    className="w-full rounded-xl border border-[#ffd7a8] p-3 text-xs font-mono placeholder:text-black/30 focus:border-[#F49B31] focus:outline-none"
+                    required
+                  />
+                  <div className="mt-1 flex items-center justify-between text-[11px] text-[#8b8e8d]">
+                    <span>
+                      Detected:{" "}
+                      {
+                        bodyMemberEmails
+                          .split(/[\n,;\s]+/)
+                          .filter((e) => e.trim().includes("@")).length
+                      }{" "}
+                      email(s)
+                    </span>
+                    <span className="text-[#F49B31]">Supports 100+ members</span>
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-end gap-3 pt-2">
+                  <button
+                    type="button"
+                    onClick={() => setIsAddingBodyMembers(false)}
+                    className="rounded-full border border-black/10 px-4 py-2 font-poppins text-xs font-semibold text-black/60 hover:bg-black/5"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={saving || !bodyMemberEmails.trim()}
+                    className={`${primaryBtnClass} text-xs disabled:opacity-50`}
+                  >
+                    {saving ? "Importing Members..." : "Import Members"}
                   </button>
                 </div>
               </form>

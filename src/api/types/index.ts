@@ -204,6 +204,13 @@ export interface Ping {
     id: number;
     name: string;
   } | null;
+  isMembersOnly?: boolean;
+  visibilityBodyId?: number | null;
+  visibilityBody?: {
+    id: number;
+    name: string;
+    slug: string;
+  } | null;
 }
 
 export interface CreatePingRequest {
@@ -216,6 +223,8 @@ export interface CreatePingRequest {
   targetDepartmentId?: number;
   targetLevel?: number;
   targetHall?: string;
+  isMembersOnly?: boolean;
+  visibilityBodyId?: number;
 }
 
 export interface UpdatePingRequest {

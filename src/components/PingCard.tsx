@@ -183,21 +183,28 @@ const PingCard = ({
                 </div>
             </div>
 
-            {/* Category badge */}
-            {categoryName && (
-                <div className="flex items-center gap-[5px]">
-                    {categoryIcon && (
-                        <img
-                            src={categoryIcon}
-                            alt={categoryName}
-                            className="w-3 h-3 object-contain"
-                        />
-                    )}
-                    <span className="font-['Poppins',sans-serif] font-medium  text-[13px] text-black">
-                        {categoryName}
+            {/* Category and Visibility badges */}
+            <div className="flex flex-wrap items-center gap-2">
+                {categoryName && (
+                    <div className="flex items-center gap-[5px]">
+                        {categoryIcon && (
+                            <img
+                                src={categoryIcon}
+                                alt={categoryName}
+                                className="w-3 h-3 object-contain"
+                            />
+                        )}
+                        <span className="font-['Poppins',sans-serif] font-medium  text-[13px] text-black">
+                            {categoryName}
+                        </span>
+                    </div>
+                )}
+                {ping.isMembersOnly && (
+                    <span className="inline-flex items-center gap-1 rounded-full bg-[#FEF5EA] px-2 py-0.5 text-xs font-semibold text-[#F49B31] border border-[#ffd7a8]">
+                        🔒 {ping.visibilityBody?.name ? `${ping.visibilityBody.name} Members` : "Members Only"}
                     </span>
-                </div>
-            )}
+                )}
+            </div>
 
             {/* Title */}
             <h1 className="font-['Poppins',sans-serif] font-semibold text-[20px] text-black">

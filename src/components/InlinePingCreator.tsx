@@ -19,6 +19,9 @@ import type { CategoryData } from "../api/types/index";
 import OptionalPingContext, {
   type OptionalPingContextValue,
 } from "./OptionalPingContext";
+import institutionAdminService, {
+  type RepresentativeBody,
+} from "../api/services/institutionAdmin.service";
 
 type ExpansionState = "collapsed" | "expanded";
 
@@ -58,6 +61,49 @@ const InlinePingCreator = forwardRef<InlinePingCreatorHandle>((_, ref) => {
   const [showCategoryDropdown, setShowCategoryDropdown] = useState(false);
   const [showPostMenu, setShowPostMenu] = useState(false);
   const [categories, setCategories] = useState<CategoryData[]>([]);
+
+  // Permissions & members-only ping state
+  const isAdmin =
+    user?.role === "LEADER" ||
+    user?.role === "SUPER_ADMIN" ||
+    (user?.role as string) === "ADMIN";
+  const userRepBodyId = user?.representativeProfile?.bodyId;
+  const isRep = Boolean(userRepBodyId && user?.representativeProfile?.isActive);
+  const canPostMembersOnly = isAdmin || isRep;
+
+  const [isMembersOnly, setIsMembersOnly] = useState(false);
+  const [visibilityBodyId, setVisibilityBodyId] = useState<number | null>(
+    userRepBodyId ?? null
+  );
+  const [availableBodies, setAvailableBodies] = useState<RepresentativeBody[]>([]);
+
+  useEffect(() => {
+    if (canPostMembersOnly) {
+      if (isAdmin) {
+        institutionAdminService
+          .getBodies()
+          .then((bodies) => {
+            setAvailableBodies(bodies);
+            if (bodies.length > 0 && !visibilityBodyId) {
+              setVisibilityBodyId(bodies[0].id);
+            }
+          })
+          .catch((err) =>
+            console.error("Failed to load bodies for members-only ping", err)
+          );
+      } else if (isRep && userRepBodyId) {
+        const repBody = user?.representativeProfile?.body;
+        setAvailableBodies([
+          {
+            id: userRepBodyId,
+            name: (repBody as any)?.name || "My Representative Body",
+            slug: (repBody as any)?.slug || "body",
+          },
+        ]);
+        setVisibilityBodyId(userRepBodyId);
+      }
+    }
+  }, [canPostMembersOnly, isAdmin, isRep, userRepBodyId, user?.representativeProfile?.body]);
 
   // Refs
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -203,6 +249,9 @@ const InlinePingCreator = forwardRef<InlinePingCreatorHandle>((_, ref) => {
         categoryId: pingData.categoryId,
         isAnonymous: pingData.anonymous,
         mediaIds: mediaIds.length > 0 ? mediaIds : undefined,
+        ...(isMembersOnly && visibilityBodyId
+          ? { isMembersOnly: true, visibilityBodyId: Number(visibilityBodyId) }
+          : {}),
         ...(pingData.context.targetDepartmentId
           ? { targetDepartmentId: pingData.context.targetDepartmentId }
           : {}),
@@ -382,6 +431,22 @@ const InlinePingCreator = forwardRef<InlinePingCreatorHandle>((_, ref) => {
           <div className="w-full text-xs text-red-500">{uploadError}</div>
         )}
 
+        {/* Members-Only Notice */}
+        {isMembersOnly && (
+          <div className="w-full flex items-center justify-between rounded-lg bg-[#FEF5EA] border border-[#ffd7a8] px-3 py-2 text-xs font-poppins text-[#75420B]">
+            <span className="flex items-center gap-1.5 font-medium">
+              🔒 Members-Only: Visible only to enrolled members & reps ({availableBodies.find((b) => b.id === visibilityBodyId)?.name || "Body"})
+            </span>
+            <button
+              type="button"
+              onClick={() => setIsMembersOnly(false)}
+              className="text-[11px] underline text-[#F49B31] hover:text-[#d88429]"
+            >
+              Make Public
+            </button>
+          </div>
+        )}
+
         {/* Bottom Action Row: Attach + Post Button */}
         <div className="w-full flex justify-between items-center">
           {/* Photo Upload Button */}
@@ -431,7 +496,7 @@ const InlinePingCreator = forwardRef<InlinePingCreatorHandle>((_, ref) => {
 
             {/* Post Menu Dropdown */}
             {showPostMenu && (
-              <div className="absolute top-full right-0 mt-2 bg-white rounded-lg shadow-lg p-3 z-50 w-max">
+              <div className="absolute top-full right-0 mt-2 bg-white rounded-lg shadow-lg p-3 z-50 w-max min-w-[220px] border border-[#ffd7a8]">
                 <button
                   type="button"
                   onClick={() => {
@@ -454,6 +519,51 @@ const InlinePingCreator = forwardRef<InlinePingCreatorHandle>((_, ref) => {
                   </div>
                   <span>Post Anonymously</span>
                 </button>
+
+                {/* Members-Only Discussion Toggle (Reps & Admins) */}
+                {canPostMembersOnly && (
+                  <div className="mt-2 pt-2 border-t border-[#ffd7a8]/40">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const nextVal = !isMembersOnly;
+                        setIsMembersOnly(nextVal);
+                        if (nextVal && !visibilityBodyId && availableBodies.length > 0) {
+                          setVisibilityBodyId(availableBodies[0].id);
+                        }
+                      }}
+                      className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-[#FEF5EA] transition-colors w-full text-left text-sm text-black"
+                    >
+                      <div
+                        className={`w-9 h-5 flex items-center rounded-full transition-colors ${isMembersOnly ? "bg-[#F49B31]" : "bg-gray-300"}`}
+                      >
+                        <div
+                          className={`w-4 h-4 rounded-full bg-white transition-transform ${isMembersOnly ? "translate-x-[18.5px]" : "translate-x-0"}`}
+                        />
+                      </div>
+                      <span className="font-medium text-xs">Members-Only Discussion</span>
+                    </button>
+
+                    {isMembersOnly && availableBodies.length > 1 && (
+                      <div className="mt-2 px-3">
+                        <label className="block text-[11px] text-[#8b8e8d] mb-1 font-poppins">
+                          Target Body:
+                        </label>
+                        <select
+                          value={visibilityBodyId ?? ""}
+                          onChange={(e) => setVisibilityBodyId(Number(e.target.value))}
+                          className="w-full text-xs rounded-lg border border-[#ffd7a8] bg-[#FEF5EA]/30 p-1.5 focus:border-[#F49B31] focus:outline-none"
+                        >
+                          {availableBodies.map((b) => (
+                            <option key={b.id} value={b.id}>
+                              {b.name}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
             )}
           </div>

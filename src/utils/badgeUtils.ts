@@ -191,6 +191,11 @@ export function calculatePingBadge(
   ping: Ping,
   weeklyTop3Ids: number[] = [],
 ): PingBadgeConfig | null {
+  // Private / Members-only pings do not receive public ranking/status badges
+  if (ping.isMembersOnly) {
+    return null;
+  }
+
   // Explicit ping states take precedence over weekly ranking.
   if (ping.progressStatus === "RESOLVED" || !!ping.resolvedAt) {
     return {

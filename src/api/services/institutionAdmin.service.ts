@@ -25,7 +25,22 @@ export interface RepresentativeBody {
   description?: string | null;
   departmentId?: number | null;
   department?: Pick<AcademicDepartment, "id" | "name" | "code"> | null;
-  _count?: { representatives?: number; assignedPings?: number };
+  _count?: { representatives?: number; assignedPings?: number; bodyMembers?: number };
+}
+
+export interface BodyMemberItem {
+  id: number;
+  userId: number;
+  bodyId: number;
+  organizationId: number;
+  joinedAt: string;
+  user: {
+    id: number;
+    firstName?: string | null;
+    lastName?: string | null;
+    email: string;
+    avatarUrl?: string | null;
+  };
 }
 
 export interface RepresentativePermissions {
@@ -218,6 +233,38 @@ const institutionAdminService = {
 
   removeRepresentative: async (profileId: number): Promise<void> => {
     await api.delete(`/admin/representatives/${profileId}`);
+  },
+
+  getBodyMembers: async (
+    bodyId: number,
+    params?: { page?: number; limit?: number; search?: string }
+  ): Promise<{ members: BodyMemberItem[]; pagination: { total: number; page: number; totalPages: number } }> => {
+    const response = await api.get<{
+      members: BodyMemberItem[];
+      pagination: { total: number; page: number; totalPages: number };
+    }>(`/admin/bodies/${bodyId}/members`, { params });
+    return response.data;
+  },
+
+  addBodyMembers: async (
+    bodyId: number,
+    data: { emails?: string[]; userIds?: number[] }
+  ): Promise<{ message: string; addedCount: number }> => {
+    const response = await api.post<{ message: string; addedCount: number }>(
+      `/admin/bodies/${bodyId}/members`,
+      data
+    );
+    return response.data;
+  },
+
+  removeBodyMember: async (
+    bodyId: number,
+    userId: number
+  ): Promise<{ message: string }> => {
+    const response = await api.delete<{ message: string }>(
+      `/admin/bodies/${bodyId}/members/${userId}`
+    );
+    return response.data;
   },
 };
 
