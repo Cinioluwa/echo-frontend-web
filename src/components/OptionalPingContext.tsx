@@ -7,6 +7,7 @@ export interface OptionalPingContextValue {
   targetDepartmentId: number | null;
   targetLevel: number | null;
   targetHall: string;
+  targetBodyId?: number | null;
 }
 
 interface OptionalPingContextProps {
@@ -111,6 +112,7 @@ const OptionalPingContext = ({ value, onChange }: OptionalPingContextProps) => {
   const [departments, setDepartments] = useState<
     Array<{ id: number; name: string; code: string }>
   >([]);
+  const [bodies, setBodies] = useState<Array<{ id: number; name: string }>>([]);
   const [halls, setHalls] = useState<string[]>([]);
   const [levels, setLevels] = useState<number[]>([]);
   const [contextError, setContextError] = useState<string | null>(null);
@@ -119,6 +121,7 @@ const OptionalPingContext = ({ value, onChange }: OptionalPingContextProps) => {
     let cancelled = false;
     if (!organizationId) {
       setDepartments([]);
+      setBodies([]);
       setHalls([]);
       setLevels([]);
       return;
@@ -130,8 +133,9 @@ const OptionalPingContext = ({ value, onChange }: OptionalPingContextProps) => {
         if (cancelled) return;
         // The API payload is network data, so each list is coerced to an array.
         // A missing field must not become `undefined`, because departmentOptions,
-        // levelOptions and hallOptions map over them during render.
+        // levelOptions, hallOptions, and bodyOptions map over them during render.
         setDepartments(toArray(options?.departments));
+        setBodies(toArray(options?.bodies));
         setHalls(toArray(options?.halls));
         setLevels(toArray(options?.levels));
         setContextError(null);
@@ -157,6 +161,13 @@ const OptionalPingContext = ({ value, onChange }: OptionalPingContextProps) => {
       label: department.name,
     })),
   ];
+  const bodyOptions = [
+    { value: "", label: "Any body / committee" },
+    ...bodies.map((body) => ({
+      value: String(body.id),
+      label: body.name,
+    })),
+  ];
   const levelOptions = [
     { value: "", label: "Any level" },
     ...levels.map((level) => ({ value: String(level), label: `${level}L` })),
@@ -180,6 +191,17 @@ const OptionalPingContext = ({ value, onChange }: OptionalPingContextProps) => {
         </p>
       </div>
       <div className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,_180px),_1fr))] gap-3">
+        <ContextDropdown
+          label="Body / Committee"
+          value={value.targetBodyId?.toString() ?? ""}
+          options={bodyOptions}
+          onChange={(bodyId) =>
+            onChange({
+              ...value,
+              targetBodyId: bodyId ? Number(bodyId) : null,
+            })
+          }
+        />
         <ContextDropdown
           label="Department"
           value={value.targetDepartmentId?.toString() ?? ""}

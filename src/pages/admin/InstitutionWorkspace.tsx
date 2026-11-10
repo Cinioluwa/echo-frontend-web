@@ -1291,7 +1291,12 @@ const InstitutionWorkspace = ({ mode = "admin" }: { mode?: "admin" | "rep" }) =>
                       )}
                       <button
                         type="button"
-                        onClick={() => setIsAssigningRep(true)}
+                        onClick={() => {
+                          if (user?.role === "REPRESENTATIVE" && user.representativeProfile?.bodyId) {
+                            setRepBodyId(String(user.representativeProfile.bodyId));
+                          }
+                          setIsAssigningRep(true);
+                        }}
                         disabled={bodies.length === 0}
                         className={primaryBtnClass}
                       >
@@ -2859,12 +2864,13 @@ const InstitutionWorkspace = ({ mode = "admin" }: { mode?: "admin" | "rep" }) =>
                     <select
                       required
                       value={repBodyId}
+                      disabled={user?.role === "REPRESENTATIVE"}
                       onChange={(e) => {
                         setRepBodyId(e.target.value);
                         const b = bodies.find((item) => String(item.id) === e.target.value);
                         setRepDepartmentId(b?.department?.id ? String(b.department.id) : "");
                       }}
-                      className={inputClass}
+                      className={`${inputClass} ${user?.role === "REPRESENTATIVE" ? "bg-black/5 cursor-not-allowed" : ""}`}
                     >
                       <option value="">Select a body</option>
                       {bodies.map((b) => (
@@ -2873,6 +2879,11 @@ const InstitutionWorkspace = ({ mode = "admin" }: { mode?: "admin" | "rep" }) =>
                         </option>
                       ))}
                     </select>
+                    {user?.role === "REPRESENTATIVE" && (
+                      <span className="mt-1 block font-poppins text-[10px] text-[#8b8e8d]">
+                        Representatives can only configure leaders within their assigned body.
+                      </span>
+                    )}
                   </label>
 
                   <label className="block font-poppins text-xs font-medium text-[#454545]">
@@ -2982,21 +2993,28 @@ const InstitutionWorkspace = ({ mode = "admin" }: { mode?: "admin" | "rep" }) =>
                   <legend className="font-poppins text-xs font-semibold text-[#212121]">
                     Permissions
                   </legend>
+                  <p className="mt-1 font-poppins text-[11px] font-medium text-[#75420B]">
+                    All granted permissions are strictly scoped to{" "}
+                    <span className="font-semibold underline">
+                      {bodies.find((b) => String(b.id) === String(repBodyId))?.name || "the assigned body"}
+                    </span>{" "}
+                    (not university-wide).
+                  </p>
                   {user?.role === "REPRESENTATIVE" && (
                     <p className="mt-1 font-poppins text-[11px] text-[#8b8e8d]">
-                      You can only grant permissions that are already assigned to you.
+                      You can only grant permissions that are already assigned to you within your body.
                     </p>
                   )}
-                  <div className="mt-2 grid gap-2 sm:grid-cols-2">
+                  <div className="mt-2.5 grid gap-2 sm:grid-cols-2">
                     {(
                       [
-                        ["canAssign", "Can assign issues to reps/bodies"],
-                        ["canRespond", "Can publish official responses"],
-                        ["canAcknowledge", "Can acknowledge issues"],
-                        ["canModerateWaves", "Can moderate posts (approve, reject or review waves)"],
-                        ["canUpdateWaveProgress", "Can mark waves in progress or completed"],
-                        ["canExport", "Can export data to CSV"],
-                        ["canManageReps", "Can manage other reps"],
+                        ["canAssign", "Can assign issues within this body"],
+                        ["canRespond", "Can publish official responses for this body"],
+                        ["canAcknowledge", "Can acknowledge issues in this body"],
+                        ["canModerateWaves", "Can moderate posts (approve, reject or review waves) for this body"],
+                        ["canUpdateWaveProgress", "Can mark wave progress for this body"],
+                        ["canExport", "Can export body data to CSV"],
+                        ["canManageReps", "Can manage other reps in this body"],
                       ] as const
                     ).map(([key, label]) => (
                       <label

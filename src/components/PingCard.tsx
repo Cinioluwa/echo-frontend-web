@@ -204,6 +204,11 @@ const PingCard = ({
                         🔒 {ping.visibilityBody?.name ? `${ping.visibilityBody.name} Members` : "Members Only"}
                     </span>
                 )}
+                {!ping.isMembersOnly && ping.assignedToBody?.name && (
+                    <span className="inline-flex items-center gap-1 rounded-full bg-[#FEF5EA] px-2.5 py-0.5 text-xs font-semibold text-[#75420B] border border-[#ffd7a8]">
+                        🏛️ {ping.assignedToBody.name}
+                    </span>
+                )}
             </div>
 
             {/* Title */}

@@ -80,7 +80,7 @@ const PingFormModal = ({
     categoryName: "",
     anonymous: false,
     photos: [],
-    context: { targetDepartmentId: null, targetLevel: null, targetHall: "" },
+    context: { targetDepartmentId: null, targetLevel: null, targetHall: "", targetBodyId: null },
   });
 
   // UI state
@@ -271,8 +271,17 @@ const PingFormModal = ({
         categoryId: pingData.categoryId,
         isAnonymous: pingData.anonymous,
         mediaIds,
-        ...(isMembersOnly && visibilityBodyId
-          ? { isMembersOnly: true, visibilityBodyId: Number(visibilityBodyId) }
+        ...(isMembersOnly && (visibilityBodyId || pingData.context.targetBodyId)
+          ? {
+              isMembersOnly: true,
+              visibilityBodyId: Number(visibilityBodyId || pingData.context.targetBodyId),
+            }
+          : {}),
+        ...(pingData.context.targetBodyId
+          ? {
+              targetBodyId: Number(pingData.context.targetBodyId),
+              assignedToBodyId: Number(pingData.context.targetBodyId),
+            }
           : {}),
         ...(pingData.context.targetDepartmentId
           ? { targetDepartmentId: pingData.context.targetDepartmentId }
@@ -400,10 +409,53 @@ const PingFormModal = ({
 
           <OptionalPingContext
             value={pingData.context}
-            onChange={(context) =>
-              setPingData((prev) => ({ ...prev, context }))
-            }
+            onChange={(context) => {
+              setPingData((prev) => ({ ...prev, context }));
+              if (context.targetBodyId) {
+                setVisibilityBodyId(context.targetBodyId);
+              }
+            }}
           />
+
+          {/* Members-Only Discussion Toggle (Visible to Reps & Admins) */}
+          {canPostMembersOnly && (
+            <div className="flex items-center justify-between rounded-xl bg-[#FEF5EA] border border-[#ffd7a8] p-3 text-xs font-poppins">
+              <div>
+                <span className="font-semibold text-[#212121] block">
+                  🔒 Members-Only Discussion
+                </span>
+                <span className="text-[#8b8e8d] text-[11px] block mt-0.5">
+                  {isMembersOnly
+                    ? `Restricted to enrolled members and executives of ${
+                        availableBodies.find((b) => b.id === (pingData.context.targetBodyId || visibilityBodyId))?.name || "the selected body"
+                      }.`
+                    : "Unchecked: Public discussion (past attendees & all students can view)."}
+                </span>
+              </div>
+              <label className="relative inline-flex items-center cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={isMembersOnly}
+                  onChange={(e) => {
+                    const checked = e.target.checked;
+                    setIsMembersOnly(checked);
+                    if (checked) {
+                      const bodyId = pingData.context.targetBodyId || visibilityBodyId || availableBodies[0]?.id;
+                      if (bodyId) {
+                        setVisibilityBodyId(bodyId);
+                        setPingData((prev) => ({
+                          ...prev,
+                          context: { ...prev.context, targetBodyId: bodyId },
+                        }));
+                      }
+                    }
+                  }}
+                  className="sr-only peer"
+                />
+                <div className="w-9 h-5 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[#F49B31]"></div>
+              </label>
+            </div>
+          )}
 
           {/* Title Input */}
           <div className="flex px-4 md:px-[27px] py-1.5 md:py-3 border-2 border-[#FFC37B] rounded-[20px] focus-within:border-[#F49B31] focus-within:shadow-md transition-all duration-200 bg-white w-full h-[36px] md:h-[50px]">

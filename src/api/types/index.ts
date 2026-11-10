@@ -223,6 +223,8 @@ export interface CreatePingRequest {
   targetDepartmentId?: number;
   targetLevel?: number;
   targetHall?: string;
+  targetBodyId?: number;
+  assignedToBodyId?: number;
   isMembersOnly?: boolean;
   visibilityBodyId?: number;
 }
