@@ -63,6 +63,11 @@ export interface User {
     responsibilities?: string;
     isActive: boolean;
   } | null;
+  bodyMemberships?: Array<{
+    id?: number;
+    bodyId: number;
+    body?: { id: number; name: string };
+  }>;
   userPreference?: UserPreference;
 }
 

@@ -78,6 +78,17 @@ const Layout = () => {
 
     const handlePingCreated = (newPing: any) => {
       console.log('📌 Real-time ping:created:', newPing);
+      if (newPing?.isMembersOnly) {
+        const currentUser = useAuthStore.getState().user;
+        const userBodyIds = [
+          ...(currentUser?.representativeProfile?.bodyId ? [currentUser.representativeProfile.bodyId] : []),
+          ...(currentUser?.bodyMemberships?.map((m: any) => m.bodyId) || []),
+        ];
+        const isAdmin = currentUser?.role === 'ADMIN' || currentUser?.role === 'SUPER_ADMIN';
+        if (!isAdmin && !userBodyIds.includes(newPing.visibilityBodyId)) {
+          return;
+        }
+      }
       usePingsStore.getState().addPing(newPing);
     };
 

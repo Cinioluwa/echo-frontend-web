@@ -11,6 +11,7 @@ import { useState } from "react";
 import ProfileDropdown from "./ProfileDropdown";
 import NotificationBell from "./NotificationBell";
 import MobileSideDrawer from "./MobileSideDrawer";
+import SearchBar from "./SearchBar";
 import { useNavigate } from "react-router-dom";
 
 const logo = "/assets/images/Echo Logo_black.svg";
@@ -27,10 +28,10 @@ const NavBar = () => {
         {/* Same max-width as Layout's content row so the logo sits on the sidebar's
             left edge and the profile icon on the right aside's right edge. */}
         <div className="max-w-[1322px] mx-auto flex items-center justify-between gap-2">
-          {/* Logo — left-aligned inside the shared desktop container */}
+        {/* Logo — left-aligned inside the shared desktop container */}
         <div
           onClick={() => navigate("/feed")}
-          className="flex items-center gap-[5px] cursor-pointer"
+          className="flex items-center gap-[5px] cursor-pointer shrink-0"
         >
           <img
             src={logo}
@@ -40,6 +41,11 @@ const NavBar = () => {
           <span className="font-bold text-[30px] text-black font-['Poppins',sans-serif] leading-normal">
             Echo
           </span>
+        </div>
+
+        {/* Search Bar in center */}
+        <div className="flex-1 max-w-[480px] mx-4 hidden min-[1131px]:block">
+          <SearchBar />
         </div>
 
         {/* Notification bell + User profile + dropdown */}

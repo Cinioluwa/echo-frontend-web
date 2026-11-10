@@ -22,6 +22,7 @@ import OnboardingOverlay from "../components/onboarding/OnboardingOverlay";
 import AnnouncementWidget from "../components/UnifiedFeed/AnnouncementWidget";
 import Top3Widget from "../components/UnifiedFeed/Top3Widget";
 import UnifiedPingCard from "../components/UnifiedFeed/UnifiedPingCard";
+import SearchBar from "../components/SearchBar";
 import type { Announcement, Ping } from "../api/types";
 import type { InstitutionStatus } from "../api/services/organization.service";
 import { useAuthStore, usePingsStore, useSearchStore } from "../stores";
@@ -183,6 +184,27 @@ const UnifiedFeed = () => {
       <div className="lg:hidden flex flex-col gap-[15px]">
         <Top3Widget pings={top3} />
       </div>
+
+      {/* Search Bar on feed */}
+      <div className="w-full">
+        <SearchBar />
+      </div>
+
+      {/* Active Search Results Indicator */}
+      {debouncedQuery && (
+        <div className="flex items-center justify-between rounded-xl bg-[#FEF5EA] border border-[#ffd7a8] px-3.5 py-2 text-xs font-poppins text-[#75420B]">
+          <span>
+            Showing search results for <strong className="text-black">"{debouncedQuery}"</strong>
+          </span>
+          <button
+            type="button"
+            onClick={() => useSearchStore.getState().clearSearch()}
+            className="text-[11px] underline text-[#F49B31] hover:text-[#d88429] font-medium"
+          >
+            Clear Search
+          </button>
+        </div>
+      )}
 
       {/* ── Feed list ── */}
       {error && pings.length === 0 ? (

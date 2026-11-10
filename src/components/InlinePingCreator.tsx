@@ -483,22 +483,6 @@ const InlinePingCreator = forwardRef<InlinePingCreatorHandle>((_, ref) => {
           <div className="w-full text-xs text-red-500">{uploadError}</div>
         )}
 
-        {/* Members-Only Notice */}
-        {isMembersOnly && (
-          <div className="w-full flex items-center justify-between rounded-lg bg-[#FEF5EA] border border-[#ffd7a8] px-3 py-2 text-xs font-poppins text-[#75420B]">
-            <span className="flex items-center gap-1.5 font-medium">
-              🔒 Members-Only: Visible only to enrolled members & reps ({availableBodies.find((b) => b.id === visibilityBodyId)?.name || "Body"})
-            </span>
-            <button
-              type="button"
-              onClick={() => setIsMembersOnly(false)}
-              className="text-[11px] underline text-[#F49B31] hover:text-[#d88429]"
-            >
-              Make Public
-            </button>
-          </div>
-        )}
-
         {/* Bottom Action Row: Attach + Post Button */}
         <div className="w-full flex justify-between items-center">
           {/* Photo Upload Button */}
