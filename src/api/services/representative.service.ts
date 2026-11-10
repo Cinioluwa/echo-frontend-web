@@ -128,8 +128,8 @@ const representativeService = {
     params?: PaginationParams & { status?: string },
   ): Promise<PaginatedResponse<Ping>> => {
     const response = await api.get<PaginatedResponse<Ping>>(
-      "/representatives/pings/submitted",
-      { params: { ...params, assigned: "me" } },
+      "/pings/inbox",
+      { params },
     );
     return response.data;
   },

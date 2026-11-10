@@ -78,9 +78,11 @@ const SideBar = ({ onCreatePing, onNavigate, variant = "desktop" }: Props) => {
         </span>
       </button>
 
+      {/* Universal Inbox for all users */}
+      {navItem("/inbox", "Inbox", "/assets/icon/admin-soundboard.svg", pathname.startsWith("/inbox"))}
+
       {isRepresentative && (
         <>
-          {navItem("/inbox", "Inbox", "/assets/icon/admin-soundboard.svg", pathname.startsWith("/inbox"))}
           {navItem("/follow-up", "Follow Up", "/assets/icon/followup.svg", pathname === "/follow-up")}
           {canModerate &&
             navItem(

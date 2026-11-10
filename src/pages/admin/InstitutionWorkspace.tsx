@@ -77,6 +77,20 @@ const InstitutionWorkspace = ({ mode = "admin" }: { mode?: "admin" | "rep" }) =>
     canManageOrganizationSettings ||
     user?.representativeProfile?.[permission] === true;
 
+  const canEditBody = useCallback(
+    (body: RepresentativeBody) => {
+      if (canManageOrganizationSettings) return true;
+      if (
+        isRepresentativeManager &&
+        user?.representativeProfile?.bodyId === body.id
+      ) {
+        return true;
+      }
+      return false;
+    },
+    [canManageOrganizationSettings, isRepresentativeManager, user?.representativeProfile?.bodyId],
+  );
+
   const [activeTab, setActiveTab] = useState<WorkspaceTab>(
     isRepresentativeManager ? "representatives" : "departments",
   );
@@ -109,6 +123,7 @@ const InstitutionWorkspace = ({ mode = "admin" }: { mode?: "admin" | "rep" }) =>
   const [isAddingHalls, setIsAddingHalls] = useState(false);
   const [isAddingLevels, setIsAddingLevels] = useState(false);
   const [isAddingBody, setIsAddingBody] = useState(false);
+  const [editingBody, setEditingBody] = useState<RepresentativeBody | null>(null);
   const [isAssigningRep, setIsAssigningRep] = useState(false);
 
   // Form states
@@ -119,6 +134,16 @@ const InstitutionWorkspace = ({ mode = "admin" }: { mode?: "admin" | "rep" }) =>
   const [bodyName, setBodyName] = useState("");
   const [bodyDepartmentId, setBodyDepartmentId] = useState("");
   const [bodyDescription, setBodyDescription] = useState("");
+  const [editBodyName, setEditBodyName] = useState("");
+  const [editBodyDeptId, setEditBodyDeptId] = useState("");
+  const [editBodyDescription, setEditBodyDescription] = useState("");
+
+  const openEditBodyModal = (body: RepresentativeBody) => {
+    setEditingBody(body);
+    setEditBodyName(body.name);
+    setEditBodyDeptId(body.department?.id ? String(body.department.id) : "");
+    setEditBodyDescription(body.description || "");
+  };
   const [repEmail, setRepEmail] = useState("");
   const [repTitle, setRepTitle] = useState("");
   const [repBodyId, setRepBodyId] = useState("");
@@ -557,6 +582,36 @@ const InstitutionWorkspace = ({ mode = "admin" }: { mode?: "admin" | "rep" }) =>
       setBodyDepartmentId("");
       setBodyDescription("");
       setIsAddingBody(false);
+    });
+  };
+
+  const handleUpdateBody = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (!editingBody) return;
+    const bodyId = editingBody.id;
+    const trimmedName = editBodyName.trim();
+    if (!trimmedName) {
+      setError("Please provide a name for the body.");
+      return;
+    }
+
+    void runSave(async () => {
+      const updated = await institutionAdminService.updateBody(bodyId, {
+        name: trimmedName,
+        description: editBodyDescription.trim() || null,
+        departmentId: canManageOrganizationSettings
+          ? editBodyDeptId
+            ? Number(editBodyDeptId)
+            : null
+          : undefined,
+      });
+      setBodies((current) =>
+        current.map((b) => (b.id === updated.id ? { ...b, ...updated } : b)),
+      );
+      if (selectedBody?.id === updated.id) {
+        setSelectedBody((current) => (current ? { ...current, ...updated } : null));
+      }
+      setEditingBody(null);
     });
   };
 
@@ -1236,17 +1291,32 @@ const InstitutionWorkspace = ({ mode = "admin" }: { mode?: "admin" | "rep" }) =>
                                   </h3>
                                 </div>
                                 <div className="flex items-center gap-1">
-                                  <button
-                                    type="button"
-                                    aria-label={`Delete ${body.name}`}
-                                    onClick={(event) => {
-                                      event.stopPropagation();
-                                      setPendingDelete({ kind: "body", id: body.id });
-                                    }}
-                                    className="rounded-full p-2 text-red-600 hover:bg-red-50"
-                                  >
-                                    <Trash2 size={16} />
-                                  </button>
+                                  {canEditBody(body) && (
+                                    <button
+                                      type="button"
+                                      aria-label={`Edit ${body.name}`}
+                                      onClick={(event) => {
+                                        event.stopPropagation();
+                                        openEditBodyModal(body);
+                                      }}
+                                      className="rounded-full p-2 text-[#8b8e8d] hover:bg-[#FEF5EA] hover:text-[#F49B31] transition-colors cursor-pointer"
+                                    >
+                                      <Pencil size={16} />
+                                    </button>
+                                  )}
+                                  {canManageOrganizationSettings && (
+                                    <button
+                                      type="button"
+                                      aria-label={`Delete ${body.name}`}
+                                      onClick={(event) => {
+                                        event.stopPropagation();
+                                        setPendingDelete({ kind: "body", id: body.id });
+                                      }}
+                                      className="rounded-full p-2 text-red-600 hover:bg-red-50 cursor-pointer"
+                                    >
+                                      <Trash2 size={16} />
+                                    </button>
+                                  )}
                                   <div className="rounded-full bg-[#FEF5EA] p-2 text-[#F49B31] group-hover:bg-[#F49B31] group-hover:text-white transition-all">
                                     <ChevronRight size={16} />
                                   </div>
@@ -1671,13 +1741,25 @@ const InstitutionWorkspace = ({ mode = "admin" }: { mode?: "admin" | "rep" }) =>
                     </p>
                   )}
                 </div>
-                <button
-                  type="button"
-                  onClick={() => setSelectedBody(null)}
-                  className="rounded-full p-2 text-black/40 hover:bg-[#FEF5EA] hover:text-black transition-colors"
-                >
-                  <X size={20} />
-                </button>
+                <div className="flex items-center gap-2">
+                  {canEditBody(selectedBody) && (
+                    <button
+                      type="button"
+                      onClick={() => openEditBodyModal(selectedBody)}
+                      className="flex items-center gap-1.5 rounded-full border border-[#ffd7a8] bg-white px-3 py-1.5 font-poppins text-xs font-semibold text-[#75420B] hover:bg-[#FEF5EA] transition-colors cursor-pointer"
+                    >
+                      <Pencil size={13} />
+                      Edit Body
+                    </button>
+                  )}
+                  <button
+                    type="button"
+                    onClick={() => setSelectedBody(null)}
+                    className="rounded-full p-2 text-black/40 hover:bg-[#FEF5EA] hover:text-black transition-colors"
+                  >
+                    <X size={20} />
+                  </button>
+                </div>
               </div>
 
               {/* Metrics Grid */}
@@ -2802,6 +2884,99 @@ const InstitutionWorkspace = ({ mode = "admin" }: { mode?: "admin" | "rep" }) =>
                   </button>
                   <button type="submit" disabled={saving} className={primaryBtnClass}>
                     {saving ? "Saving…" : "Create Body"}
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
+
+        {/* ────────── MODAL: EDIT BODY ────────── */}
+        {editingBody && (
+          <div
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4 animate-fade-in"
+            onClick={() => setEditingBody(null)}
+          >
+            <div
+              className="relative w-full max-w-md rounded-[24px] border border-[#ffd7a8] bg-white p-6 sm:p-8 shadow-xl"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex items-center justify-between border-b border-[#ffd7a8]/50 pb-3">
+                <h3 className="font-poppins font-bold text-lg text-[#212121]">
+                  Edit Representative Body
+                </h3>
+                <button
+                  type="button"
+                  onClick={() => setEditingBody(null)}
+                  className="rounded-full p-1 text-black/40 hover:bg-[#FEF5EA]"
+                >
+                  <X size={18} />
+                </button>
+              </div>
+
+              {error && <p role="alert" className="mt-3 text-sm text-red-700">{error}</p>}
+
+              <form onSubmit={handleUpdateBody} className="mt-4 flex flex-col gap-4">
+                <label className="block font-poppins text-xs font-medium text-[#454545]">
+                  Body Name
+                  <input
+                    required
+                    maxLength={160}
+                    value={editBodyName}
+                    onChange={(e) => setEditBodyName(e.target.value)}
+                    placeholder="e.g. AEIES, Student Council"
+                    className={inputClass}
+                  />
+                </label>
+                {canManageOrganizationSettings ? (
+                  <label className="block font-poppins text-xs font-medium text-[#454545]">
+                    Associated Department (optional)
+                    <select
+                      value={editBodyDeptId}
+                      onChange={(e) => setEditBodyDeptId(e.target.value)}
+                      className={inputClass}
+                    >
+                      <option value="">Institution-Wide (No specific department)</option>
+                      {departments.map((dept) => (
+                        <option key={dept.id} value={dept.id}>
+                          {dept.name} ({dept.code})
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                ) : (
+                  <div>
+                    <span className="block font-poppins text-xs font-medium text-[#454545]">
+                      Associated Department
+                    </span>
+                    <p className="mt-1 font-poppins text-xs text-[#8b8e8d]">
+                      {editingBody.department
+                        ? `${editingBody.department.name} (${editingBody.department.code})`
+                        : "Institution-Wide (No specific department)"}
+                    </p>
+                  </div>
+                )}
+                <label className="block font-poppins text-xs font-medium text-[#454545]">
+                  Description (optional)
+                  <textarea
+                    rows={3}
+                    maxLength={1000}
+                    value={editBodyDescription}
+                    onChange={(e) => setEditBodyDescription(e.target.value)}
+                    placeholder="Describe the jurisdiction and role of this council..."
+                    className={inputClass}
+                  />
+                </label>
+                <div className="mt-2 flex justify-end gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setEditingBody(null)}
+                    className="rounded-full border border-black/15 px-5 py-2 font-poppins text-sm font-semibold cursor-pointer"
+                  >
+                    Cancel
+                  </button>
+                  <button type="submit" disabled={saving} className={primaryBtnClass}>
+                    {saving ? "Saving…" : "Save Changes"}
                   </button>
                 </div>
               </form>

@@ -32,19 +32,27 @@ const RepInbox = () => {
 
   return (
     <div className="flex flex-col gap-[15px] pb-10 w-full max-w-[720px] mx-auto">
-      <h1 className="font-['Poppins',sans-serif] text-[24px] font-semibold text-black">Inbox</h1>
+      <div>
+        <h1 className="font-['Poppins',sans-serif] text-[24px] font-semibold text-black">Inbox</h1>
+        <p className="font-poppins text-xs text-[#8b8e8d] mt-0.5">
+          Direct updates, polls, and discussions from your representative bodies and assignments.
+        </p>
+      </div>
 
       {error && (
-        <div role="alert" className="rounded-2xl border border-red-200 bg-white p-5 text-sm text-red-800">
+        <div role="alert" className="rounded-2xl border border-red-200 bg-white p-5 text-sm text-red-800 font-poppins">
           {error}
         </div>
       )}
 
       {loading && pings.length === 0 ? (
-        <div className="py-16 text-center text-sm text-[#4A504E]">Loading…</div>
+        <div className="py-16 text-center text-sm text-[#4A504E] font-poppins">Loading…</div>
       ) : !error && pings.length === 0 ? (
-        <div className="py-16 text-center text-sm text-[#4A504E]">
-          No pings have been assigned to you yet.
+        <div className="py-16 text-center text-sm font-poppins text-[#4A504E]">
+          <p className="font-semibold text-base text-[#212121]">No pings in your inbox</p>
+          <p className="text-xs text-[#8b8e8d] mt-1 max-w-[340px] mx-auto">
+            When representative bodies (like TEDxCU or student councils) post private updates, polls, or issues directed to you, they will appear here.
+          </p>
         </div>
       ) : (
         <div className="flex flex-col gap-[15px] w-full">

@@ -208,6 +208,14 @@ const institutionAdminService = {
     return response.data.body;
   },
 
+  updateBody: async (
+    id: number,
+    data: { name?: string; description?: string | null; departmentId?: number | null },
+  ): Promise<RepresentativeBody> => {
+    const response = await api.patch<{ body: RepresentativeBody }>(`/admin/bodies/${id}`, data);
+    return response.data.body;
+  },
+
   removeBody: async (id: number): Promise<{ message: string }> => {
     const response = await api.delete<{ message: string }>(`/admin/bodies/${id}`);
     return response.data;

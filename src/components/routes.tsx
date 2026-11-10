@@ -232,11 +232,17 @@ const router = createBrowserRouter([
         element: withSuspense(History),
       },
       {
+        path: "inbox",
+        element: withSuspense(RepInbox),
+      },
+      {
+        path: "inbox/:pingId",
+        element: withSuspense(RepPingDetail),
+      },
+      {
         path: "",
         element: <RepresentativeRoute />,
         children: [
-          { path: "inbox", element: withSuspense(RepInbox) },
-          { path: "inbox/:pingId", element: withSuspense(RepPingDetail) },
           { path: "follow-up", element: withSuspense(RepFollowUp) },
         ],
       },
