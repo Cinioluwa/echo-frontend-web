@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { FiSearch, FiX } from "react-icons/fi";
 import { useSearchStore } from "../stores";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -12,6 +12,7 @@ export const SearchBar = ({ className = "" }: { className?: string }) => {
   const clearSearch = useSearchStore((state) => state.clearSearch);
 
   const [localInput, setLocalInput] = useState(query);
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     setLocalInput(query);
@@ -19,11 +20,23 @@ export const SearchBar = ({ className = "" }: { className?: string }) => {
 
   // Debounce the input (300ms) to trigger search requests
   useEffect(() => {
-    const timer = setTimeout(() => {
+    if (timerRef.current) clearTimeout(timerRef.current);
+    timerRef.current = setTimeout(() => {
       setDebouncedQuery(localInput.trim());
     }, 300);
-    return () => clearTimeout(timer);
+    return () => {
+      if (timerRef.current) clearTimeout(timerRef.current);
+    };
   }, [localInput, setDebouncedQuery]);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (timerRef.current) clearTimeout(timerRef.current);
+    setDebouncedQuery(localInput.trim());
+    if (location.pathname !== "/feed") {
+      navigate("/feed");
+    }
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = e.target.value;
@@ -35,13 +48,20 @@ export const SearchBar = ({ className = "" }: { className?: string }) => {
   };
 
   const handleClear = () => {
+    if (timerRef.current) clearTimeout(timerRef.current);
     setLocalInput("");
     clearSearch();
   };
 
   return (
-    <div className={`relative flex items-center ${className}`}>
-      <FiSearch className="absolute left-3.5 text-[#8b8e8d] text-base pointer-events-none" />
+    <form onSubmit={handleSubmit} className={`relative flex items-center ${className}`}>
+      <button
+        type="submit"
+        aria-label="Search"
+        className="absolute left-3.5 text-[#8b8e8d] hover:text-[#212121] text-base cursor-pointer"
+      >
+        <FiSearch />
+      </button>
       <input
         type="text"
         value={localInput}
@@ -53,13 +73,13 @@ export const SearchBar = ({ className = "" }: { className?: string }) => {
         <button
           type="button"
           onClick={handleClear}
-          className="absolute right-3 text-[#8b8e8d] hover:text-[#212121] transition-colors p-0.5"
+          className="absolute right-3 text-[#8b8e8d] hover:text-[#212121] transition-colors p-0.5 cursor-pointer"
           aria-label="Clear search"
         >
           <FiX className="text-sm" />
         </button>
       )}
-    </div>
+    </form>
   );
 };
 

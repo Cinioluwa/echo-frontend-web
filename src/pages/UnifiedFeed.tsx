@@ -214,8 +214,24 @@ const UnifiedFeed = () => {
       ) : isLoading && pings.length === 0 ? (
         <UnifiedFeedSkeleton />
       ) : pings.length === 0 ? (
-        <div className="text-center py-16 text-[#4A504E] text-sm">
-          No pings yet. Be the first to raise an issue!
+        <div className="text-center py-16 text-[#4A504E] text-sm font-poppins">
+          {debouncedQuery ? (
+            <div className="flex flex-col items-center">
+              <p className="font-semibold text-base text-[#212121]">No matching pings found</p>
+              <p className="text-xs text-[#8b8e8d] mt-1 max-w-[320px]">
+                No issues match "{debouncedQuery}". Try another keyword or clear the search filter.
+              </p>
+              <button
+                type="button"
+                onClick={() => useSearchStore.getState().clearSearch()}
+                className="mt-3 rounded-full border border-[#F49B31] bg-[#FEF5EA] px-4 py-1.5 text-xs font-semibold text-[#F49B31] hover:bg-[#FAE9D4] cursor-pointer"
+              >
+                Clear Search
+              </button>
+            </div>
+          ) : (
+            "No pings yet. Be the first to raise an issue!"
+          )}
         </div>
       ) : (
         <div className="flex flex-col gap-[15px] w-full">
