@@ -125,7 +125,7 @@ const representativeService = {
   },
 
   getAssignedPings: async (
-    params?: PaginationParams & { status?: string },
+    params?: PaginationParams & { status?: string; bodyId?: number },
   ): Promise<PaginatedResponse<Ping>> => {
     const response = await api.get<PaginatedResponse<Ping>>(
       "/pings/inbox",

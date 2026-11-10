@@ -19,6 +19,7 @@ import { pingService } from "../api/services";
 import { useAuthStore } from "../stores";
 import SurgeIcon from "./shared/SurgeIcon";
 import formatTimeAgo from "../utils/formatTimeAgo";
+import { Building2, Lock } from "lucide-react";
 
 interface PingCardProps {
     ping: Ping;
@@ -200,13 +201,15 @@ const PingCard = ({
                     </div>
                 )}
                 {ping.isMembersOnly && (
-                    <span className="inline-flex items-center gap-1 rounded-full bg-[#FEF5EA] px-2 py-0.5 text-xs font-semibold text-[#F49B31] border border-[#ffd7a8]">
-                        🔒 {ping.visibilityBody?.name ? `${ping.visibilityBody.name} Members` : "Members Only"}
+                    <span className="inline-flex items-center gap-1.5 rounded-full bg-[#FEF5EA] px-2.5 py-0.5 text-xs font-semibold font-['Poppins',sans-serif] text-[#75420B] border border-[#ffd7a8]">
+                        <Lock size={11} className="text-[#F49B31] shrink-0" />
+                        <span>{ping.visibilityBody?.name ? `${ping.visibilityBody.name} Members` : "Members Only"}</span>
                     </span>
                 )}
                 {!ping.isMembersOnly && ping.assignedToBody?.name && (
-                    <span className="inline-flex items-center gap-1 rounded-full bg-[#FEF5EA] px-2.5 py-0.5 text-xs font-semibold text-[#75420B] border border-[#ffd7a8]">
-                        🏛️ {ping.assignedToBody.name}
+                    <span className="inline-flex items-center gap-1.5 rounded-full bg-[#FEF5EA] px-2.5 py-0.5 text-xs font-semibold font-['Poppins',sans-serif] text-[#75420B] border border-[#ffd7a8]">
+                        <Building2 size={11} className="text-[#F49B31] shrink-0" />
+                        <span>{ping.assignedToBody.name}</span>
                     </span>
                 )}
             </div>

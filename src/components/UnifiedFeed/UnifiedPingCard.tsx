@@ -10,6 +10,7 @@
 
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Building2, Lock, User } from "lucide-react";
 import { useAuthStore, useSurgeStore, usePingsStore } from "../../stores";
 import { pingService } from "../../api/services";
 import BadgeTooltip from "../BadgeTooltip";
@@ -235,26 +236,57 @@ const UnifiedPingCard = ({
             </div>
           </div>
 
-          {/* Category label */}
-          {categoryName && (
-            <div
-              className={[
-                "flex items-center gap-[9px] min-w-0 flex-wrap",
-                isHistoryContext ? "min-w-0" : "",
-              ].join(" ")}
-            >
-              {categoryIcon && (
-                <img
-                  src={categoryIcon}
-                  alt={categoryName}
-                  className="w-[13px] h-[13px] md:w-5 md:h-5 object-contain shrink-0"
-                />
-              )}
-              <span className="font-['Poppins',sans-serif] font-medium text-[clamp(11px,2.8vw,15px)] text-[#171717] truncate">
-                {categoryName}
+          {/* Metadata row: Category + Group Scope Badges */}
+          <div
+            className={[
+              "flex items-center gap-2 min-w-0 flex-wrap",
+              isHistoryContext ? "min-w-0" : "",
+            ].join(" ")}
+          >
+            {/* Category label */}
+            {categoryName && (
+              <div className="flex items-center gap-[9px]">
+                {categoryIcon && (
+                  <img
+                    src={categoryIcon}
+                    alt={categoryName}
+                    className="w-[13px] h-[13px] md:w-5 md:h-5 object-contain shrink-0"
+                  />
+                )}
+                <span className="font-['Poppins',sans-serif] font-medium text-[clamp(11px,2.8vw,15px)] text-[#171717] truncate">
+                  {categoryName}
+                </span>
+              </div>
+            )}
+
+            {/* Members-Only Body Badge */}
+            {currentPing.isMembersOnly && (
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-[#FEF5EA] px-2.5 py-0.5 font-['Poppins',sans-serif] text-[11px] md:text-xs font-semibold text-[#75420B] border border-[#ffd7a8]">
+                <Lock size={11} className="text-[#F49B31] shrink-0" />
+                <span>
+                  {currentPing.visibilityBody?.name
+                    ? `${currentPing.visibilityBody.name} Members`
+                    : "Members Only"}
+                </span>
               </span>
-            </div>
-          )}
+            )}
+
+            {/* Assigned Body Badge (for public / targeted issues) */}
+            {!currentPing.isMembersOnly && currentPing.assignedToBody?.name && (
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-[#FEF5EA] px-2.5 py-0.5 font-['Poppins',sans-serif] text-[11px] md:text-xs font-semibold text-[#75420B] border border-[#ffd7a8]">
+                <Building2 size={11} className="text-[#F49B31] shrink-0" />
+                <span>{currentPing.assignedToBody.name}</span>
+              </span>
+            )}
+
+            {/* Assigned directly to current user */}
+            {currentPing.assignedToUserId && currentPing.assignedToUserId === currentUser?.id && (
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-[#FEF5EA] px-2.5 py-0.5 font-['Poppins',sans-serif] text-[11px] md:text-xs font-semibold text-[#75420B] border border-[#ffd7a8]">
+                <User size={11} className="text-[#F49B31] shrink-0" />
+                <span>Assigned to you</span>
+              </span>
+            )}
+          </div>
         </div>
 
         {/* ─── Body ────────────────────────────────── */}

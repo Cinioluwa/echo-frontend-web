@@ -56,7 +56,7 @@ export interface User {
     canExport?: boolean;
     canManageReps?: boolean;
     bodyId?: number | null;
-    body?: { departmentId: number | null } | null;
+    body?: { id?: number; name?: string; departmentId: number | null } | null;
     departmentId?: number | null;
     scopeLevel?: number | null;
     scopeHall?: string | null;

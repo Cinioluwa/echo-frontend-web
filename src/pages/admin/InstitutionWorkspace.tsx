@@ -3,6 +3,7 @@ import {
   Building2,
   ChevronRight,
   Pencil,
+  Pin,
   Plus,
   Settings,
   Sliders,
@@ -1328,8 +1329,14 @@ const InstitutionWorkspace = ({ mode = "admin" }: { mode?: "admin" | "rep" }) =>
                               </p>
 
                               <div className="mt-4 border-t border-[#ffd7a8]/40 pt-3 flex items-center justify-between text-xs font-poppins text-[#75420B]">
-                                <span>👥 {repCount} {repCount === 1 ? "representative" : "representatives"}</span>
-                                <span>📌 {body._count?.assignedPings ?? 0} assigned</span>
+                                <span className="flex items-center gap-1.5">
+                                  <Users size={13} className="text-[#F49B31] shrink-0" />
+                                  <span>{repCount} {repCount === 1 ? "representative" : "representatives"}</span>
+                                </span>
+                                <span className="flex items-center gap-1.5">
+                                  <Pin size={13} className="text-[#F49B31] shrink-0" />
+                                  <span>{body._count?.assignedPings ?? 0} assigned</span>
+                                </span>
                               </div>
                             </article>
                           );

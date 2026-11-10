@@ -1,6 +1,6 @@
 import { useState, useRef, type ReactNode, useEffect } from "react";
 import { FaLink } from "react-icons/fa6";
-import { ChevronDown, Trash2 } from "lucide-react";
+import { ChevronDown, Lock, Trash2 } from "lucide-react";
 import { v4 as uuidv4 } from "uuid";
 import PostSuccessModal from "./PostSuccessModal";
 import { pingService, uploadService, categoryService } from "../api/services";
@@ -421,8 +421,9 @@ const PingFormModal = ({
           {canPostMembersOnly && (
             <div className="flex items-center justify-between rounded-xl bg-[#FEF5EA] border border-[#ffd7a8] p-3 text-xs font-poppins">
               <div>
-                <span className="font-semibold text-[#212121] block">
-                  🔒 Members-Only Discussion
+                <span className="font-semibold text-[#212121] flex items-center gap-1.5">
+                  <Lock size={12} className="text-[#F49B31]" />
+                  Members-Only Discussion
                 </span>
                 <span className="text-[#8b8e8d] text-[11px] block mt-0.5">
                   {isMembersOnly
