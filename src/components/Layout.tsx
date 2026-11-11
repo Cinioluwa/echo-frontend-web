@@ -11,7 +11,7 @@
  *     - /feed          → Top3Widget (Phase 2)
  *     - /feed/:pingId  → CommentsPanel (Phase 3)
  */
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { Outlet, useLocation } from "react-router-dom";
 import { usePageTitle } from "../hooks/usePageTitle";
 import { useNotificationSocket } from "../hooks/useNotificationSocket";
@@ -45,6 +45,7 @@ const Layout = () => {
 
   const currentUser = useAuthStore((state) => state.user);
   const updatePingStore = usePingsStore((state) => state.updatePing);
+  const lastActivitySentAt = useRef(0);
 
   // ── Notification hooks ────────────────────────────────────────────────────
   // Listens for socket `notification:new` events → updates badge + toast queue
@@ -65,6 +66,39 @@ const Layout = () => {
     // Only re-run when the logged-in user changes (e.g. after login/logout)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentUser?.id]);
+
+  useEffect(() => {
+    if (!currentUser) return;
+    const socket = getSocket();
+    if (!socket) return;
+
+    const sendActivity = () => {
+      if (document.visibilityState !== "visible") return;
+      const now = Date.now();
+      const isSameUtcDay =
+        new Date(now).toISOString().slice(0, 10) ===
+        new Date(lastActivitySentAt.current).toISOString().slice(0, 10);
+      if (isSameUtcDay && now - lastActivitySentAt.current < 60_000) return;
+      lastActivitySentAt.current = now;
+      socket.emit("user:activity");
+    };
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === "visible") sendActivity();
+    };
+
+    window.addEventListener("pointerdown", sendActivity, { passive: true });
+    window.addEventListener("keydown", sendActivity);
+    window.addEventListener("scroll", sendActivity, { passive: true });
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    sendActivity();
+
+    return () => {
+      window.removeEventListener("pointerdown", sendActivity);
+      window.removeEventListener("keydown", sendActivity);
+      window.removeEventListener("scroll", sendActivity);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
+  }, [currentUser?.id, location.pathname]);
 
   // Global real-time socket events
   useEffect(() => {
