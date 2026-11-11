@@ -355,8 +355,8 @@ const MemberManagement: React.FC = () => {
                                             <tr key={user.id} className="border-b border-[#ffd7a8]/30 last:border-0 hover:bg-[#fff9f1] transition-colors">
                                                 <td className="p-4">
                                                     <div className="flex items-center gap-3">
-                                                        <img src={user.avatarUrl} alt={user.name} className="w-8 h-8 shrink-0 rounded-full border border-[#f49b31]" />
-                                                        <span className="whitespace-nowrap font-poppins font-medium text-[14px] text-[#212121]">{user.name}</span>
+                                                        <img src={user.avatarUrl} alt={user.name} className="w-8 h-8 rounded-full border border-[#f49b31]" />
+                                                        <span className="font-poppins font-medium text-[14px] text-[#212121]">{user.name}</span>
                                                     </div>
                                                 </td>
                                                 <td className="p-4 font-poppins text-[14px] text-[#5e5c58]">{user.email}</td>
@@ -422,8 +422,8 @@ const MemberManagement: React.FC = () => {
                                             <tr key={user.id} className="border-b border-[#ffd7a8]/30 last:border-0 hover:bg-[#fff9f1] transition-colors">
                                                 <td className="p-4">
                                                     <div className="flex items-center gap-3">
-                                                        <img src={user.avatarUrl} alt={user.name} className="w-8 h-8 rounded-full border border-[#f49b31]" />
-                                                        <span className="font-poppins font-medium text-[14px] text-[#212121]">{user.name}</span>
+                                                        <img src={user.avatarUrl} alt={user.name} className="w-8 h-8 shrink-0 rounded-full border border-[#f49b31]" />
+                                                        <span className="whitespace-nowrap font-poppins font-medium text-[14px] text-[#212121]">{user.name}</span>
                                                     </div>
                                                 </td>
                                                 <td className="p-4 font-poppins text-[14px] text-[#5e5c58]">{user.email}</td>
