@@ -53,6 +53,7 @@ const InstitutionFound: React.FC = () => {
                 firstName: formData.firstName,
                 lastName: formData.lastName,
                 organizationId: organization.id,
+                regNumber: formData.regNumber,
             });
 
             // Clear registration store after successful signup

@@ -70,15 +70,34 @@ const FindInstitution: React.FC = () => {
                 firstName: locationState.userData.firstName,
                 lastName: locationState.userData.lastName,
                 password: locationState.userData.password,
+                regNumber: (locationState.userData as any)?.regNumber,
             });
         }
     }, [locationState, setFormData]);
+
+    const isConsumerDomain = (email: string): boolean => {
+        const consumerDomains = [
+            "gmail.com",
+            "yahoo.com",
+            "hotmail.com",
+            "outlook.com",
+            "aol.com",
+            "icloud.com",
+            "mail.com",
+            "protonmail.com",
+            "fastmail.com",
+        ];
+        const domain = email.split("@")[1]?.toLowerCase();
+        return domain ? consumerDomains.includes(domain) : false;
+    };
 
     /**
      * Validate email domain matches selected organization
      */
     const validateEmailDomain = (org: Organization, email: string): boolean => {
         if (!email) return false;
+        // Consumer email domains (including freshmen onboarding with personal email) manually select their org
+        if (isConsumerDomain(email)) return true;
         const emailDomain = email.split("@")[1]?.toLowerCase();
         const orgDomain = org.domain.toLowerCase();
         return emailDomain === orgDomain;

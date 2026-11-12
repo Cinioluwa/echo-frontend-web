@@ -7,6 +7,7 @@ interface RegistrationFormData {
   password: string;
   firstName: string;
   lastName: string;
+  regNumber?: string;
 }
 
 interface RegistrationState {

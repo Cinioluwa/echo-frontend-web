@@ -35,6 +35,16 @@ const UserIcon = () => (
   </svg>
 );
 
+const BadgeIcon = () => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect x="3" y="4" width="18" height="16" rx="3" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+    <circle cx="9" cy="10" r="2" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+    <line x1="15" y1="9" x2="17" y2="9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+    <line x1="15" y1="13" x2="17" y2="13" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+    <line x1="7" y1="16" x2="17" y2="16" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+);
+
 /**
  * SignUp Component - Phase 2 Implementation
  * Primary signup flow with domain-based organization assignment
@@ -71,11 +81,13 @@ const SignUp: React.FC = () => {
   // Set page title
   usePageTitle();
 
+  const [isFreshman, setIsFreshman] = useState(false);
   const [formData, setFormData] = useState({
     email: "",
     password: "",
     firstName: "",
     lastName: "",
+    regNumber: "",
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -84,6 +96,7 @@ const SignUp: React.FC = () => {
     password?: string;
     firstName?: string;
     lastName?: string;
+    regNumber?: string;
   }>({});
 
   // Password strength validation
@@ -143,15 +156,27 @@ const SignUp: React.FC = () => {
 
     // Client-side validation using utilities
     const errors = validateSignupForm(formData);
+    if (isFreshman && (!formData.regNumber || formData.regNumber.trim().length < 5)) {
+      errors.regNumber = "Please enter your valid Student Registration Number (e.g. 2201677)";
+    }
+
     if (Object.keys(errors).length > 0) {
       setValidationErrors(errors);
       return;
     }
 
+    const payload = {
+      firstName: formData.firstName,
+      lastName: formData.lastName,
+      email: formData.email,
+      password: formData.password,
+      regNumber: isFreshman && formData.regNumber ? formData.regNumber.trim() : undefined,
+    };
+
     // Check if user is using a consumer email domain
     // These require manual organization selection before registration
     if (isConsumerEmailDomain(formData.email)) {
-      setRegistrationFormData(formData);
+      setRegistrationFormData(payload);
       navigate("/find-institution", {
         state: {
           email: formData.email,
@@ -159,6 +184,7 @@ const SignUp: React.FC = () => {
             firstName: formData.firstName,
             lastName: formData.lastName,
             password: formData.password,
+            regNumber: isFreshman && formData.regNumber ? formData.regNumber.trim() : undefined,
           },
         },
       });
@@ -169,9 +195,9 @@ const SignUp: React.FC = () => {
 
     try {
       // Save form data to registration store for potential fallback flow
-      setRegistrationFormData(formData);
+      setRegistrationFormData(payload);
 
-      await register(formData);
+      await register(payload);
 
       // If successful, navigate to verification screen
       navigate("/verification", { state: { email: formData.email } });
@@ -184,6 +210,10 @@ const SignUp: React.FC = () => {
 
       if (status === 409 && code === "ACCOUNT_EXISTS") {
         setError("An account with this email already exists. Try logging in instead.");
+      } else if (status === 409 && code === "REG_NUMBER_EXISTS") {
+        setError("An account with this Registration Number already exists.");
+      } else if (status === 409 && code === "REG_NUMBER_ALREADY_CLAIMED") {
+        setError("This Registration Number has already been claimed.");
       } else if (status === 404 && code === "ORG_NOT_FOUND") {
         // No organization found - redirect to Find Institution
         navigate("/find-institution", {
@@ -193,6 +223,7 @@ const SignUp: React.FC = () => {
               firstName: formData.firstName,
               lastName: formData.lastName,
               password: formData.password,
+              regNumber: isFreshman && formData.regNumber ? formData.regNumber.trim() : undefined,
             },
           },
         });
@@ -205,6 +236,7 @@ const SignUp: React.FC = () => {
               firstName: formData.firstName,
               lastName: formData.lastName,
               password: formData.password,
+              regNumber: isFreshman && formData.regNumber ? formData.regNumber.trim() : undefined,
             },
           },
         });
@@ -288,6 +320,51 @@ const SignUp: React.FC = () => {
               required
             />
 
+            {/* Freshman toggle pill */}
+            <div className="flex items-center justify-between p-3 rounded-xl bg-[#FEF5EA] border border-[#ffd7a8]/60 transition-all">
+              <div className="flex flex-col text-left">
+                <span className="text-xs font-semibold text-[#75420B]" style={{ fontFamily: "Poppins, sans-serif" }}>
+                  Incoming Freshman?
+                </span>
+                <span className="text-[11px] text-[#A66E2E]" style={{ fontFamily: "Poppins, sans-serif" }}>
+                  Register with your Reg Number if you don't have a school email yet
+                </span>
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  setIsFreshman(!isFreshman);
+                  if (error) setError(null);
+                }}
+                className={`relative inline-flex h-5 w-9 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
+                  isFreshman ? "bg-[#F49B31]" : "bg-gray-300"
+                }`}
+                role="switch"
+                aria-checked={isFreshman}
+              >
+                <span
+                  className={`pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow-lg ring-0 transition duration-200 ease-in-out ${
+                    isFreshman ? "translate-x-4" : "translate-x-0"
+                  }`}
+                />
+              </button>
+            </div>
+
+            {/* Registration Number (Visible only if isFreshman is true) */}
+            {isFreshman && (
+              <AuthInput
+                type="text"
+                name="regNumber"
+                value={formData.regNumber}
+                onChange={handleInputChange}
+                placeholder="Registration Number (e.g. 2201677)..."
+                icon={<BadgeIcon />}
+                error={validationErrors.regNumber}
+                disabled={loading || isOffline}
+                required={isFreshman}
+              />
+            )}
+
             {/* Email */}
             <AuthInput
               type="email"
@@ -295,7 +372,7 @@ const SignUp: React.FC = () => {
               value={formData.email}
               onChange={handleInputChange}
               onBlur={handleEmailBlur}
-              placeholder="Enter Institutional Email..."
+              placeholder={isFreshman ? "Personal Email (e.g. your Gmail)..." : "Enter Institutional Email..."}
               icon={<EmailIcon />}
               error={validationErrors.email}
               autoComplete="email"

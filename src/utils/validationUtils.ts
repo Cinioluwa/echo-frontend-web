@@ -262,6 +262,7 @@ export interface SignupFormData {
   lastName: string;
   email: string;
   password: string;
+  regNumber?: string;
 }
 
 export interface SignupFormErrors {
@@ -269,6 +270,7 @@ export interface SignupFormErrors {
   lastName?: string;
   email?: string;
   password?: string;
+  regNumber?: string;
 }
 
 export const validateSignupForm = (data: SignupFormData): SignupFormErrors => {

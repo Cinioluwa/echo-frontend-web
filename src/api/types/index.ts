@@ -14,6 +14,8 @@ export interface User {
   lastName: string;
   profilePicture?: string;
   level?: number; // Student year/level
+  regNumber?: string;
+  isTemporary?: boolean;
   role: "USER" | "ADMIN" | "REPRESENTATIVE" | "LEADER" | "SUPER_ADMIN";
   organizationId: number | null;
   status: "PENDING" | "ACTIVE" | "SUSPENDED";
@@ -82,6 +84,7 @@ export interface SignupRequest {
   firstName: string;
   lastName: string;
   level?: number;
+  regNumber?: string;
   organizationId?: number; // Optional - for manual organization selection
 }
 

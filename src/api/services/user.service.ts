@@ -148,6 +148,35 @@ const userService = {
       );
     }
   },
+
+  /**
+   * Request school email upgrade for temporary freshman account
+   * @param schoolEmail Official institutional email address
+   */
+  requestSchoolEmailUpgrade: async (
+    schoolEmail: string,
+  ): Promise<{ message: string }> => {
+    const response = await api.post<{ message: string }>(
+      "/users/me/upgrade-school-email",
+      { schoolEmail },
+    );
+    return response.data;
+  },
+
+  /**
+   * Confirm school email upgrade with verification token
+   * @param token Upgrade verification token
+   */
+  confirmSchoolEmailUpgrade: async (
+    token: string,
+  ): Promise<{ message: string; email: string; isTemporary: boolean }> => {
+    const response = await api.post<{
+      message: string;
+      email: string;
+      isTemporary: boolean;
+    }>("/users/confirm-school-email", { token });
+    return response.data;
+  },
 };
 
 export default userService;
