@@ -156,8 +156,16 @@ const SignUp: React.FC = () => {
 
     // Client-side validation using utilities
     const errors = validateSignupForm(formData);
-    if (isFreshman && (!formData.regNumber || formData.regNumber.trim().length < 5)) {
-      errors.regNumber = "Please enter your valid Student Registration Number (e.g. 2201677)";
+    if (isFreshman) {
+      const reg = formData.regNumber?.trim() || "";
+      if (!reg) {
+        errors.regNumber = "Please enter your 7-digit Student Registration Number.";
+      } else if (!reg.startsWith("26")) {
+        errors.regNumber =
+          "Freshman Registration Numbers for this session begin with 26 (e.g. 2601234).";
+      } else if (reg.length !== 7 || !/^\d{7}$/.test(reg)) {
+        errors.regNumber = "Registration Number must be exactly 7 digits (e.g. 2601234).";
+      }
     }
 
     if (Object.keys(errors).length > 0) {
@@ -240,6 +248,11 @@ const SignUp: React.FC = () => {
             },
           },
         });
+      } else if (status === 400 && code === "FRESHMAN_YEAR_PREFIX_REQUIRED") {
+        setError(
+          data?.error ||
+            "Personal email registration is strictly open to incoming 100L freshmen (numbers starting with 26).",
+        );
       } else if (status === 400) {
         setError(data?.error || data?.message || "Invalid registration data. Please check all fields.");
       } else {
@@ -357,7 +370,7 @@ const SignUp: React.FC = () => {
                 name="regNumber"
                 value={formData.regNumber}
                 onChange={handleInputChange}
-                placeholder="Registration Number (e.g. 2201677)..."
+                placeholder="Registration Number (e.g. 2601234)..."
                 icon={<BadgeIcon />}
                 error={validationErrors.regNumber}
                 disabled={loading || isOffline}
