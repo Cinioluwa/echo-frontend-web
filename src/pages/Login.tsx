@@ -310,6 +310,14 @@ const Login = () => {
       // Handle different error scenarios with improved messaging
       if (status === 401) {
         setError("Invalid email or password. Please try again.");
+      } else if (status === 429) {
+        setError(
+          data?.message ||
+            data?.error ||
+            "Too many attempts. Please wait a moment before trying again.",
+        );
+      } else if (status === 400 && data?.code === "ORG_ID_REQUIRED_FOR_PERSONAL_EMAIL") {
+        navigate("/find-institution", { state: { email: formData.email } });
       } else if (status === 403 && data?.code === "ACCOUNT_PENDING_VERIFICATION") {
         navigate("/verification", { state: { email: formData.email } });
       } else if (status === 400 && data?.code === "GOOGLE_AUTH_REQUIRED") {
