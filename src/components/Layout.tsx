@@ -32,7 +32,6 @@ import {
 } from "../api/services";
 import type { Announcement, Ping } from "../api/types";
 import MarkAsResolvedBar from "./MarkAsResolvedBar";
-import TemporaryAccountBanner from "./TemporaryAccountBanner";
 import { useAuthStore, usePingsStore, useNotificationStore, useSearchStore } from "../stores";
 
 const Layout = () => {
@@ -255,7 +254,6 @@ const Layout = () => {
 
             {/* Main content area */}
             <div className="flex-1 min-w-0">
-              <TemporaryAccountBanner />
               <PingCreatorProvider expandPingCreator={() => { }}>
                 <main className="mt-[15px] lg:mt-5 w-full">
                 <Outlet context={{ showPingFormModal, setShowPingFormModal, announcement, top3 }} />
