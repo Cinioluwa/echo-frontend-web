@@ -7,19 +7,49 @@
  * of the viewport. Tapping the hamburger opens MobileSideDrawer.
  * Desktop: logo left, bell + profile right.
  */
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import ProfileDropdown from "./ProfileDropdown";
 import NotificationBell from "./NotificationBell";
 import MobileSideDrawer from "./MobileSideDrawer";
 import SearchBar from "./SearchBar";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
+import { FiSearch } from "react-icons/fi";
+import { useSearchStore } from "../stores";
 
 const logo = "/assets/images/Echo Logo_black.svg";
 const menuBar = "/assets/images/menu-hotdog.svg";
 
 const NavBar = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
+  const mobileSearchRef = useRef<HTMLDivElement>(null);
+  const searchQuery = useSearchStore((state) => state.query);
+  const isProfileSettings =
+    location.pathname === "/profile" ||
+    location.pathname.startsWith("/user/") ||
+    /^\/admin\/(profile|account|notification-settings)(\/|$)/.test(location.pathname);
+
+  useEffect(() => {
+    if (isProfileSettings) {
+      setMobileSearchOpen(false);
+      return;
+    }
+    setMobileSearchOpen(Boolean(searchQuery.trim()));
+  }, [isProfileSettings, searchQuery]);
+
+  useEffect(() => {
+    if (!mobileSearchOpen || isProfileSettings) return;
+
+    const closeWhenClickedOutside = (event: PointerEvent) => {
+      if (mobileSearchRef.current?.contains(event.target as Node)) return;
+      if (!searchQuery.trim()) setMobileSearchOpen(false);
+    };
+
+    document.addEventListener("pointerdown", closeWhenClickedOutside);
+    return () => document.removeEventListener("pointerdown", closeWhenClickedOutside);
+  }, [isProfileSettings, mobileSearchOpen, searchQuery]);
 
   return (
     <>
@@ -44,9 +74,11 @@ const NavBar = () => {
         </div>
 
         {/* Search Bar in center */}
-        <div className="flex-1 max-w-[480px] mx-4 hidden min-[1131px]:block">
-          <SearchBar />
-        </div>
+        {!isProfileSettings && (
+          <div className="flex-1 max-w-[480px] mx-4 hidden min-[1131px]:block">
+            <SearchBar />
+          </div>
+        )}
 
         {/* Notification bell + User profile + dropdown */}
         <div className="flex items-center gap-1.5 shrink-0">
@@ -62,35 +94,59 @@ const NavBar = () => {
         className="min-[1131px]:hidden fixed top-[10px] left-3 right-3 z-30 rounded-[22px] bg-[#FFC37B]/95 shadow-lg backdrop-blur"
       >
         <div className="flex items-center justify-between gap-2 px-3 py-2">
-          {/* Mobile: hamburger trigger inside a white circle */}
-          <button
-            type="button"
-            onClick={() => setDrawerOpen(true)}
-            aria-label="Open menu"
-            aria-expanded={drawerOpen}
-            className="shrink-0 w-[34px] h-[34px] rounded-full bg-white flex items-center justify-center cursor-pointer shadow-sm active:scale-95 transition-transform"
-          >
-            <img
-              src={menuBar}
-              alt=""
-              className="w-[17px] h-[17px] object-contain"
-            />
-          </button>
+          <div className="flex shrink-0 items-center gap-1.5">
+            <button
+              type="button"
+              onClick={() => setDrawerOpen(true)}
+              aria-label="Open menu"
+              aria-expanded={drawerOpen}
+              className="shrink-0 w-[34px] h-[34px] rounded-full bg-white flex items-center justify-center cursor-pointer shadow-sm active:scale-95 transition-transform"
+            >
+              <img
+                src={menuBar}
+                alt=""
+                className="w-[17px] h-[17px] object-contain"
+              />
+            </button>
+            {!isProfileSettings && (
+              <button
+                type="button"
+                onClick={() => {
+                  if (searchQuery.trim()) return;
+                  setMobileSearchOpen((open) => !open);
+                }}
+                aria-label="Open search"
+                aria-expanded={mobileSearchOpen}
+                className="shrink-0 w-[34px] h-[34px] rounded-full bg-white flex items-center justify-center text-[#75420B] cursor-pointer shadow-sm active:scale-95 transition-transform"
+              >
+                <FiSearch size={17} />
+              </button>
+            )}
+          </div>
 
           {/* Logo — centred on mobile */}
-          <div
-            onClick={() => navigate("/feed")}
-            className="flex items-center gap-[5px] cursor-pointer absolute left-1/2 -translate-x-1/2"
-          >
-            <img
-              src={logo}
-              className="brightness-0 contrast-200 h-[25px] w-[23px]"
-              alt="Echo logo"
-            />
-            <span className="font-bold text-[24px] text-black font-['Poppins',sans-serif] leading-normal">
-              Echo
-            </span>
-          </div>
+          {mobileSearchOpen && !isProfileSettings ? (
+            <div
+              ref={mobileSearchRef}
+              className="absolute left-[84px] right-[84px] top-1/2 -translate-y-1/2"
+            >
+              <SearchBar />
+            </div>
+          ) : (
+            <div
+              onClick={() => navigate("/feed")}
+              className="flex items-center gap-[5px] cursor-pointer absolute left-1/2 -translate-x-1/2"
+            >
+              <img
+                src={logo}
+                className="brightness-0 contrast-200 h-[25px] w-[23px]"
+                alt="Echo logo"
+              />
+              <span className="font-bold text-[24px] text-black font-['Poppins',sans-serif] leading-normal">
+                Echo
+              </span>
+            </div>
+          )}
 
           {/* Notification bell + User profile + dropdown */}
           <div className="flex items-center gap-1.5 shrink-0">

@@ -5,7 +5,7 @@ import SurgeIcon from "../shared/SurgeIcon";
 import api from "../../api/axios.config";
 import UserAvatar from "../UserAvatar";
 import { useAuthStore } from "../../stores/auth/useAuthStore";
-import { commentService } from "../../api/services";
+import { commentService, userService } from "../../api/services";
 import DeleteConfirmationModal from "../DeleteConfirmationModal";
 import CommentActionsDropdown from "./CommentActionsDropdown";
 import { getErrorMessage } from "../../utils/networkUtils";
@@ -205,39 +205,44 @@ const CommentItem = ({ comment, onRefresh: _onRefresh, onDelete, pingId }: Props
         if (!trimmedReply) return;
 
         const tempId = `temp-reply-${Date.now()}`;
-        const optimisticReply: Comment = {
-            id: tempId,
-            content: trimmedReply,
-            author: user ?? null,
-            createdAt: new Date().toISOString(),
-            isOwner: true,
-            hasSurged: false,
-            surgeCount: 0,
-            isAnonymous: false,
-            replyCount: 0,
-        };
-
         setActionError(null);
-        setReplies((prev) => [...prev, optimisticReply]);
-        setReplyInput("");
-        setLocalReplyCount((prev) => prev + 1);
-
         setIsPostingReply(true);
+        let optimisticReply: Comment | null = null;
         try {
+            const preferences = await userService.getMyPreferences();
+            const isAnonymous = preferences.commentAnonymously ?? false;
+
+            optimisticReply = {
+                id: tempId,
+                content: trimmedReply,
+                author: isAnonymous ? null : user ?? null,
+                createdAt: new Date().toISOString(),
+                isOwner: true,
+                hasSurged: false,
+                surgeCount: 0,
+                isAnonymous,
+                replyCount: 0,
+            };
+            setReplies((prev) => [...prev, optimisticReply!]);
+            setReplyInput("");
+            setLocalReplyCount((prev) => prev + 1);
+
             const newReply = await commentService.replyToPingComment(
                 pingId,
                 String(comment.id),
                 trimmedReply,
-                false
+                isAnonymous
             );
 
             setReplies((prev) =>
                 prev.map((reply) => (reply.id === tempId ? newReply : reply)),
             );
         } catch (err) {
-            setReplies((prev) => prev.filter((reply) => reply.id !== tempId));
-            setReplyInput(trimmedReply);
-            setLocalReplyCount((prev) => Math.max(prev - 1, 0));
+            if (optimisticReply) {
+                setReplies((prev) => prev.filter((reply) => reply.id !== tempId));
+                setReplyInput(trimmedReply);
+                setLocalReplyCount((prev) => Math.max(prev - 1, 0));
+            }
             setActionError(getErrorMessage(err));
             console.error("Error posting reply:", err);
         } finally {

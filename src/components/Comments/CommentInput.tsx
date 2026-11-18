@@ -86,8 +86,10 @@ const CommentInput = ({
         setError(null);
 
         try {
-            // Use the preference setting to determine if comment should be anonymous
-            const isAnonymous = userPreferences?.commentAnonymously ?? false;
+            // Resolve the preference before posting so a fast submit cannot fall back to public.
+            const preferences = userPreferences ?? await userService.getMyPreferences();
+            if (!userPreferences) setUserPreferences(preferences);
+            const isAnonymous = preferences.commentAnonymously ?? false;
 
             // Use the correct API endpoints that match the documentation
             let createdComment;

@@ -22,7 +22,6 @@ import OnboardingOverlay from "../components/onboarding/OnboardingOverlay";
 import AnnouncementWidget from "../components/UnifiedFeed/AnnouncementWidget";
 import Top3Widget from "../components/UnifiedFeed/Top3Widget";
 import UnifiedPingCard from "../components/UnifiedFeed/UnifiedPingCard";
-import SearchBar from "../components/SearchBar";
 import type { Announcement, Ping } from "../api/types";
 import type { InstitutionStatus } from "../api/services/organization.service";
 import { useAuthStore, usePingsStore, useSearchStore } from "../stores";
@@ -183,11 +182,6 @@ const UnifiedFeed = () => {
       {/* Mobile-only Top 3 (Desktop renders it in Layout's right aside) */}
       <div className="lg:hidden flex flex-col gap-[15px]">
         <Top3Widget pings={top3} />
-      </div>
-
-      {/* Search Bar on feed */}
-      <div className="w-full">
-        <SearchBar />
       </div>
 
       {/* Active Search Results Indicator */}
