@@ -93,7 +93,7 @@ const NavBar = () => {
       <div
         className="min-[1131px]:hidden fixed top-[10px] left-3 right-3 z-30 rounded-[22px] bg-[#FFC37B]/95 shadow-lg backdrop-blur"
       >
-        <div className="flex items-center justify-between gap-2 px-3 py-2">
+        <div className="flex items-center justify-between gap-2.5 px-3 py-2">
           <div className="flex shrink-0 items-center gap-1.5">
             <button
               type="button"
@@ -128,7 +128,7 @@ const NavBar = () => {
           {mobileSearchOpen && !isProfileSettings ? (
             <div
               ref={mobileSearchRef}
-              className="absolute left-[84px] right-[84px] top-1/2 -translate-y-1/2"
+              className="flex-1 min-w-0"
             >
               <SearchBar />
             </div>
